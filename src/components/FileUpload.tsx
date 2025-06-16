@@ -1,5 +1,6 @@
-import React, { useCallback, useState } from 'react';
-import { Upload, File, AlertCircle, Check } from 'lucide-react';
+import { useCallback, useState } from 'react';
+import type { ChangeEvent, DragEvent } from 'react';
+import { Upload, AlertCircle, Check } from 'lucide-react';
 import { parseFile } from '../services/fileParser';
 
 interface FileUploadProps {
@@ -30,7 +31,7 @@ export default function FileUpload({ onContentChange, label, accept = ".txt,.doc
     }
   }, [onContentChange]);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
+  const handleDrop = useCallback((e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragOver(false);
     
@@ -40,7 +41,7 @@ export default function FileUpload({ onContentChange, label, accept = ".txt,.doc
     }
   }, [handleFile]);
 
-  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
       handleFile(files[0]);
