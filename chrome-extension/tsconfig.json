@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "lib": ["ES2020", "DOM"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "rootDir": "./",
+    "moduleResolution": "node",
+    "baseUrl": "./",
+    "paths": {
+      "shared/*": ["shared/*"]
+    },
+    "typeRoots": ["./node_modules/@types", "./@types"]
+  },
+  "include": [
+    "*.ts",
+    "shared/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}
