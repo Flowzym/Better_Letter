@@ -104,7 +104,7 @@ Mit dieser Anwendung kannst du Lebenslauf- und Stellenanzeigendaten flexibel imp
 
 1. **Repository klonen:**
     ```bash
-    git clone https://github.com/<IHR_USERNAME>/bewerbungsschreiben-generator.git
+    git clone https://github.com/flowzym/bewerbungsschreiben-generator.git
     cd bewerbungsschreiben-generator
     ```
 2. **Abhängigkeiten installieren:**
@@ -180,14 +180,14 @@ Mit dieser Anwendung kannst du Lebenslauf- und Stellenanzeigendaten flexibel imp
 ## Lizenz
 
 MIT  
-(Ergänze eigene Lizenzbedingungen, falls abweichend.)
+(n/a)
 
 ---
 
 ## Entwickler:in & Kontakt
 
 Flor  
-Kontakt: [Deine E-Mail oder das Issue-Board auf GitHub]
+Kontakt: n/a
 
 ---
 
