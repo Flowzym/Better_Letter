@@ -1,46 +1,49 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { 
-  Settings, 
-  X, 
-  FileText, 
-  Palette, 
-  Edit3, 
-  User, 
-  Database, 
-  Brain, 
-  Save, 
-  Plus, 
-  Trash2, 
-  Download, 
+import {
+  Settings,
+  X,
+  FileText,
+  Palette,
+  Edit3,
+  User,
+  Database,
+  Brain,
+  Save,
+  Plus,
+  Trash2,
+  Download,
   Upload,
-  AlertCircle,
   Check,
   RefreshCw,
-  Key,
-  Globe,
-  Zap,
-  Code,
   Server,
   Eye,
   EyeOff,
   RotateCcw,
-  Archive,
-  CheckSquare,
-  Square
+  Archive
 } from 'lucide-react';
 import ProfileSourceSettings from './ProfileSourceSettings';
 import DatabaseStatus from './DatabaseStatus';
 import { ProfileSourceMapping } from '../services/supabaseService';
 
+interface PromptConfig {
+  label: string;
+  prompt: string;
+  /** Optional visibility flag */
+  visible?: boolean;
+}
+
+type PromptsRecord = Record<string, PromptConfig>;
+type PromptCategory = 'document' | 'edit' | 'style';
+
 interface SettingsPageProps {
   isOpen: boolean;
   onClose: () => void;
-  documentTypes: any;
-  onDocumentTypesChange: (types: any) => void;
-  editPrompts: any;
-  onEditPromptsChange: (prompts: any) => void;
-  stylePrompts: any;
-  onStylePromptsChange: (prompts: any) => void;
+  documentTypes: PromptsRecord;
+  onDocumentTypesChange: (types: PromptsRecord) => void;
+  editPrompts: PromptsRecord;
+  onEditPromptsChange: (prompts: PromptsRecord) => void;
+  stylePrompts: PromptsRecord;
+  onStylePromptsChange: (prompts: PromptsRecord) => void;
   profileSourceMappings: ProfileSourceMapping[];
   onProfileSourceMappingsChange: (mappings: ProfileSourceMapping[]) => void;
 }
@@ -85,8 +88,15 @@ export default function SettingsPage({
   const [aiModels, setAiModels] = useState<AIModel[]>([]);
   const [currentModel, setCurrentModel] = useState<string>('mistral-large-latest');
   const [showNewPromptForm, setShowNewPromptForm] = useState<string | null>(null);
-  const [newPrompt, setNewPrompt] = useState({ key: '', label: '', prompt: '', visible: true });
-  const [editingPrompt, setEditingPrompt] = useState<{ type: string; key: string; data: any } | null>(null);
+  const [newPrompt, setNewPrompt] = useState<{ key: string } & PromptConfig>({
+    key: '',
+    label: '',
+    prompt: '',
+    visible: true
+  });
+  const [editingPrompt, setEditingPrompt] = useState<
+    { type: PromptCategory; key: string; data: PromptConfig } | null
+  >(null);
   const [exportOptions, setExportOptions] = useState<ExportOptions>({
     documentTypes: true,
     stylePrompts: true,
@@ -109,11 +119,11 @@ export default function SettingsPage({
     description: ''
   });
 
-  // ✅ KORRIGIERT: Load AI models and settings
+  // Load AI models and settings on mount
   useEffect(() => {
     loadAIModels();
     loadCurrentModel();
-  }, []); // ✅ KORRIGIERT: Leeres Dependency-Array für Mount-only
+  }, [loadAIModels, loadCurrentModel]);
 
   const loadAIModels = useCallback(() => {
     try {
@@ -222,57 +232,83 @@ export default function SettingsPage({
     setShowNewPromptForm(null);
   }, [newPrompt, documentTypes, editPrompts, stylePrompts, onDocumentTypesChange, onEditPromptsChange, onStylePromptsChange]); // ✅ KORRIGIERT: useCallback mit Dependencies
 
-  const updatePrompt = useCallback((type: 'document' | 'edit' | 'style', key: string, updates: any) => {
-    switch (type) {
-      case 'document':
-        onDocumentTypesChange({
-          ...documentTypes,
-          [key]: { ...documentTypes[key], ...updates }
-        });
-        break;
-      case 'edit':
-        onEditPromptsChange({
-          ...editPrompts,
-          [key]: { ...editPrompts[key], ...updates }
-        });
-        break;
-      case 'style':
-        onStylePromptsChange({
-          ...stylePrompts,
-          [key]: { ...stylePrompts[key], ...updates }
-        });
-        break;
-    }
-  }, [documentTypes, editPrompts, stylePrompts, onDocumentTypesChange, onEditPromptsChange, onStylePromptsChange]); // ✅ KORRIGIERT: useCallback mit Dependencies
+  const updatePrompt = useCallback(
+    (type: PromptCategory, key: string, updates: Partial<PromptConfig>) => {
+      switch (type) {
+        case 'document':
+          onDocumentTypesChange({
+            ...documentTypes,
+            [key]: { ...documentTypes[key], ...updates }
+          });
+          break;
+        case 'edit':
+          onEditPromptsChange({
+            ...editPrompts,
+            [key]: { ...editPrompts[key], ...updates }
+          });
+          break;
+        case 'style':
+          onStylePromptsChange({
+            ...stylePrompts,
+            [key]: { ...stylePrompts[key], ...updates }
+          });
+          break;
+      }
+    },
+    [
+      documentTypes,
+      editPrompts,
+      stylePrompts,
+      onDocumentTypesChange,
+      onEditPromptsChange,
+      onStylePromptsChange
+    ]
+  );
 
-  const deletePrompt = useCallback((type: 'document' | 'edit' | 'style', key: string) => {
-    switch (type) {
-      case 'document':
-        const newDocTypes = { ...documentTypes };
-        delete newDocTypes[key];
-        onDocumentTypesChange(newDocTypes);
-        break;
-      case 'edit':
-        const newEditPrompts = { ...editPrompts };
-        delete newEditPrompts[key];
-        onEditPromptsChange(newEditPrompts);
-        break;
-      case 'style':
-        const newStylePrompts = { ...stylePrompts };
-        delete newStylePrompts[key];
-        onStylePromptsChange(newStylePrompts);
-        break;
-    }
-  }, [documentTypes, editPrompts, stylePrompts, onDocumentTypesChange, onEditPromptsChange, onStylePromptsChange]); // ✅ KORRIGIERT: useCallback mit Dependencies
+  const deletePrompt = useCallback(
+    (type: PromptCategory, key: string) => {
+      switch (type) {
+        case 'document': {
+          const newDocTypes = { ...documentTypes };
+          delete newDocTypes[key];
+          onDocumentTypesChange(newDocTypes);
+          break;
+        }
+        case 'edit': {
+          const newEditPrompts = { ...editPrompts };
+          delete newEditPrompts[key];
+          onEditPromptsChange(newEditPrompts);
+          break;
+        }
+        case 'style': {
+          const newStylePrompts = { ...stylePrompts };
+          delete newStylePrompts[key];
+          onStylePromptsChange(newStylePrompts);
+          break;
+        }
+      }
+    },
+    [
+      documentTypes,
+      editPrompts,
+      stylePrompts,
+      onDocumentTypesChange,
+      onEditPromptsChange,
+      onStylePromptsChange
+    ]
+  );
 
-  const startEditingPrompt = useCallback((type: 'document' | 'edit' | 'style', key: string, data: any) => {
-    setEditingPrompt({ type, key, data: { ...data } });
-  }, []); // ✅ KORRIGIERT: useCallback
+  const startEditingPrompt = useCallback(
+    (type: PromptCategory, key: string, data: PromptConfig) => {
+      setEditingPrompt({ type, key, data: { ...data } });
+    },
+    []
+  );
 
   const saveEditingPrompt = useCallback(() => {
     if (!editingPrompt) return;
     
-    updatePrompt(editingPrompt.type as any, editingPrompt.key, editingPrompt.data);
+    updatePrompt(editingPrompt.type, editingPrompt.key, editingPrompt.data);
     setEditingPrompt(null);
   }, [editingPrompt, updatePrompt]); // ✅ KORRIGIERT: useCallback mit Dependencies
 
@@ -308,13 +344,6 @@ export default function SettingsPage({
     setShowNewModelForm(false);
   }, [newModel, aiModels]); // ✅ KORRIGIERT: useCallback mit Dependencies
 
-  const updateAIModel = useCallback((id: string, updates: Partial<AIModel>) => {
-    setAiModels(models => 
-      models.map(model => 
-        model.id === id ? { ...model, ...updates } : model
-      )
-    );
-  }, []); // ✅ KORRIGIERT: useCallback
 
   const deleteAIModel = useCallback((id: string) => {
     setAiModels(models => models.filter(model => model.id !== id));
@@ -334,7 +363,7 @@ export default function SettingsPage({
   }, []); // ✅ KORRIGIERT: useCallback
 
   const exportSettings = useCallback(() => {
-    const settings: any = {
+    const settings: Record<string, unknown> = {
       exportDate: new Date().toISOString(),
       version: '1.0'
     };
@@ -384,7 +413,7 @@ export default function SettingsPage({
       
       setImportError('');
       alert('Einstellungen erfolgreich importiert!');
-    } catch (error) {
+    } catch {
       setImportError('Fehler beim Importieren der Einstellungen. Bitte überprüfen Sie das Dateiformat.');
     }
     
@@ -411,9 +440,8 @@ export default function SettingsPage({
 
   const renderPromptSection = (
     title: string,
-    prompts: any,
-    type: 'document' | 'edit' | 'style',
-    onUpdate: (prompts: any) => void
+    prompts: PromptsRecord,
+    type: PromptCategory
   ) => (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -517,7 +545,7 @@ export default function SettingsPage({
       )}
 
       <div className="space-y-4">
-        {Object.entries(prompts).map(([key, prompt]: [string, any]) => (
+        {Object.entries(prompts).map(([key, prompt]: [string, PromptConfig]) => (
           <div key={key} className="border rounded-lg p-4 bg-gray-50">
             {editingPrompt && editingPrompt.key === key && editingPrompt.type === type ? (
               // EDIT MODE
@@ -738,26 +766,14 @@ export default function SettingsPage({
           {/* Main Content */}
           <div className="flex-1 flex flex-col min-h-0">
             <div className="flex-1 p-6 overflow-y-auto" role="tabpanel">
-              {activeTab === 'document-types' && renderPromptSection(
-                'Texttyp-Prompts',
-                documentTypes,
-                'document',
-                onDocumentTypesChange
-              )}
+              {activeTab === 'document-types' &&
+                renderPromptSection('Texttyp-Prompts', documentTypes, 'document')}
 
-              {activeTab === 'style-prompts' && renderPromptSection(
-                'Stil-Prompts',
-                stylePrompts,
-                'style',
-                onStylePromptsChange
-              )}
+              {activeTab === 'style-prompts' &&
+                renderPromptSection('Stil-Prompts', stylePrompts, 'style')}
 
-              {activeTab === 'edit-prompts' && renderPromptSection(
-                'Anpassungs-Prompts',
-                editPrompts,
-                'edit',
-                onEditPromptsChange
-              )}
+              {activeTab === 'edit-prompts' &&
+                renderPromptSection('Anpassungs-Prompts', editPrompts, 'edit')}
 
               {activeTab === 'profile-config' && (
                 <div className="space-y-6">
@@ -837,7 +853,12 @@ export default function SettingsPage({
                               id="new-model-provider"
                               name="newModelProvider"
                               value={newModel.provider}
-                              onChange={(e) => setNewModel({ ...newModel, provider: e.target.value as any })}
+                              onChange={(e) =>
+                                setNewModel({
+                                  ...newModel,
+                                  provider: e.target.value as AIModel['provider']
+                                })
+                              }
                               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
                               style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
                             >
