@@ -6,7 +6,15 @@ import StyleSelector from './components/StyleSelector';
 import DocumentTypeSelector from './components/DocumentTypeSelector';
 import SettingsPage from './components/SettingsPage';
 import { generateCoverLetter, editCoverLetter } from './services/mistralService';
-import { loadProfileSuggestions, isSupabaseConfigured, ProfileConfig, ProfileSourceMapping, invalidateTableCache, testDatabaseConnection, getDatabaseStats } from './services/supabaseService';
+import {
+  loadProfileSuggestions,
+  isSupabaseConfigured,
+  ProfileConfig,
+  ProfileSourceMapping,
+  DatabaseStats,
+  testDatabaseConnection,
+  getDatabaseStats
+} from './services/supabaseService';
 
 const DEFAULT_DOCUMENT_TYPES = {
   standard: {
@@ -230,23 +238,23 @@ const loadProfileSourceMappingsFromStorage = (): ProfileSourceMapping[] => {
 };
 
 // Helper functions for localStorage
-const loadFromStorage = (key: string, defaultValue: any) => {
+function loadFromStorage<T>(key: string, defaultValue: T): T {
   try {
     const saved = localStorage.getItem(key);
-    return saved ? JSON.parse(saved) : defaultValue;
+    return saved ? (JSON.parse(saved) as T) : defaultValue;
   } catch (error) {
     console.error(`Error loading ${key} from localStorage:`, error);
     return defaultValue;
   }
-};
+}
 
-const saveToStorage = (key: string, value: any) => {
+function saveToStorage<T>(key: string, value: T): void {
   try {
     localStorage.setItem(key, JSON.stringify(value));
   } catch (error) {
     console.error(`Error saving ${key} to localStorage:`, error);
   }
-};
+}
 
 function App() {
   const [cvContent, setCvContent] = useState('');
@@ -255,9 +263,7 @@ function App() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState('');
-  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
-  const [databaseStatus, setDatabaseStatus] = useState<'connected' | 'disconnected' | 'unknown'>('unknown');
-  const [databaseStats, setDatabaseStats] = useState<any>(null);
+  const [databaseStats, setDatabaseStats] = useState<DatabaseStats | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   
   // Load settings from localStorage with defaults
@@ -281,15 +287,13 @@ function App() {
   );
   const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
 
-  // Check database status on component mount and when Supabase config changes
+  // Load database statistics if Supabase is configured
   useEffect(() => {
-    const checkDatabaseStatus = async () => {
+    const loadStats = async () => {
       if (isSupabaseConfigured()) {
         try {
           const isConnected = await testDatabaseConnection();
-          setDatabaseStatus(isConnected ? 'connected' : 'disconnected');
-          
-          // Lade erweiterte Statistiken
+
           if (isConnected) {
             try {
               const stats = await getDatabaseStats(profileSourceMappings);
@@ -298,36 +302,31 @@ function App() {
               console.error('Failed to load database stats:', error);
             }
           }
-        } catch (error) {
-          setDatabaseStatus('disconnected');
+        } catch {
+          // Ignore connection errors; stats remain null
         }
-      } else {
-        setDatabaseStatus('disconnected');
       }
     };
 
-    checkDatabaseStatus();
+    loadStats();
   }, [profileSourceMappings]);
 
   // Load profile suggestions from Supabase on component mount
   useEffect(() => {
     const loadProfileData = async () => {
-      if (isSupabaseConfigured()) {
-        setIsLoadingProfile(true);
-        try {
-          console.log('Loading profile data with mappings:', profileSourceMappings);
-          const supabaseConfig = await loadProfileSuggestions(profileSourceMappings, true); // Force refresh
-          console.log('Loaded profile config:', supabaseConfig);
-          setProfileConfig(supabaseConfig);
-          // Don't save to localStorage when using Supabase
-        } catch (error) {
-          console.error('Failed to load profile suggestions from Supabase:', error);
-          // Keep using localStorage fallback
-        } finally {
-          setIsLoadingProfile(false);
+        if (isSupabaseConfigured()) {
+          try {
+            console.log('Loading profile data with mappings:', profileSourceMappings);
+            const supabaseConfig = await loadProfileSuggestions(profileSourceMappings, true); // Force refresh
+            console.log('Loaded profile config:', supabaseConfig);
+            setProfileConfig(supabaseConfig);
+            // Don't save to localStorage when using Supabase
+          } catch (error) {
+            console.error('Failed to load profile suggestions from Supabase:', error);
+            // Keep using localStorage fallback
+          }
         }
-      }
-    };
+      };
 
     loadProfileData();
   }, [profileSourceMappings]);
@@ -412,17 +411,7 @@ function App() {
     setCoverLetter(newContent);
   }, []);
 
-  // Berechne Gesamtstatistiken
-  const getTotalEntries = () => {
-    if (!databaseStats) return 'Unbekannt';
-    
-    let total = databaseStats.totalSuggestions || 0;
-    if (databaseStats.totalFromMappings) {
-      total += databaseStats.totalFromMappings;
-    }
-    
-    return total.toLocaleString('de-DE');
-  };
+
 
   return (
     <div className="min-h-screen bg-white">
