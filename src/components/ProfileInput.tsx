@@ -87,18 +87,6 @@ export default function ProfileInput({ onContentChange, profileConfig, initialCo
     localStorage.setItem('profileFavorites', JSON.stringify(favoritesConfig));
   }, [favoritesConfig]); // ✅ KORRIGIERT: favoritesConfig als Dependency
 
-
-  // ✅ KORRIGIERT: Update zusatzangaben when initialContent changes
-  useEffect(() => {
-    if (!initialContent) return;
-    setProfileData(prev => {
-      if (prev.zusatzangaben === initialContent) return prev;
-      const newData = { ...prev, zusatzangaben: initialContent };
-      updateProfileContent(newData);
-      return newData;
-    });
-  }, [initialContent, updateProfileContent]);
-
   const updateProfileContent = useCallback((newData: ProfileData) => {
     const sections = [];
     
@@ -129,6 +117,18 @@ export default function ProfileInput({ onContentChange, profileConfig, initialCo
     
     onContentChange(sections.join('\n\n'));
   }, [onContentChange]); // ✅ KORRIGIERT: useCallback mit onContentChange als Dependency
+
+
+  // ✅ KORRIGIERT: Update zusatzangaben when initialContent changes
+  useEffect(() => {
+    if (!initialContent) return;
+    setProfileData(prev => {
+      if (prev.zusatzangaben === initialContent) return prev;
+      const newData = { ...prev, zusatzangaben: initialContent };
+      updateProfileContent(newData);
+      return newData;
+    });
+  }, [initialContent, updateProfileContent]);
 
   const toggleSelection = useCallback((category: keyof Omit<ProfileData, 'zusatzangaben'>, item: string) => {
     const newData = { ...profileData };
