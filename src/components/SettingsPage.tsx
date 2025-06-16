@@ -119,12 +119,6 @@ export default function SettingsPage({
     description: ''
   });
 
-  // Load AI models and settings on mount
-  useEffect(() => {
-    loadAIModels();
-    loadCurrentModel();
-  }, [loadAIModels, loadCurrentModel]);
-
   const loadAIModels = useCallback(() => {
     try {
       const saved = localStorage.getItem('aiModels');
@@ -179,6 +173,12 @@ export default function SettingsPage({
       console.error('Error loading current model:', error);
     }
   }, []); // ✅ KORRIGIERT: useCallback
+
+  // Load AI models and settings on mount
+  useEffect(() => {
+    loadAIModels();
+    loadCurrentModel();
+  }, [loadAIModels, loadCurrentModel]);
 
   const saveSettings = useCallback(async () => {
     setSaveStatus('saving');
