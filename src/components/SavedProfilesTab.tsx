@@ -1,5 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { Bookmark, FolderOpen, Trash2, Download, Upload, AlertCircle, Check } from 'lucide-react';
+import {
+  useState,
+  useEffect,
+  type ChangeEvent,
+  type CSSProperties,
+} from 'react';
+import {
+  Bookmark,
+  FolderOpen,
+  Trash2,
+  Download,
+  Upload,
+  AlertCircle,
+  Check,
+  X,
+} from 'lucide-react';
 
 interface ProfileData {
   berufe: string[];
@@ -33,7 +47,8 @@ export default function SavedProfilesTab({ onContentChange }: SavedProfilesTabPr
     const saved = localStorage.getItem('savedProfiles');
     if (saved) {
       try {
-        setSavedProfiles(JSON.parse(saved));
+        const parsed = JSON.parse(saved) as SavedProfile[]; // parsed from storage
+        setSavedProfiles(parsed);
       } catch (error) {
         console.error('Error loading saved profiles:', error);
       }
@@ -46,7 +61,7 @@ export default function SavedProfilesTab({ onContentChange }: SavedProfilesTabPr
   }, [savedProfiles]);
 
   const loadProfile = (profile: SavedProfile) => {
-    const sections = [];
+    const sections: string[] = []; // build textual sections
     
     if (profile.data.berufe.length > 0) {
       sections.push(`BERUFE:\n${profile.data.berufe.join(', ')}`);
@@ -92,7 +107,7 @@ export default function SavedProfilesTab({ onContentChange }: SavedProfilesTabPr
     URL.revokeObjectURL(url);
   };
 
-  const handleImportFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImportFile = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -101,7 +116,7 @@ export default function SavedProfilesTab({ onContentChange }: SavedProfilesTabPr
 
     try {
       const content = await file.text();
-      const profile = JSON.parse(content);
+      const profile = JSON.parse(content) as SavedProfile; // parsed import file
 
       // Validate the structure
       if (!profile.id || !profile.name || !profile.data || !profile.createdAt) {
@@ -153,7 +168,7 @@ export default function SavedProfilesTab({ onContentChange }: SavedProfilesTabPr
         return;
       }
 
-      const profileData = JSON.parse(currentProfileData);
+      const profileData = JSON.parse(currentProfileData) as ProfileData; // current profile
       const newProfile: SavedProfile = {
         id: Date.now().toString(),
         name: profileName.trim(),
@@ -215,7 +230,7 @@ export default function SavedProfilesTab({ onContentChange }: SavedProfilesTabPr
                   onChange={(e) => setProfileName(e.target.value)}
                   placeholder="Profilname eingeben..."
                   className="flex-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2"
-                  style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                  style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as CSSProperties}
                   onKeyPress={(e) => {
                     if (e.key === 'Enter') {
                       saveProfile();
