@@ -1,9 +1,10 @@
-import React, { useMemo, useRef, useEffect, useState, useCallback } from 'react';
+import { useMemo, useRef, useEffect, useState, useCallback } from 'react';
 import ForwardedReactQuill from './ForwardedReactQuill';
 import 'react-quill/dist/quill.snow.css';
 import CustomToolbar from './CustomToolbar';
 import TemplateManagerModal, { Template } from './TemplateManagerModal';
 import SettingsModal, { EditorSettings } from './SettingsModal';
+import ReactQuill from 'react-quill';
 
 interface QuillEditorProps {
   value: string;
@@ -57,7 +58,8 @@ const DEFAULT_TEMPLATES: Template[] = [
 ];
 
 export default function QuillEditor({ value, onChange }: QuillEditorProps) {
-  const quillRef = useRef<any>(null);
+  // quillRef points to the underlying ReactQuill instance
+  const quillRef = useRef<ReactQuill | null>(null);
   const [zoom, setZoom] = useState(140); // BOLT-UI-ANPASSUNG 2025-01-15: Standard 140% Zoom, aber als 100% angezeigt
   const [displayZoom, setDisplayZoom] = useState(100); // BOLT-UI-ANPASSUNG 2025-01-15: User sieht 100%
   const [showTemplates, setShowTemplates] = useState(false);
@@ -128,7 +130,7 @@ export default function QuillEditor({ value, onChange }: QuillEditorProps) {
         if (quill && quill.history) {
           try {
             quill.history.undo();
-          } catch (error) {
+          } catch {
             // BOLT-FIX 2025-01-15: Stille Fehlerbehandlung wenn Editor nicht bereit
           }
         }
@@ -140,7 +142,7 @@ export default function QuillEditor({ value, onChange }: QuillEditorProps) {
         if (quill && quill.history) {
           try {
             quill.history.redo();
-          } catch (error) {
+          } catch {
             // BOLT-FIX 2025-01-15: Stille Fehlerbehandlung wenn Editor nicht bereit
           }
         }
@@ -152,7 +154,7 @@ export default function QuillEditor({ value, onChange }: QuillEditorProps) {
         try {
           const length = quill.getLength ? quill.getLength() : 0;
           quill.setSelection(0, length);
-        } catch (error) {
+        } catch {
           // BOLT-FIX 2025-01-15: Stille Fehlerbehandlung wenn Editor nicht bereit
         }
       }
@@ -170,7 +172,7 @@ export default function QuillEditor({ value, onChange }: QuillEditorProps) {
             await navigator.clipboard.writeText(text);
           }
         }
-      } catch (error) {
+      } catch {
         showClipboardError('Zugriff auf die Zwischenablage verweigert. Bitte erlauben Sie den Zugriff in Ihren Browsereinstellungen.');
       }
     },
@@ -184,7 +186,7 @@ export default function QuillEditor({ value, onChange }: QuillEditorProps) {
             quill.insertText(selection.index, text);
           }
         }
-      } catch (error) {
+      } catch {
         showClipboardError('Zugriff auf die Zwischenablage verweigert. Verwenden Sie Strg+V zum Einfügen.');
       }
     },
