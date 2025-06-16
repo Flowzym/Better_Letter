@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Database, Plus, Trash2, X, Check, AlertCircle, RefreshCw, TestTube, Eye, Search } from 'lucide-react';
+import { Database, Plus, Trash2, X, AlertCircle, RefreshCw, TestTube, Search } from 'lucide-react';
 import { 
   getSupabaseTableNames, 
   ProfileSourceMapping, 
@@ -36,7 +36,12 @@ export default function ProfileSourceSettings({
     columnName: '',
     isActive: true
   });
-  const [testResults, setTestResults] = useState<{ [key: string]: any }>({});
+  // store results of mapping tests keyed by `table.column`
+  const [testResults, setTestResults] = useState<Record<string, {
+    success: boolean;
+    sampleData: string[];
+    error?: string;
+  }>>({});
   const [isTestingMapping, setIsTestingMapping] = useState<string | null>(null);
   const [tableSearchTerm, setTableSearchTerm] = useState('');
   const [isLoadingColumns, setIsLoadingColumns] = useState<string | null>(null);
@@ -130,7 +135,7 @@ export default function ProfileSourceSettings({
     onSourceMappingsChange(newMappings);
   };
 
-  const testMapping = async (mapping: ProfileSourceMapping, index: number) => {
+  const testMapping = async (mapping: ProfileSourceMapping) => {
     const testKey = `${mapping.tableName}.${mapping.columnName}`;
     setIsTestingMapping(testKey);
     
@@ -459,7 +464,7 @@ export default function ProfileSourceSettings({
                     
                     <div className="flex items-center space-x-2">
                       <button
-                        onClick={() => testMapping(mapping, index)}
+                        onClick={() => testMapping(mapping)}
                         disabled={isTestingMapping === testKey}
                         className="px-3 py-1 bg-purple-100 text-purple-800 hover:bg-purple-200 rounded-md text-xs transition-colors duration-200 disabled:opacity-50"
                         title="Zuordnung testen"
