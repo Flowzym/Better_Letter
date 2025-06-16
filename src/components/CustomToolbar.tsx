@@ -1,8 +1,9 @@
 import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
+import type ReactQuill from 'react-quill';
 
 interface CustomToolbarProps {
-  quillRef: React.RefObject<any>;
+  quillRef: React.RefObject<ReactQuill>; // ref to the ReactQuill component
   onUndo: () => void;
   onRedo: () => void;
   onSelectAll: () => void;
@@ -300,9 +301,7 @@ export default function CustomToolbar({
   const [currentBackgroundColor, setCurrentBackgroundColor] = useState('#ffffff'); // BOLT-UI-ANPASSUNG 2025-01-15: Aktuelle Hintergrundfarbe
 
   // Get Quill instance
-  const getQuill = () => {
-    return quillRef.current?.getEditor();
-  };
+  const getQuill = useCallback(() => quillRef.current?.getEditor(), [quillRef]);
 
   // BOLT-UI-ANPASSUNG 2025-01-15: Update button states mit Farbtracking
   const updateButtonStates = useCallback(() => {
@@ -333,10 +332,10 @@ export default function CustomToolbar({
       if (format.background) {
         setCurrentBackgroundColor(format.background);
       }
-    } catch (error) {
+    } catch {
       // BOLT-FIX 2025-01-15: Stille Fehlerbehandlung wenn Editor nicht bereit
     }
-  }, []);
+  }, [getQuill]);
 
   // BOLT-FIX 2025-01-15: Listen to Quill selection changes mit verbesserter Fehlerbehandlung
   useEffect(() => {
@@ -360,10 +359,10 @@ export default function CustomToolbar({
         quill.off('text-change', handleSelectionChange);
       }
     };
-  }, [updateButtonStates]);
+  }, [getQuill, updateButtonStates]);
 
   // Preserve scroll position during formatting
-  const preserveScrollPosition = (action: () => void) => {
+  const preserveScrollPosition = useCallback((action: () => void) => {
     const quill = getQuill();
     if (!quill || !quill.root) return action();
 
@@ -376,7 +375,7 @@ export default function CustomToolbar({
         updateButtonStates();
       }
     }, 0);
-  };
+  }, [getQuill, updateButtonStates]);
 
   // BOLT-UI-ANPASSUNG 2025-01-15: Alle Quill formatting handlers erweitert
   const handleBold = useCallback(() => {
@@ -386,12 +385,12 @@ export default function CustomToolbar({
         try {
           const currentFormat = quill.getFormat();
           quill.format('bold', !currentFormat.bold);
-        } catch (error) {
+        } catch {
           // BOLT-FIX 2025-01-15: Stille Fehlerbehandlung
         }
       }
     });
-  }, []);
+  }, [getQuill, preserveScrollPosition]);
 
   const handleItalic = useCallback(() => {
     preserveScrollPosition(() => {
@@ -400,12 +399,12 @@ export default function CustomToolbar({
         try {
           const currentFormat = quill.getFormat();
           quill.format('italic', !currentFormat.italic);
-        } catch (error) {
+        } catch {
           // BOLT-FIX 2025-01-15: Stille Fehlerbehandlung
         }
       }
     });
-  }, []);
+  }, [getQuill, preserveScrollPosition]);
 
   const handleUnderline = useCallback(() => {
     preserveScrollPosition(() => {
@@ -414,12 +413,12 @@ export default function CustomToolbar({
         try {
           const currentFormat = quill.getFormat();
           quill.format('underline', !currentFormat.underline);
-        } catch (error) {
+        } catch {
           // BOLT-FIX 2025-01-15: Stille Fehlerbehandlung
         }
       }
     });
-  }, []);
+  }, [getQuill, preserveScrollPosition]);
 
   const handleStrike = useCallback(() => {
     preserveScrollPosition(() => {
@@ -428,12 +427,12 @@ export default function CustomToolbar({
         try {
           const currentFormat = quill.getFormat();
           quill.format('strike', !currentFormat.strike);
-        } catch (error) {
+        } catch {
           // BOLT-FIX 2025-01-15: Stille Fehlerbehandlung
         }
       }
     });
-  }, []);
+  }, [getQuill, preserveScrollPosition]);
 
   const handleHeader = useCallback((value: string) => {
     preserveScrollPosition(() => {
@@ -441,12 +440,12 @@ export default function CustomToolbar({
       if (quill && quill.format) {
         try {
           quill.format('header', value || false);
-        } catch (error) {
+        } catch {
           // BOLT-FIX 2025-01-15: Stille Fehlerbehandlung
         }
       }
     });
-  }, []);
+  }, [getQuill, preserveScrollPosition]);
 
   const handleFont = useCallback((value: string) => {
     preserveScrollPosition(() => {
@@ -454,12 +453,12 @@ export default function CustomToolbar({
       if (quill && quill.format) {
         try {
           quill.format('font', value || false);
-        } catch (error) {
+        } catch {
           // BOLT-FIX 2025-01-15: Stille Fehlerbehandlung
         }
       }
     });
-  }, []);
+  }, [getQuill, preserveScrollPosition]);
 
   const handleSize = useCallback((value: string) => {
     preserveScrollPosition(() => {
@@ -467,12 +466,12 @@ export default function CustomToolbar({
       if (quill && quill.format) {
         try {
           quill.format('size', value || false);
-        } catch (error) {
+        } catch {
           // BOLT-FIX 2025-01-15: Stille Fehlerbehandlung
         }
       }
     });
-  }, []);
+  }, [getQuill, preserveScrollPosition]);
 
   const handleColor = useCallback((value: string) => {
     preserveScrollPosition(() => {
@@ -481,12 +480,12 @@ export default function CustomToolbar({
         try {
           quill.format('color', value || false);
           setCurrentTextColor(value);
-        } catch (error) {
+        } catch {
           // BOLT-FIX 2025-01-15: Stille Fehlerbehandlung
         }
       }
     });
-  }, []);
+  }, [getQuill, preserveScrollPosition]);
 
   const handleBackground = useCallback((value: string) => {
     preserveScrollPosition(() => {
@@ -495,12 +494,12 @@ export default function CustomToolbar({
         try {
           quill.format('background', value || false);
           setCurrentBackgroundColor(value);
-        } catch (error) {
+        } catch {
           // BOLT-FIX 2025-01-15: Stille Fehlerbehandlung
         }
       }
     });
-  }, []);
+  }, [getQuill, preserveScrollPosition]);
 
   const handleList = useCallback((value: string) => {
     preserveScrollPosition(() => {
@@ -509,12 +508,12 @@ export default function CustomToolbar({
         try {
           const currentFormat = quill.getFormat();
           quill.format('list', currentFormat.list === value ? false : value);
-        } catch (error) {
+        } catch {
           // BOLT-FIX 2025-01-15: Stille Fehlerbehandlung
         }
       }
     });
-  }, []);
+  }, [getQuill, preserveScrollPosition]);
 
   const handleIndent = useCallback((value: string) => {
     preserveScrollPosition(() => {
@@ -522,12 +521,12 @@ export default function CustomToolbar({
       if (quill && quill.format) {
         try {
           quill.format('indent', value);
-        } catch (error) {
+        } catch {
           // BOLT-FIX 2025-01-15: Stille Fehlerbehandlung
         }
       }
     });
-  }, []);
+  }, [getQuill, preserveScrollPosition]);
 
   const handleAlign = useCallback((value: string) => {
     preserveScrollPosition(() => {
@@ -535,12 +534,12 @@ export default function CustomToolbar({
       if (quill && quill.format) {
         try {
           quill.format('align', value || false);
-        } catch (error) {
+        } catch {
           // BOLT-FIX 2025-01-15: Stille Fehlerbehandlung
         }
       }
     });
-  }, []);
+  }, [getQuill, preserveScrollPosition]);
 
   const handleLink = useCallback(() => {
     preserveScrollPosition(() => {
@@ -559,12 +558,12 @@ export default function CustomToolbar({
               }
             }
           }
-        } catch (error) {
+        } catch {
           // BOLT-FIX 2025-01-15: Stille Fehlerbehandlung
         }
       }
     });
-  }, []);
+  }, [getQuill, preserveScrollPosition]);
 
   const handleBlockquote = useCallback(() => {
     preserveScrollPosition(() => {
@@ -573,12 +572,12 @@ export default function CustomToolbar({
         try {
           const currentFormat = quill.getFormat();
           quill.format('blockquote', !currentFormat.blockquote);
-        } catch (error) {
+        } catch {
           // BOLT-FIX 2025-01-15: Stille Fehlerbehandlung
         }
       }
     });
-  }, []);
+  }, [getQuill, preserveScrollPosition]);
 
   const handleClean = useCallback(() => {
     preserveScrollPosition(() => {
@@ -589,12 +588,12 @@ export default function CustomToolbar({
           if (selection && typeof selection.index === 'number' && typeof selection.length === 'number') {
             quill.removeFormat(selection.index, selection.length);
           }
-        } catch (error) {
+        } catch {
           // BOLT-FIX 2025-01-15: Stille Fehlerbehandlung
         }
       }
     });
-  }, []);
+  }, [getQuill, preserveScrollPosition]);
 
   // BOLT-UI-ANPASSUNG 2025-01-15: Zeilenabstand-Handler hinzugefügt
   const handleLineHeight = useCallback((value: string) => {
@@ -603,12 +602,12 @@ export default function CustomToolbar({
       if (quill && quill.format) {
         try {
           quill.format('line-height', value || false);
-        } catch (error) {
+        } catch {
           // BOLT-FIX 2025-01-15: Stille Fehlerbehandlung
         }
       }
     });
-  }, []);
+  }, [getQuill, preserveScrollPosition]);
 
   const handleZoomSliderChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const newZoom = parseInt(e.target.value);
@@ -628,12 +627,15 @@ export default function CustomToolbar({
   }, [buttonStates]);
 
   // BOLT-UI-ANPASSUNG 2025-01-15: Farbvorschläge für Text und Hintergrund
-  const colorSuggestions = [
-    '#000000', '#333333', '#666666', '#999999', '#CCCCCC', '#FFFFFF',
-    '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF',
-    '#800000', '#008000', '#000080', '#808000', '#800080', '#008080',
-    '#F29400', '#E8850C', '#D4761A', '#C06828', '#AC5936', '#984A44'
-  ];
+  const colorSuggestions = useMemo(
+    () => [
+      '#000000', '#333333', '#666666', '#999999', '#CCCCCC', '#FFFFFF',
+      '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF',
+      '#800000', '#008000', '#000080', '#808000', '#800080', '#008080',
+      '#F29400', '#E8850C', '#D4761A', '#C06828', '#AC5936', '#984A44'
+    ],
+    []
+  );
 
   // BOLT-UI-ANPASSUNG 2025-01-15: Alle Toolbar-Buttons erweitert und angepasst
   const allButtons: ToolbarButton[] = useMemo(() => [
@@ -1401,6 +1403,7 @@ export default function CustomToolbar({
             // Für normale Buttons: Erstelle neuen Button mit Overflow-Handler und ohne helle Hintergrundfarbe
             const buttonElement = button.element as React.ReactElement;
             const { onClick, className, ...otherProps } = buttonElement.props;
+            void onClick; // discard original onClick
             
             return React.cloneElement(buttonElement, {
               key: `overflow-${button.id}`,
