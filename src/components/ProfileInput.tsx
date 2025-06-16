@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { User, Plus, X, ChevronDown, ChevronUp, Save, FolderOpen, Trash2, FileText, Download, Star, Edit3, Check } from 'lucide-react';
+import { X, ChevronDown, ChevronUp, Star } from 'lucide-react';
 import TextInput from './TextInput';
 import AutocompleteInput from './AutocompleteInput';
 
@@ -22,14 +22,6 @@ interface ProfileData {
   skills: string[];
   softskills: string[];
   zusatzangaben: string;
-}
-
-interface SavedProfile {
-  id: string;
-  name: string;
-  data: ProfileData;
-  createdAt: string;
-  isLoaded?: boolean;
 }
 
 interface FavoritesConfig {
@@ -68,11 +60,6 @@ export default function ProfileInput({ onContentChange, profileConfig, initialCo
     softskills: '',
   });
 
-  const [savedProfiles, setSavedProfiles] = useState<SavedProfile[]>([]);
-  const [profileName, setProfileName] = useState('');
-  const [showSaveForm, setShowSaveForm] = useState(false);
-  const [editingProfile, setEditingProfile] = useState<string | null>(null);
-  const [editingProfileName, setEditingProfileName] = useState('');
 
   // Favoriten-Konfiguration
   const [favoritesConfig, setFavoritesConfig] = useState<FavoritesConfig>(() => {
@@ -100,31 +87,17 @@ export default function ProfileInput({ onContentChange, profileConfig, initialCo
     localStorage.setItem('profileFavorites', JSON.stringify(favoritesConfig));
   }, [favoritesConfig]); // ✅ KORRIGIERT: favoritesConfig als Dependency
 
-  // ✅ KORRIGIERT: Load saved profiles from localStorage on component mount
-  useEffect(() => {
-    const saved = localStorage.getItem('savedProfiles');
-    if (saved) {
-      try {
-        setSavedProfiles(JSON.parse(saved));
-      } catch (error) {
-        console.error('Error loading saved profiles:', error);
-      }
-    }
-  }, []); // ✅ KORRIGIERT: Leeres Dependency-Array für Mount-only
-
-  // ✅ KORRIGIERT: Save profiles to localStorage whenever savedProfiles changes
-  useEffect(() => {
-    localStorage.setItem('savedProfiles', JSON.stringify(savedProfiles));
-  }, [savedProfiles]); // ✅ KORRIGIERT: savedProfiles als Dependency
 
   // ✅ KORRIGIERT: Update zusatzangaben when initialContent changes
   useEffect(() => {
-    if (initialContent && initialContent !== profileData.zusatzangaben) {
-      const newData = { ...profileData, zusatzangaben: initialContent };
-      setProfileData(newData);
+    if (!initialContent) return;
+    setProfileData(prev => {
+      if (prev.zusatzangaben === initialContent) return prev;
+      const newData = { ...prev, zusatzangaben: initialContent };
       updateProfileContent(newData);
-    }
-  }, [initialContent]); // ✅ KORRIGIERT: Nur initialContent als Dependency (profileData würde Loop verursachen)
+      return newData;
+    });
+  }, [initialContent, updateProfileContent]);
 
   const updateProfileContent = useCallback((newData: ProfileData) => {
     const sections = [];
@@ -211,103 +184,6 @@ export default function ProfileInput({ onContentChange, profileConfig, initialCo
     updateProfileContent(newData);
   }, [profileData, updateProfileContent]); // ✅ KORRIGIERT: useCallback mit Dependencies
 
-  const saveProfile = useCallback(() => {
-    if (!profileName.trim()) return;
-
-    const newProfile: SavedProfile = {
-      id: Date.now().toString(),
-      name: profileName.trim(),
-      data: { ...profileData },
-      createdAt: new Date().toISOString(),
-    };
-
-    setSavedProfiles([...savedProfiles, newProfile]);
-    setProfileName('');
-    setShowSaveForm(false);
-  }, [profileName, profileData, savedProfiles]); // ✅ KORRIGIERT: useCallback mit Dependencies
-
-  const loadProfile = useCallback((profile: SavedProfile) => {
-    setProfileData(profile.data);
-    updateProfileContent(profile.data);
-    
-    // Markiere das Profil als geladen
-    setSavedProfiles(profiles => 
-      profiles.map(p => ({
-        ...p,
-        isLoaded: p.id === profile.id
-      }))
-    );
-  }, [updateProfileContent]); // ✅ KORRIGIERT: useCallback mit Dependencies
-
-  const deleteProfile = useCallback((profileId: string) => {
-    setSavedProfiles(savedProfiles.filter(p => p.id !== profileId));
-  }, [savedProfiles]); // ✅ KORRIGIERT: useCallback mit Dependencies
-
-  const startEditingProfile = useCallback((profile: SavedProfile) => {
-    setEditingProfile(profile.id);
-    setEditingProfileName(profile.name);
-  }, []); // ✅ KORRIGIERT: useCallback
-
-  const saveProfileEdit = useCallback((profileId: string) => {
-    if (!editingProfileName.trim()) return;
-    
-    setSavedProfiles(profiles => 
-      profiles.map(p => 
-        p.id === profileId 
-          ? { ...p, name: editingProfileName.trim() }
-          : p
-      )
-    );
-    
-    setEditingProfile(null);
-    setEditingProfileName('');
-  }, [editingProfileName]); // ✅ KORRIGIERT: useCallback mit Dependencies
-
-  const cancelProfileEdit = useCallback(() => {
-    setEditingProfile(null);
-    setEditingProfileName('');
-  }, []); // ✅ KORRIGIERT: useCallback
-
-  const extendWithProfile = useCallback((profile: SavedProfile) => {
-    const newData = { ...profileData };
-    
-    // Merge arrays without duplicates
-    Object.keys(profile.data).forEach(key => {
-      if (key !== 'zusatzangaben') {
-        const categoryKey = key as keyof Omit<ProfileData, 'zusatzangaben'>;
-        const existingItems = newData[categoryKey];
-        const newItems = profile.data[categoryKey];
-        newData[categoryKey] = [...new Set([...existingItems, ...newItems])];
-      }
-    });
-
-    // Append additional information
-    if (profile.data.zusatzangaben.trim()) {
-      const existingZusatz = newData.zusatzangaben.trim();
-      const newZusatz = profile.data.zusatzangaben.trim();
-      if (existingZusatz && newZusatz) {
-        newData.zusatzangaben = `${existingZusatz}\n\n${newZusatz}`;
-      } else {
-        newData.zusatzangaben = existingZusatz || newZusatz;
-      }
-    }
-
-    setProfileData(newData);
-    updateProfileContent(newData);
-  }, [profileData, updateProfileContent]); // ✅ KORRIGIERT: useCallback mit Dependencies
-
-  const exportProfile = useCallback((profile: SavedProfile) => {
-    const content = JSON.stringify(profile, null, 2);
-    const blob = new Blob([content], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `profil-${profile.name.replace(/[^a-zA-Z0-9]/g, '-')}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }, []); // ✅ KORRIGIERT: useCallback
 
   const addToFavorites = useCallback((category: keyof FavoritesConfig, item: string) => {
     const newFavorites = { ...favoritesConfig };
