@@ -1,20 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Settings, 
-  X, 
-  Save, 
-  RotateCcw, 
-  Eye, 
-  EyeOff, 
-  Palette,
+import {
+  Settings,
+  X,
+  Save,
+  RotateCcw,
+  Eye,
   Type,
   Layout,
-  FileText,
-  Code,
   Monitor,
   Smartphone,
-  Tablet,
-  Check
+  Tablet
 } from 'lucide-react';
 
 export interface EditorSettings {
@@ -304,7 +299,10 @@ export default function SettingsModal({
                           {Object.entries(deviceIcons).map(([device, Icon]) => (
                             <button
                               key={device}
-                              onClick={() => setPreviewDevice(device as any)}
+                              onClick={() =>
+                                // Object.entries loses literal types
+                                setPreviewDevice(device as keyof typeof deviceIcons)
+                              }
                               className={`p-1 rounded ${
                                 previewDevice === device
                                   ? 'text-white'
@@ -439,7 +437,12 @@ export default function SettingsModal({
                       <label className="block text-sm font-medium text-gray-700 mb-2">Verhalten</label>
                       <select
                         value={settings.toolbarMode}
-                        onChange={(e) => updateSetting('toolbarMode', e.target.value as any)}
+                        onChange={(e) =>
+                          updateSetting(
+                            'toolbarMode',
+                            e.target.value as EditorSettings['toolbarMode']
+                          )
+                        }
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
                         style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
                       >
@@ -453,7 +456,12 @@ export default function SettingsModal({
                       <label className="block text-sm font-medium text-gray-700 mb-2">Position</label>
                       <select
                         value={settings.toolbarPosition}
-                        onChange={(e) => updateSetting('toolbarPosition', e.target.value as any)}
+                        onChange={(e) =>
+                          updateSetting(
+                            'toolbarPosition',
+                            e.target.value as EditorSettings['toolbarPosition']
+                          )
+                        }
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
                         style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
                       >
