@@ -187,7 +187,7 @@ MIT
 ## Entwickler:in & Kontakt
 
 Flor  
-Kontakt: n/a
+Kontakt: hypophobia@gmail.com
 
 ---
 
