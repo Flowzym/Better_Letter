@@ -77,10 +77,9 @@ export default function InputSection({
     }
   };
 
-  const switchToStructuredWithContent = (existingContent: string) => {
+  const switchToStructuredWithContent = () => {
     setMode('structured');
-    // Pass the existing content to be extended
-    // This will be handled by the ProfileInput component
+    // Existing CV text will be passed via initialContent prop in ProfileInput
   };
 
   // Bestimme die Anzahl der Zeilen basierend auf dem Titel
