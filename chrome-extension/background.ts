@@ -1,6 +1,6 @@
 // chrome-extension/background.ts
 
-import { MessageType, BaseMessage, ResponseMessage } from './shared/types';
+import { MessageType, BaseMessage } from './shared/types';
 
 console.log('Background script geladen.');
 
@@ -9,7 +9,7 @@ console.log('Background script geladen.');
  * Stellt sicher, dass immer eine Antwort gesendet wird, auch bei Fehlern oder unbekannten Nachrichten.
  */
 chrome.runtime.onMessage.addListener(
-    (message: BaseMessage, sender, sendResponse) => {
+    (message: BaseMessage, _sender, sendResponse) => {
         console.log('Background: Nachricht empfangen:', message.type, message.payload);
 
         // Flag, das anzeigt, ob sendResponse asynchron aufgerufen wird.
@@ -33,13 +33,15 @@ chrome.runtime.onMessage.addListener(
                     }, 100); // Simulierte Verzögerung
                     break;
 
-                case MessageType.PROCESS_TEXT:
+                case MessageType.PROCESS_TEXT: {
                     // Asynchrone Operation mit Payload-Validierung.
                     isAsyncResponse = true;
                     const textToProcess = message.payload?.text;
                     if (typeof textToProcess !== 'string') {
                         sendResponse({ success: false, error: 'Ungültige Text-Payload.' });
-                        console.log('Background: Fehlerantwort für PROCESS_TEXT (ungültige Payload) gesendet.');
+                        console.log(
+                            'Background: Fehlerantwort für PROCESS_TEXT (ungültige Payload) gesendet.'
+                        );
                     } else {
                         setTimeout(() => {
                             const processedText = textToProcess.toUpperCase();
@@ -48,6 +50,7 @@ chrome.runtime.onMessage.addListener(
                         }, 50); // Simulierte Verzögerung
                     }
                     break;
+                }
 
                 default:
                     // WICHTIG: Behandelt unbekannte Nachrichtentypen, um runtime.lastError zu vermeiden.
@@ -55,10 +58,11 @@ chrome.runtime.onMessage.addListener(
                     console.log('Background: Fehlerantwort für unbekannten Nachrichtentyp gesendet.');
                     break;
             }
-        } catch (error: any) {
+        } catch (error: unknown) {
             // WICHTIG: Fängt synchrone Fehler während der Nachrichtenverarbeitung ab
             // und sendet eine Fehlerantwort.
-            sendResponse({ success: false, error: `Fehler im Hintergrund-Skript: ${error.message}` });
+            const message = error instanceof Error ? error.message : String(error);
+            sendResponse({ success: false, error: `Fehler im Hintergrund-Skript: ${message}` });
             console.error('Background: Synchroner Fehler abgefangen:', error);
         }
 
@@ -72,7 +76,7 @@ chrome.runtime.onMessage.addListener(
  * Optional: Listener für langlebige Verbindungen (Ports).
  * Nützlich für häufige Kommunikation oder Streamen von Daten.
  */
-chrome.runtime.onConnect.addListener((port) => {
+chrome.runtime.onConnect.addListener((port: chrome.runtime.Port) => {
     console.log('Background: Port verbunden:', port.name);
 
     // Listener für Nachrichten, die über diesen Port gesendet werden.
@@ -88,9 +92,10 @@ chrome.runtime.onConnect.addListener((port) => {
                     port.postMessage({ success: false, error: `Unbekannter Port-Nachrichtentyp: ${message.type}` });
                     break;
             }
-        } catch (error: any) {
+        } catch (error: unknown) {
             // Fehlerbehandlung für Port-Nachrichten
-            port.postMessage({ success: false, error: `Fehler im Hintergrund-Port: ${error.message}` });
+            const message = error instanceof Error ? error.message : String(error);
+            port.postMessage({ success: false, error: `Fehler im Hintergrund-Port: ${message}` });
             console.error('Background: Fehler bei Port-Nachricht abgefangen:', error);
         }
     });
