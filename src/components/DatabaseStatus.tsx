@@ -1,20 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Database, CheckCircle, XCircle, AlertCircle, RefreshCw } from 'lucide-react';
-import { 
-  isSupabaseConfigured, 
-  testDatabaseConnection, 
+import {
+  isSupabaseConfigured,
+  testDatabaseConnection,
   getDatabaseStats,
-  loadProfileSuggestions 
+  loadProfileSuggestions,
+  type DatabaseStats
 } from '../services/supabaseService';
 
 export default function DatabaseStatus() {
   const [isConfigured, setIsConfigured] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
-  const [stats, setStats] = useState<any>(null);
+  // DatabaseStats describes the metrics returned from getDatabaseStats
+  const [stats, setStats] = useState<DatabaseStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const checkStatus = async () => {
+  const checkStatus = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     
@@ -44,11 +46,11 @@ export default function DatabaseStatus() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     checkStatus();
-  }, []);
+  }, [checkStatus]);
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200 mb-8">
