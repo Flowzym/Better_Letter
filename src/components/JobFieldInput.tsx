@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Briefcase, Plus, X, ChevronDown, ChevronUp, Star } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { X, ChevronDown, ChevronUp, Star } from 'lucide-react';
 import TextInput from './TextInput';
 import AutocompleteInput from './AutocompleteInput';
 
