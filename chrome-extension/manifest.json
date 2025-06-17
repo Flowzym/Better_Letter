@@ -3,10 +3,6 @@
   "name": "Robuste Nachrichtenübermittlung Beispiel",
   "version": "1.0",
   "description": "Demonstriert robuste Nachrichtenübermittlung in Chrome Extensions.",
-  "permissions": [
-    "activeTab",
-    "scripting"
-  ],
   "background": {
     "service_worker": "background.js"
   },
