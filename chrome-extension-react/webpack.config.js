@@ -1,25 +1,33 @@
 const path = require('path');
 
-module.exports = {
+/** @type {import('webpack').Configuration} */
+const config = {
+  mode: 'production',
   entry: {
-    popup: './src/index.tsx'
+    popup: './src/index.tsx',
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].js',
-    clean: true
+    clean: true,
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.js']
+    extensions: ['.tsx', '.ts', '.js'],
   },
   module: {
     rules: [
       {
         test: /\.tsx?$/,
         use: 'ts-loader',
-        exclude: /node_modules/
-      }
-    ]
+        exclude: /node_modules/,
+      },
+      {
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader'],
+        exclude: /node_modules/,
+      },
+    ],
   },
-  mode: 'production'
 };
+
+module.exports = config;
