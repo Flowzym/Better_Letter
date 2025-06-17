@@ -69,7 +69,7 @@ export async function getSupabaseTableNames(forceRefresh: boolean = false): Prom
           return JSON.parse(cachedTables);
         }
       }
-    } catch (error) {
+    } catch (_error) {
       // Silent error handling
     }
   }
@@ -82,19 +82,19 @@ export async function getSupabaseTableNames(forceRefresh: boolean = false): Prom
     try {
       localStorage.setItem(cacheKey, JSON.stringify(tables));
       localStorage.setItem(cacheTimeKey, Date.now().toString());
-    } catch (error) {
+    } catch (_error) {
       // Silent cache error
     }
     
     return tables;
-  } catch (error) {
+  } catch (_error) {
     // Fallback zu gecachten Daten oder leerer Liste
     try {
       const cachedTables = localStorage.getItem(cacheKey);
       if (cachedTables) {
         return JSON.parse(cachedTables);
       }
-    } catch (cacheError) {
+    } catch (_cacheError) {
       // Silent cache error
     }
     
@@ -122,9 +122,14 @@ async function safeTableQuery(tableName: string): Promise<{ exists: boolean; has
     }
 
     return { exists: true, hasData: data !== null };
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Netzwerk- oder andere unerwartete Fehler
-    if (error?.code === '42P01') {
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      (error as { code: string }).code === '42P01'
+    ) {
       return { exists: false, hasData: false };
     }
     return { exists: false, hasData: false };
@@ -217,7 +222,7 @@ async function detectAllTablesAggressive(): Promise<SupabaseTable[]> {
           tableNames.add(result.value);
         }
       });
-    } catch (error) {
+    } catch (_error) {
       // Silent error handling
     }
     
@@ -235,7 +240,7 @@ async function detectAllTablesAggressive(): Promise<SupabaseTable[]> {
         table_name: tableName,
         columns
       });
-    } catch (error) {
+    } catch (_error) {
       // Füge Tabelle auch ohne Spalten hinzu
       discoveredTables.push({
         table_name: tableName,
@@ -283,7 +288,7 @@ export async function getTableColumns(tableName: string): Promise<string[]> {
           if (!rpcError && rpcData && Array.isArray(rpcData)) {
             return rpcData;
           }
-        } catch (rpcError) {
+        } catch (_rpcError) {
           // Silent RPC error
         }
         
@@ -292,7 +297,7 @@ export async function getTableColumns(tableName: string): Promise<string[]> {
     }
     
     return [];
-  } catch (error: any) {
+  } catch (_error: unknown) {
     return [];
   }
 }
@@ -302,8 +307,7 @@ export async function getTableColumns(tableName: string): Promise<string[]> {
  * Verbesserte Datenladung mit besserer Fehlerbehandlung
  */
 export async function loadProfileSuggestions(
-  sourceMappings?: ProfileSourceMapping[],
-  forceRefresh: boolean = false
+  sourceMappings?: ProfileSourceMapping[]
 ): Promise<ProfileConfig> {
   if (!isSupabaseConfigured()) {
     return getDefaultProfileConfig();
@@ -320,7 +324,7 @@ export async function loadProfileSuggestions(
 
     // Wenn keine Mappings vorhanden sind, verwende die Standard-Tabelle
     if (!sourceMappings || sourceMappings.length === 0) {
-      return await loadFromDefaultTable(forceRefresh);
+      return await loadFromDefaultTable();
     }
 
     // Lade Daten aus den konfigurierten Quellen
@@ -358,11 +362,11 @@ export async function loadProfileSuggestions(
         }
         
         return { category: mapping.category, values: [], error: 'No data found' };
-      } catch (error: any) {
-        return { 
-          category: mapping.category, 
-          values: [], 
-          error: error instanceof Error ? error.message : 'Unknown error' 
+      } catch (error: unknown) {
+        return {
+          category: mapping.category,
+          values: [],
+          error: error instanceof Error ? error.message : 'Unknown error'
         };
       }
     });
@@ -400,7 +404,7 @@ export async function loadProfileSuggestions(
     }
     
     return config;
-  } catch (error) {
+  } catch (_error) {
     // Alle Methoden fehlgeschlagen - verwende Standard-Konfiguration
     return getDefaultProfileConfig();
   }
@@ -409,7 +413,7 @@ export async function loadProfileSuggestions(
 /**
  * Lädt Daten aus der Standard-Tabelle (profile_suggestions)
  */
-async function loadFromDefaultTable(forceRefresh: boolean = false): Promise<ProfileConfig> {
+async function loadFromDefaultTable(): Promise<ProfileConfig> {
   try {
     // Prüfe zuerst, ob die Tabelle existiert
     const tableResult = await safeTableQuery('profile_suggestions');
@@ -452,7 +456,7 @@ async function loadFromDefaultTable(forceRefresh: boolean = false): Promise<Prof
     });
     
     return config;
-  } catch (error) {
+  } catch (_error) {
     // Fehler beim Laden - verwende Standard-Konfiguration
     return getDefaultProfileConfig();
   }
@@ -512,7 +516,7 @@ export async function testTableColumnMapping(
       sampleData,
       error: sampleData.length === 0 ? 'Spalte enthält keine gültigen Textdaten' : undefined
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     return {
       success: false,
       sampleData: [],
@@ -528,7 +532,7 @@ export function invalidateTableCache(): void {
   try {
     localStorage.removeItem('supabase_tables_cache');
     localStorage.removeItem('supabase_tables_cache_time');
-  } catch (error) {
+  } catch (_error) {
     // Silent cache error
   }
 }
@@ -544,45 +548,41 @@ export async function addProfileSuggestion(
     throw new Error('Supabase ist nicht konfiguriert');
   }
 
-  try {
-    // Prüfe zuerst, ob die Tabelle existiert
-    const tableResult = await safeTableQuery('profile_suggestions');
-    if (!tableResult.exists) {
-      throw new Error('Die Tabelle profile_suggestions existiert nicht in der Datenbank');
-    }
+  // Prüfe zuerst, ob die Tabelle existiert
+  const tableResult = await safeTableQuery('profile_suggestions');
+  if (!tableResult.exists) {
+    throw new Error('Die Tabelle profile_suggestions existiert nicht in der Datenbank');
+  }
 
-    // Prüfe, ob der Vorschlag bereits existiert
-    const { data: existing } = await supabase
-      .from('profile_suggestions')
-      .select('id')
-      .eq('category', category)
-      .eq('value', value)
-      .single();
+  // Prüfe, ob der Vorschlag bereits existiert
+  const { data: existing } = await supabase
+    .from('profile_suggestions')
+    .select('id')
+    .eq('category', category)
+    .eq('value', value)
+    .single();
 
-    if (existing) {
-      throw new Error('Dieser Vorschlag existiert bereits in dieser Kategorie.');
-    }
+  if (existing) {
+    throw new Error('Dieser Vorschlag existiert bereits in dieser Kategorie.');
+  }
 
-    const { data, error } = await supabase
-      .from('profile_suggestions')
-      .insert([
-        {
-          category,
-          value: value.trim(),
-          is_default: false,
-        },
-      ])
-      .select()
-      .single();
+  const { data, error } = await supabase
+    .from('profile_suggestions')
+    .insert([
+      {
+        category,
+        value: value.trim(),
+        is_default: false,
+      },
+    ])
+    .select()
+    .single();
 
-    if (error) {
-      throw error;
-    }
-
-    return data;
-  } catch (error) {
+  if (error) {
     throw error;
   }
+
+  return data;
 }
 
 /**
@@ -596,23 +596,19 @@ export async function removeProfileSuggestion(
     throw new Error('Supabase ist nicht konfiguriert');
   }
 
-  try {
-    // Prüfe zuerst, ob die Tabelle existiert
-    const tableResult = await safeTableQuery('profile_suggestions');
-    if (!tableResult.exists) {
-      throw new Error('Die Tabelle profile_suggestions existiert nicht in der Datenbank');
-    }
+  // Prüfe zuerst, ob die Tabelle existiert
+  const tableResult = await safeTableQuery('profile_suggestions');
+  if (!tableResult.exists) {
+    throw new Error('Die Tabelle profile_suggestions existiert nicht in der Datenbank');
+  }
 
-    const { error } = await supabase
-      .from('profile_suggestions')
-      .delete()
-      .eq('category', category)
-      .eq('value', value);
+  const { error } = await supabase
+    .from('profile_suggestions')
+    .delete()
+    .eq('category', category)
+    .eq('value', value);
 
-    if (error) {
-      throw error;
-    }
-  } catch (error) {
+  if (error) {
     throw error;
   }
 }
@@ -645,7 +641,7 @@ export async function loadSuggestionsByCategory(
     }
 
     return data?.map((item) => item.value) || [];
-  } catch (error) {
+  } catch (_error) {
     return [];
   }
 }
@@ -681,7 +677,7 @@ export async function searchProfileSuggestions(
     }
 
     return data?.map((item) => item.value) || [];
-  } catch (error) {
+  } catch (_error) {
     return [];
   }
 }
@@ -709,7 +705,7 @@ export async function testDatabaseConnection(): Promise<boolean> {
     // Versuche eine einfache Abfrage auf die profile_suggestions Tabelle
     const result = await safeTableQuery('profile_suggestions');
     return result.exists;
-  } catch (error) {
+  } catch (_error) {
     return false;
   }
 }
@@ -723,11 +719,10 @@ export async function getDatabaseStats(sourceMappings?: ProfileSourceMapping[]):
     throw new Error('Supabase ist nicht konfiguriert');
   }
 
-  try {
-    // Prüfe zuerst, ob die Standard-Tabelle existiert
-    const tableResult = await safeTableQuery('profile_suggestions');
-    let totalCount = 0;
-    let categoryData: any[] = [];
+  // Prüfe zuerst, ob die Standard-Tabelle existiert
+  const tableResult = await safeTableQuery('profile_suggestions');
+  let totalCount = 0;
+  let categoryData: Record<string, unknown>[] = []; // generic record for dynamic columns
 
     if (tableResult.exists) {
       // Gesamtanzahl der Vorschläge aus Standard-Tabelle
@@ -777,23 +772,20 @@ export async function getDatabaseStats(sourceMappings?: ProfileSourceMapping[]):
               totalFromMappings += count;
             }
           }
-        } catch (error) {
+        } catch (_error) {
           // Silent error handling
         }
       }
     }
 
-    const stats: DatabaseStats = {
-      totalSuggestions: totalCount,
-      categoryCounts,
-      totalFromMappings,
-      mappingStats
-    };
+  const stats: DatabaseStats = {
+    totalSuggestions: totalCount,
+    categoryCounts,
+    totalFromMappings,
+    mappingStats
+  };
 
-    return stats;
-  } catch (error) {
-    throw error;
-  }
+  return stats;
 }
 
 /**
@@ -844,26 +836,22 @@ export async function exportProfileSuggestions(): Promise<ProfileSuggestion[]> {
     throw new Error('Supabase ist nicht konfiguriert');
   }
 
-  try {
-    // Prüfe zuerst, ob die Tabelle existiert
-    const tableResult = await safeTableQuery('profile_suggestions');
-    if (!tableResult.exists) {
-      throw new Error('Die Tabelle profile_suggestions existiert nicht in der Datenbank');
-    }
+  // Prüfe zuerst, ob die Tabelle existiert
+  const tableResult = await safeTableQuery('profile_suggestions');
+  if (!tableResult.exists) {
+    throw new Error('Die Tabelle profile_suggestions existiert nicht in der Datenbank');
+  }
 
-    const { data, error } = await supabase
-      .from('profile_suggestions')
-      .select('*')
-      .order('category, value');
+  const { data, error } = await supabase
+    .from('profile_suggestions')
+    .select('*')
+    .order('category, value');
 
-    if (error) {
-      throw error;
-    }
-
-    return data || [];
-  } catch (error) {
+  if (error) {
     throw error;
   }
+
+  return data || [];
 }
 
 /**
@@ -874,21 +862,17 @@ export async function importProfileSuggestions(suggestions: Omit<ProfileSuggesti
     throw new Error('Supabase ist nicht konfiguriert');
   }
 
-  try {
-    // Prüfe zuerst, ob die Tabelle existiert
-    const tableResult = await safeTableQuery('profile_suggestions');
-    if (!tableResult.exists) {
-      throw new Error('Die Tabelle profile_suggestions existiert nicht in der Datenbank');
-    }
+  // Prüfe zuerst, ob die Tabelle existiert
+  const tableResult = await safeTableQuery('profile_suggestions');
+  if (!tableResult.exists) {
+    throw new Error('Die Tabelle profile_suggestions existiert nicht in der Datenbank');
+  }
 
-    const { error } = await supabase
-      .from('profile_suggestions')
-      .insert(suggestions);
+  const { error } = await supabase
+    .from('profile_suggestions')
+    .insert(suggestions);
 
-    if (error) {
-      throw error;
-    }
-  } catch (error) {
+  if (error) {
     throw error;
   }
 }
