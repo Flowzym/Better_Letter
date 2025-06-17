@@ -1,4 +1,3 @@
-import React from 'react';
 import { Palette } from 'lucide-react';
 
 interface StyleSelectorProps {
@@ -21,7 +20,7 @@ export default function StyleSelector({ selectedStyles, onStylesChange, stylePro
     }
   };
 
-  const styleEntries = Object.entries(stylePrompts);
+  const styleEntries = Object.entries(stylePrompts) as [string, { label: string; prompt: string }][]; // typed entries
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 mb-8 border border-gray-200">
