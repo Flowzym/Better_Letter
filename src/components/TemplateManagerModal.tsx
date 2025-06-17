@@ -36,7 +36,15 @@ export default function TemplateManagerModal({
   onTemplatesChange
 }: TemplateManagerModalProps) {
   const [editingTemplate, setEditingTemplate] = useState<Template | null>(null);
-  const [newTemplate, setNewTemplate] = useState({ name: '', content: '' });
+  interface NewTemplateData {
+    name: string;
+    content: string;
+  }
+
+  const [newTemplate, setNewTemplate] = useState<NewTemplateData>({
+    name: '',
+    content: ''
+  });
   const [showNewTemplateForm, setShowNewTemplateForm] = useState(false);
   const [importError, setImportError] = useState<string>('');
   const [importSuccess, setImportSuccess] = useState<string>('');
@@ -55,7 +63,7 @@ export default function TemplateManagerModal({
     }
   }, [isOpen, onClose]);
 
-  const generateThumbnail = (content: string) => {
+  const generateThumbnail = (content: string): string => {
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = content;
     const text = tempDiv.textContent || tempDiv.innerText || '';
@@ -116,7 +124,7 @@ export default function TemplateManagerModal({
 
     try {
       const content = await file.text();
-      const importedTemplates = JSON.parse(content);
+      const importedTemplates: Template[] = JSON.parse(content); // parse result typed
       
       if (!Array.isArray(importedTemplates)) {
         throw new Error('Ungültiges Dateiformat. Erwartet wird ein Array von Templates.');
