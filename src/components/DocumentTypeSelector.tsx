@@ -1,4 +1,4 @@
-import React from 'react';
+import type { LucideIcon } from 'lucide-react';
 import { FileText, Briefcase, Send, GraduationCap, Coffee, Users } from 'lucide-react';
 
 interface DocumentTypeSelectorProps {
@@ -12,7 +12,8 @@ interface DocumentTypeSelectorProps {
   onTypeChange: (type: string) => void;
 }
 
-const ICON_MAP: { [key: string]: React.ComponentType<any> } = {
+// Map document type keys to their respective Lucide icon
+const ICON_MAP: Record<string, LucideIcon> = {
   standard: Briefcase,
   berufsfern: Users,
   initiativ: Send,
