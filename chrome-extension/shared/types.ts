@@ -13,14 +13,14 @@ export enum MessageType {
  */
 export interface BaseMessage {
     type: MessageType;
-    payload?: any; // Optionale Daten, die mit der Nachricht gesendet werden
+    payload?: Record<string, unknown>; // Optionale Daten, die mit der Nachricht gesendet werden
 }
 
 /**
  * Struktur für die Antwort auf eine Nachricht.
  */
-export interface ResponseMessage {
+export interface ResponseMessage<T = unknown> {
     success: boolean; // Zeigt an, ob die Operation erfolgreich war
-    data?: any;      // Optionale Daten im Erfolgsfall
-    error?: string;  // Fehlermeldung im Fehlerfall
+    data?: T; // Optionale Daten im Erfolgsfall
+    error?: string; // Fehlermeldung im Fehlerfall
 }
