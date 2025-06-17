@@ -1,4 +1,4 @@
-import React from 'react';
+import type { CSSProperties, ChangeEvent } from 'react';
 
 interface TextInputProps {
   value: string;
@@ -32,14 +32,14 @@ export default function TextInput({
         id={textareaId}
         name={textareaName}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e: ChangeEvent<HTMLTextAreaElement>) => onChange(e.target.value)} // specify event type
         placeholder={placeholder}
         rows={rows}
         className="w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 resize-vertical min-h-[120px]"
         style={{ 
           borderColor: '#F29400',
           '--tw-ring-color': '#F29400'
-        } as React.CSSProperties}
+        } as CSSProperties}
       />
     </div>
   );
