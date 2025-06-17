@@ -26,9 +26,9 @@ async function sendMessageToBackground(message: BaseMessage): Promise<ResponseMe
  * Fügt Event-Listener zu den Buttons im Popup hinzu, um Nachrichten zu senden.
  */
 document.addEventListener('DOMContentLoaded', () => {
-    const pingButton = document.getElementById('pingButton');
-    const getDataButton = document.getElementById('getDataButton');
-    const processTextButton = document.getElementById('processTextButton');
+    const pingButton = document.getElementById('pingButton') as HTMLButtonElement | null;
+    const getDataButton = document.getElementById('getDataButton') as HTMLButtonElement | null;
+    const processTextButton = document.getElementById('processTextButton') as HTMLButtonElement | null;
     const resultDiv = document.getElementById('result');
 
     if (pingButton) {
@@ -41,8 +41,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     if (resultDiv) resultDiv.textContent = `Ping-Fehler: ${response.error}`;
                 }
-            } catch (error: any) {
-                if (resultDiv) resultDiv.textContent = `Ping-Ausnahme: ${error.message}`;
+            } catch (error: unknown) {
+                // Narrow unknown error type to extract message if possible
+                const message = error instanceof Error ? error.message : String(error);
+                if (resultDiv) resultDiv.textContent = `Ping-Ausnahme: ${message}`;
             }
         });
     }
@@ -57,8 +59,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     if (resultDiv) resultDiv.textContent = `Daten-Fehler: ${response.error}`;
                 }
-            } catch (error: any) {
-                if (resultDiv) resultDiv.textContent = `Daten-Ausnahme: ${error.message}`;
+            } catch (error: unknown) {
+                // Narrow unknown error type to extract message if possible
+                const message = error instanceof Error ? error.message : String(error);
+                if (resultDiv) resultDiv.textContent = `Daten-Ausnahme: ${message}`;
             }
         });
     }
@@ -78,8 +82,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     if (resultDiv) resultDiv.textContent = `Verarbeitungsfehler: ${response.error}`;
                 }
-            } catch (error: any) {
-                if (resultDiv) resultDiv.textContent = `Verarbeitungs-Ausnahme: ${error.message}`;
+            } catch (error: unknown) {
+                // Narrow unknown error type to extract message if possible
+                const message = error instanceof Error ? error.message : String(error);
+                if (resultDiv) resultDiv.textContent = `Verarbeitungs-Ausnahme: ${message}`;
             }
         });
     }
