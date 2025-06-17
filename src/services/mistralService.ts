@@ -6,9 +6,18 @@ export interface GenerateLetterRequest {
   jobDescription: string;
   basePrompt: string;
   styles?: string[];
-  stylePrompts?: {
-    [key: string]: string;
-  };
+  stylePrompts?: Record<string, string>;
+}
+
+interface MistralMessage {
+  role: string;
+  content: string;
+}
+
+interface MistralApiResponse {
+  choices: Array<{
+    message: MistralMessage;
+  }>;
 }
 
 async function callMistralAPI(prompt: string): Promise<string> {
@@ -35,7 +44,7 @@ async function callMistralAPI(prompt: string): Promise<string> {
     throw new Error(`Mistral API request failed: ${response.statusText}`);
   }
 
-  const data = await response.json();
+  const data = (await response.json()) as MistralApiResponse; // cast to expected response structure
   return data.choices[0].message.content;
 }
 
@@ -57,7 +66,7 @@ export async function generateCoverLetter(request: GenerateLetterRequest): Promi
 
   try {
     return await callMistralAPI(prompt);
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error generating cover letter:', error);
     throw new Error('Fehler bei der Verbindung zur KI. Bitte versuchen Sie es erneut.');
   }
@@ -68,7 +77,7 @@ export async function editCoverLetter(currentContent: string, instruction: strin
 
   try {
     return await callMistralAPI(prompt);
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error editing cover letter:', error);
     throw new Error('Fehler bei der Verbindung zur KI. Bitte versuchen Sie es erneut.');
   }
