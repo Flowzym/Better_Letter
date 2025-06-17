@@ -65,9 +65,10 @@ async function demonstrateMessaging() {
             console.error('Content: Fehler bei unbekannter Nachricht:', unknownResponse.error);
         }
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         // Fängt Fehler ab, die von sendMessageToBackground abgelehnt wurden (z.B. runtime.lastError)
-        console.error('Content: Fehler während der Nachrichtenübermittlung:', error.message);
+        const message = error instanceof Error ? error.message : String(error); // handle unknown error shape
+        console.error('Content: Fehler während der Nachrichtenübermittlung:', message);
     }
 }
 
