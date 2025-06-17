@@ -1,10 +1,21 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Download, Copy, Check, Edit3, Minus, Plus, BookOpen, GraduationCap, Zap, FileText } from 'lucide-react';
-import QuillEditor from './QuillEditor';
+import { useState, useRef, useEffect, useCallback } from "react";
+import type { LucideIcon } from "lucide-react";
+import {
+  Download,
+  Copy,
+  Check,
+  Edit3,
+  Minus,
+  Plus,
+  BookOpen,
+  GraduationCap,
+  Zap,
+  FileText,
+} from "lucide-react";
+import QuillEditor from "./QuillEditor";
 
 interface CoverLetterDisplayProps {
   content: string;
-  isLoading: boolean;
   isEditing: boolean;
   onEdit: (instruction: string) => void;
   onContentChange?: (content: string) => void;
@@ -16,7 +27,8 @@ interface CoverLetterDisplayProps {
   };
 }
 
-const ICON_MAP: { [key: string]: React.ComponentType<any> } = {
+// Map edit keys to their respective Lucide icon components
+const ICON_MAP: Record<string, LucideIcon> = {
   shorter: Minus,
   longer: Plus,
   simpler: BookOpen,
@@ -24,27 +36,33 @@ const ICON_MAP: { [key: string]: React.ComponentType<any> } = {
   b1: Zap,
 };
 
-export default function CoverLetterDisplay({ 
-  content, 
-  isLoading, 
-  isEditing, 
-  onEdit, 
-  onContentChange, 
-  editPrompts 
+function stripHtml(html: string): string {
+  if (!html) return "";
+  const tempDiv = document.createElement("div");
+  tempDiv.innerHTML = html;
+  return tempDiv.textContent || tempDiv.innerText || "";
+}
+
+export default function CoverLetterDisplay({
+  content,
+  isEditing,
+  onEdit,
+  onContentChange,
+  editPrompts,
 }: CoverLetterDisplayProps) {
   const [copied, setCopied] = useState(false);
-  const [editorContent, setEditorContent] = useState('');
-  const lastContentRef = useRef('');
+  const [editorContent, setEditorContent] = useState("");
+  const lastContentRef = useRef("");
 
   // ✅ KORRIGIERT: Initialize content when component mounts or content changes from external source
   useEffect(() => {
-    console.log('🔄 Content prop changed:', content?.substring(0, 100) + '...');
-    
+    console.log("🔄 Content prop changed:", content?.substring(0, 100) + "...");
+
     // Only update if content actually changed
     if (content !== lastContentRef.current) {
-      console.log('📝 Updating editor with new content from props');
+      console.log("📝 Updating editor with new content from props");
       lastContentRef.current = content;
-      setEditorContent(content || '');
+      setEditorContent(content || "");
     }
   }, [content]); // ✅ KORRIGIERT: content als Dependency
 
@@ -56,16 +74,16 @@ export default function CoverLetterDisplay({
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error('Failed to copy text:', err);
+      console.error("Failed to copy text:", err);
     }
   }, [editorContent, content]); // ✅ KORRIGIERT: useCallback mit Dependencies
 
   const handleDownload = useCallback(() => {
     const textToDownload = stripHtml(editorContent || content);
-    const element = document.createElement('a');
-    const file = new Blob([textToDownload], { type: 'text/plain' });
+    const element = document.createElement("a");
+    const file = new Blob([textToDownload], { type: "text/plain" });
     element.href = URL.createObjectURL(file);
-    element.download = 'bewerbungsschreiben.txt';
+    element.download = "bewerbungsschreiben.txt";
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
@@ -73,64 +91,84 @@ export default function CoverLetterDisplay({
 
   const handleDownloadDocx = useCallback(async () => {
     try {
-      const { Document, Packer, Paragraph, TextRun, AlignmentType } = await import('docx');
-      
+      const { Document, Packer, Paragraph, TextRun, AlignmentType } =
+        await import("docx");
+
       const textToExport = stripHtml(editorContent || content);
-      const lines = textToExport.split('\n').filter(line => line.trim() !== '');
-      
+      const lines = textToExport
+        .split("\n")
+        .filter((line) => line.trim() !== "");
+
       const docParagraphs = [];
       let isFirstParagraph = true;
-      
+
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i].trim();
-        
-        if (line.toLowerCase().includes('betreff:') || line.toLowerCase().startsWith('betreff')) {
-          docParagraphs.push(new Paragraph({
-            children: [
-              new TextRun({
-                text: line,
-                bold: true,
-                size: 24,
-              }),
-            ],
-            spacing: { before: 240, after: 240 },
-            alignment: AlignmentType.LEFT,
-          }));
-        } else if (line.match(/^\d{2}\.\d{2}\.\d{4}$/) || line.includes(new Date().getFullYear().toString())) {
-          docParagraphs.push(new Paragraph({
-            children: [
-              new TextRun({
-                text: line,
-                size: 22,
-              }),
-            ],
-            spacing: { before: 240, after: 240 },
-            alignment: AlignmentType.RIGHT,
-          }));
-        } else if (isFirstParagraph || (line.length < 50 && !line.includes(',') && !line.endsWith('.'))) {
-          docParagraphs.push(new Paragraph({
-            children: [
-              new TextRun({
-                text: line,
-                size: 22,
-                bold: false,
-              }),
-            ],
-            spacing: { before: 240, after: 240 },
-            alignment: AlignmentType.LEFT,
-          }));
+
+        if (
+          line.toLowerCase().includes("betreff:") ||
+          line.toLowerCase().startsWith("betreff")
+        ) {
+          docParagraphs.push(
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: line,
+                  bold: true,
+                  size: 24,
+                }),
+              ],
+              spacing: { before: 240, after: 240 },
+              alignment: AlignmentType.LEFT,
+            }),
+          );
+        } else if (
+          line.match(/^\d{2}\.\d{2}\.\d{4}$/) ||
+          line.includes(new Date().getFullYear().toString())
+        ) {
+          docParagraphs.push(
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: line,
+                  size: 22,
+                }),
+              ],
+              spacing: { before: 240, after: 240 },
+              alignment: AlignmentType.RIGHT,
+            }),
+          );
+        } else if (
+          isFirstParagraph ||
+          (line.length < 50 && !line.includes(",") && !line.endsWith("."))
+        ) {
+          docParagraphs.push(
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: line,
+                  size: 22,
+                  bold: false,
+                }),
+              ],
+              spacing: { before: 240, after: 240 },
+              alignment: AlignmentType.LEFT,
+            }),
+          );
           isFirstParagraph = false;
         } else {
-          docParagraphs.push(new Paragraph({
-            children: [
-              new TextRun({
-                text: line,
-                size: 22,
-              }),
-            ],
-            spacing: { before: 240, after: 240 },
-            alignment: AlignmentType.JUSTIFIED,
-          }));
+          docParagraphs.push(
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: line,
+                  size: 22,
+                }),
+              ],
+              spacing: { before: 240, after: 240 },
+              alignment: AlignmentType.JUSTIFIED,
+            }),
+          );
         }
       }
 
@@ -153,45 +191,49 @@ export default function CoverLetterDisplay({
       });
 
       const blob = await Packer.toBlob(doc);
-      
+
       const url = URL.createObjectURL(blob);
-      const element = document.createElement('a');
+      const element = document.createElement("a");
       element.href = url;
-      element.download = 'bewerbungsschreiben.docx';
+      element.download = "bewerbungsschreiben.docx";
       document.body.appendChild(element);
       element.click();
       document.body.removeChild(element);
       URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Error creating DOCX file:', error);
-      alert('Fehler beim Erstellen der DOCX-Datei. Bitte versuchen Sie es erneut oder verwenden Sie den TXT-Download.');
+      console.error("Error creating DOCX file:", error);
+      alert(
+        "Fehler beim Erstellen der DOCX-Datei. Bitte versuchen Sie es erneut oder verwenden Sie den TXT-Download.",
+      );
     }
   }, [editorContent, content]); // ✅ KORRIGIERT: useCallback mit Dependencies
 
-  const stripHtml = useCallback((html: string): string => {
-    if (!html) return '';
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = html;
-    return tempDiv.textContent || tempDiv.innerText || '';
-  }, []); // ✅ KORRIGIERT: useCallback
+  const handleContentChange = useCallback(
+    (newContent: string) => {
+      console.log(
+        "📝 Editor content changed:",
+        newContent?.substring(0, 100) + "...",
+      );
 
-  const handleContentChange = useCallback((newContent: string) => {
-    console.log('📝 Editor content changed:', newContent?.substring(0, 100) + '...');
-    
-    setEditorContent(newContent);
-    lastContentRef.current = stripHtml(newContent);
-    
-    if (onContentChange) {
-      // Send plain text to parent component
-      const plainText = stripHtml(newContent);
-      onContentChange(plainText);
-    }
-  }, [onContentChange, stripHtml]); // ✅ KORRIGIERT: useCallback mit Dependencies
+      setEditorContent(newContent);
+      lastContentRef.current = stripHtml(newContent);
+
+      if (onContentChange) {
+        // Send plain text to parent component
+        const plainText = stripHtml(newContent);
+        onContentChange(plainText);
+      }
+    },
+    [onContentChange],
+  );
 
   // Check if there's real content
-  const hasRealContent = (editorContent || content) && 
-    (editorContent || content).trim() && 
-    !(editorContent || content).includes('Hier können Sie Ihr Bewerbungsschreiben schreiben');
+  const hasRealContent =
+    (editorContent || content) &&
+    (editorContent || content).trim() &&
+    !(editorContent || content).includes(
+      "Hier können Sie Ihr Bewerbungsschreiben schreiben",
+    );
 
   return (
     <div className="bg-white rounded-lg shadow-lg border border-gray-200">
@@ -199,7 +241,9 @@ export default function CoverLetterDisplay({
         <div className="flex items-center space-x-3">
           <h3 className="text-lg font-semibold text-gray-900">
             {/* BOLT-UI-ANPASSUNG 2025-01-15: Titel geändert */}
-            {hasRealContent ? 'Bearbeiten & optimieren' : 'Bearbeiten & optimieren'}
+            {hasRealContent
+              ? "Bearbeiten & optimieren"
+              : "Bearbeiten & optimieren"}
           </h3>
           <div className="flex items-center space-x-2">
             <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
@@ -213,14 +257,18 @@ export default function CoverLetterDisplay({
             disabled={!hasRealContent}
             className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 border border-gray-300 rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {copied ? <Check className="h-4 w-4" style={{ color: '#F29400' }} /> : <Copy className="h-4 w-4" style={{ color: '#F29400' }} />}
-            <span>{copied ? 'Kopiert!' : 'Kopieren'}</span>
+            {copied ? (
+              <Check className="h-4 w-4" style={{ color: "#F29400" }} />
+            ) : (
+              <Copy className="h-4 w-4" style={{ color: "#F29400" }} />
+            )}
+            <span>{copied ? "Kopiert!" : "Kopieren"}</span>
           </button>
           <button
             onClick={handleDownload}
             disabled={!hasRealContent}
             className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-white rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{ backgroundColor: '#F29400' }}
+            style={{ backgroundColor: "#F29400" }}
           >
             <Download className="h-4 w-4" />
             <span>TXT</span>
@@ -239,7 +287,7 @@ export default function CoverLetterDisplay({
       {/* AI Edit Options */}
       <div className="p-4 border-b border-gray-200 bg-white">
         <div className="flex items-center space-x-2 mb-3">
-          <Edit3 className="h-5 w-5" style={{ color: '#F29400' }} />
+          <Edit3 className="h-5 w-5" style={{ color: "#F29400" }} />
           <h4 className="font-medium text-gray-900">KI-Bearbeitung</h4>
           {/* BOLT-UI-ANPASSUNG 2025-01-15: Text "verfügbar sobald Text vorhanden" entfernt */}
         </div>
@@ -252,9 +300,16 @@ export default function CoverLetterDisplay({
                 onClick={() => onEdit(promptData.prompt)}
                 disabled={isEditing || !hasRealContent}
                 className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-orange-50 hover:border-orange-300 rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                title={hasRealContent ? promptData.prompt : 'Erst Text eingeben oder generieren'}
+                title={
+                  hasRealContent
+                    ? promptData.prompt
+                    : "Erst Text eingeben oder generieren"
+                }
               >
-                <IconComponent className="h-4 w-4" style={{ color: '#F29400' }} />
+                <IconComponent
+                  className="h-4 w-4"
+                  style={{ color: "#F29400" }}
+                />
                 <span>{promptData.label}</span>
               </button>
             );
@@ -262,18 +317,20 @@ export default function CoverLetterDisplay({
         </div>
         {isEditing && (
           <div className="mt-3 flex items-center space-x-2">
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2" style={{ borderColor: '#F29400' }}></div>
-            <span className="text-sm" style={{ color: '#F29400' }}>Wird bearbeitet...</span>
+            <div
+              className="animate-spin rounded-full h-4 w-4 border-b-2"
+              style={{ borderColor: "#F29400" }}
+            ></div>
+            <span className="text-sm" style={{ color: "#F29400" }}>
+              Wird bearbeitet...
+            </span>
           </div>
         )}
       </div>
 
       {/* Quill Rich Text Editor */}
       <div className="p-0">
-        <QuillEditor
-          value={editorContent}
-          onChange={handleContentChange}
-        />
+        <QuillEditor value={editorContent} onChange={handleContentChange} />
       </div>
     </div>
   );
