@@ -1,4 +1,10 @@
-import React, { forwardRef, useEffect, useRef, useState } from "react";
+import React, {
+  forwardRef,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import ReactQuill from "react-quill";
 import Quill from "quill";
 import "../quill-custom/LineHeight";
@@ -31,6 +37,7 @@ Size.whitelist = [
 ];
 Quill.register(Size, true);
 
+const DEFAULT_HISTORY = { delay: 1000, maxStack: 100, userOnly: true };
 
 const formats = [
   "font", "size",
@@ -69,14 +76,16 @@ const ForwardedReactQuill = forwardRef((props: any, ref) => {
     }
   };
 
-  const rest = props || {};
+  const { autoFocus: _ignored, modules: userModules = {}, ...rest } = props || {};
 
-  const modules = {
-    toolbar: {
-      container: '#toolbar',
-    },
-    history: { delay: 1000, maxStack: 100, userOnly: true },
-  };
+  const modules = useMemo(
+    () => ({
+      ...userModules,
+      toolbar: true,
+      history: userModules.history || DEFAULT_HISTORY,
+    }),
+    [userModules]
+  );
 
   return (
     <>
