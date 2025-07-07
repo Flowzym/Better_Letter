@@ -601,7 +601,7 @@ export default function CustomToolbar({
       const quill = getQuill();
       if (quill && quill.format) {
         try {
-          quill.format('line-height', value || false);
+          quill.format('lineheight', value || false);
         } catch {
           // BOLT-FIX 2025-01-15: Stille Fehlerbehandlung
         }
@@ -801,7 +801,7 @@ export default function CustomToolbar({
       group: 'color',
       handler: () => {}, // Color picker hat keinen direkten Handler
       element: (
-        <div key="color" className="relative group">
+        <div key="color" className="relative group ql-color">
           <div 
             className="w-7 h-7 border border-gray-300 rounded cursor-pointer flex items-center justify-center"
             title="Textfarbe"
@@ -841,7 +841,7 @@ export default function CustomToolbar({
       group: 'color',
       handler: () => {}, // Color picker hat keinen direkten Handler
       element: (
-        <div key="background" className="relative group">
+        <div key="background" className="relative group ql-background">
           <div 
             className="w-7 h-7 border border-gray-300 rounded cursor-pointer flex items-center justify-center"
             title="Hintergrundfarbe"
@@ -894,12 +894,12 @@ export default function CustomToolbar({
 
     // BOLT-UI-ANPASSUNG 2025-01-15: Zeilenabstand hinzugefügt
     {
-      id: 'line-height',
+      id: 'lineheight',
       priority: 17,
       group: 'style',
       handler: () => {}, // Dropdown hat keinen direkten Handler
       element: (
-        <div key="line-height" className="relative group">
+        <div key="lineheight" className="relative group ql-lineheight">
           <button className="p-2 text-gray-600 hover:text-orange-600 hover:bg-orange-50 rounded-md transition-colors duration-200" title="Zeilenabstand">
             <LineHeightIcon />
           </button>
