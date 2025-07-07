@@ -40,7 +40,9 @@ Quill.register(Size, true);
 const toolbarConfig = {
   toolbar: [
     [{ color: [] }, { background: [] }],
-    [{ lineheight: ["1", "1.15", "1.5", "2"] }],
+    [{ lineheight: ["1", "1.15", "2", "2.5", "3"] }],
+    [{ margintop: ["0px", "8px", "16px", "24px", "32px"] }],
+    [{ marginbottom: ["0px", "8px", "16px", "24px", "32px"] }],
   ],
   history: { delay: 1000, maxStack: 100, userOnly: true },
 };
@@ -62,6 +64,8 @@ const formats = [
   "color",
   "background",
   "lineheight",
+  "margintop",
+  "marginbottom",
 ];
 
 // BOLT-UI-ANPASSUNG 2025-01-15: Dieses Forwarding ermöglicht eine korrekte Weitergabe von Refs ohne findDOMNode!
