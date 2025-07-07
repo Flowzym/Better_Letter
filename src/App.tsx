@@ -287,6 +287,14 @@ function App() {
   );
   const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
 
+  useEffect(() => {
+    const input = document.getElementById('dummy-initial-blur') as HTMLInputElement | null;
+    if (input) {
+      input.focus();
+      setTimeout(() => input.blur(), 10);
+    }
+  }, []);
+
   // Load database statistics if Supabase is configured
   useEffect(() => {
     const loadStats = async () => {
@@ -527,8 +535,15 @@ function App() {
         )}
 
         {/* Cover Letter Display */}
-        <CoverLetterDisplay 
-          content={coverLetter} 
+        <input
+          type="text"
+          id="dummy-initial-blur"
+          style={{ opacity: 0, position: "absolute", top: 0, left: 0, zIndex: -1, width: 1, height: 1 }}
+          tabIndex={-1}
+          aria-hidden="true"
+        />
+        <CoverLetterDisplay
+          content={coverLetter}
           isLoading={isGenerating}
           isEditing={isEditing}
           onEdit={handleEdit}
