@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import ReactQuill from "react-quill";
 import Quill from "quill";
+import "../quill-custom/LineHeight";
 
 // Register custom font and size whitelists so that selections apply correctly
 const Font = Quill.import("formats/font");
@@ -37,7 +38,10 @@ Size.whitelist = [
 Quill.register(Size, true);
 
 const toolbarConfig = {
-  toolbar: false,
+  toolbar: [
+    [{ color: [] }, { background: [] }],
+    [{ lineheight: ["1", "1.15", "1.5", "2"] }],
+  ],
   history: { delay: 1000, maxStack: 100, userOnly: true },
 };
 
@@ -57,6 +61,7 @@ const formats = [
   "link",
   "color",
   "background",
+  "lineheight",
 ];
 
 // BOLT-UI-ANPASSUNG 2025-01-15: Dieses Forwarding ermöglicht eine korrekte Weitergabe von Refs ohne findDOMNode!

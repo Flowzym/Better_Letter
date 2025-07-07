@@ -253,6 +253,19 @@
   font-family: Tahoma, sans-serif !important;
 }
 
+/* Custom Quill pickers */
+.ql-color .ql-picker-item,
+.ql-background .ql-picker-item {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+}
+
+.ql-lineheight .ql-picker-label::before,
+.ql-lineheight .ql-picker-item::before {
+  content: attr(data-value);
+}
+
 /* BOLT-UI-ANPASSUNG 2025-01-15: Zeilenabstand-Styles */
 .ql-editor[style*="line-height: 1"] {
   line-height: 1 !important;
