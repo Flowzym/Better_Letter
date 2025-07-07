@@ -15,12 +15,16 @@ export default function CustomToolbar({ quillRef }: CustomToolbarProps) {
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   useEffect(() => {
-    if (quillRef.current && toolbarRef.current) {
-      const quill = quillRef.current.getEditor();
-      const toolbarModule = quill.getModule('toolbar');
-      if (toolbarModule && toolbarModule.container !== toolbarRef.current) {
+    if (!quillRef?.current || !toolbarRef.current) return;
+
+    try {
+      const quill = quillRef.current.getEditor?.();
+      const toolbarModule = quill?.getModule?.('toolbar');
+      if (toolbarModule && toolbarRef.current) {
         toolbarModule.container = toolbarRef.current;
       }
+    } catch {
+      // sicher ignorieren, wenn Quill noch nicht bereit ist
     }
   }, [quillRef]);
 
