@@ -9,6 +9,7 @@ import ReactQuill from 'react-quill';
 interface QuillEditorProps {
   value: string;
   onChange: (content: string) => void;
+  autoFocus?: boolean;
 }
 
 // BOLT-UI-ANPASSUNG 2025-01-15: Default settings angepasst
@@ -57,7 +58,7 @@ const DEFAULT_TEMPLATES: Template[] = [
   }
 ];
 
-export default function QuillEditor({ value, onChange }: QuillEditorProps) {
+export default function QuillEditor({ value, onChange, autoFocus = false }: QuillEditorProps) {
   // quillRef points to the underlying ReactQuill instance
   const quillRef = useRef<ReactQuill | null>(null);
   const [zoom, setZoom] = useState(140); // BOLT-UI-ANPASSUNG 2025-01-15: Standard 140% Zoom, aber als 100% angezeigt
@@ -65,6 +66,13 @@ export default function QuillEditor({ value, onChange }: QuillEditorProps) {
   const [showTemplates, setShowTemplates] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [clipboardError, setClipboardError] = useState<string>('');
+
+  // Focus editor on mount if autoFocus is enabled
+  useEffect(() => {
+    if (autoFocus) {
+      quillRef.current?.focus();
+    }
+  }, [autoFocus]);
   
   // Load settings and templates from localStorage
   const [settings, setSettings] = useState<EditorSettings>(() => {
