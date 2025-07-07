@@ -41,21 +41,15 @@ Quill.register(Size, true);
 const DEFAULT_HISTORY = { delay: 1000, maxStack: 100, userOnly: true };
 
 const formats = [
-  "font",
-  "size",
-  "header",
   "bold",
   "italic",
   "underline",
   "strike",
-  "blockquote",
   "list",
   "bullet",
-  "indent",
-  "align",
-  "link",
   "color",
   "background",
+  "align",
   "lineheight",
   "margintop",
   "marginbottom",
@@ -97,7 +91,7 @@ const ForwardedReactQuill = forwardRef((props: any, ref) => {
   const modules = useMemo(
     () => ({
       ...userModules,
-      toolbar: true,
+      toolbar: { toolbar: true },
       history: userModules.history || DEFAULT_HISTORY,
     }),
     [userModules]
