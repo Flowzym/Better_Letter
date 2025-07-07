@@ -290,17 +290,22 @@ export default function QuillEditor({ value, onChange, autoFocus = false }: Quil
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [customHandlers]);
 
+  // Blur editor when clicking outside
+  useEffect(() => {
+    const handleMouseDown = (event: MouseEvent) => {
+      const quill = quillRef.current?.getEditor();
+      if (!quill) return;
+      const root = quill.root;
+      if (!root.contains(event.target as Node)) {
+        root.blur();
+      }
+    };
+    document.addEventListener('mousedown', handleMouseDown);
+    return () => document.removeEventListener('mousedown', handleMouseDown);
+  }, []);
+
   return (
-    <div
-      className="w-full min-h-screen bg-gray-50"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) {
-          const btn = document.getElementById('dummy-blur-button') as HTMLButtonElement | null;
-          btn?.focus();
-        }
-      }}
-    >
-      <button id="dummy-blur-button" className="absolute opacity-0 pointer-events-none" aria-hidden="true" />
+    <div className="w-full min-h-screen bg-gray-50">
       {/* BOLT-UI-ANPASSUNG 2025-01-15: Toolbar wieder oben wie ursprünglich */}
       <div className="main-content w-full">
         {/* BOLT-UI-ANPASSUNG 2025-01-15: Toolbar mit vergrößertem Abstand zur Editorfläche */}
