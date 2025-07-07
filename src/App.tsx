@@ -360,6 +360,29 @@ function App() {
     saveToStorage('profileSourceMappings', profileSourceMappings);
   }, [profileSourceMappings]);
 
+  // Prevent Quill from auto-focusing on mount or when clicking outside
+  useEffect(() => {
+    const blurEditor = () => {
+      const active = document.activeElement as HTMLElement | null;
+      if (active && active.classList.contains('ql-editor')) {
+        active.blur();
+      }
+    };
+
+    blurEditor();
+
+    const handleClick = (e: MouseEvent) => {
+      const editor = document.querySelector('.ql-editor');
+      if (editor && !editor.contains(e.target as Node)) {
+        if (document.activeElement === editor) {
+          (editor as HTMLElement).blur();
+        }
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
   // ✅ KORRIGIERT: Memoisiere handleGenerate mit useCallback
   const handleGenerate = useCallback(async () => {
     if (!cvContent.trim() || !jobContent.trim()) {

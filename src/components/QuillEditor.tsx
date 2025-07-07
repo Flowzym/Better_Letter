@@ -5,20 +5,19 @@ import {
   useCallback,
   useState,
 } from "react";
-import ReactQuill from "react-quill";
+import type ReactQuill from "react-quill";
+import ForwardedReactQuill from "./ForwardedReactQuill";
 import CustomToolbar from "./CustomToolbar";
 import "react-quill/dist/quill.snow.css";
 
 interface QuillEditorProps {
   value: string;
   onChange: (value: string) => void;
-  autoFocus?: boolean;
 }
 
 export default function QuillEditor({
   value,
   onChange,
-  autoFocus = false,
 }: QuillEditorProps) {
   const editorRef = useRef<ReactQuill | null>(null);
 
@@ -145,14 +144,6 @@ export default function QuillEditor({
 
   const noop = useCallback(() => {}, []);
 
-  useEffect(() => {
-    if (!autoFocus) return;
-    const id = setTimeout(() => {
-      editorRef.current?.focus();
-    });
-    return () => clearTimeout(id);
-  }, [autoFocus]);
-
   return (
     <>
       <CustomToolbar
@@ -173,7 +164,7 @@ export default function QuillEditor({
         minZoom={50}
         maxZoom={200}
       />
-      <ReactQuill
+      <ForwardedReactQuill
         ref={editorRef}
         theme="snow"
         value={value}
@@ -185,3 +176,4 @@ export default function QuillEditor({
     </>
   );
 }
+
