@@ -8,8 +8,8 @@ import React, {
 import ReactQuill from "react-quill";
 import Quill from "quill";
 import "../quill-custom/LineHeight";
+import CustomToolbar from "./CustomToolbar";
 
-// Register custom font and size whitelists so that selections apply correctly
 const Font = Quill.import("formats/font");
 Font.whitelist = [
   "serif",
@@ -48,18 +48,16 @@ const formats = [
   "lineheight", "margintop", "marginbottom",
 ];
 
-// BOLT-UI-ANPASSUNG 2025-01-15: Dieses Forwarding ermöglicht eine korrekte Weitergabe von Refs ohne findDOMNode!
 const ForwardedReactQuill = forwardRef((props: any, ref) => {
   const innerRef = useRef<ReactQuill | null>(null);
+  const toolbarRef = useRef<HTMLDivElement>(null);
   const [renderEditor, setRenderEditor] = useState(false);
 
-  // Delay rendering slightly to avoid initial focus
   useEffect(() => {
     const id = setTimeout(() => setRenderEditor(true), 50);
     return () => clearTimeout(id);
   }, []);
 
-  // Immediately blur after mount so the cursor is not placed automatically
   useEffect(() => {
     if (!renderEditor) return;
     try {
@@ -84,20 +82,25 @@ const ForwardedReactQuill = forwardRef((props: any, ref) => {
   const modules = useMemo(
     () => ({
       ...userModules,
-      toolbar: true,
+      toolbar: { container: toolbarRef.current },
       history: userModules.history || DEFAULT_HISTORY,
     }),
-    [userModules]
+    [userModules, toolbarRef.current]
   );
 
-  return renderEditor ? (
-    <ReactQuill
-      {...rest}
-      ref={setRefs}
-      modules={modules}
-      formats={formats}
-    />
-  ) : null;
+  return (
+    <>
+      <CustomToolbar ref={toolbarRef} />
+      {renderEditor && (
+        <ReactQuill
+          {...rest}
+          ref={setRefs}
+          modules={modules}
+          formats={formats}
+        />
+      )}
+    </>
+  );
 });
 
 export default ForwardedReactQuill;
