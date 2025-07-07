@@ -59,8 +59,11 @@ export default function CustomToolbar({ quillRef }: CustomToolbarProps) {
         <button className="ql-bold" title="Fett" />
         <button className="ql-italic" title="Kursiv" />
         <button className="ql-underline" title="Unterstrichen" />
+        <button className="ql-strike" title="Durchgestrichen" />
         <button className="ql-list" value="ordered" title="Nummeriert" />
         <button className="ql-list" value="bullet" title="Aufzählung" />
+        <select className="ql-color" title="Textfarbe" />
+        <select className="ql-background" title="Hintergrundfarbe" />
 
         <div className="relative group ml-2">
           <button type="button" className="more-button" title="Weitere Optionen">

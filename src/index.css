@@ -261,14 +261,12 @@
   border-radius: 50%;
 }
 
-.ql-lineheight .ql-picker-label::before,
-.ql-lineheight .ql-picker-item::before {
-  content: attr(data-value);
-}
-.ql-margintop .ql-picker-label::before,
-.ql-margintop .ql-picker-item::before,
-.ql-marginbottom .ql-picker-label::before,
-.ql-marginbottom .ql-picker-item::before {
+.ql-picker.ql-lineheight .ql-picker-label::before,
+.ql-picker.ql-lineheight .ql-picker-item::before,
+.ql-picker.ql-margintop .ql-picker-label::before,
+.ql-picker.ql-margintop .ql-picker-item::before,
+.ql-picker.ql-marginbottom .ql-picker-label::before,
+.ql-picker.ql-marginbottom .ql-picker-item::before {
   content: attr(data-value);
 }
 
