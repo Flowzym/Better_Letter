@@ -2,6 +2,7 @@
 import React, {
   forwardRef,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -37,10 +38,7 @@ Size.whitelist = [
 ];
 Quill.register(Size, true);
 
-const toolbarConfig = {
-  toolbar: "#toolbar",
-  history: { delay: 1000, maxStack: 100, userOnly: true },
-};
+const DEFAULT_HISTORY = { delay: 1000, maxStack: 100, userOnly: true };
 
 const formats = [
   "font",
@@ -94,13 +92,22 @@ const ForwardedReactQuill = forwardRef((props: any, ref) => {
     }
   };
 
-  const { autoFocus: _ignored, ...rest } = props || {};
+  const { autoFocus: _ignored, modules: userModules = {}, ...rest } = props || {};
+
+  const modules = useMemo(
+    () => ({
+      ...userModules,
+      toolbar: "#toolbar",
+      history: userModules.history || DEFAULT_HISTORY,
+    }),
+    [userModules]
+  );
 
   return renderEditor ? (
     <ReactQuill
       {...rest}
       ref={setRefs}
-      modules={toolbarConfig}
+      modules={modules}
       formats={formats}
     />
   ) : null;
