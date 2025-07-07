@@ -253,6 +253,8 @@ export default function QuillEditor({ value, onChange }: QuillEditorProps) {
     setSettings(newSettings);
   }, []);
 
+  const handleEditorClick = () => quillRef.current?.getEditor().focus();
+
   // BOLT-FIX 2025-01-15: Keyboard shortcuts mit besserer Fehlerbehandlung
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -317,6 +319,7 @@ export default function QuillEditor({ value, onChange }: QuillEditorProps) {
           <div className="editor-paper-sheet mt-4 mb-8">
             <div 
               className="bg-white shadow-lg rounded-lg overflow-hidden mx-auto"
+              onClick={handleEditorClick}
               style={{
                 width: '794px', // BOLT-UI-ANPASSUNG 2025-01-15: A4-Breite (21cm)
                 minHeight: '1123px', // BOLT-UI-ANPASSUNG 2025-01-15: A4-Höhe (29.7cm)
