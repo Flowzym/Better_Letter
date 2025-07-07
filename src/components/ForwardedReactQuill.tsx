@@ -48,7 +48,12 @@ const formats = [
   "lineheight", "margintop", "marginbottom",
 ];
 
-const ForwardedReactQuill = forwardRef((props: any, ref) => {
+interface ForwardedReactQuillProps {
+  onZoomChange?: () => void;
+  [key: string]: any;
+}
+
+const ForwardedReactQuill = forwardRef((props: ForwardedReactQuillProps, ref) => {
   const innerRef = useRef<ReactQuill | null>(null);
   const [renderEditor, setRenderEditor] = useState(false);
 
@@ -76,7 +81,7 @@ const ForwardedReactQuill = forwardRef((props: any, ref) => {
     }
   };
 
-  const { autoFocus: _ignored, modules: userModules = {}, ...rest } = props || {};
+  const { autoFocus: _ignored, modules: userModules = {}, onZoomChange, ...rest } = props || {};
 
   const modules = useMemo(
     () => ({
@@ -89,7 +94,7 @@ const ForwardedReactQuill = forwardRef((props: any, ref) => {
 
   return (
     <>
-      <CustomToolbar quillRef={innerRef} />
+      <CustomToolbar quillRef={innerRef} onZoomChange={onZoomChange} />
       {renderEditor && (
         <ReactQuill
           {...rest}

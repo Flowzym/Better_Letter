@@ -6,11 +6,13 @@ import "react-quill/dist/quill.snow.css";
 interface QuillEditorProps {
   value: string;
   onChange: (value: string) => void;
+  onZoomChange?: () => void;
 }
 
 export default function QuillEditor({
   value,
   onChange,
+  onZoomChange,
 }: QuillEditorProps) {
   const editorRef = useRef<ReactQuill | null>(null);
 
@@ -47,6 +49,7 @@ export default function QuillEditor({
         theme="snow"
         value={value}
         onChange={onChange}
+        onZoomChange={onZoomChange}
         modules={modules}
         formats={formats}
         placeholder="Text hier eingeben..."

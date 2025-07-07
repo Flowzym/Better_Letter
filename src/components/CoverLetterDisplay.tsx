@@ -330,7 +330,7 @@ export default function CoverLetterDisplay({
 
       {/* Quill Rich Text Editor */}
       <div className="p-0">
-        <QuillEditor value={editorContent} onChange={handleContentChange} />
+        <QuillEditor value={editorContent} onChange={handleContentChange} onZoomChange={() => {}} />
       </div>
     </div>
   );
