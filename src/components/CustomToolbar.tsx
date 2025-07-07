@@ -1,40 +1,60 @@
 import React, { useEffect, useRef, useState } from 'react';
 import type ReactQuill from 'react-quill';
-import { Undo2, Redo2, MoreHorizontal } from 'lucide-react';
 
 interface CustomToolbarProps {
   quillRef: React.RefObject<ReactQuill>;
 }
 
-const UndoIcon = () => <Undo2 className="w-4 h-4" />;
-const RedoIcon = () => <Redo2 className="w-4 h-4" />;
-const MoreIcon = () => <MoreHorizontal className="w-4 h-4" />;
+const UndoIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M1 4v6h6" />
+    <path d="M1 10l3.586-3.586a2 2 0 0 1 2.828 0L10 9" />
+    <path d="M7 7a8 8 0 1 1 8 8" />
+  </svg>
+);
+
+const RedoIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M23 4v6h-6" />
+    <path d="M23 10l-3.586-3.586a2 2 0 0 0-2.828 0L14 9" />
+    <path d="M17 7a8 8 0 1 0-8 8" />
+  </svg>
+);
+
+const MoreIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="1" />
+    <circle cx="19" cy="12" r="1" />
+    <circle cx="5" cy="12" r="1" />
+  </svg>
+);
 
 export default function CustomToolbar({ quillRef }: CustomToolbarProps) {
   const toolbarRef = useRef<HTMLDivElement>(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   useEffect(() => {
-    if (!quillRef?.current || !toolbarRef.current) return;
-
-    try {
-      const quill = quillRef.current.getEditor?.();
-      const toolbarModule = quill?.getModule?.('toolbar');
-      if (toolbarModule && toolbarRef.current) {
-        toolbarModule.container = toolbarRef.current;
+    const id = setTimeout(() => {
+      if (quillRef?.current && toolbarRef.current) {
+        try {
+          const quill = quillRef.current.getEditor?.();
+          const toolbarModule = quill?.getModule?.('toolbar');
+          if (toolbarModule && toolbarRef.current) {
+            toolbarModule.container = toolbarRef.current;
+          }
+        } catch {/* ignore */}
       }
-    } catch {
-      // sicher ignorieren, wenn Quill noch nicht bereit ist
-    }
+    }, 100);
+    return () => clearTimeout(id);
   }, [quillRef]);
 
   return (
     <div className="toolbar-wrapper">
-      <div ref={toolbarRef} id="toolbar" className="flex flex-wrap items-center gap-2">
-        <button type="button" onClick={() => quillRef.current?.getEditor().history.undo()} title="Rückgängig" className="p-1">
+      <div ref={toolbarRef} className="flex flex-wrap items-center gap-2">
+        <button type="button" onClick={() => quillRef.current?.getEditor().history.undo()} title="Rückgängig">
           <UndoIcon />
         </button>
-        <button type="button" onClick={() => quillRef.current?.getEditor().history.redo()} title="Wiederholen" className="p-1">
+        <button type="button" onClick={() => quillRef.current?.getEditor().history.redo()} title="Wiederholen">
           <RedoIcon />
         </button>
 
@@ -52,7 +72,7 @@ export default function CustomToolbar({ quillRef }: CustomToolbarProps) {
         <select className="ql-color" />
         <select className="ql-background" />
 
-        <button onClick={() => setShowAdvanced(!showAdvanced)} className="p-1 border rounded" title="Weitere Optionen">
+        <button onClick={() => setShowAdvanced(!showAdvanced)} title="Weitere Optionen">
           <MoreIcon />
         </button>
 
