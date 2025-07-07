@@ -85,35 +85,7 @@ export default function QuillEditor({ value, onChange }: QuillEditorProps) {
     }
   });
 
-  // Prevent unwanted focus behavior - NOW SETTINGS IS AVAILABLE
-  useEffect(() => {
-    // Always prevent auto-focus unless explicitly enabled
-    const timer = setTimeout(() => {
-      const quill = quillRef.current?.getEditor();
-      if (quill && quill.root) {
-        if (!settings.autoFocus) {
-          // Blur the editor and prevent focus
-          quill.root.blur();
-          quill.root.setAttribute('tabindex', '-1');
-          
-          // Remove any focus classes
-          const container = quill.container;
-          if (container) {
-            container.classList.remove('ql-focus-allowed');
-          }
-        } else {
-          // Allow focus if autoFocus is enabled
-          quill.root.removeAttribute('tabindex');
-          const container = quill.container;
-          if (container) {
-            container.classList.add('ql-focus-allowed');
-          }
-        }
-      }
-    }, 100);
-    
-    return () => clearTimeout(timer);
-  }, [settings.autoFocus]);
+
 
   // Save settings and templates to localStorage
   useEffect(() => {
@@ -312,36 +284,6 @@ export default function QuillEditor({ value, onChange }: QuillEditorProps) {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [customHandlers]);
 
-  // Improved blur handling - only blur when clicking outside editor area
-  useEffect(() => {
-    const handleMouseDown = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      
-      // Don't interfere if clicking on profile inputs or other form elements
-      if (target.closest('.profile-input') || 
-          target.closest('.autocomplete-input') ||
-          target.closest('input') ||
-          target.closest('textarea') ||
-          target.closest('select') ||
-          target.closest('button')) {
-        return;
-      }
-      
-      const quill = quillRef.current?.getEditor();
-      if (!quill) return;
-      
-      const editorContainer = quill.container;
-      const toolbarContainer = document.getElementById('custom-toolbar');
-      
-      // Only blur if clicking outside both editor and toolbar
-      if (!editorContainer?.contains(target) && !toolbarContainer?.contains(target)) {
-        quill.root.blur();
-      }
-    };
-
-    document.addEventListener('mousedown', handleMouseDown);
-    return () => document.removeEventListener('mousedown', handleMouseDown);
-  }, []);
 
   return (
     <div className="w-full min-h-screen bg-gray-50">
