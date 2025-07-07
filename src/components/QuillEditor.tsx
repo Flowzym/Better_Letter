@@ -66,22 +66,6 @@ export default function QuillEditor({ value, onChange }: QuillEditorProps) {
   const [showSettings, setShowSettings] = useState(false);
   const [clipboardError, setClipboardError] = useState<string>('');
 
-  // Prevent any unwanted focus behavior
-  useEffect(() => {
-    // Ensure editor doesn't auto-focus unless explicitly enabled
-    if (!settings.autoFocus) {
-      const timer = setTimeout(() => {
-        const quill = quillRef.current?.getEditor();
-        if (quill && quill.root) {
-          quill.root.blur();
-          // Remove any tabindex that might cause focus
-          quill.root.removeAttribute('tabindex');
-        }
-      }, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [settings.autoFocus]);
-
   // Load settings and templates from localStorage
   const [settings, setSettings] = useState<EditorSettings>(() => {
     try {
@@ -100,6 +84,22 @@ export default function QuillEditor({ value, onChange }: QuillEditorProps) {
       return DEFAULT_TEMPLATES;
     }
   });
+
+  // Prevent any unwanted focus behavior
+  useEffect(() => {
+    // Ensure editor doesn't auto-focus unless explicitly enabled
+    if (!settings.autoFocus) {
+      const timer = setTimeout(() => {
+        const quill = quillRef.current?.getEditor();
+        if (quill && quill.root) {
+          quill.root.blur();
+          // Remove any tabindex that might cause focus
+          quill.root.removeAttribute('tabindex');
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [settings.autoFocus]);
 
   // Save settings and templates to localStorage
   useEffect(() => {
