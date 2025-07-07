@@ -97,7 +97,7 @@ const ForwardedReactQuill = forwardRef((props: any, ref) => {
   const modules = useMemo(
     () => ({
       ...userModules,
-      toolbar: { container: "#toolbar" },
+      toolbar: true,
       history: userModules.history || DEFAULT_HISTORY,
     }),
     [userModules]

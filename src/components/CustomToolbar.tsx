@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import type ReactQuill from 'react-quill';
 
 interface CustomToolbarProps {
@@ -30,10 +30,25 @@ const MoreIcon = () => (
 );
 
 export default function CustomToolbar({ quillRef }: CustomToolbarProps) {
+  const toolbarRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const quill = quillRef.current?.getEditor?.();
+    const container = toolbarRef.current;
+    if (!quill || !container) return;
+    try {
+      const toolbar = quill.getModule('toolbar');
+      if (toolbar) {
+        toolbar.container = container;
+      }
+    } catch {
+      /* ignored */
+    }
+  }, [quillRef]);
 
   return (
     <div className="toolbar-wrapper">
-      <div id="toolbar" className="flex flex-wrap items-center gap-1">
+      <div ref={toolbarRef} className="flex flex-wrap items-center gap-1">
         <button type="button" onClick={() => quillRef.current?.getEditor().history.undo()} title="Rückgängig" className="p-1">
           <UndoIcon />
         </button>
