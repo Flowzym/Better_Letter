@@ -66,7 +66,7 @@ export default function QuillEditor({ value, onChange }: QuillEditorProps) {
   const [showSettings, setShowSettings] = useState(false);
   const [clipboardError, setClipboardError] = useState<string>('');
 
-  // Load settings and templates from localStorage
+  // Load settings and templates from localStorage - MOVED BEFORE ANY EFFECTS
   const [settings, setSettings] = useState<EditorSettings>(() => {
     try {
       const saved = localStorage.getItem('quillEditorSettings');
@@ -85,20 +85,34 @@ export default function QuillEditor({ value, onChange }: QuillEditorProps) {
     }
   });
 
-  // Prevent any unwanted focus behavior
+  // Prevent unwanted focus behavior - NOW SETTINGS IS AVAILABLE
   useEffect(() => {
-    // Ensure editor doesn't auto-focus unless explicitly enabled
-    if (!settings.autoFocus) {
-      const timer = setTimeout(() => {
-        const quill = quillRef.current?.getEditor();
-        if (quill && quill.root) {
+    // Always prevent auto-focus unless explicitly enabled
+    const timer = setTimeout(() => {
+      const quill = quillRef.current?.getEditor();
+      if (quill && quill.root) {
+        if (!settings.autoFocus) {
+          // Blur the editor and prevent focus
           quill.root.blur();
-          // Remove any tabindex that might cause focus
+          quill.root.setAttribute('tabindex', '-1');
+          
+          // Remove any focus classes
+          const container = quill.container;
+          if (container) {
+            container.classList.remove('ql-focus-allowed');
+          }
+        } else {
+          // Allow focus if autoFocus is enabled
           quill.root.removeAttribute('tabindex');
+          const container = quill.container;
+          if (container) {
+            container.classList.add('ql-focus-allowed');
+          }
         }
-      }, 100);
-      return () => clearTimeout(timer);
-    }
+      }
+    }, 100);
+    
+    return () => clearTimeout(timer);
   }, [settings.autoFocus]);
 
   // Save settings and templates to localStorage
@@ -298,22 +312,33 @@ export default function QuillEditor({ value, onChange }: QuillEditorProps) {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [customHandlers]);
 
-  // Blur editor when clicking outside
+  // Improved blur handling - only blur when clicking outside editor area
   useEffect(() => {
     const handleMouseDown = (event: MouseEvent) => {
-      // Don't interfere if clicking on profile inputs
       const target = event.target as HTMLElement;
-      if (target.closest('.profile-input') || target.closest('.autocomplete-input')) {
+      
+      // Don't interfere if clicking on profile inputs or other form elements
+      if (target.closest('.profile-input') || 
+          target.closest('.autocomplete-input') ||
+          target.closest('input') ||
+          target.closest('textarea') ||
+          target.closest('select') ||
+          target.closest('button')) {
         return;
       }
       
       const quill = quillRef.current?.getEditor();
       if (!quill) return;
-      const root = quill.root;
-      if (!root.contains(event.target as Node)) {
-        root.blur();
+      
+      const editorContainer = quill.container;
+      const toolbarContainer = document.getElementById('custom-toolbar');
+      
+      // Only blur if clicking outside both editor and toolbar
+      if (!editorContainer?.contains(target) && !toolbarContainer?.contains(target)) {
+        quill.root.blur();
       }
     };
+
     document.addEventListener('mousedown', handleMouseDown);
     return () => document.removeEventListener('mousedown', handleMouseDown);
   }, []);
@@ -366,7 +391,6 @@ export default function QuillEditor({ value, onChange }: QuillEditorProps) {
                 modules={modules}
                 formats={formats}
                 placeholder="" // BOLT-UI-ANPASSUNG 2025-01-15: Kein Platzhalter
-                autoFocus={settings.autoFocus}
                 readOnly={settings.readOnly}
                 theme={settings.theme}
                 style={{

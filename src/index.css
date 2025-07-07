@@ -331,6 +331,7 @@ button:focus {
 /* Prevent unwanted editor focus */
 .ql-editor {
   outline: none !important;
+  cursor: text;
 }
 
 .ql-editor:focus {
@@ -338,11 +339,12 @@ button:focus {
   box-shadow: none !important;
 }
 
-/* Only allow focus when explicitly clicked */
-.ql-container:not(.ql-focus-allowed) .ql-editor {
-  pointer-events: auto;
+/* Prevent focus unless explicitly allowed */
+.ql-container .ql-editor[tabindex="-1"] {
+  cursor: default;
 }
 
-.ql-container:not(.ql-focus-allowed) .ql-editor:focus {
+.ql-container .ql-editor[tabindex="-1"]:focus {
   outline: none !important;
+  cursor: default;
 }
