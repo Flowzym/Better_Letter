@@ -38,12 +38,7 @@ Size.whitelist = [
 Quill.register(Size, true);
 
 const toolbarConfig = {
-  toolbar: [
-    [{ color: [] }, { background: [] }],
-    [{ lineheight: ["1", "1.15", "2", "2.5", "3"] }],
-    [{ margintop: ["0px", "8px", "16px", "24px", "32px"] }],
-    [{ marginbottom: ["0px", "8px", "16px", "24px", "32px"] }],
-  ],
+  toolbar: "#toolbar",
   history: { delay: 1000, maxStack: 100, userOnly: true },
 };
 
