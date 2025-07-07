@@ -6,6 +6,7 @@ import StyleSelector from './components/StyleSelector';
 import DocumentTypeSelector from './components/DocumentTypeSelector';
 import SettingsPage from './components/SettingsPage';
 import { generateCoverLetter, editCoverLetter } from './services/mistralService';
+import 'react-quill/dist/quill.snow.css';
 import {
   loadProfileSuggestions,
   isSupabaseConfigured,

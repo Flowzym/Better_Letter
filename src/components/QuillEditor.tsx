@@ -1,7 +1,6 @@
 import { useRef, useMemo } from "react";
 import type ReactQuill from "react-quill";
 import ForwardedReactQuill from "./ForwardedReactQuill";
-import CustomToolbar from "./CustomToolbar";
 import "react-quill/dist/quill.snow.css";
 
 interface QuillEditorProps {
@@ -43,7 +42,6 @@ export default function QuillEditor({
 
   return (
     <>
-      <CustomToolbar />
       <ForwardedReactQuill
         ref={editorRef}
         theme="snow"
