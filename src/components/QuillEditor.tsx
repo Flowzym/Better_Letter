@@ -24,7 +24,7 @@ export default function QuillEditor({
 
   const modules = useMemo(
     () => ({
-      toolbar: { container: "#custom-toolbar" },
+      toolbar: false,
       history: { delay: 1000, maxStack: 100, userOnly: true },
     }),
     []
