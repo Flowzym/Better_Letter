@@ -1,8 +1,9 @@
 import Quill from "quill";
+import { StyleAttributor } from "parchment";
 
 const Parchment = Quill.import("parchment");
 
-const LineHeightStyle = new (Parchment as any).StyleAttributor(
+const LineHeightStyle = new StyleAttributor(
   "lineheight",
   "line-height",
   {
