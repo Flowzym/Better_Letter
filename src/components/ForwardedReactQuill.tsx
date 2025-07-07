@@ -1,4 +1,3 @@
-// src/components/ForwardedReactQuill.tsx
 import React, {
   forwardRef,
   useEffect,
@@ -41,18 +40,12 @@ Quill.register(Size, true);
 const DEFAULT_HISTORY = { delay: 1000, maxStack: 100, userOnly: true };
 
 const formats = [
-  "bold",
-  "italic",
-  "underline",
-  "strike",
-  "list",
-  "bullet",
-  "color",
-  "background",
+  "font", "size",
+  "bold", "italic", "underline", "strike",
+  "list", "bullet",
+  "color", "background",
   "align",
-  "lineheight",
-  "margintop",
-  "marginbottom",
+  "lineheight", "margintop", "marginbottom",
 ];
 
 // BOLT-UI-ANPASSUNG 2025-01-15: Dieses Forwarding ermöglicht eine korrekte Weitergabe von Refs ohne findDOMNode!
@@ -91,7 +84,7 @@ const ForwardedReactQuill = forwardRef((props: any, ref) => {
   const modules = useMemo(
     () => ({
       ...userModules,
-      toolbar: { toolbar: true },
+      toolbar: true,
       history: userModules.history || DEFAULT_HISTORY,
     }),
     [userModules]
