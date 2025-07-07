@@ -33,16 +33,13 @@ export default function CustomToolbar({ quillRef }: CustomToolbarProps) {
   const toolbarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const quill = quillRef.current?.getEditor?.();
-    const container = toolbarRef.current;
-    if (!quill || !container) return;
-    try {
-      const toolbar = quill.getModule('toolbar');
-      if (toolbar) {
-        toolbar.container = container;
+    if (quillRef.current && toolbarRef.current) {
+      const quill = quillRef.current.getEditor();
+      const toolbarModule = quill.getModule('toolbar');
+      if (toolbarModule) {
+        toolbarModule.container = toolbarRef.current;
+        toolbarModule.init();
       }
-    } catch {
-      /* ignored */
     }
   }, [quillRef]);
 
