@@ -1,10 +1,4 @@
-import React, {
-  forwardRef,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { forwardRef, useEffect, useRef, useState } from "react";
 import ReactQuill from "react-quill";
 import Quill from "quill";
 import "../quill-custom/LineHeight";
@@ -50,7 +44,6 @@ const formats = [
 
 const ForwardedReactQuill = forwardRef((props: any, ref) => {
   const innerRef = useRef<ReactQuill | null>(null);
-  const toolbarRef = useRef<HTMLDivElement>(null);
   const [renderEditor, setRenderEditor] = useState(false);
 
   useEffect(() => {
@@ -79,18 +72,16 @@ const ForwardedReactQuill = forwardRef((props: any, ref) => {
 
   const { autoFocus: _ignored, modules: userModules = {}, ...rest } = props || {};
 
-  const modules = useMemo(
-    () => ({
-      ...userModules,
-      toolbar: { container: toolbarRef.current },
-      history: userModules.history || DEFAULT_HISTORY,
-    }),
-    [userModules, toolbarRef.current]
-  );
+  const modules = {
+    toolbar: {
+      container: '#custom-toolbar',
+    },
+    history: userModules.history || DEFAULT_HISTORY,
+  };
 
   return (
     <>
-      <CustomToolbar ref={toolbarRef} />
+      <CustomToolbar />
       {renderEditor && (
         <ReactQuill
           {...rest}
