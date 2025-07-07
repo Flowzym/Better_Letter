@@ -527,6 +527,15 @@ function App() {
           </div>
         )}
 
+        {/* Dummy input to prevent Quill from grabbing focus automatically */}
+        <input
+          type="text"
+          id="dummy-initial-blur"
+          style={{ opacity: 0, position: "absolute", top: 0, left: 0, zIndex: -1, width: 1, height: 1 }}
+          tabIndex={-1}
+          aria-hidden="true"
+        />
+
         {/* Cover Letter Display */}
         <CoverLetterDisplay
           content={coverLetter}
