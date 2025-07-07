@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type ReactQuill from 'react-quill';
 
 interface CustomToolbarProps {
@@ -31,24 +31,22 @@ const MoreIcon = () => (
 
 export default function CustomToolbar({ quillRef }: CustomToolbarProps) {
   const toolbarRef = useRef<HTMLDivElement>(null);
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   useEffect(() => {
-    const quill = quillRef.current?.getEditor?.();
-    const container = toolbarRef.current;
-    if (!quill || !container) return;
-    try {
-      const toolbar = quill.getModule('toolbar');
-      if (toolbar) {
-        toolbar.container = container;
+    if (quillRef.current && toolbarRef.current) {
+      const quill = quillRef.current.getEditor();
+      const toolbarModule = quill.getModule('toolbar');
+      if (toolbarModule) {
+        toolbarModule.container = toolbarRef.current;
+        toolbarModule.init();
       }
-    } catch {
-      /* ignored */
     }
   }, [quillRef]);
 
   return (
     <div className="toolbar-wrapper">
-      <div ref={toolbarRef} className="flex flex-wrap items-center gap-1">
+      <div ref={toolbarRef} id="toolbar" className="flex flex-wrap items-center gap-2">
         <button type="button" onClick={() => quillRef.current?.getEditor().history.undo()} title="Rückgängig" className="p-1">
           <UndoIcon />
         </button>
@@ -56,22 +54,28 @@ export default function CustomToolbar({ quillRef }: CustomToolbarProps) {
           <RedoIcon />
         </button>
 
+        <select className="ql-font" />
+        <select className="ql-size" />
+
         <button className="ql-bold" title="Fett" />
         <button className="ql-italic" title="Kursiv" />
         <button className="ql-underline" title="Unterstrichen" />
         <button className="ql-strike" title="Durchgestrichen" />
+
         <button className="ql-list" value="ordered" title="Nummeriert" />
         <button className="ql-list" value="bullet" title="Aufzählung" />
-        <select className="ql-color" title="Textfarbe" />
-        <select className="ql-background" title="Hintergrundfarbe" />
 
-        <div className="relative group ml-2">
-          <button type="button" className="more-button" title="Weitere Optionen">
-            <MoreIcon />
-          </button>
-          <div className="absolute left-0 z-10 hidden flex-wrap gap-1 p-2 mt-1 bg-white border rounded shadow-lg group-hover:flex">
+        <select className="ql-color" />
+        <select className="ql-background" />
+
+        <button onClick={() => setShowAdvanced(!showAdvanced)} className="p-1 border rounded" title="Weitere Optionen">
+          <MoreIcon />
+        </button>
+
+        {showAdvanced && (
+          <div className="flex flex-wrap gap-2 p-2 bg-white border rounded shadow-md z-10">
             <select className="ql-lineheight" defaultValue="">
-              <option value="">LH</option>
+              <option value="">Zeilenhöhe</option>
               <option value="1">1.0</option>
               <option value="1.15">1.15</option>
               <option value="1.5">1.5</option>
@@ -80,7 +84,7 @@ export default function CustomToolbar({ quillRef }: CustomToolbarProps) {
               <option value="3">3</option>
             </select>
             <select className="ql-margintop" defaultValue="">
-              <option value="">Top</option>
+              <option value="">Abstand oben</option>
               <option value="0px">0</option>
               <option value="8px">8</option>
               <option value="16px">16</option>
@@ -88,7 +92,7 @@ export default function CustomToolbar({ quillRef }: CustomToolbarProps) {
               <option value="32px">32</option>
             </select>
             <select className="ql-marginbottom" defaultValue="">
-              <option value="">Bottom</option>
+              <option value="">Abstand unten</option>
               <option value="0px">0</option>
               <option value="8px">8</option>
               <option value="16px">16</option>
@@ -100,9 +104,8 @@ export default function CustomToolbar({ quillRef }: CustomToolbarProps) {
             <button className="ql-align" value="right" title="Rechts" />
             <button className="ql-align" value="justify" title="Blocksatz" />
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
 }
-
