@@ -95,5 +95,5 @@ const CustomToolbar = forwardRef(function CustomToolbar(_, ref) {
     </div>
   );
 });
- 
+
 export default CustomToolbar;
