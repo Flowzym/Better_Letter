@@ -31,7 +31,6 @@ Size.whitelist = [
 ];
 Quill.register(Size, true);
 
-const DEFAULT_HISTORY = { delay: 1000, maxStack: 100, userOnly: true };
 
 const formats = [
   "font", "size",
@@ -70,13 +69,13 @@ const ForwardedReactQuill = forwardRef((props: any, ref) => {
     }
   };
 
-  const { autoFocus: _ignored, modules: userModules = {}, ...rest } = props || {};
+  const rest = props || {};
 
   const modules = {
     toolbar: {
       container: '#custom-toolbar',
     },
-    history: userModules.history || DEFAULT_HISTORY,
+    history: { delay: 1000, maxStack: 100, userOnly: true },
   };
 
   return (
