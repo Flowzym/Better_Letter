@@ -1,16 +1,5 @@
 import Quill from "quill";
-import { StyleAttributor } from "parchment";
-
-const Parchment = Quill.import("parchment");
-
-const LineHeightStyle = new StyleAttributor(
-  "lineheight",
-  "line-height",
-  {
-    scope: (Parchment as any).Scope.BLOCK,
-    whitelist: ["1", "1.15", "1.5", "2"],
-  }
-);
+const LineHeightStyle = Quill.import("attributors/style/line-height");
 
 Quill.register(LineHeightStyle, true);
 
