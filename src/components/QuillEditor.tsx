@@ -19,7 +19,6 @@ const DEFAULT_SETTINGS: EditorSettings = {
   placeholderEnabled: false, // BOLT-UI-ANPASSUNG 2025-01-15: Platzhalter deaktiviert
   placeholderColor: '#9ca3af',
   readOnly: false,
-  autoFocus: false, // BOLT-UI-ANPASSUNG 2025-01-15: AutoFocus deaktiviert
   toolbarMode: 'wrap',
   toolbarAutoHide: false,
   toolbarPosition: 'top',
@@ -66,14 +65,6 @@ export default function QuillEditor({ value, onChange }: QuillEditorProps) {
   const [showSettings, setShowSettings] = useState(false);
   const [clipboardError, setClipboardError] = useState<string>('');
 
-  // Prevent initial auto focus/cursor after mount
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const quill = quillRef.current?.getEditor();
-      quill?.root.blur();
-    }, 0);
-    return () => clearTimeout(timer);
-  }, []);
 
   // Load settings and templates from localStorage
   const [settings, setSettings] = useState<EditorSettings>(() => {
