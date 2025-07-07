@@ -39,10 +39,10 @@ export default function CustomToolbar({ quillRef }: CustomToolbarProps) {
       const toolbarModule = quill.getModule('toolbar');
       if (toolbarModule && toolbarModule.container !== toolbarRef.current) {
         toolbarModule.container = toolbarRef.current;
-        toolbarModule.init();
+        // toolbarModule.init(); // removed, does not exist
       }
     }
-  }, [quillRef, toolbarRef]);
+  }, [quillRef]);
 
   return (
     <div className="toolbar-wrapper">
