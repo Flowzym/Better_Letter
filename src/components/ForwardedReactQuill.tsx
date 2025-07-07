@@ -73,14 +73,14 @@ const ForwardedReactQuill = forwardRef((props: any, ref) => {
 
   const modules = {
     toolbar: {
-      container: '#custom-toolbar',
+      container: '#toolbar',
     },
     history: { delay: 1000, maxStack: 100, userOnly: true },
   };
 
   return (
     <>
-      <CustomToolbar />
+      <CustomToolbar quillRef={innerRef} />
       {renderEditor && (
         <ReactQuill
           {...rest}
