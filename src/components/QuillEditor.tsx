@@ -19,7 +19,6 @@ const DEFAULT_SETTINGS: EditorSettings = {
   placeholderEnabled: false, // BOLT-UI-ANPASSUNG 2025-01-15: Platzhalter deaktiviert
   placeholderColor: '#9ca3af',
   readOnly: false,
-  autoFocus: false,
   toolbarMode: 'wrap',
   toolbarAutoHide: false,
   toolbarPosition: 'top',
