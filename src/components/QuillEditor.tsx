@@ -19,6 +19,7 @@ const DEFAULT_SETTINGS: EditorSettings = {
   placeholderEnabled: false, // BOLT-UI-ANPASSUNG 2025-01-15: Platzhalter deaktiviert
   placeholderColor: '#9ca3af',
   readOnly: false,
+  autoFocus: false,
   toolbarMode: 'wrap',
   toolbarAutoHide: false,
   toolbarPosition: 'top',
@@ -344,6 +345,7 @@ export default function QuillEditor({ value, onChange }: QuillEditorProps) {
                 modules={modules}
                 formats={formats}
                 placeholder="" // BOLT-UI-ANPASSUNG 2025-01-15: Kein Platzhalter
+                autoFocus={settings.autoFocus}
                 readOnly={settings.readOnly}
                 theme={settings.theme}
                 style={{
