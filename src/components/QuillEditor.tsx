@@ -67,11 +67,10 @@ export default function QuillEditor({ value, onChange, autoFocus = false }: Quil
   const [showSettings, setShowSettings] = useState(false);
   const [clipboardError, setClipboardError] = useState<string>('');
 
-  // Focus editor on mount if autoFocus is enabled
+  // Debug: log current autoFocus setting without applying focus
   useEffect(() => {
-    if (autoFocus) {
-      quillRef.current?.focus();
-    }
+    console.debug('QuillEditor autoFocus:', autoFocus);
+    // quillRef.current?.focus();
   }, [autoFocus]);
   
   // Load settings and templates from localStorage
