@@ -37,16 +37,16 @@ export default function CustomToolbar({ quillRef }: CustomToolbarProps) {
     if (quillRef.current && toolbarRef.current) {
       const quill = quillRef.current.getEditor();
       const toolbarModule = quill.getModule('toolbar');
-      if (toolbarModule) {
+      if (toolbarModule && toolbarModule.container !== toolbarRef.current) {
         toolbarModule.container = toolbarRef.current;
         toolbarModule.init();
       }
     }
-  }, [quillRef]);
+  }, [quillRef, toolbarRef]);
 
   return (
     <div className="toolbar-wrapper">
-      <div ref={toolbarRef} id="toolbar" className="flex flex-wrap items-center gap-2">
+      <div ref={toolbarRef} className="flex flex-wrap items-center gap-2">
         <button type="button" onClick={() => quillRef.current?.getEditor().history.undo()} title="Rückgängig" className="p-1">
           <UndoIcon />
         </button>
