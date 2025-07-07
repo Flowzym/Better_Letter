@@ -1,9 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
-import type ReactQuill from 'react-quill';
-
-interface CustomToolbarProps {
-  quillRef: React.RefObject<ReactQuill>;
-}
+import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 
 const UndoIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -29,28 +24,19 @@ const MoreIcon = () => (
   </svg>
 );
 
-export default function CustomToolbar({ quillRef }: CustomToolbarProps) {
+const CustomToolbar = forwardRef(function CustomToolbar(_, ref) {
   const toolbarRef = useRef<HTMLDivElement>(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
 
-  useEffect(() => {
-    if (quillRef.current && toolbarRef.current) {
-      const quill = quillRef.current.getEditor();
-      const toolbarModule = quill.getModule('toolbar');
-      if (toolbarModule && toolbarModule.container !== toolbarRef.current) {
-        toolbarModule.container = toolbarRef.current;
-        // toolbarModule.init(); // removed, does not exist
-      }
-    }
-  }, [quillRef]);
+  useImperativeHandle(ref, () => toolbarRef.current as HTMLDivElement, []);
 
   return (
     <div className="toolbar-wrapper">
       <div ref={toolbarRef} className="flex flex-wrap items-center gap-2">
-        <button type="button" onClick={() => quillRef.current?.getEditor().history.undo()} title="Rückgängig" className="p-1">
+        <button className="ql-undo" title="Rückgängig">
           <UndoIcon />
         </button>
-        <button type="button" onClick={() => quillRef.current?.getEditor().history.redo()} title="Wiederholen" className="p-1">
+        <button className="ql-redo" title="Wiederholen">
           <RedoIcon />
         </button>
 
@@ -108,4 +94,6 @@ export default function CustomToolbar({ quillRef }: CustomToolbarProps) {
       </div>
     </div>
   );
-}
+});
+
+export default CustomToolbar;
