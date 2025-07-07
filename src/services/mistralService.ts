@@ -1,5 +1,5 @@
-const MISTRAL_API_KEY = 'OxzXVw0IZxKEtS567E110UlKazPNjol5';
-const MISTRAL_API_URL = 'https://api.mistral.ai/v1/chat/completions';
+const MISTRAL_API_KEY = import.meta.env.VITE_KI_API_KEY;
+const MISTRAL_API_URL = import.meta.env.VITE_KI_API_URL;
 
 export interface GenerateLetterRequest {
   cvContent: string;
