@@ -754,7 +754,7 @@ export default function CustomToolbar({
         <select
           key="font"
           onChange={(e) => handleFont(e.target.value)}
-          className="px-2 py-1 border-0 rounded text-xs focus:outline-none focus:ring-1 focus:ring-orange-500 bg-white"
+          className="ql-font px-2 py-1 border-0 rounded text-xs focus:outline-none focus:ring-1 focus:ring-orange-500 bg-white"
           title="Schriftart"
           defaultValue=""
         >
@@ -778,7 +778,7 @@ export default function CustomToolbar({
         <select
           key="size"
           onChange={(e) => handleSize(e.target.value)}
-          className="px-2 py-1 border-0 rounded text-xs focus:outline-none focus:ring-1 focus:ring-orange-500 bg-white"
+          className="ql-size px-2 py-1 border-0 rounded text-xs focus:outline-none focus:ring-1 focus:ring-orange-500 bg-white"
           title="Schriftgröße"
           defaultValue=""
         >
