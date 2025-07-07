@@ -6,6 +6,35 @@ import React, {
   useState,
 } from "react";
 import ReactQuill from "react-quill";
+import Quill from "quill";
+
+// Register custom font and size whitelists so that selections apply correctly
+const Font = Quill.import("formats/font");
+Font.whitelist = [
+  "serif",
+  "monospace",
+  "Arial",
+  "Helvetica",
+  "Georgia",
+  "Verdana",
+  "Tahoma",
+];
+Quill.register(Font, true);
+
+const Size = Quill.import("attributors/style/size");
+Size.whitelist = [
+  "9px",
+  "10px",
+  "11px",
+  "12px",
+  "14px",
+  "16px",
+  "18px",
+  "20px",
+  "22px",
+  "24px",
+];
+Quill.register(Size, true);
 
 const toolbarConfig = {
   toolbar: false,
