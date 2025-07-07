@@ -6,6 +6,22 @@ import TemplateManagerModal, { Template } from './TemplateManagerModal';
 import SettingsModal, { EditorSettings } from './SettingsModal';
 import ReactQuill from 'react-quill';
 
+function useQuillAutoFocus(ref: React.MutableRefObject<ReactQuill | null>) {
+  useEffect(() => {
+    let id: NodeJS.Timeout | undefined;
+    function tryFocus(attempt = 0) {
+      const editor = ref.current?.getEditor?.();
+      if (editor) {
+        editor.focus();
+      } else if (attempt < 5) {
+        id = setTimeout(() => tryFocus(attempt + 1), 50);
+      }
+    }
+    tryFocus();
+    return () => clearTimeout(id);
+  }, []);
+}
+
 interface QuillEditorProps {
   value: string;
   onChange: (content: string) => void;
@@ -59,6 +75,7 @@ const DEFAULT_TEMPLATES: Template[] = [
 export default function QuillEditor({ value, onChange }: QuillEditorProps) {
   // quillRef points to the underlying ReactQuill instance
   const quillRef = useRef<ReactQuill | null>(null);
+  useQuillAutoFocus(quillRef);
   const [zoom, setZoom] = useState(140); // BOLT-UI-ANPASSUNG 2025-01-15: Standard 140% Zoom, aber als 100% angezeigt
   const [displayZoom, setDisplayZoom] = useState(100); // BOLT-UI-ANPASSUNG 2025-01-15: User sieht 100%
   const [showTemplates, setShowTemplates] = useState(false);
