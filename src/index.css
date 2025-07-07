@@ -327,3 +327,22 @@ select:focus,
 button:focus {
   z-index: 10;
 }
+
+/* Prevent unwanted editor focus */
+.ql-editor {
+  outline: none !important;
+}
+
+.ql-editor:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Only allow focus when explicitly clicked */
+.ql-container:not(.ql-focus-allowed) .ql-editor {
+  pointer-events: auto;
+}
+
+.ql-container:not(.ql-focus-allowed) .ql-editor:focus {
+  outline: none !important;
+}

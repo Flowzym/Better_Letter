@@ -66,6 +66,21 @@ export default function QuillEditor({ value, onChange }: QuillEditorProps) {
   const [showSettings, setShowSettings] = useState(false);
   const [clipboardError, setClipboardError] = useState<string>('');
 
+  // Prevent any unwanted focus behavior
+  useEffect(() => {
+    // Ensure editor doesn't auto-focus unless explicitly enabled
+    if (!settings.autoFocus) {
+      const timer = setTimeout(() => {
+        const quill = quillRef.current?.getEditor();
+        if (quill && quill.root) {
+          quill.root.blur();
+          // Remove any tabindex that might cause focus
+          quill.root.removeAttribute('tabindex');
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [settings.autoFocus]);
 
   // Load settings and templates from localStorage
   const [settings, setSettings] = useState<EditorSettings>(() => {
@@ -286,6 +301,12 @@ export default function QuillEditor({ value, onChange }: QuillEditorProps) {
   // Blur editor when clicking outside
   useEffect(() => {
     const handleMouseDown = (event: MouseEvent) => {
+      // Don't interfere if clicking on profile inputs
+      const target = event.target as HTMLElement;
+      if (target.closest('.profile-input') || target.closest('.autocomplete-input')) {
+        return;
+      }
+      
       const quill = quillRef.current?.getEditor();
       if (!quill) return;
       const root = quill.root;
