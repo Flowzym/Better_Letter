@@ -7,6 +7,29 @@ import React, {
 } from "react";
 import ReactQuill from "react-quill";
 
+const toolbarConfig = {
+  toolbar: false,
+  history: { delay: 1000, maxStack: 100, userOnly: true },
+};
+
+const formats = [
+  "font",
+  "size",
+  "header",
+  "bold",
+  "italic",
+  "underline",
+  "strike",
+  "blockquote",
+  "list",
+  "bullet",
+  "indent",
+  "align",
+  "link",
+  "color",
+  "background",
+];
+
 // BOLT-UI-ANPASSUNG 2025-01-15: Dieses Forwarding ermöglicht eine korrekte Weitergabe von Refs ohne findDOMNode!
 const ForwardedReactQuill = forwardRef((props: any, ref) => {
   const innerRef = useRef<ReactQuill | null>(null);
@@ -40,7 +63,14 @@ const ForwardedReactQuill = forwardRef((props: any, ref) => {
 
   const { autoFocus: _ignored, ...rest } = props || {};
 
-  return renderEditor ? <ReactQuill {...rest} ref={setRefs} /> : null;
+  return renderEditor ? (
+    <ReactQuill
+      {...rest}
+      ref={setRefs}
+      modules={toolbarConfig}
+      formats={formats}
+    />
+  ) : null;
 });
 
 export default ForwardedReactQuill;
