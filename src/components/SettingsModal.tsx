@@ -29,8 +29,8 @@ export default function SettingsModal({
           <label>
             API Key:
             <input
-              value={model.apiKey}
-              onChange={(e) => updateModel(model.id, "apiKey", e.target.value)}
+              value={model.api_key}
+              onChange={(e) => updateModel(model.id, "api_key", e.target.value)}
               className="input"
             />
           </label>

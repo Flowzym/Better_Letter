@@ -118,8 +118,8 @@ function KIModelSettingsItem({
           <span className="text-sm font-medium text-gray-700">API-Key</span>
           <input
             type="text"
-            value={model.apiKey}
-            onChange={(e) => handleModelField(model.id, 'apiKey', e.target.value)}
+            value={model.api_key}
+            onChange={(e) => handleModelField(model.id, 'api_key', e.target.value)}
             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
             style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
           />
