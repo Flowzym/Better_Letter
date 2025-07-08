@@ -320,7 +320,7 @@ function HomePage() {
         if (isSupabaseConfigured()) {
           try {
             console.log('Loading profile data with mappings:', profileSourceMappings);
-            const supabaseConfig = await loadProfileSuggestions(profileSourceMappings, true); // Force refresh
+            const supabaseConfig = await loadProfileSuggestions(profileSourceMappings);
             console.log('Loaded profile config:', supabaseConfig);
             setProfileConfig(supabaseConfig);
             // Don't save to localStorage when using Supabase
