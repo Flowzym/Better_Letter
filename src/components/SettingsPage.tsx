@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Settings as SettingsIcon,
@@ -45,125 +45,136 @@ interface PromptState {
   styles: Record<string, PromptConfig>;
 }
 
+// Static data - moved outside component to prevent re-creation
+const MODEL_OPTIONS = [
+  'mistral-7b-instruct',
+  'mistral-tiny',
+  'mistral-small',
+  'mistral-medium',
+  'mistral-large',
+  'mixtral-8x7b',
+  'openrouter/mixtral',
+  'gpt-3.5-turbo',
+  'gpt-4',
+  'claude-3-opus'
+];
+
+const ENDPOINT_MAP: Record<string, string> = {
+  'mistral-7b-instruct': 'https://api.mistral.ai/v1/chat/completions',
+  'mistral-tiny': 'https://api.mistral.ai/v1/chat/completions',
+  'mistral-small': 'https://api.mistral.ai/v1/chat/completions',
+  'mistral-medium': 'https://api.mistral.ai/v1/chat/completions',
+  'mistral-large': 'https://api.mistral.ai/v1/chat/completions',
+  'mixtral-8x7b': 'https://api.mistral.ai/v1/chat/completions',
+  'openrouter/mixtral': 'https://openrouter.ai/api/v1/chat/completions',
+  'gpt-3.5-turbo': 'https://api.openai.com/v1/chat/completions',
+  'gpt-4': 'https://api.openai.com/v1/chat/completions',
+  'claude-3-opus': 'https://api.anthropic.com/v1/messages'
+};
+
+const TABS = [
+  { id: 'general', label: 'Allgemein', icon: SlidersHorizontal },
+  { id: 'ai', label: 'KI-Einstellungen', icon: Brain },
+  { id: 'prompts', label: 'Prompt-Vorlagen', icon: FileText },
+  { id: 'database', label: 'Datenbank', icon: DatabaseIcon },
+  { id: 'templates', label: 'Template-Manager', icon: FileText },
+  { id: 'import', label: 'Import/Export', icon: Download }
+] as const;
+
 // Helper functions moved outside component to prevent re-creation
-const loadPrompts = (key: string): Record<string, PromptConfig> => {
+const loadFromLocalStorage = (key: string, defaultValue: any) => {
   try {
     const saved = localStorage.getItem(key);
-    return saved ? JSON.parse(saved) : {};
+    return saved ? JSON.parse(saved) : defaultValue;
   } catch {
-    return {};
+    return defaultValue;
   }
 };
 
-const loadTemplatesFromStorage = (): Template[] => {
+const saveToLocalStorage = (key: string, value: any) => {
   try {
-    const saved = localStorage.getItem('templates');
-    return saved ? JSON.parse(saved) : [];
-  } catch {
-    return [];
-  }
-};
-
-const loadProfileSourceMappingsFromStorage = (): ProfileSourceMapping[] => {
-  try {
-    const saved = localStorage.getItem('profileSourceMappings');
-    return saved ? JSON.parse(saved) : [];
-  } catch {
-    return [];
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (error) {
+    console.error(`Error saving ${key} to localStorage:`, error);
   }
 };
 
 export default function SettingsPage() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<Tab>('ai');
   
-  // Static data that doesn't change
-  const modelOptions = [
-    'mistral-7b-instruct',
-    'mistral-tiny',
-    'mistral-small',
-    'mistral-medium',
-    'mistral-large',
-    'mixtral-8x7b',
-    'openrouter/mixtral',
-    'gpt-3.5-turbo',
-    'gpt-4',
-    'claude-3-opus'
-  ];
-
-  const endpointMap: Record<string, string> = {
-    'mistral-7b-instruct': 'https://api.mistral.ai/v1/chat/completions',
-    'mistral-tiny': 'https://api.mistral.ai/v1/chat/completions',
-    'mistral-small': 'https://api.mistral.ai/v1/chat/completions',
-    'mistral-medium': 'https://api.mistral.ai/v1/chat/completions',
-    'mistral-large': 'https://api.mistral.ai/v1/chat/completions',
-    'mixtral-8x7b': 'https://api.mistral.ai/v1/chat/completions',
-    'openrouter/mixtral': 'https://openrouter.ai/api/v1/chat/completions',
-    'gpt-3.5-turbo': 'https://api.openai.com/v1/chat/completions',
-    'gpt-4': 'https://api.openai.com/v1/chat/completions',
-    'claude-3-opus': 'https://api.anthropic.com/v1/messages'
-  };
-
-  // State with stable initial values
+  // Core state
+  const [activeTab, setActiveTab] = useState<Tab>('ai');
   const [models, setModels] = useState<KIModelSettings[]>([]);
   const [openModels, setOpenModels] = useState<string[]>([]);
   const [showModelModal, setShowModelModal] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [connStatus, setConnStatus] = useState<'idle' | 'success' | 'error' | 'loading'>('idle');
+  
+  // Prompt state
   const [prompts, setPrompts] = useState<PromptState>({
     documents: {},
     edits: {},
     styles: {}
   });
+  
+  // Settings state
   const [autoloadPrompts, setAutoloadPrompts] = useState(false);
   const [defaultStyle, setDefaultStyle] = useState('');
+  
+  // Template state
   const [templates, setTemplates] = useState<Template[]>([]);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
+  
+  // Profile source mappings state
   const [profileSourceMappings, setProfileSourceMappings] = useState<ProfileSourceMapping[]>([]);
-  const [isInitialized, setIsInitialized] = useState(false);
+  
+  // Loading state
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Initialize data once on mount
+  // Initialize all data once on mount
   useEffect(() => {
     let isMounted = true;
 
     const initializeData = async () => {
       try {
-        // Load KI models
+        // Load KI models from database
         const fromDB = await loadKIConfigs();
-        const merged = [...defaultKIModels];
+        const mergedModels = [...defaultKIModels];
         fromDB.forEach((m) => {
-          const idx = merged.findIndex((d) => d.id === m.id);
-          if (idx >= 0) merged[idx] = { ...merged[idx], ...m };
-          else merged.push(m);
+          const idx = mergedModels.findIndex((d) => d.id === m.id);
+          if (idx >= 0) mergedModels[idx] = { ...mergedModels[idx], ...m };
+          else mergedModels.push(m);
         });
 
         if (!isMounted) return;
 
-        // Load all data synchronously to prevent race conditions
-        const promptsData = {
-          documents: loadPrompts('documentTypes'),
-          edits: loadPrompts('editPrompts'),
-          styles: loadPrompts('stylePrompts')
-        };
+        // Load all localStorage data synchronously
+        const documentsData = loadFromLocalStorage('documentTypes', {});
+        const editsData = loadFromLocalStorage('editPrompts', {});
+        const stylesData = loadFromLocalStorage('stylePrompts', {});
+        const autoloadPromptsData = loadFromLocalStorage('autoloadPrompts', false);
+        const defaultStyleData = loadFromLocalStorage('defaultStyle', '');
+        const templatesData = loadFromLocalStorage('templates', []);
+        const profileSourceMappingsData = loadFromLocalStorage('profileSourceMappings', []);
 
-        const autoloadPromptsValue = localStorage.getItem('autoloadPrompts') === 'true';
-        const defaultStyleValue = localStorage.getItem('defaultStyle') || '';
-        const templatesData = loadTemplatesFromStorage();
-        const profileSourceMappingsData = loadProfileSourceMappingsFromStorage();
-
-        // Set all state at once to minimize re-renders
-        setModels(merged);
-        setOpenModels(merged.filter((m) => m.active).map((m) => m.id));
-        setPrompts(promptsData);
-        setAutoloadPrompts(autoloadPromptsValue);
-        setDefaultStyle(defaultStyleValue);
+        // Set all state in one batch to minimize re-renders
+        setModels(mergedModels);
+        setOpenModels(mergedModels.filter((m) => m.active).map((m) => m.id));
+        setPrompts({
+          documents: documentsData,
+          edits: editsData,
+          styles: stylesData
+        });
+        setAutoloadPrompts(autoloadPromptsData);
+        setDefaultStyle(defaultStyleData);
         setTemplates(templatesData);
         setProfileSourceMappings(profileSourceMappingsData);
-        setIsInitialized(true);
+        
+        setIsLoading(false);
       } catch (error) {
         console.error('Error initializing settings:', error);
         if (isMounted) {
-          setIsInitialized(true); // Still mark as initialized to prevent loading loop
+          setIsLoading(false);
         }
       }
     };
@@ -175,7 +186,7 @@ export default function SettingsPage() {
     };
   }, []);
 
-  // Memoized handlers to prevent re-creation
+  // Memoized handlers to prevent unnecessary re-renders
   const handleModelField = useCallback((
     id: string,
     field: keyof KIModelSettings,
@@ -188,11 +199,11 @@ export default function SettingsPage() {
     setModels((prev) =>
       prev.map((m) =>
         m.id === id
-          ? { ...m, model: modelName, endpoint: endpointMap[modelName] ?? m.endpoint }
+          ? { ...m, model: modelName, endpoint: ENDPOINT_MAP[modelName] ?? m.endpoint }
           : m
       )
     );
-  }, [endpointMap]);
+  }, []);
 
   const setActiveModel = useCallback((id: string) => {
     setModels((prev) => prev.map((m) => ({ ...m, active: m.id === id })));
@@ -204,7 +215,7 @@ export default function SettingsPage() {
       id: `model_${Date.now()}`,
       name: 'Neues Modell',
       apiKey: '',
-      endpoint: endpointMap['mistral-7b-instruct'],
+      endpoint: ENDPOINT_MAP['mistral-7b-instruct'],
       model: 'mistral-7b-instruct',
       temperature: 0.7,
       top_p: 0.95,
@@ -213,7 +224,7 @@ export default function SettingsPage() {
     };
     setModels((prev) => [...prev, newModel]);
     setOpenModels((prev) => [...prev, newModel.id]);
-  }, [endpointMap]);
+  }, []);
 
   const removeModel = useCallback((id: string) => {
     setModels((prev) => prev.filter((m) => m.id !== id));
@@ -256,31 +267,30 @@ export default function SettingsPage() {
     });
   }, []);
 
-  // Persist templates to localStorage
+  // Persist data to localStorage only when not loading
   useEffect(() => {
-    if (isInitialized) {
-      localStorage.setItem('templates', JSON.stringify(templates));
+    if (!isLoading) {
+      saveToLocalStorage('templates', templates);
     }
-  }, [templates, isInitialized]);
+  }, [templates, isLoading]);
 
-  // Persist profile source mappings to localStorage
   useEffect(() => {
-    if (isInitialized) {
-      localStorage.setItem('profileSourceMappings', JSON.stringify(profileSourceMappings));
+    if (!isLoading) {
+      saveToLocalStorage('profileSourceMappings', profileSourceMappings);
     }
-  }, [profileSourceMappings, isInitialized]);
+  }, [profileSourceMappings, isLoading]);
 
   const handleSave = useCallback(async () => {
     setIsSaving(true);
     try {
       await saveKIConfigs(models);
-      localStorage.setItem('documentTypes', JSON.stringify(prompts.documents));
-      localStorage.setItem('editPrompts', JSON.stringify(prompts.edits));
-      localStorage.setItem('stylePrompts', JSON.stringify(prompts.styles));
-      localStorage.setItem('autoloadPrompts', JSON.stringify(autoloadPrompts));
-      localStorage.setItem('defaultStyle', defaultStyle);
-      localStorage.setItem('templates', JSON.stringify(templates));
-      localStorage.setItem('profileSourceMappings', JSON.stringify(profileSourceMappings));
+      saveToLocalStorage('documentTypes', prompts.documents);
+      saveToLocalStorage('editPrompts', prompts.edits);
+      saveToLocalStorage('stylePrompts', prompts.styles);
+      saveToLocalStorage('autoloadPrompts', autoloadPrompts);
+      saveToLocalStorage('defaultStyle', defaultStyle);
+      saveToLocalStorage('templates', templates);
+      saveToLocalStorage('profileSourceMappings', profileSourceMappings);
       navigate(-1);
     } catch (error) {
       console.error('Save error:', error);
@@ -301,7 +311,7 @@ export default function SettingsPage() {
   }, []);
 
   const handleExport = useCallback(() => {
-    const dbMapping = localStorage.getItem('databaseMapping');
+    const dbMapping = loadFromLocalStorage('databaseMapping', null);
     const data = {
       models,
       prompts,
@@ -309,7 +319,7 @@ export default function SettingsPage() {
       profileSourceMappings,
       autoloadPrompts,
       defaultStyle,
-      databaseMapping: dbMapping ? JSON.parse(dbMapping) : null
+      databaseMapping: dbMapping
     };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -339,7 +349,7 @@ export default function SettingsPage() {
       if (typeof data.autoloadPrompts === 'boolean') setAutoloadPrompts(data.autoloadPrompts);
       if (data.defaultStyle) setDefaultStyle(data.defaultStyle);
       if (data.databaseMapping) {
-        localStorage.setItem('databaseMapping', JSON.stringify(data.databaseMapping));
+        saveToLocalStorage('databaseMapping', data.databaseMapping);
       }
     } catch (err) {
       console.error('Failed to import settings', err);
@@ -347,8 +357,13 @@ export default function SettingsPage() {
     e.target.value = '';
   }, []);
 
-  // Don't render until initialized to prevent flickering
-  if (!isInitialized) {
+  // Memoize sorted models to prevent unnecessary re-renders
+  const sortedModels = useMemo(() => {
+    return [...models].sort((a, b) => (a.active === b.active ? 0 : a.active ? -1 : 1));
+  }, [models]);
+
+  // Show loading state
+  if (isLoading) {
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div className="bg-white rounded-lg shadow-xl p-8">
@@ -360,15 +375,6 @@ export default function SettingsPage() {
       </div>
     );
   }
-
-  const tabs = [
-    { id: 'general', label: 'Allgemein', icon: SlidersHorizontal },
-    { id: 'ai', label: 'KI-Einstellungen', icon: Brain },
-    { id: 'prompts', label: 'Prompt-Vorlagen', icon: FileText },
-    { id: 'database', label: 'Datenbank', icon: DatabaseIcon },
-    { id: 'templates', label: 'Template-Manager', icon: FileText },
-    { id: 'import', label: 'Import/Export', icon: Download }
-  ] as const;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -405,7 +411,7 @@ export default function SettingsPage() {
         <div className="flex flex-1 overflow-hidden">
           <aside className="w-56 border-r border-gray-200 flex-shrink-0 overflow-y-auto">
             <nav className="p-4 space-y-2">
-              {tabs.map(({ id, label, icon: Icon }) => (
+              {TABS.map(({ id, label, icon: Icon }) => (
                 <button
                   key={id}
                   onClick={() => setActiveTab(id as Tab)}
@@ -471,26 +477,24 @@ export default function SettingsPage() {
                   </button>
                 </div>
                 <div className="space-y-4">
-                  {[...models]
-                    .sort((a, b) => (a.active === b.active ? 0 : a.active ? -1 : 1))
-                    .map((model) => {
-                      const selected = modelOptions.includes(model.model) ? model.model : 'custom';
-                      const isOpen = openModels.includes(model.id);
-                      return (
-                        <details
-                          key={model.id}
-                          open={isOpen}
-                          onToggle={() =>
-                            setOpenModels((prev) =>
-                              prev.includes(model.id)
-                                ? prev.filter((id) => id !== model.id)
-                                : [...prev, model.id]
-                            )
-                          }
-                          className={`group border rounded-lg p-4 shadow-sm ${
-                            model.active ? 'border-orange-400 bg-orange-50' : 'border-gray-200'
-                          }`}
-                        >
+                  {sortedModels.map((model) => {
+                    const selected = MODEL_OPTIONS.includes(model.model) ? model.model : 'custom';
+                    const isOpen = openModels.includes(model.id);
+                    return (
+                      <details
+                        key={model.id}
+                        open={isOpen}
+                        onToggle={() =>
+                          setOpenModels((prev) =>
+                            prev.includes(model.id)
+                              ? prev.filter((id) => id !== model.id)
+                              : [...prev, model.id]
+                          )
+                        }
+                        className={`group border rounded-lg p-4 shadow-sm ${
+                          model.active ? 'border-orange-400 bg-orange-50' : 'border-gray-200'
+                        }`}
+                      >
                         <summary className="cursor-pointer flex items-center justify-between">
                           <span className="text-lg font-medium">{model.name}</span>
                           <div className="flex items-center space-x-2">
@@ -514,7 +518,7 @@ export default function SettingsPage() {
                               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
                               style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
                             >
-                              {modelOptions.map((opt) => (
+                              {MODEL_OPTIONS.map((opt) => (
                                 <option key={opt} value={opt}>
                                   {opt}
                                 </option>
