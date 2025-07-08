@@ -1,7 +1,7 @@
 import { supabase } from "../lib/supabase";
 import { KIModelSettings } from "../types/KIModelSettings";
 
-export async function loadKIConfigs(): Promise<KIModelSettings[]> {
+async function loadKIConfigs(): Promise<KIModelSettings[]> {
   const { data, error } = await supabase.from("ki_settings").select("*");
   if (error) {
     console.error("Fehler beim Laden der KI-Konfigurationen:", error.message);
@@ -10,7 +10,7 @@ export async function loadKIConfigs(): Promise<KIModelSettings[]> {
   return data ?? [];
 }
 
-export async function saveKIConfigs(models: KIModelSettings[]) {
+async function saveKIConfigs(models: KIModelSettings[]) {
   const { error } = await supabase.from("ki_settings").upsert(models, {
     onConflict: "id",
   });
@@ -20,7 +20,7 @@ export async function saveKIConfigs(models: KIModelSettings[]) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function getDatabaseStats(): Promise<any> {
+async function getDatabaseStats(): Promise<any> {
   const { data, error } = await supabase
     .from("usage_stats")
     .select("*")
@@ -35,7 +35,7 @@ export async function getDatabaseStats(): Promise<any> {
   return data?.[0] ?? null;
 }
 
-export function isSupabaseConfigured(): boolean {
+function isSupabaseConfigured(): boolean {
   return Boolean(
     import.meta.env.VITE_SUPABASE_URL &&
     import.meta.env.VITE_SUPABASE_KEY
