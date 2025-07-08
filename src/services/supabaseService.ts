@@ -102,15 +102,18 @@ async function testTableColumnMapping(table: string, column: string) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function getDatabaseStats(): Promise<any> {
+export async function getDatabaseStats(): Promise<any> {
   const { data, error } = await supabase
-    .from('system_status')
-    .select('*')
-    .order('timestamp', { ascending: false })
+    .from("system_status")
+    .select("*")
+    .order("timestamp", { ascending: false })
     .limit(1);
 
   if (error) {
-    console.error(error.message);
+    console.error(
+      "Fehler beim Abrufen der Datenbankstatistiken:",
+      error.message
+    );
     return null;
   }
 
@@ -125,8 +128,7 @@ function isSupabaseConfigured(): boolean {
 }
 
 async function loadProfileSuggestions(
-  mappings: ProfileSourceMapping[] = [],
-  _forceRefresh = false
+  mappings: ProfileSourceMapping[] = []
 ): Promise<ProfileConfig> {
   const result: ProfileConfig = {
     berufe: [],
@@ -181,7 +183,6 @@ async function fetchTableColumns(tableName: string): Promise<string[]> {
 export {
   loadKIConfigs,
   saveKIConfigs,
-  getDatabaseStats,
   isSupabaseConfigured,
   loadProfileSuggestions,
   testDatabaseConnection,
