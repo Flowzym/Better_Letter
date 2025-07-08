@@ -126,7 +126,7 @@ export async function getDatabaseStats(): Promise<any> {
   const { data, error } = await supabase
     .from("system_status")
     .select("*")
-    .order("timestamp", { ascending: false })
+    .order("created_at", { ascending: false })
     .limit(1);
 
   if (error) {
