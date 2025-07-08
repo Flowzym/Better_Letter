@@ -50,7 +50,7 @@ const formats = [
 
 interface ForwardedReactQuillProps {
   onZoomChange?: () => void;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 const ForwardedReactQuill = forwardRef((props: ForwardedReactQuillProps, ref) => {
@@ -81,7 +81,9 @@ const ForwardedReactQuill = forwardRef((props: ForwardedReactQuillProps, ref) =>
     }
   };
 
-  const { autoFocus: _ignored, modules: userModules = {}, onZoomChange, ...rest } = props || {};
+  const { autoFocus: _ignored, modules: userModules = {}, onZoomChange, ...rest } =
+    props || {};
+  void _ignored;
 
   const modules = useMemo(
     () => ({
