@@ -15,7 +15,6 @@ import SettingsModal from './SettingsModal';
 import TemplateManagerModal, { Template } from './TemplateManagerModal';
 import ProfileSourceSettings from './ProfileSourceSettings';
 import DatabaseStatus from './DatabaseStatus';
-import DatabaseMappingSection from './DatabaseMappingSection';
 import KIModelSettingsItem from './KIModelSettingsItem';
 import { KIModelSettings } from '../types/KIModelSettings';
 import { defaultKIModels } from '../constants/kiDefaults';
@@ -611,7 +610,6 @@ export default function SettingsPage() {
                   sourceMappings={profileSourceMappings}
                   onSourceMappingsChange={setProfileSourceMappings}
                 />
-                <DatabaseMappingSection />
               </div>
             )}
 
