@@ -130,6 +130,7 @@ async function testTableColumnMapping(table: string, column: string) {
   return { success: true, sampleData: samples };
 }
 
+
 async function getDatabaseStats(
   mappings: ProfileSourceMapping[] = []
 ): Promise<DatabaseStats> {
@@ -141,19 +142,42 @@ async function getDatabaseStats(
     ausbildung: 0,
   };
 
+  if (mappings.length === 0) {
+    console.warn('getDatabaseStats: No mappings provided.');
+  }
+
+  const tables = await getSupabaseTableNames();
+  const tableSet = new Set(tables.map((t) => t.table_name));
+
   for (const m of mappings.filter((m) => m.isActive)) {
+    if (!m.tableName || !m.columnName) {
+      console.warn('Ung\u00fcltiges Mapping \u00fcbersprungen:', m);
+      continue;
+    }
+
+    if (!tableSet.has(m.tableName)) {
+      console.error(`Tabelle '${m.tableName}' existiert nicht in Supabase.`);
+      continue;
+    }
+
     try {
       const { count, error } = await supabase
         .from(m.tableName)
         .select('*', { count: 'exact', head: true });
       if (error) {
-        console.error('Fehler beim Abrufen der Statistiken:', error.message);
+        console.error(
+          `Fehler beim Abrufen der Statistiken f\u00fcr ${m.tableName}:`,
+          error.message
+        );
         continue;
       }
       const c = count ?? 0;
       counts[m.category] += c;
     } catch (err) {
-      console.error('Fehler beim Abrufen der Statistiken:', err);
+      console.error(
+        `Fehler beim Abrufen der Statistiken f\u00fcr ${m.tableName}:`,
+        err
+      );
     }
   }
 
@@ -163,8 +187,8 @@ async function getDatabaseStats(
   );
 
   return { totalFromMappings, ...counts };
-}
 
+}
 function isSupabaseConfigured(): boolean {
   return Boolean(
     import.meta.env.VITE_SUPABASE_URL &&
