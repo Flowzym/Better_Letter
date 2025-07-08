@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Database as DatabaseIcon, CheckCircle, XCircle, RefreshCw, AlertCircle } from 'lucide-react';
-import { testDatabaseConnection } from '../services/supabaseService';
+import { testSupabaseConnection } from '../services/supabaseService';
 
 export default function DatabaseStatusPanel() {
   const [status, setStatus] = useState<'idle' | 'success' | 'error' | 'loading'>('idle');
@@ -10,7 +10,7 @@ export default function DatabaseStatusPanel() {
     setStatus('loading');
     setMessage('');
     try {
-      const success = await testDatabaseConnection();
+      const success = await testSupabaseConnection();
       if (success) {
         setStatus('success');
         setMessage('Verbindung aktiv');
