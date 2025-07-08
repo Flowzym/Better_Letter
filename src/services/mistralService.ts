@@ -1,5 +1,39 @@
 import { KIModelSettings } from "../types/KIModelSettings";
 
+async function callMistral(
+  payload: Record<string, unknown>,
+  config: KIModelSettings
+) {
+  if (!config.api_key || !config.api_key.startsWith("sk-")) {
+    throw new Error(
+      "Fehlender oder ungültiger API-Key. Bitte in den Einstellungen prüfen."
+    );
+  }
+
+  try {
+    const res = await fetch(config.endpoint, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${config.api_key}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      console.warn("Fehler-Antwort:", res.status, text);
+      throw new Error(`KI-Antwort fehlgeschlagen (${res.status})`);
+    }
+
+    const data = await res.json();
+    return data.choices?.[0]?.message?.content ?? "";
+  } catch (err) {
+    console.error("API-Aufruffehler:", err);
+    throw new Error("Verbindung zur KI fehlgeschlagen.");
+  }
+}
+
 async function generateText(prompt: string, config: KIModelSettings) {
   const body = {
     model: config.model,
@@ -9,18 +43,7 @@ async function generateText(prompt: string, config: KIModelSettings) {
     messages: [{ role: "user", content: prompt }],
   };
 
-  const res = await fetch(config.endpoint, {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${config.apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
-
-  if (!res.ok) throw new Error("KI-Antwort fehlgeschlagen.");
-  const data = await res.json();
-  return data.choices?.[0]?.message?.content ?? "";
+  return callMistral(body, config);
 }
 
 async function generateCoverLetter({
@@ -61,18 +84,7 @@ async function generateCoverLetter({
     ],
   };
 
-  const res = await fetch(config.endpoint, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${config.apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
-
-  if (!res.ok) throw new Error("KI-Antwort fehlgeschlagen.");
-  const data = await res.json();
-  return data.choices?.[0]?.message?.content ?? "";
+  return callMistral(body, config);
 }
 
 async function editCoverLetter(
@@ -91,18 +103,7 @@ async function editCoverLetter(
     ],
   };
 
-  const res = await fetch(config.endpoint, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${config.apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
-
-  if (!res.ok) throw new Error("KI-Antwort fehlgeschlagen.");
-  const data = await res.json();
-  return data.choices?.[0]?.message?.content ?? "";
+  return callMistral(body, config);
 }
 
 export { generateText, editCoverLetter, generateCoverLetter };
