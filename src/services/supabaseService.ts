@@ -69,6 +69,21 @@ async function testDatabaseConnection(): Promise<boolean> {
   return true;
 }
 
+async function fetchTableColumns(tableName: string): Promise<string[]> {
+  const { data, error } = await supabase
+    .from('information_schema.columns')
+    .select('column_name')
+    .eq('table_name', tableName)
+    .order('ordinal_position');
+
+  if (error) {
+    console.error('Error fetching table columns:', error.message);
+    return [];
+  }
+
+  return (data as { column_name: string }[]).map((row) => row.column_name);
+}
+
 export {
   loadKIConfigs,
   saveKIConfigs,
@@ -76,4 +91,5 @@ export {
   isSupabaseConfigured,
   loadProfileSuggestions,
   testDatabaseConnection,
+  fetchTableColumns,
 };
