@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Database as DatabaseIcon, Plus, Trash2 } from 'lucide-react';
-import { fetchTableColumns } from '../services/supabaseService';
+import { supabase } from '../lib/supabase';
 
 interface MappingRow {
   dbField: string;
@@ -31,29 +31,43 @@ export default function DatabaseMappingSection() {
   const [tableName, setTableName] = useState(initial.tableName);
   const [isActive, setIsActive] = useState<boolean>(initial.isActive);
   const [mappings, setMappings] = useState<MappingRow[]>(initial.mappings);
-  const [columnCache, setColumnCache] = useState<Record<string, string[]>>({});
-  const [columns, setColumns] = useState<string[]>([]);
+  const [availableTables, setAvailableTables] = useState<string[]>([]);
+  const [availableColumns, setAvailableColumns] = useState<string[]>([]);
   const [error, setError] = useState<string>('');
 
   useEffect(() => {
-    const loadColumns = async () => {
-      if (!tableName) {
-        setColumns([]);
-        return;
+    const fetchTables = async () => {
+      const { data, error } = await supabase
+        .from('information_schema.tables')
+        .select('table_name')
+        .eq('table_schema', 'public');
+      if (error) {
+        console.error('Tabellen konnten nicht geladen werden:', error.message);
+      } else {
+        setAvailableTables((data as { table_name: string }[]).map(row => row.table_name));
       }
-
-      if (columnCache[tableName]) {
-        setColumns(columnCache[tableName]);
-        return;
-      }
-
-      const cols = await fetchTableColumns(tableName);
-      setColumnCache(prev => ({ ...prev, [tableName]: cols }));
-      setColumns(cols);
     };
 
-    loadColumns();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    fetchTables();
+  }, []);
+
+  useEffect(() => {
+    if (!tableName) return;
+
+    const fetchColumns = async () => {
+      const { data, error } = await supabase
+        .from('information_schema.columns')
+        .select('column_name')
+        .eq('table_name', tableName);
+      if (error) {
+        console.error('Fehler beim Laden der Spalten:', error.message);
+        setAvailableColumns([]);
+      } else {
+        setAvailableColumns((data as { column_name: string }[]).map(col => col.column_name));
+      }
+    };
+
+    fetchColumns();
   }, [tableName]);
 
   const updateRow = (index: number, field: keyof MappingRow, value: string) => {
@@ -69,9 +83,10 @@ export default function DatabaseMappingSection() {
   };
 
   const handleSave = () => {
-    if (tableName && columnCache[tableName]) {
-      const cols = columnCache[tableName];
-      const invalid = mappings.some(row => row.dbField && !cols.includes(row.dbField));
+    if (tableName && availableColumns.length > 0) {
+      const invalid = mappings.some(
+        row => row.dbField && !availableColumns.includes(row.dbField)
+      );
       if (invalid) {
         setError('Einige Datenbankfelder existieren nicht');
         return;
@@ -96,13 +111,19 @@ export default function DatabaseMappingSection() {
 
       <div className="space-y-2">
         <label className="block text-sm font-medium text-gray-700">Tabellenname</label>
-        <input
-          type="text"
+        <select
           value={tableName}
           onChange={e => setTableName(e.target.value)}
           className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
           style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-        />
+        >
+          <option value="">Tabelle wählen</option>
+          {availableTables.map(name => (
+            <option key={name} value={name}>
+              {name}
+            </option>
+          ))}
+        </select>
       </div>
 
       <label className="flex items-center space-x-2">
@@ -124,21 +145,19 @@ export default function DatabaseMappingSection() {
         {mappings.map((row, index) => (
           <div key={index} className="grid grid-cols-2 gap-2 items-center">
             <div>
-              <input
-                type="text"
-                list={`cols-${index}`}
+              <select
                 value={row.dbField}
                 onChange={e => updateRow(index, 'dbField', e.target.value)}
                 className="w-full px-2 py-1 border rounded focus:outline-none focus:ring-2"
                 style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-              />
-              {columns.length > 0 && (
-                <datalist id={`cols-${index}`}>
-                  {columns.map(c => (
-                    <option key={c} value={c} />
-                  ))}
-                </datalist>
-              )}
+              >
+                <option value="">Feld wählen</option>
+                {availableColumns.map(col => (
+                  <option key={col} value={col}>
+                    {col}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="flex items-center space-x-2">
               <input
