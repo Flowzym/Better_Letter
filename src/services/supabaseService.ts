@@ -21,22 +21,30 @@ export async function saveKIConfigs(models: KIModelSettings[]) {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function getDatabaseStats(): Promise<any> {
-  try {
-    const { data, error } = await supabase
-      .from("usage_stats")
-      .select("*")
-      .order("timestamp", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+  const { data, error } = await supabase
+    .from("usage_stats")
+    .select("*")
+    .order("timestamp", { ascending: false })
+    .limit(1);
 
-    if (error) {
-      console.error("Fehler beim Abrufen der Datenbankstatistiken:", error.message);
-      return null;
-    }
-
-    return data ?? null;
-  } catch (err) {
-    console.error("Unerwarteter Fehler beim Abrufen der Datenbankstatistiken:", err);
+  if (error) {
+    console.error(error.message);
     return null;
   }
+
+  return data?.[0] ?? null;
 }
+
+export function isSupabaseConfigured(): boolean {
+  return Boolean(
+    import.meta.env.VITE_SUPABASE_URL &&
+    import.meta.env.VITE_SUPABASE_KEY
+  );
+}
+
+export {
+  loadKIConfigs,
+  saveKIConfigs,
+  getDatabaseStats,
+  isSupabaseConfigured,
+};
