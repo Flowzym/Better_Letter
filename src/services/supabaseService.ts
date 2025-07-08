@@ -62,7 +62,8 @@ async function loadKIConfigs(): Promise<KIModelSettings[]> {
 }
 
 async function saveKIConfigs(models: KIModelSettings[]) {
-  const { error } = await supabase.from("ki_settings").upsert(models, {
+  const modelsToSave = models.map(({ name, ...rest }) => rest);
+  const { error } = await supabase.from("ki_settings").upsert(modelsToSave, {
     onConflict: "id",
   });
   if (error) {

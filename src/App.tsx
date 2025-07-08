@@ -15,8 +15,10 @@ import {
   ProfileSourceMapping,
   DatabaseStats,
   testSupabaseConnection,
-  getDatabaseStats
+  getDatabaseStats,
+  loadKIConfigs
 } from './services/supabaseService';
+import { KIModelSettings } from './types/KIModelSettings';
 
 const DEFAULT_DOCUMENT_TYPES = {
   standard: {
@@ -288,6 +290,21 @@ function HomePage() {
     loadProfileSourceMappingsFromStorage()
   );
   const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
+  const [activeKIModel, setActiveKIModel] = useState<KIModelSettings | null>(null);
+
+  useEffect(() => {
+    const fetchModels = async () => {
+      try {
+        const models = await loadKIConfigs();
+        if (models.length > 0) {
+          setActiveKIModel(models[0]);
+        }
+      } catch (err) {
+        console.error('Failed to load KI configs:', err);
+      }
+    };
+    fetchModels();
+  }, []);
 
 
   // Load database statistics if Supabase is configured
@@ -392,6 +409,11 @@ function HomePage() {
       return;
     }
 
+    if (!activeKIModel) {
+      setError('Kein KI-Modell verfügbar.');
+      return;
+    }
+
     setIsGenerating(true);
     setError('');
     
@@ -406,6 +428,7 @@ function HomePage() {
         stylePrompts: Object.fromEntries(
           Object.entries(stylePrompts).map(([key, value]) => [key, value.prompt])
         ),
+        config: activeKIModel,
       });
       setCoverLetter(result);
     } catch (err) {
@@ -413,24 +436,29 @@ function HomePage() {
     } finally {
       setIsGenerating(false);
     }
-  }, [cvContent, jobContent, documentTypes, selectedDocumentType, selectedStyles, stylePrompts]);
+  }, [cvContent, jobContent, documentTypes, selectedDocumentType, selectedStyles, stylePrompts, activeKIModel]);
 
   // ✅ KORRIGIERT: Memoisiere handleEdit mit useCallback
   const handleEdit = useCallback(async (instruction: string) => {
     if (!coverLetter.trim()) return;
 
+    if (!activeKIModel) {
+      setError('Kein KI-Modell verfügbar.');
+      return;
+    }
+
     setIsEditing(true);
     setError('');
     
     try {
-      const result = await editCoverLetter(coverLetter, instruction);
+      const result = await editCoverLetter(coverLetter, instruction, activeKIModel);
       setCoverLetter(result);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Ein Fehler beim Bearbeiten ist aufgetreten.');
     } finally {
       setIsEditing(false);
     }
-  }, [coverLetter]);
+  }, [coverLetter, activeKIModel]);
 
   // ✅ KORRIGIERT: Memoisiere handleDirectContentChange mit useCallback
   const handleDirectContentChange = useCallback((newContent: string) => {

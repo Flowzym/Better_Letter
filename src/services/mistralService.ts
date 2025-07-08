@@ -23,11 +23,33 @@ async function generateText(prompt: string, config: KIModelSettings) {
   return data.choices?.[0]?.message?.content ?? "";
 }
 
-async function generateCoverLetter(
-  input: string,
-  systemPrompt: string,
-  config: KIModelSettings,
-) {
+async function generateCoverLetter({
+  cvContent,
+  jobDescription,
+  basePrompt,
+  styles,
+  stylePrompts,
+  config,
+}: {
+  cvContent: string;
+  jobDescription: string;
+  basePrompt: string;
+  styles: string[];
+  stylePrompts: Record<string, string>;
+  config: KIModelSettings;
+}) {
+  const styleText = styles
+    .map((s) => stylePrompts[s])
+    .filter(Boolean)
+    .join(", ");
+
+  const systemPrompt =
+    styleText.length > 0
+      ? `${basePrompt} Schreibe im ${styleText}.`
+      : basePrompt;
+
+  const input = `${cvContent}\n\n${jobDescription}`;
+
   const body = {
     model: config.model,
     temperature: config.temperature,
@@ -54,8 +76,8 @@ async function generateCoverLetter(
 }
 
 async function editCoverLetter(
-  existingText: string,
-  instruction: string,
+  originalText: string,
+  edits: string,
   config: KIModelSettings,
 ) {
   const body = {
@@ -64,8 +86,8 @@ async function editCoverLetter(
     top_p: config.top_p,
     max_tokens: config.max_tokens,
     messages: [
-      { role: "system", content: instruction },
-      { role: "user", content: existingText },
+      { role: "system", content: edits },
+      { role: "user", content: originalText },
     ],
   };
 

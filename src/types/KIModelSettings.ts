@@ -1,4 +1,5 @@
 export interface KIModelSettings {
+  name: string;
   id: string;
   model: string;
   endpoint: string;
@@ -6,5 +7,4 @@ export interface KIModelSettings {
   temperature: number;
   top_p: number;
   max_tokens: number;
-  active: boolean;
-}
+  active: boolean;}
