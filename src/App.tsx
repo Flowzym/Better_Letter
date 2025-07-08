@@ -409,8 +409,8 @@ function HomePage() {
       return;
     }
 
-    if (!activeKIModel) {
-      setError('Kein KI-Modell verfügbar.');
+    if (!activeKIModel || !activeKIModel.model) {
+      setError('Fehler: Kein aktives Modell konfiguriert oder Modellbezeichnung fehlt.');
       return;
     }
 
