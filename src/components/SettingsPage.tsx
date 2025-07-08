@@ -16,7 +16,9 @@ import TemplateManagerModal, { Template } from './TemplateManagerModal';
 import ProfileSourceSettings from './ProfileSourceSettings';
 import DatabaseStatus from './DatabaseStatus';
 import KIModelSettingsItem from './KIModelSettingsItem';
+import PromptTemplateManager from './PromptTemplateManager';
 import { KIModelSettings } from '../types/KIModelSettings';
+import { PromptConfig, PromptState } from '../types/Prompt';
 import { defaultKIModels } from '../constants/kiDefaults';
 import {
   loadKIConfigs,
@@ -28,20 +30,6 @@ import {
 // Tabs handled in this page
 type Tab = 'general' | 'ai' | 'prompts' | 'database' | 'templates' | 'import';
 
-interface PromptConfig {
-  label: string;
-  prompt: string;
-  title?: string;
-  role?: string;
-  style?: string;
-  examples?: string;
-}
-
-interface PromptState {
-  documents: Record<string, PromptConfig>;
-  edits: Record<string, PromptConfig>;
-  styles: Record<string, PromptConfig>;
-}
 
 const ENDPOINT_MAP: Record<string, string> = {
   'mistral-7b-instruct': 'https://api.mistral.ai/v1/chat/completions',
@@ -210,42 +198,6 @@ export default function SettingsPage() {
     setModels((prev) => prev.filter((m) => m.id !== id));
   }, []);
 
-  const updatePrompt = useCallback((
-    category: keyof PromptState,
-    key: string,
-    field: keyof PromptConfig,
-    value: string
-  ) => {
-    setPrompts((prev) => ({
-      ...prev,
-      [category]: {
-        ...prev[category],
-        [key]: { ...prev[category][key], [field]: value }
-      }
-    }));
-  }, []);
-
-  const addPrompt = useCallback((category: keyof PromptState) => {
-    const key = `prompt_${Date.now()}`;
-    setPrompts((prev) => ({
-      ...prev,
-      [category]: {
-        ...prev[category],
-        [key]:
-          category === 'documents'
-            ? { label: '', prompt: '', title: '', role: '', style: '', examples: '' }
-            : { label: '', prompt: '' }
-      }
-    }));
-  }, []);
-
-  const removePrompt = useCallback((category: keyof PromptState, key: string) => {
-    setPrompts((prev) => {
-      const newCat = { ...prev[category] };
-      delete newCat[key];
-      return { ...prev, [category]: newCat };
-    });
-  }, []);
 
   // Persist data to localStorage only when not loading
   useEffect(() => {
@@ -456,111 +408,7 @@ export default function SettingsPage() {
             )}
 
             {activeTab === 'prompts' && (
-              <div className="space-y-8">
-                {(['documents', 'edits', 'styles'] as (keyof PromptState)[]).map((cat) => (
-                  <div key={cat} className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-medium">
-                        {cat === 'documents'
-                          ? 'Dokumenttypen'
-                          : cat === 'edits'
-                          ? 'Edit-Prompts'
-                          : 'Stil-Prompts'}
-                      </h3>
-                      <button
-                        onClick={() => addPrompt(cat)}
-                        className="px-3 py-1 text-sm text-white rounded-md"
-                        style={{ backgroundColor: '#F29400' }}
-                      >
-                        Neu
-                      </button>
-                    </div>
-                    <div className="space-y-3">
-                      {Object.entries(prompts[cat]).map(([key, p]) => (
-                        <div key={key} className="border rounded-lg p-4 space-y-2 bg-gray-50">
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <label className="space-y-1">
-                              <span className="text-sm font-medium text-gray-700">Label</span>
-                              <input
-                                type="text"
-                                value={p.label}
-                                onChange={(e) => updatePrompt(cat, key, 'label', e.target.value)}
-                                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-                                style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-                              />
-                            </label>
-                            <label className="space-y-1">
-                              <span className="text-sm font-medium text-gray-700">Prompt</span>
-                              <textarea
-                                value={p.prompt}
-                                onChange={(e) => updatePrompt(cat, key, 'prompt', e.target.value)}
-                                rows={3}
-                                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-                                style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-                              />
-                            </label>
-                            {cat === 'documents' && (
-                              <>
-                                <label className="space-y-1">
-                                  <span className="text-sm font-medium text-gray-700">Titel</span>
-                                  <input
-                                    type="text"
-                                    value={p.title || ''}
-                                    onChange={(e) => updatePrompt(cat, key, 'title', e.target.value)}
-                                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-                                    style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-                                  />
-                                </label>
-                                <label className="space-y-1">
-                                  <span className="text-sm font-medium text-gray-700">Rolle</span>
-                                  <input
-                                    type="text"
-                                    value={p.role || ''}
-                                    onChange={(e) => updatePrompt(cat, key, 'role', e.target.value)}
-                                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-                                    style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-                                  />
-                                </label>
-                                <label className="space-y-1">
-                                  <span className="text-sm font-medium text-gray-700">Stil</span>
-                                  <input
-                                    type="text"
-                                    value={p.style || ''}
-                                    onChange={(e) => updatePrompt(cat, key, 'style', e.target.value)}
-                                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-                                    style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-                                  />
-                                </label>
-                                <label className="space-y-1 md:col-span-2">
-                                  <span className="text-sm font-medium text-gray-700">Beispiele</span>
-                                  <textarea
-                                    value={p.examples || ''}
-                                    onChange={(e) => updatePrompt(cat, key, 'examples', e.target.value)}
-                                    rows={2}
-                                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-                                    style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-                                  />
-                                </label>
-                              </>
-                            )}
-                          </div>
-                          <div className="text-right">
-                            <button
-                              onClick={() => removePrompt(cat, key)}
-                              className="text-sm text-red-600 hover:underline"
-                            >
-                              Löschen
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                      {Object.keys(prompts[cat]).length === 0 && (
-                        <p className="text-sm text-gray-500">Keine Einträge</p>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <PromptTemplateManager prompts={prompts} onChange={setPrompts} />
             )}
 
             {activeTab === 'import' && (
