@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Database as DatabaseIcon, Plus, Trash2 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { getFieldMappings } from '../services/supabaseService';
 
 interface MappingRow {
   dbField: string;
@@ -33,41 +33,34 @@ export default function DatabaseMappingSection() {
   const [mappings, setMappings] = useState<MappingRow[]>(initial.mappings);
   const [availableTables, setAvailableTables] = useState<string[]>([]);
   const [availableColumns, setAvailableColumns] = useState<string[]>([]);
+  const [tableColumns, setTableColumns] = useState<Record<string, string[]>>({});
   const [error, setError] = useState<string>('');
 
   useEffect(() => {
-    const fetchTables = async () => {
-      const { data, error } = await supabase
-        .from('available_tables')
-        .select('table_name');
-      if (error) {
-        console.error('Tabellen konnten nicht geladen werden:', error.message);
-      } else {
-        setAvailableTables((data as { table_name: string }[]).map(row => row.table_name));
-      }
+    const loadMappings = async () => {
+      const mappings = await getFieldMappings();
+      const grouped: Record<string, string[]> = {};
+      mappings.forEach((m: any) => {
+        const table = m.table_name || m.table;
+        const field = m.field_name || m.column_name;
+        if (!table || !field) return;
+        if (!grouped[table]) grouped[table] = [];
+        if (!grouped[table].includes(field)) grouped[table].push(field);
+      });
+      setTableColumns(grouped);
+      setAvailableTables(Object.keys(grouped));
     };
 
-    fetchTables();
+    loadMappings();
   }, []);
 
   useEffect(() => {
-    if (!tableName) return;
-
-    const fetchColumns = async () => {
-      const { data, error } = await supabase
-        .from('available_columns')
-        .select('column_name')
-        .eq('table_name', tableName);
-      if (error) {
-        console.error('Fehler beim Laden der Spalten:', error.message);
-        setAvailableColumns([]);
-      } else {
-        setAvailableColumns((data as { column_name: string }[]).map(col => col.column_name));
-      }
-    };
-
-    fetchColumns();
-  }, [tableName]);
+    if (!tableName) {
+      setAvailableColumns([]);
+      return;
+    }
+    setAvailableColumns(tableColumns[tableName] || []);
+  }, [tableName, tableColumns]);
 
   const updateRow = (index: number, field: keyof MappingRow, value: string) => {
     setMappings(prev => prev.map((row, i) => (i === index ? { ...row, [field]: value } : row)));

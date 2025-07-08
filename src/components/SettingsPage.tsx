@@ -22,7 +22,8 @@ import { defaultKIModels } from '../constants/kiDefaults';
 import {
   loadKIConfigs,
   saveKIConfigs,
-  ProfileSourceMapping
+  ProfileSourceMapping,
+  testSupabaseConnection
 } from '../services/supabaseService';
 
 // Tabs handled in this page
@@ -49,6 +50,7 @@ export default function SettingsPage() {
   const [models, setModels] = useState<KIModelSettings[]>([]);
   const [showModelModal, setShowModelModal] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [connStatus, setConnStatus] = useState<'idle' | 'success' | 'error' | 'loading'>('idle');
   const [prompts, setPrompts] = useState<PromptState>({
     documents: {},
     edits: {},
@@ -180,6 +182,12 @@ export default function SettingsPage() {
     navigate(-1);
   };
 
+  const handleTestSupabase = async () => {
+    setConnStatus('loading');
+    const ok = await testSupabaseConnection();
+    setConnStatus(ok ? 'success' : 'error');
+  };
+
   const handleExport = () => {
     const dbMapping = localStorage.getItem('databaseMapping');
     const data = {
@@ -244,9 +252,28 @@ export default function SettingsPage() {
             <SettingsIcon className="h-6 w-6" style={{ color: '#F29400' }} />
             <h2 className="text-xl font-semibold">Einstellungen</h2>
           </div>
-          <button onClick={() => navigate(-1)} className="text-gray-400 hover:text-gray-600">
-            <X className="h-6 w-6" />
-          </button>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={handleTestSupabase}
+              disabled={connStatus === 'loading'}
+              className={`px-3 py-2 text-white rounded-md text-sm ${
+                connStatus === 'success'
+                  ? 'bg-green-600'
+                  : connStatus === 'error'
+                  ? 'bg-red-600'
+                  : 'bg-blue-600'
+              }`}
+            >
+              {connStatus === 'success'
+                ? 'Verbindung erfolgreich'
+                : connStatus === 'error'
+                ? 'Verbindung fehlgeschlagen'
+                : 'Supabase testen'}
+            </button>
+            <button onClick={() => navigate(-1)} className="text-gray-400 hover:text-gray-600">
+              <X className="h-6 w-6" />
+            </button>
+          </div>
         </div>
 
         <div className="flex flex-1 overflow-hidden">

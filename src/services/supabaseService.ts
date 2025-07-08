@@ -27,6 +27,26 @@ export interface SupabaseTable {
   columns: string[];
 }
 
+// -----------------------------------------------------------------------
+// Data helpers
+async function getFieldMappings(): Promise<any[]> {
+  const { data, error } = await supabase.from('field_mappings').select('*');
+  if (error) {
+    console.error('Fehler beim Laden der Field-Mappings:', error.message);
+    return [];
+  }
+  return data ?? [];
+}
+
+async function getPromptTemplates(): Promise<any[]> {
+  const { data, error } = await supabase.from('prompts').select('*');
+  if (error) {
+    console.error('Fehler beim Laden der Prompt-Vorlagen:', error.message);
+    return [];
+  }
+  return data ?? [];
+}
+
 // --- Cache helpers -----------------------------------------------------
 const TABLE_CACHE_DURATION = 30000; // 30s
 let tableCache: { timestamp: number; tables: SupabaseTable[] } | null = null;
@@ -153,13 +173,10 @@ async function loadProfileSuggestions(
   return result;
 }
 
-async function testDatabaseConnection(): Promise<boolean> {
-  const { error } = await supabase
-    .from("profile_suggestions")
-    .select("id")
-    .limit(1);
+async function testSupabaseConnection(): Promise<boolean> {
+  const { error } = await supabase.from('ki_settings').select('id').limit(1);
   if (error) {
-    console.error(error.message);
+    console.error('Fehler beim Testen der Supabase-Verbindung:', error.message);
     return false;
   }
   return true;
@@ -185,10 +202,12 @@ export {
   saveKIConfigs,
   isSupabaseConfigured,
   loadProfileSuggestions,
-  testDatabaseConnection,
+  testSupabaseConnection,
   fetchTableColumns,
   getSupabaseTableNames,
   invalidateTableCache,
   getTableColumns,
   testTableColumnMapping,
+  getFieldMappings,
+  getPromptTemplates,
 };

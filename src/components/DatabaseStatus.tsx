@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Database, CheckCircle, XCircle, AlertCircle, RefreshCw } from 'lucide-react';
 import {
   isSupabaseConfigured,
-  testDatabaseConnection,
+  testSupabaseConnection,
   getDatabaseStats,
   loadProfileSuggestions,
   type DatabaseStats
@@ -27,7 +27,7 @@ export default function DatabaseStatus() {
       
       if (configured) {
         // Test connection
-        const connected = await testDatabaseConnection();
+        const connected = await testSupabaseConnection();
         setIsConnected(connected);
         
         if (connected) {
