@@ -57,10 +57,23 @@ async function loadProfileSuggestions(): Promise<any[]> {
   return data ?? [];
 }
 
+async function testDatabaseConnection(): Promise<boolean> {
+  const { error } = await supabase
+    .from("profile_suggestions")
+    .select("id")
+    .limit(1);
+  if (error) {
+    console.error(error.message);
+    return false;
+  }
+  return true;
+}
+
 export {
   loadKIConfigs,
   saveKIConfigs,
   getDatabaseStats,
   isSupabaseConfigured,
   loadProfileSuggestions,
+  testDatabaseConnection,
 };
