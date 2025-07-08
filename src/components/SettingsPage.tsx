@@ -366,23 +366,6 @@ export default function SettingsPage() {
             <h2 className="text-xl font-semibold">Einstellungen</h2>
           </div>
           <div className="flex items-center space-x-2">
-            <button
-              onClick={handleTestSupabase}
-              disabled={connStatus === 'loading'}
-              className={`px-3 py-2 text-white rounded-md text-sm ${
-                connStatus === 'success'
-                  ? 'bg-green-600'
-                  : connStatus === 'error'
-                  ? 'bg-red-600'
-                  : 'bg-blue-600'
-              }`}
-            >
-              {connStatus === 'success'
-                ? 'Verbindung erfolgreich'
-                : connStatus === 'error'
-                ? 'Verbindung fehlgeschlagen'
-                : 'Supabase testen'}
-            </button>
             <button onClick={() => navigate(-1)} className="text-gray-400 hover:text-gray-600">
               <X className="h-6 w-6" />
             </button>
@@ -603,6 +586,26 @@ export default function SettingsPage() {
 
             {activeTab === 'database' && (
               <div className="space-y-6">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-semibold">Datenbankstatus</h3>
+                  <button
+                    onClick={handleTestSupabase}
+                    disabled={connStatus === 'loading'}
+                    className={`px-3 py-2 text-white rounded-md text-sm ${
+                      connStatus === 'success'
+                        ? 'bg-green-600'
+                        : connStatus === 'error'
+                        ? 'bg-red-600'
+                        : 'bg-blue-600'
+                    }`}
+                  >
+                    {connStatus === 'success'
+                      ? 'Verbindung erfolgreich'
+                      : connStatus === 'error'
+                      ? 'Verbindung fehlgeschlagen'
+                      : 'Supabase testen'}
+                  </button>
+                </div>
                 <DatabaseStatus />
                 <ProfileSourceSettings
                   sourceMappings={profileSourceMappings}
