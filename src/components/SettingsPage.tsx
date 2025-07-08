@@ -10,7 +10,8 @@ import {
   SlidersHorizontal,
   X,
   Save,
-  Check
+  Check,
+  ChevronDown
 } from 'lucide-react';
 import SettingsModal from './SettingsModal';
 import TemplateManagerModal, { Template } from './TemplateManagerModal';
@@ -47,6 +48,13 @@ interface PromptState {
 export default function SettingsPage() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<Tab>('ai');
+  const modelOptions = [
+    'mistral-7b-instruct',
+    'mixtral-8x7b-instruct',
+    'gpt-3.5-turbo',
+    'gpt-4',
+    'claude-3-opus'
+  ];
   const [models, setModels] = useState<KIModelSettings[]>([]);
   const [showModelModal, setShowModelModal] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -121,6 +129,25 @@ export default function SettingsPage() {
 
   const setActiveModel = (id: string) => {
     setModels((prev) => prev.map((m) => ({ ...m, active: m.id === id })));
+  };
+
+  const addModel = () => {
+    const newModel: KIModelSettings = {
+      id: `model_${Date.now()}`,
+      name: 'Neues Modell',
+      apiKey: '',
+      endpoint: '',
+      model: 'mistral-7b-instruct',
+      temperature: 0.7,
+      top_p: 0.95,
+      max_tokens: 1024,
+      active: false
+    };
+    setModels((prev) => [...prev, newModel]);
+  };
+
+  const removeModel = (id: string) => {
+    setModels((prev) => prev.filter((m) => m.id !== id));
   };
 
   const updatePrompt = (
@@ -328,7 +355,14 @@ export default function SettingsPage() {
 
             {activeTab === 'ai' && (
               <div className="space-y-6">
-                <div className="text-right">
+                <div className="flex justify-between">
+                  <button
+                    onClick={addModel}
+                    className="px-3 py-2 text-sm text-white rounded-md"
+                    style={{ backgroundColor: '#F29400' }}
+                  >
+                    Modell hinzufügen
+                  </button>
                   <button
                     onClick={() => setShowModelModal(true)}
                     className="px-3 py-2 text-sm text-white rounded-md"
@@ -337,103 +371,136 @@ export default function SettingsPage() {
                     Modelle im Modal bearbeiten
                   </button>
                 </div>
-                {models.map((model) => (
-                  <div
-                    key={model.id}
-                    className={`border rounded-lg p-4 space-y-4 ${
-                      model.active ? 'border-orange-400 bg-orange-50' : 'border-gray-200'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-medium">{model.name}</h3>
-                      {model.active && (
-                        <span className="flex items-center text-sm text-orange-600">
-                          <Check className="h-4 w-4 mr-1" /> Aktiv
-                        </span>
-                      )}
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <label className="space-y-1">
-                        <span className="text-sm font-medium text-gray-700">Modell</span>
-                        <input
-                          type="text"
-                          value={model.model}
-                          onChange={(e) => handleModelField(model.id, 'model', e.target.value)}
-                          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-                          style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-                        />
-                      </label>
-                      <label className="space-y-1">
-                        <span className="text-sm font-medium text-gray-700">API-Key</span>
-                        <input
-                          type="text"
-                          value={model.apiKey}
-                          onChange={(e) => handleModelField(model.id, 'apiKey', e.target.value)}
-                          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-                          style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-                        />
-                      </label>
-                      <label className="space-y-1">
-                        <span className="text-sm font-medium text-gray-700">Endpoint</span>
-                        <input
-                          type="text"
-                          value={model.endpoint}
-                          onChange={(e) => handleModelField(model.id, 'endpoint', e.target.value)}
-                          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-                          style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-                        />
-                      </label>
-                      <label className="space-y-1">
-                        <span className="text-sm font-medium text-gray-700">Temperature</span>
-                        <input
-                          type="number"
-                          min="0"
-                          max="2"
-                          step="0.1"
-                          value={model.temperature}
-                          onChange={(e) => handleModelField(model.id, 'temperature', parseFloat(e.target.value))}
-                          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-                          style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-                        />
-                      </label>
-                      <label className="space-y-1">
-                        <span className="text-sm font-medium text-gray-700">Top-P</span>
-                        <input
-                          type="number"
-                          min="0"
-                          max="1"
-                          step="0.01"
-                          value={model.top_p}
-                          onChange={(e) => handleModelField(model.id, 'top_p', parseFloat(e.target.value))}
-                          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-                          style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-                        />
-                      </label>
-                      <label className="space-y-1">
-                        <span className="text-sm font-medium text-gray-700">Max Tokens</span>
-                        <input
-                          type="number"
-                          min="1"
-                          value={model.max_tokens}
-                          onChange={(e) => handleModelField(model.id, 'max_tokens', parseInt(e.target.value))}
-                          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-                          style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-                        />
-                      </label>
-                      <label className="flex items-center space-x-2">
-                        <input
-                          type="radio"
-                          name="activeModel"
-                          checked={model.active}
-                          onChange={() => setActiveModel(model.id)}
-                          className="rounded border-gray-300"
-                          style={{ accentColor: '#F29400' }}
-                        />
-                        <span className="text-sm text-gray-700">Aktivieren</span>
-                      </label>
-                    </div>
-                  </div>
-                ))}
+                <div className="space-y-4">
+                  {[...models].sort((a, b) => (a.active === b.active ? 0 : a.active ? -1 : 1)).map((model) => {
+                    const selected = modelOptions.includes(model.model) ? model.model : 'custom';
+                    return (
+                      <details
+                        key={model.id}
+                        open={model.active}
+                        className={`group border rounded-lg p-4 shadow-sm ${
+                          model.active ? 'border-orange-400 bg-orange-50' : 'border-gray-200'
+                        }`}
+                      >
+                        <summary className="cursor-pointer flex items-center justify-between">
+                          <span className="text-lg font-medium">{model.name}</span>
+                          <div className="flex items-center space-x-2">
+                            {model.active && (
+                              <span className="flex items-center text-sm text-orange-600">
+                                <Check className="h-4 w-4 mr-1" /> Aktiv
+                              </span>
+                            )}
+                            <ChevronDown className="h-4 w-4 group-open:rotate-180 transition-transform" />
+                          </div>
+                        </summary>
+                        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <label className="space-y-1">
+                            <span className="text-sm font-medium text-gray-700">Modell</span>
+                            <select
+                              value={selected}
+                              onChange={(e) => {
+                                if (e.target.value === 'custom') return;
+                                handleModelField(model.id, 'model', e.target.value);
+                              }}
+                              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                              style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                            >
+                              {modelOptions.map((opt) => (
+                                <option key={opt} value={opt}>
+                                  {opt}
+                                </option>
+                              ))}
+                              <option value="custom">custom...</option>
+                            </select>
+                            {selected === 'custom' && (
+                              <input
+                                type="text"
+                                value={model.model}
+                                onChange={(e) => handleModelField(model.id, 'model', e.target.value)}
+                                className="w-full mt-2 px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                                style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                              />
+                            )}
+                          </label>
+                          <label className="space-y-1">
+                            <span className="text-sm font-medium text-gray-700">API-Key</span>
+                            <input
+                              type="text"
+                              value={model.apiKey}
+                              onChange={(e) => handleModelField(model.id, 'apiKey', e.target.value)}
+                              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                              style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                            />
+                          </label>
+                          <label className="space-y-1">
+                            <span className="text-sm font-medium text-gray-700">Endpoint</span>
+                            <input
+                              type="text"
+                              value={model.endpoint}
+                              onChange={(e) => handleModelField(model.id, 'endpoint', e.target.value)}
+                              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                              style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                            />
+                          </label>
+                          <label className="space-y-1">
+                            <span className="text-sm font-medium text-gray-700">Temperature</span>
+                            <input
+                              type="number"
+                              min="0"
+                              max="2"
+                              step="0.1"
+                              value={model.temperature}
+                              onChange={(e) => handleModelField(model.id, 'temperature', parseFloat(e.target.value))}
+                              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                              style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                            />
+                          </label>
+                          <label className="space-y-1">
+                            <span className="text-sm font-medium text-gray-700">Top-P</span>
+                            <input
+                              type="number"
+                              min="0"
+                              max="1"
+                              step="0.01"
+                              value={model.top_p}
+                              onChange={(e) => handleModelField(model.id, 'top_p', parseFloat(e.target.value))}
+                              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                              style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                            />
+                          </label>
+                          <label className="space-y-1">
+                            <span className="text-sm font-medium text-gray-700">Max Tokens</span>
+                            <input
+                              type="number"
+                              min="1"
+                              value={model.max_tokens}
+                              onChange={(e) => handleModelField(model.id, 'max_tokens', parseInt(e.target.value))}
+                              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                              style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                            />
+                          </label>
+                          <label className="flex items-center space-x-2">
+                            <input
+                              type="radio"
+                              name="activeModel"
+                              checked={model.active}
+                              onChange={() => setActiveModel(model.id)}
+                              className="rounded border-gray-300"
+                              style={{ accentColor: '#F29400' }}
+                            />
+                            <span className="text-sm text-gray-700">Aktivieren</span>
+                          </label>
+                          <button
+                            onClick={() => removeModel(model.id)}
+                            className="text-sm text-red-600 hover:underline md:col-span-2 text-left"
+                          >
+                            Entfernen
+                          </button>
+                        </div>
+                      </details>
+                    );
+                  })}
+                </div>
               </div>
             )}
 

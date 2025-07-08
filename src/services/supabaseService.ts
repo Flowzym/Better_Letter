@@ -29,7 +29,7 @@ export interface SupabaseTable {
 
 // -----------------------------------------------------------------------
 // Data helpers
-async function getFieldMappings(): Promise<any[]> {
+async function getFieldMappings(): Promise<unknown[]> {
   const { data, error } = await supabase.from('field_mappings').select('*');
   if (error) {
     console.error('Fehler beim Laden der Field-Mappings:', error.message);
@@ -38,7 +38,7 @@ async function getFieldMappings(): Promise<any[]> {
   return data ?? [];
 }
 
-async function getPromptTemplates(): Promise<any[]> {
+async function getPromptTemplates(): Promise<unknown[]> {
   const { data, error } = await supabase.from('prompts').select('*');
   if (error) {
     console.error('Fehler beim Laden der Prompt-Vorlagen:', error.message);
@@ -121,8 +121,10 @@ async function testTableColumnMapping(table: string, column: string) {
   return { success: true, sampleData: samples };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function getDatabaseStats(): Promise<any> {
+export async function getDatabaseStats(): Promise<{
+  totalSuggestions: number;
+  categoryCounts: Record<string, number>;
+}> {
   try {
     // Get profile suggestions count
     const { data: suggestionsData, error: suggestionsError } = await supabase

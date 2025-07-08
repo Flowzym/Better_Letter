@@ -41,7 +41,7 @@ export default function DatabaseMappingSection() {
       try {
         const mappings = await getFieldMappings();
         const grouped: Record<string, string[]> = {};
-        mappings.forEach((m: any) => {
+        mappings.forEach((m: Record<string, unknown>) => {
           const table = m.table_name || m.table;
           const field = m.field_name || m.column_name;
           if (!table || !field) return;
