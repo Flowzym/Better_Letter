@@ -194,7 +194,7 @@ export default function SettingsPage() {
 
   const addModel = useCallback(() => {
     const newModel: KIModelSettings = {
-      id: `model_${Date.now()}`,
+      id: crypto.randomUUID(),
       name: 'Neues Modell',
       apiKey: '',
       endpoint: ENDPOINT_MAP['mistral-7b-instruct'],
