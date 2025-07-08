@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Database, Plus, Trash2, X, AlertCircle, RefreshCw, TestTube, Search } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 import { 
   getSupabaseTableNames, 
   ProfileSourceMapping, 
@@ -43,9 +44,46 @@ function ProfileSourceSettings({
     error?: string;
   }>>({});
   const [isTestingMapping, setIsTestingMapping] = useState<string | null>(null);
-  const [tableSearchTerm, setTableSearchTerm] = useState('');
   const [isLoadingColumns, setIsLoadingColumns] = useState<string | null>(null);
   const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null);
+
+  const useColumnCount = (table: string, column: string) => {
+    const [count, setCount] = useState<number | null | undefined>(undefined);
+
+    useEffect(() => {
+      let cancelled = false;
+      const load = async () => {
+        if (!table || !column) {
+          setCount(null);
+          return;
+        }
+        try {
+          const { count: c, error } = await supabase
+            .from(table)
+            .select(column, { count: 'exact', head: true });
+          if (!cancelled) {
+            if (error) {
+              console.error('Error loading count for', table, column, error);
+              setCount(null);
+            } else {
+              setCount(c ?? 0);
+            }
+          }
+        } catch (err) {
+          if (!cancelled) {
+            console.error('Count fetch failed', err);
+            setCount(null);
+          }
+        }
+      };
+      load();
+      return () => {
+        cancelled = true;
+      };
+    }, [table, column]);
+
+    return count;
+  };
 
   const loadTables = useCallback(async (forceRefresh: boolean = false) => {
     setIsLoadingTables(true);
@@ -176,10 +214,6 @@ function ProfileSourceSettings({
     }
   }, [newMapping, refreshTableColumns]);
 
-  // Filtere Tabellen basierend auf Suchbegriff
-  const filteredTables = availableTables.filter(table => 
-    table.table_name.toLowerCase().includes(tableSearchTerm.toLowerCase())
-  );
 
   return (
     <div className="space-y-6">
@@ -249,40 +283,6 @@ function ProfileSourceSettings({
         </div>
       )}
 
-      {/* Available Tables Info */}
-      {availableTables.length > 0 && (
-        <div className="border rounded-lg p-4" style={{ backgroundColor: '#FEF7EE', borderColor: '#F29400' }}>
-          <div className="flex items-center justify-between mb-3">
-            <h4 className="font-medium" style={{ color: '#F29400' }}>Verfügbare Tabellen ({availableTables.length})</h4>
-            <div className="flex items-center space-x-2">
-              <Search className="h-4 w-4" style={{ color: '#F29400' }} />
-              <input
-                type="text"
-                placeholder="Tabellen filtern..."
-                value={tableSearchTerm}
-                onChange={(e) => setTableSearchTerm(e.target.value)}
-                className="px-2 py-1 text-sm border rounded focus:outline-none focus:ring-2"
-                style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-              />
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 text-sm max-h-32 overflow-y-auto">
-            {(tableSearchTerm ? filteredTables : availableTables).map(table => (
-              <div key={table.table_name} className="flex items-center justify-between space-x-1 bg-white rounded px-2 py-1 border" style={{ borderColor: '#F29400' }}>
-                <span className="truncate">{table.table_name}</span>
-                <span className="text-xs text-white px-1 rounded flex-shrink-0" style={{ backgroundColor: '#F29400' }}>
-                  {table.columns.length}
-                </span>
-              </div>
-            ))}
-          </div>
-          
-          {tableSearchTerm && filteredTables.length === 0 && (
-            <p className="text-sm mt-2" style={{ color: '#F29400' }}>Keine Tabellen gefunden für "{tableSearchTerm}"</p>
-          )}
-        </div>
-      )}
 
       {/* New Mapping Form */}
       {showNewMappingForm && (
@@ -408,6 +408,7 @@ function ProfileSourceSettings({
             {sourceMappings.map((mapping, index) => {
               const testKey = `${mapping.tableName}.${mapping.columnName}`;
               const testResult = testResults[testKey];
+              const count = useColumnCount(mapping.tableName, mapping.columnName);
               
               return (
                 <div key={index} className={`border rounded-lg p-4 ${
@@ -427,6 +428,13 @@ function ProfileSourceSettings({
                         </span>
                         <span className="font-medium text-gray-900">
                           {mapping.tableName}.{mapping.columnName}
+                        </span>
+                        <span className="text-slate-600 text-sm ml-2">
+                          {count === undefined
+                            ? '?'
+                            : count === null
+                            ? 'keine Daten'
+                            : `${count} Einträge`}
                         </span>
                         {mapping.isActive && (
                           <span className="px-2 py-1 text-white text-xs rounded-full" style={{ backgroundColor: '#F29400' }}>
@@ -502,20 +510,6 @@ function ProfileSourceSettings({
         )}
       </div>
 
-      {/* Info Box */}
-      <div className="border rounded-lg p-4" style={{ backgroundColor: '#FEF7EE', borderColor: '#F29400' }}>
-        <h4 className="font-medium mb-2" style={{ color: '#F29400' }}>💡 Tipps zur Verwendung</h4>
-        <ul className="text-sm space-y-1" style={{ color: '#F29400' }}>
-          <li>• <strong>Tabellen neu laden:</strong> Invalidiert den Cache und sucht nach neuen Tabellen (Cache: 30 Sekunden)</li>
-          <li>• <strong>Automatische Erkennung:</strong> Das System erkennt neue Tabellen automatisch nach kurzer Zeit</li>
-          <li>• <strong>Mehrere Zuordnungen:</strong> Pro Kategorie sind mehrere Zuordnungen möglich - die Daten werden zusammengeführt</li>
-          <li>• <strong>Testen:</strong> Verwenden Sie "Testen" um zu prüfen, ob eine Zuordnung funktioniert</li>
-          <li>• <strong>Deaktivierte Zuordnungen:</strong> Werden ignoriert, aber bleiben gespeichert</li>
-          <li>• <strong>Fallback:</strong> Bei Fehlern wird automatisch auf Standard-Daten zurückgegriffen</li>
-          <li>• <strong>Spalten aktualisieren:</strong> Klicken Sie "Aktualisieren" bei der Spaltenauswahl für neue Spalten</li>
-        </ul>
-      </div>
     </div>
   );}
-
 export default React.memo(ProfileSourceSettings);
