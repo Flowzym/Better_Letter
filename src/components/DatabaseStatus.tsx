@@ -2,17 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Database, CheckCircle, XCircle, AlertCircle, RefreshCw } from 'lucide-react';
 import {
   isSupabaseConfigured,
-  testSupabaseConnection,
-  getDatabaseStats,
-  loadProfileSuggestions,
-  type DatabaseStats
+  testSupabaseConnection
 } from '../services/supabaseService';
 
 function DatabaseStatus() {
   const [isConfigured, setIsConfigured] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
-  // DatabaseStats describes the metrics returned from getDatabaseStats
-  const [stats, setStats] = useState<DatabaseStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,19 +21,8 @@ function DatabaseStatus() {
       setIsConfigured(configured);
       
       if (configured) {
-        // Test connection
         const connected = await testSupabaseConnection();
         setIsConnected(connected);
-        
-        if (connected) {
-          // Get stats
-          const dbStats = await getDatabaseStats();
-          setStats(dbStats);
-          
-          // Test loading profile suggestions
-          const profileData = await loadProfileSuggestions();
-          console.log('Profile data loaded:', profileData);
-        }
       }
     } catch (err) {
       console.error('Database status check failed:', err);
@@ -96,38 +80,6 @@ function DatabaseStatus() {
           </div>
         )}
 
-        {/* Statistics */}
-        {stats && (
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="font-medium text-gray-900 mb-3">Datenbank-Statistiken</h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-              <div>
-                <span className="text-gray-600">Gesamt Einträge:</span>
-                <div className="font-medium">{stats.totalFromMappings || 0}</div>
-              </div>
-              <div>
-                <span className="text-gray-600">Berufe:</span>
-                <div className="font-medium">{stats.berufe}</div>
-              </div>
-              <div>
-                <span className="text-gray-600">Tätigkeiten:</span>
-                <div className="font-medium">{stats.taetigkeiten}</div>
-              </div>
-              <div>
-                <span className="text-gray-600">Fachliche Kompetenzen:</span>
-                <div className="font-medium">{stats.skills}</div>
-              </div>
-              <div>
-                <span className="text-gray-600">Persönliche Kompetenzen:</span>
-                <div className="font-medium">{stats.softskills}</div>
-              </div>
-              <div>
-                <span className="text-gray-600">Ausbildung/Qualifikationen:</span>
-                <div className="font-medium">{stats.ausbildung}</div>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Error Display */}
         {error && (
@@ -140,16 +92,7 @@ function DatabaseStatus() {
           </div>
         )}
 
-        {/* Instructions */}
-        {!isConfigured && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <p className="text-blue-800">
-              Um die Datenbank zu nutzen, klicken Sie auf "Connect to Supabase" in der oberen rechten Ecke.
-            </p>
-          </div>
-        )}
       </div>
     </div>
   );}
-
 export default React.memo(DatabaseStatus);

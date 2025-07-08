@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Database as DatabaseIcon, Plus, Trash2 } from 'lucide-react';
 import { getFieldMappings } from '../services/supabaseService';
+import { supabase } from '../lib/supabase';
 
 interface MappingRow {
   dbField: string;
@@ -36,6 +37,7 @@ function DatabaseMappingSection() {
   const [availableColumns, setAvailableColumns] = useState<string[]>([]);
   const [tableColumns, setTableColumns] = useState<Record<string, string[]>>({});
   const [error, setError] = useState<string>('');
+  const [counts, setCounts] = useState<Record<number, number | null>>({});
 
   useEffect(() => {
     const loadMappings = async () => {
@@ -67,6 +69,41 @@ function DatabaseMappingSection() {
     }
     setAvailableColumns(tableColumns[tableName] || []);
   }, [tableName, tableColumns]);
+
+  useEffect(() => {
+    const loadCounts = async () => {
+      if (!tableName) {
+        setCounts({});
+        return;
+      }
+      const newCounts: Record<number, number | null> = {};
+      await Promise.all(
+        mappings.map(async (row, idx) => {
+          if (!row.dbField) {
+            newCounts[idx] = null;
+            return;
+          }
+          try {
+            const { count, error } = await supabase
+              .from(tableName)
+              .select(row.dbField, { count: 'exact', head: true });
+            if (error) {
+              console.error('Error loading count for', row.dbField, error);
+              newCounts[idx] = null;
+            } else {
+              newCounts[idx] = count ?? 0;
+            }
+          } catch (err) {
+            console.error('Count fetch failed', err);
+            newCounts[idx] = null;
+          }
+        })
+      );
+      setCounts(newCounts);
+    };
+
+    loadCounts();
+  }, [tableName, mappings]);
 
   const updateRow = useCallback((index: number, field: keyof MappingRow, value: string) => {
     setState(prev => ({
@@ -153,12 +190,13 @@ function DatabaseMappingSection() {
       </label>
 
       <div className="space-y-2">
-        <div className="grid grid-cols-2 gap-2 text-sm font-medium text-gray-700">
+        <div className="grid grid-cols-3 gap-2 text-sm font-medium text-gray-700">
           <span>Datenbankfeld</span>
           <span>App-Feld</span>
+          <span className="text-right">Einträge</span>
         </div>
         {mappings.map((row, index) => (
-          <div key={index} className="grid grid-cols-2 gap-2 items-center">
+          <div key={index} className="grid grid-cols-3 gap-2 items-center">
             <div>
               <select
                 value={row.dbField}
@@ -189,6 +227,11 @@ function DatabaseMappingSection() {
                 <Trash2 className="h-4 w-4" />
               </button>
             </div>
+            <div className="text-right text-sm">
+              {counts[index] === null || counts[index] === undefined
+                ? '?'
+                : `${counts[index]} Einträge`}
+            </div>
           </div>
         ))}
         <button
@@ -214,5 +257,4 @@ function DatabaseMappingSection() {
       </div>
     </div>
   );}
-
 export default React.memo(DatabaseMappingSection);
