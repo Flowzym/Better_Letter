@@ -1,7 +1,7 @@
 export interface KIModelSettings {
   id: string;
   name: string;
-  apiKey: string;
+  api_key: string;
   endpoint: string;
   model: string;
   temperature: number;
