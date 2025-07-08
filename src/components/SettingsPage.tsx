@@ -82,22 +82,22 @@ const TABS = [
 ] as const;
 
 // Helper functions moved outside component to prevent re-creation
-const loadFromLocalStorage = (key: string, defaultValue: any) => {
+function loadFromLocalStorage<T>(key: string, defaultValue: T): T {
   try {
     const saved = localStorage.getItem(key);
-    return saved ? JSON.parse(saved) : defaultValue;
+    return saved ? (JSON.parse(saved) as T) : defaultValue;
   } catch {
     return defaultValue;
   }
-};
+}
 
-const saveToLocalStorage = (key: string, value: any) => {
+function saveToLocalStorage<T>(key: string, value: T): void {
   try {
     localStorage.setItem(key, JSON.stringify(value));
   } catch (error) {
     console.error(`Error saving ${key} to localStorage:`, error);
   }
-};
+}
 
 export default function SettingsPage() {
   const navigate = useNavigate();

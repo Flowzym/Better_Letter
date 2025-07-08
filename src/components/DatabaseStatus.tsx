@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Database, CheckCircle, XCircle, AlertCircle, RefreshCw } from 'lucide-react';
 import {
   isSupabaseConfigured,
@@ -8,7 +8,7 @@ import {
   type DatabaseStats
 } from '../services/supabaseService';
 
-export default function DatabaseStatus() {
+function DatabaseStatus() {
   const [isConfigured, setIsConfigured] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   // DatabaseStats describes the metrics returned from getDatabaseStats
@@ -136,5 +136,6 @@ export default function DatabaseStatus() {
         )}
       </div>
     </div>
-  );
-}
+  );}
+
+export default React.memo(DatabaseStatus);

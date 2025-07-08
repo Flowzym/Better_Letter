@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Database as DatabaseIcon, Plus, Trash2 } from 'lucide-react';
 import { getFieldMappings } from '../services/supabaseService';
 
@@ -27,7 +27,7 @@ const loadInitial = () => {
   return { tableName: '', isActive: true, mappings: [] as MappingRow[] };
 };
 
-export default function DatabaseMappingSection() {
+function DatabaseMappingSection() {
   // Use lazy initial state to prevent re-execution
   const [state, setState] = useState(loadInitial);
   const { tableName, isActive, mappings } = state;
@@ -213,5 +213,6 @@ export default function DatabaseMappingSection() {
         </button>
       </div>
     </div>
-  );
-}
+  );}
+
+export default React.memo(DatabaseMappingSection);

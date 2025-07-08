@@ -22,9 +22,9 @@ const CATEGORY_LABELS = {
   ausbildung: 'Ausbildung/Qualifikationen'
 };
 
-export default function ProfileSourceSettings({ 
-  sourceMappings, 
-  onSourceMappingsChange 
+function ProfileSourceSettings({
+  sourceMappings,
+  onSourceMappingsChange
 }: ProfileSourceSettingsProps) {
   const [availableTables, setAvailableTables] = useState<SupabaseTable[]>([]);
   const [isLoadingTables, setIsLoadingTables] = useState(false);
@@ -516,5 +516,6 @@ export default function ProfileSourceSettings({
         </ul>
       </div>
     </div>
-  );
-}
+  );}
+
+export default React.memo(ProfileSourceSettings);
