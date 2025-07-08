@@ -38,9 +38,8 @@ export default function DatabaseMappingSection() {
   useEffect(() => {
     const fetchTables = async () => {
       const { data, error } = await supabase
-        .from('information_schema.tables')
-        .select('table_name')
-        .eq('table_schema', 'public');
+        .from('available_tables')
+        .select('table_name');
       if (error) {
         console.error('Tabellen konnten nicht geladen werden:', error.message);
       } else {
@@ -56,7 +55,7 @@ export default function DatabaseMappingSection() {
 
     const fetchColumns = async () => {
       const { data, error } = await supabase
-        .from('information_schema.columns')
+        .from('available_columns')
         .select('column_name')
         .eq('table_name', tableName);
       if (error) {

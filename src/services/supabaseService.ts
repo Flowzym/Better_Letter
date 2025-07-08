@@ -69,10 +69,8 @@ async function getSupabaseTableNames(forceRefresh = false): Promise<SupabaseTabl
   }
 
   const { data, error } = await supabase
-    .from('pg_catalog.pg_tables')
-    .select('tablename, schemaname')
-    .neq('schemaname', 'pg_catalog')
-    .neq('schemaname', 'information_schema');
+    .from('available_tables')
+    .select('table_name');
 
   if (error) {
     console.error('Error fetching tables:', error.message);
@@ -80,9 +78,9 @@ async function getSupabaseTableNames(forceRefresh = false): Promise<SupabaseTabl
   }
 
   const tables: SupabaseTable[] = [];
-  for (const row of data as { tablename: string }[]) {
-    const columns = await getTableColumns(row.tablename);
-    tables.push({ table_name: row.tablename, columns });
+  for (const row of data as { table_name: string }[]) {
+    const columns = await getTableColumns(row.table_name);
+    tables.push({ table_name: row.table_name, columns });
   }
 
   tableCache = { timestamp: Date.now(), tables };
@@ -106,9 +104,9 @@ async function testTableColumnMapping(table: string, column: string) {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function getDatabaseStats(): Promise<any> {
   const { data, error } = await supabase
-    .from("usage_stats")
-    .select("*")
-    .order("timestamp", { ascending: false })
+    .from('system_status')
+    .select('*')
+    .order('timestamp', { ascending: false })
     .limit(1);
 
   if (error) {
@@ -167,10 +165,10 @@ async function testDatabaseConnection(): Promise<boolean> {
 
 async function fetchTableColumns(tableName: string): Promise<string[]> {
   const { data, error } = await supabase
-    .from('information_schema.columns')
+    .from('available_columns')
     .select('column_name')
     .eq('table_name', tableName)
-    .order('ordinal_position');
+    .order('column_name');
 
   if (error) {
     console.error('Error fetching table columns:', error.message);
