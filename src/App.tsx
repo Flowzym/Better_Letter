@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { User, Briefcase, Sparkles, AlertTriangle, Settings } from 'lucide-react';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import InputSection from './components/InputSection';
 import CoverLetterDisplay from './components/CoverLetterDisplay';
 import StyleSelector from './components/StyleSelector';
@@ -257,7 +258,8 @@ function saveToStorage<T>(key: string, value: T): void {
   }
 }
 
-function App() {
+function HomePage() {
+  const navigate = useNavigate();
   const [cvContent, setCvContent] = useState('');
   const [jobContent, setJobContent] = useState('');
   const [coverLetter, setCoverLetter] = useState('');
@@ -265,25 +267,24 @@ function App() {
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState('');
   const [databaseStats, setDatabaseStats] = useState<DatabaseStats | null>(null);
-  const [showSettings, setShowSettings] = useState(false);
   
   // Load settings from localStorage with defaults
-  const [documentTypes, setDocumentTypes] = useState(() => 
+  const [documentTypes] = useState(() =>
     loadFromStorage('documentTypes', DEFAULT_DOCUMENT_TYPES)
   );
   const [selectedDocumentType, setSelectedDocumentType] = useState(() => 
     loadFromStorage('selectedDocumentType', 'standard')
   );
-  const [editPrompts, setEditPrompts] = useState(() => 
+  const [editPrompts] = useState(() =>
     loadFromStorage('editPrompts', DEFAULT_EDIT_PROMPTS)
   );
-  const [stylePrompts, setStylePrompts] = useState(() => 
+  const [stylePrompts] = useState(() =>
     loadFromStorage('stylePrompts', DEFAULT_STYLE_PROMPTS)
   );
   const [profileConfig, setProfileConfig] = useState<ProfileConfig>(() => 
     loadProfileConfigFromStorage()
   );
-  const [profileSourceMappings, setProfileSourceMappings] = useState<ProfileSourceMapping[]>(() =>
+  const [profileSourceMappings] = useState<ProfileSourceMapping[]>(() =>
     loadProfileSourceMappingsFromStorage()
   );
   const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
@@ -446,10 +447,7 @@ function App() {
           {/* BOLT-UI-ANPASSUNG 2025-01-15: Nur Zahnradsymbol oben rechts */}
           <div className="absolute top-0 right-0">
             <button
-              onClick={() => {
-                console.log("Settings-Button geklickt");
-                setShowSettings(true);
-              }}
+              onClick={() => navigate('/settings')}
               className="flex items-center p-2 bg-white rounded-lg shadow-sm border hover:bg-gray-50 transition-colors duration-200"
               title="App-Konfiguration öffnen"
             >
@@ -467,12 +465,6 @@ function App() {
             </h1>
           </div>
         </div>
-
-        {/* Settings Modal */}
-        <SettingsPage
-          isOpen={showSettings}
-          onClose={() => setShowSettings(false)}
-        />
 
         {/* Document Type Selector */}
         <DocumentTypeSelector
@@ -574,6 +566,15 @@ function App() {
         </div>
       </div>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/settings" element={<SettingsPage />} />
+    </Routes>
   );
 }
 
