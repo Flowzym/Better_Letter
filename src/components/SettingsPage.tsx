@@ -84,10 +84,10 @@ export default function SettingsPage() {
     styles: {}
   });
   const [autoloadPrompts, setAutoloadPrompts] = useState(
-    () => localStorage.getItem('autoloadPrompts') === 'true'
+    localStorage.getItem('autoloadPrompts') === 'true'
   );
   const [defaultStyle, setDefaultStyle] = useState(
-    () => localStorage.getItem('defaultStyle') || ''
+    localStorage.getItem('defaultStyle') || ''
   );
   const [templates, setTemplates] = useState<Template[]>(() => {
     try {
@@ -130,12 +130,16 @@ export default function SettingsPage() {
       }
     };
 
-    fetchModels();
-    setPrompts({
-      documents: loadPrompts('documentTypes'),
-      edits: loadPrompts('editPrompts'),
-      styles: loadPrompts('stylePrompts')
-    });
+    const initializeData = async () => {
+      await fetchModels();
+      setPrompts({
+        documents: loadPrompts('documentTypes'),
+        edits: loadPrompts('editPrompts'),
+        styles: loadPrompts('stylePrompts')
+      });
+    };
+
+    initializeData();
   }, []);
 
   // Helpers for model and prompt manipulation
@@ -229,22 +233,32 @@ export default function SettingsPage() {
 
   const handleSave = async () => {
     setIsSaving(true);
-    await saveKIConfigs(models);
-    localStorage.setItem('documentTypes', JSON.stringify(prompts.documents));
-    localStorage.setItem('editPrompts', JSON.stringify(prompts.edits));
-    localStorage.setItem('stylePrompts', JSON.stringify(prompts.styles));
-    localStorage.setItem('autoloadPrompts', JSON.stringify(autoloadPrompts));
-    localStorage.setItem('defaultStyle', defaultStyle);
-    localStorage.setItem('templates', JSON.stringify(templates));
-    localStorage.setItem('profileSourceMappings', JSON.stringify(profileSourceMappings));
-    setIsSaving(false);
-    navigate(-1);
+    try {
+      await saveKIConfigs(models);
+      localStorage.setItem('documentTypes', JSON.stringify(prompts.documents));
+      localStorage.setItem('editPrompts', JSON.stringify(prompts.edits));
+      localStorage.setItem('stylePrompts', JSON.stringify(prompts.styles));
+      localStorage.setItem('autoloadPrompts', JSON.stringify(autoloadPrompts));
+      localStorage.setItem('defaultStyle', defaultStyle);
+      localStorage.setItem('templates', JSON.stringify(templates));
+      localStorage.setItem('profileSourceMappings', JSON.stringify(profileSourceMappings));
+      navigate(-1);
+    } catch (error) {
+      console.error('Save error:', error);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleTestSupabase = async () => {
     setConnStatus('loading');
-    const ok = await testSupabaseConnection();
-    setConnStatus(ok ? 'success' : 'error');
+    try {
+      const ok = await testSupabaseConnection();
+      setConnStatus(ok ? 'success' : 'error');
+    } catch (error) {
+      console.error('Supabase test error:', error);
+      setConnStatus('error');
+    }
   };
 
   const handleExport = () => {
