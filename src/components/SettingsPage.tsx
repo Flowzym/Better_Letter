@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Settings as SettingsIcon,
@@ -45,9 +45,39 @@ interface PromptState {
   styles: Record<string, PromptConfig>;
 }
 
+// Helper functions moved outside component to prevent re-creation
+const loadPrompts = (key: string): Record<string, PromptConfig> => {
+  try {
+    const saved = localStorage.getItem(key);
+    return saved ? JSON.parse(saved) : {};
+  } catch {
+    return {};
+  }
+};
+
+const loadTemplatesFromStorage = (): Template[] => {
+  try {
+    const saved = localStorage.getItem('templates');
+    return saved ? JSON.parse(saved) : [];
+  } catch {
+    return [];
+  }
+};
+
+const loadProfileSourceMappingsFromStorage = (): ProfileSourceMapping[] => {
+  try {
+    const saved = localStorage.getItem('profileSourceMappings');
+    return saved ? JSON.parse(saved) : [];
+  } catch {
+    return [];
+  }
+};
+
 export default function SettingsPage() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<Tab>('ai');
+  
+  // Static data that doesn't change
   const modelOptions = [
     'mistral-7b-instruct',
     'mistral-tiny',
@@ -73,6 +103,8 @@ export default function SettingsPage() {
     'gpt-4': 'https://api.openai.com/v1/chat/completions',
     'claude-3-opus': 'https://api.anthropic.com/v1/messages'
   };
+
+  // State with stable initial values
   const [models, setModels] = useState<KIModelSettings[]>([]);
   const [openModels, setOpenModels] = useState<string[]>([]);
   const [showModelModal, setShowModelModal] = useState(false);
@@ -83,75 +115,76 @@ export default function SettingsPage() {
     edits: {},
     styles: {}
   });
-  const [autoloadPrompts, setAutoloadPrompts] = useState(
-    localStorage.getItem('autoloadPrompts') === 'true'
-  );
-  const [defaultStyle, setDefaultStyle] = useState(
-    localStorage.getItem('defaultStyle') || ''
-  );
-  const [templates, setTemplates] = useState<Template[]>(() => {
-    try {
-      const saved = localStorage.getItem('templates');
-      return saved ? (JSON.parse(saved) as Template[]) : [];
-    } catch {
-      return [];
-    }
-  });
+  const [autoloadPrompts, setAutoloadPrompts] = useState(false);
+  const [defaultStyle, setDefaultStyle] = useState('');
+  const [templates, setTemplates] = useState<Template[]>([]);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
-  const [profileSourceMappings, setProfileSourceMappings] = useState<ProfileSourceMapping[]>(() => {
-    try {
-      const saved = localStorage.getItem('profileSourceMappings');
-      return saved ? (JSON.parse(saved) as ProfileSourceMapping[]) : [];
-    } catch {
-      return [];
-    }
-  });
+  const [profileSourceMappings, setProfileSourceMappings] = useState<ProfileSourceMapping[]>([]);
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  // Load KI models and prompt settings on mount
+  // Initialize data once on mount
   useEffect(() => {
-    const fetchModels = async () => {
-      const fromDB = await loadKIConfigs();
-      const merged = [...defaultKIModels];
-      fromDB.forEach((m) => {
-        const idx = merged.findIndex((d) => d.id === m.id);
-        if (idx >= 0) merged[idx] = { ...merged[idx], ...m };
-        else merged.push(m);
-      });
-      setModels(merged);
-      setOpenModels(merged.filter((m) => m.active).map((m) => m.id));
-    };
+    let isMounted = true;
 
-    const loadPrompts = (key: string) => {
+    const initializeData = async () => {
       try {
-        const saved = localStorage.getItem(key);
-        return saved ? (JSON.parse(saved) as Record<string, PromptConfig>) : {};
-      } catch {
-        return {};
+        // Load KI models
+        const fromDB = await loadKIConfigs();
+        const merged = [...defaultKIModels];
+        fromDB.forEach((m) => {
+          const idx = merged.findIndex((d) => d.id === m.id);
+          if (idx >= 0) merged[idx] = { ...merged[idx], ...m };
+          else merged.push(m);
+        });
+
+        if (!isMounted) return;
+
+        // Load all data synchronously to prevent race conditions
+        const promptsData = {
+          documents: loadPrompts('documentTypes'),
+          edits: loadPrompts('editPrompts'),
+          styles: loadPrompts('stylePrompts')
+        };
+
+        const autoloadPromptsValue = localStorage.getItem('autoloadPrompts') === 'true';
+        const defaultStyleValue = localStorage.getItem('defaultStyle') || '';
+        const templatesData = loadTemplatesFromStorage();
+        const profileSourceMappingsData = loadProfileSourceMappingsFromStorage();
+
+        // Set all state at once to minimize re-renders
+        setModels(merged);
+        setOpenModels(merged.filter((m) => m.active).map((m) => m.id));
+        setPrompts(promptsData);
+        setAutoloadPrompts(autoloadPromptsValue);
+        setDefaultStyle(defaultStyleValue);
+        setTemplates(templatesData);
+        setProfileSourceMappings(profileSourceMappingsData);
+        setIsInitialized(true);
+      } catch (error) {
+        console.error('Error initializing settings:', error);
+        if (isMounted) {
+          setIsInitialized(true); // Still mark as initialized to prevent loading loop
+        }
       }
     };
 
-    const initializeData = async () => {
-      await fetchModels();
-      setPrompts({
-        documents: loadPrompts('documentTypes'),
-        edits: loadPrompts('editPrompts'),
-        styles: loadPrompts('stylePrompts')
-      });
-    };
-
     initializeData();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  // Helpers for model and prompt manipulation
-  const handleModelField = (
+  // Memoized handlers to prevent re-creation
+  const handleModelField = useCallback((
     id: string,
     field: keyof KIModelSettings,
     value: string | number | boolean
   ) => {
     setModels((prev) => prev.map((m) => (m.id === id ? { ...m, [field]: value } : m)));
-  };
+  }, []);
 
-  const handleModelSelection = (id: string, modelName: string) => {
+  const handleModelSelection = useCallback((id: string, modelName: string) => {
     setModels((prev) =>
       prev.map((m) =>
         m.id === id
@@ -159,14 +192,14 @@ export default function SettingsPage() {
           : m
       )
     );
-  };
+  }, [endpointMap]);
 
-  const setActiveModel = (id: string) => {
+  const setActiveModel = useCallback((id: string) => {
     setModels((prev) => prev.map((m) => ({ ...m, active: m.id === id })));
     setOpenModels((prev) => (prev.includes(id) ? prev : [...prev, id]));
-  };
+  }, []);
 
-  const addModel = () => {
+  const addModel = useCallback(() => {
     const newModel: KIModelSettings = {
       id: `model_${Date.now()}`,
       name: 'Neues Modell',
@@ -180,13 +213,13 @@ export default function SettingsPage() {
     };
     setModels((prev) => [...prev, newModel]);
     setOpenModels((prev) => [...prev, newModel.id]);
-  };
+  }, [endpointMap]);
 
-  const removeModel = (id: string) => {
+  const removeModel = useCallback((id: string) => {
     setModels((prev) => prev.filter((m) => m.id !== id));
-  };
+  }, []);
 
-  const updatePrompt = (
+  const updatePrompt = useCallback((
     category: keyof PromptState,
     key: string,
     field: keyof PromptConfig,
@@ -199,9 +232,9 @@ export default function SettingsPage() {
         [key]: { ...prev[category][key], [field]: value }
       }
     }));
-  };
+  }, []);
 
-  const addPrompt = (category: keyof PromptState) => {
+  const addPrompt = useCallback((category: keyof PromptState) => {
     const key = `prompt_${Date.now()}`;
     setPrompts((prev) => ({
       ...prev,
@@ -213,25 +246,31 @@ export default function SettingsPage() {
             : { label: '', prompt: '' }
       }
     }));
-  };
+  }, []);
 
-  const removePrompt = (category: keyof PromptState, key: string) => {
+  const removePrompt = useCallback((category: keyof PromptState, key: string) => {
     setPrompts((prev) => {
       const newCat = { ...prev[category] };
       delete newCat[key];
       return { ...prev, [category]: newCat };
     });
-  };
+  }, []);
 
+  // Persist templates to localStorage
   useEffect(() => {
-    localStorage.setItem('templates', JSON.stringify(templates));
-  }, [templates]);
+    if (isInitialized) {
+      localStorage.setItem('templates', JSON.stringify(templates));
+    }
+  }, [templates, isInitialized]);
 
+  // Persist profile source mappings to localStorage
   useEffect(() => {
-    localStorage.setItem('profileSourceMappings', JSON.stringify(profileSourceMappings));
-  }, [profileSourceMappings]);
+    if (isInitialized) {
+      localStorage.setItem('profileSourceMappings', JSON.stringify(profileSourceMappings));
+    }
+  }, [profileSourceMappings, isInitialized]);
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     setIsSaving(true);
     try {
       await saveKIConfigs(models);
@@ -248,9 +287,9 @@ export default function SettingsPage() {
     } finally {
       setIsSaving(false);
     }
-  };
+  }, [models, prompts, autoloadPrompts, defaultStyle, templates, profileSourceMappings, navigate]);
 
-  const handleTestSupabase = async () => {
+  const handleTestSupabase = useCallback(async () => {
     setConnStatus('loading');
     try {
       const ok = await testSupabaseConnection();
@@ -259,9 +298,9 @@ export default function SettingsPage() {
       console.error('Supabase test error:', error);
       setConnStatus('error');
     }
-  };
+  }, []);
 
-  const handleExport = () => {
+  const handleExport = useCallback(() => {
     const dbMapping = localStorage.getItem('databaseMapping');
     const data = {
       models,
@@ -281,9 +320,9 @@ export default function SettingsPage() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-  };
+  }, [models, prompts, templates, profileSourceMappings, autoloadPrompts, defaultStyle]);
 
-  const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImport = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     try {
@@ -306,7 +345,21 @@ export default function SettingsPage() {
       console.error('Failed to import settings', err);
     }
     e.target.value = '';
-  };
+  }, []);
+
+  // Don't render until initialized to prevent flickering
+  if (!isInitialized) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white rounded-lg shadow-xl p-8">
+          <div className="flex items-center space-x-3">
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-orange-500"></div>
+            <span>Einstellungen werden geladen...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const tabs = [
     { id: 'general', label: 'Allgemein', icon: SlidersHorizontal },
