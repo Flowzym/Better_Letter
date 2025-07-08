@@ -23,8 +23,8 @@ export async function generateText(prompt: string, config: KIModelSettings) {
   return data.choices?.[0]?.message?.content ?? "";
 }
 
-export async function editCoverLetter(
-  prompt: string,
+export async function generateCoverLetter(
+  input: string,
   systemPrompt: string,
   config: KIModelSettings,
 ) {
@@ -35,14 +35,44 @@ export async function editCoverLetter(
     max_tokens: config.max_tokens,
     messages: [
       { role: "system", content: systemPrompt },
-      { role: "user", content: prompt },
+      { role: "user", content: input },
     ],
   };
 
   const res = await fetch(config.endpoint, {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${config.apiKey}`,
+      Authorization: `Bearer ${config.apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) throw new Error("KI-Antwort fehlgeschlagen.");
+  const data = await res.json();
+  return data.choices?.[0]?.message?.content ?? "";
+}
+
+export async function editCoverLetter(
+  existingText: string,
+  instruction: string,
+  config: KIModelSettings,
+) {
+  const body = {
+    model: config.model,
+    temperature: config.temperature,
+    top_p: config.top_p,
+    max_tokens: config.max_tokens,
+    messages: [
+      { role: "system", content: instruction },
+      { role: "user", content: existingText },
+    ],
+  };
+
+  const res = await fetch(config.endpoint, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${config.apiKey}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify(body),
