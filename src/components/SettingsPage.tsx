@@ -13,7 +13,8 @@ import {
   Check
 } from 'lucide-react';
 import SettingsModal from './SettingsModal';
-import DatabaseStatus from './DatabaseStatus';
+import DatabaseStatusPanel from './DatabaseStatusPanel';
+import DatabaseMappingSection from './DatabaseMappingSection';
 import { KIModelSettings } from '../types/KIModelSettings';
 import { defaultKIModels } from '../constants/kiDefaults';
 import { loadKIConfigs, saveKIConfigs } from '../services/supabaseService';
@@ -403,7 +404,12 @@ export default function SettingsPage() {
               </div>
             )}
 
-            {activeTab === 'database' && <DatabaseStatus />}
+            {activeTab === 'database' && (
+              <div className="space-y-6">
+                <DatabaseStatusPanel />
+                <DatabaseMappingSection />
+              </div>
+            )}
 
             {activeTab === 'advanced' && (
               <div className="space-y-4">
