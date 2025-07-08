@@ -1,5 +1,36 @@
-import { supabase } from "../lib/supabase";
-import { KIModelSettings } from "../types/KIModelSettings";
+import { supabase } from '../lib/supabase';
+import { KIModelSettings } from '../types/KIModelSettings';
+
+// --- Types --------------------------------------------------------------
+export interface ProfileConfig {
+  berufe: string[];
+  taetigkeiten: string[];
+  skills: string[];
+  softskills: string[];
+  ausbildung: string[];
+}
+
+export interface ProfileSourceMapping {
+  category: keyof ProfileConfig;
+  tableName: string;
+  columnName: string;
+  isActive: boolean;
+}
+
+export interface DatabaseStats {
+  totalSuggestions: number;
+  categoryCounts: Record<string, number>;
+}
+
+export interface SupabaseTable {
+  table_name: string;
+  columns: string[];
+}
+
+// --- Cache helpers -----------------------------------------------------
+const TABLE_CACHE_DURATION = 30000; // 30s
+let tableCache: { timestamp: number; tables: SupabaseTable[] } | null = null;
+const columnCache: Record<string, { timestamp: number; columns: string[] }> = {};
 
 async function loadKIConfigs(): Promise<KIModelSettings[]> {
   const { data, error } = await supabase.from("ki_settings").select("*");
@@ -17,6 +48,59 @@ async function saveKIConfigs(models: KIModelSettings[]) {
   if (error) {
     console.error("Fehler beim Speichern der KI-Konfigurationen:", error.message);
   }
+}
+
+// -----------------------------------------------------------------------
+// Supabase table & column helpers
+async function getTableColumns(tableName: string): Promise<string[]> {
+  const cached = columnCache[tableName];
+  if (cached && Date.now() - cached.timestamp < TABLE_CACHE_DURATION) {
+    return cached.columns;
+  }
+
+  const columns = await fetchTableColumns(tableName);
+  columnCache[tableName] = { timestamp: Date.now(), columns };
+  return columns;
+}
+
+async function getSupabaseTableNames(forceRefresh = false): Promise<SupabaseTable[]> {
+  if (!forceRefresh && tableCache && Date.now() - tableCache.timestamp < TABLE_CACHE_DURATION) {
+    return tableCache.tables;
+  }
+
+  const { data, error } = await supabase
+    .from('pg_catalog.pg_tables')
+    .select('tablename, schemaname')
+    .neq('schemaname', 'pg_catalog')
+    .neq('schemaname', 'information_schema');
+
+  if (error) {
+    console.error('Error fetching tables:', error.message);
+    return [];
+  }
+
+  const tables: SupabaseTable[] = [];
+  for (const row of data as { tablename: string }[]) {
+    const columns = await getTableColumns(row.tablename);
+    tables.push({ table_name: row.tablename, columns });
+  }
+
+  tableCache = { timestamp: Date.now(), tables };
+  return tables;
+}
+
+function invalidateTableCache() {
+  tableCache = null;
+}
+
+async function testTableColumnMapping(table: string, column: string) {
+  const { data, error } = await supabase.from(table).select(column).limit(5);
+  if (error) {
+    console.error('Mapping test failed:', error.message);
+    return { success: false, sampleData: [], error: error.message };
+  }
+  const samples = (data as Record<string, unknown>[]).map((r) => String(r[column] ?? ''));
+  return { success: true, sampleData: samples };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -38,23 +122,35 @@ async function getDatabaseStats(): Promise<any> {
 function isSupabaseConfigured(): boolean {
   return Boolean(
     import.meta.env.VITE_SUPABASE_URL &&
-    import.meta.env.VITE_SUPABASE_KEY
+    import.meta.env.VITE_SUPABASE_ANON_KEY
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function loadProfileSuggestions(): Promise<any[]> {
-  const { data, error } = await supabase
-    .from("profile_suggestions")
-    .select("*")
-    .order("created_at", { ascending: false });
+async function loadProfileSuggestions(
+  mappings: ProfileSourceMapping[] = [],
+  _forceRefresh = false
+): Promise<ProfileConfig> {
+  const result: ProfileConfig = {
+    berufe: [],
+    taetigkeiten: [],
+    skills: [],
+    softskills: [],
+    ausbildung: [],
+  };
 
-  if (error) {
-    console.error(error.message);
-    return [];
+  for (const m of mappings.filter((m) => m.isActive)) {
+    try {
+      const { data } = await supabase.from(m.tableName).select(m.columnName);
+      const values = (data as Record<string, unknown>[]).map((r) =>
+        String(r[m.columnName] ?? '')
+      );
+      result[m.category] = [...result[m.category], ...values];
+    } catch (err) {
+      console.error('Error loading profile suggestions:', err);
+    }
   }
 
-  return data ?? [];
+  return result;
 }
 
 async function testDatabaseConnection(): Promise<boolean> {
@@ -92,4 +188,8 @@ export {
   loadProfileSuggestions,
   testDatabaseConnection,
   fetchTableColumns,
+  getSupabaseTableNames,
+  invalidateTableCache,
+  getTableColumns,
+  testTableColumnMapping,
 };

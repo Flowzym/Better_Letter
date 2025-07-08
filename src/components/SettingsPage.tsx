@@ -13,18 +13,28 @@ import {
   Check
 } from 'lucide-react';
 import SettingsModal from './SettingsModal';
-import DatabaseStatusPanel from './DatabaseStatusPanel';
+import TemplateManagerModal, { Template } from './TemplateManagerModal';
+import ProfileSourceSettings from './ProfileSourceSettings';
+import DatabaseStatus from './DatabaseStatus';
 import DatabaseMappingSection from './DatabaseMappingSection';
 import { KIModelSettings } from '../types/KIModelSettings';
 import { defaultKIModels } from '../constants/kiDefaults';
-import { loadKIConfigs, saveKIConfigs } from '../services/supabaseService';
+import {
+  loadKIConfigs,
+  saveKIConfigs,
+  ProfileSourceMapping
+} from '../services/supabaseService';
 
 // Tabs handled in this page
-type Tab = 'ai' | 'prompts' | 'import' | 'database' | 'advanced';
+type Tab = 'general' | 'ai' | 'prompts' | 'database' | 'templates' | 'import';
 
 interface PromptConfig {
   label: string;
   prompt: string;
+  title?: string;
+  role?: string;
+  style?: string;
+  examples?: string;
 }
 
 interface PromptState {
@@ -50,6 +60,23 @@ export default function SettingsPage() {
   const [defaultStyle, setDefaultStyle] = useState(
     () => localStorage.getItem('defaultStyle') || ''
   );
+  const [templates, setTemplates] = useState<Template[]>(() => {
+    try {
+      const saved = localStorage.getItem('templates');
+      return saved ? (JSON.parse(saved) as Template[]) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [showTemplateModal, setShowTemplateModal] = useState(false);
+  const [profileSourceMappings, setProfileSourceMappings] = useState<ProfileSourceMapping[]>(() => {
+    try {
+      const saved = localStorage.getItem('profileSourceMappings');
+      return saved ? (JSON.parse(saved) as ProfileSourceMapping[]) : [];
+    } catch {
+      return [];
+    }
+  });
 
   // Load KI models and prompt settings on mount
   useEffect(() => {
@@ -115,7 +142,10 @@ export default function SettingsPage() {
       ...prev,
       [category]: {
         ...prev[category],
-        [key]: { label: '', prompt: '' }
+        [key]:
+          category === 'documents'
+            ? { label: '', prompt: '', title: '', role: '', style: '', examples: '' }
+            : { label: '', prompt: '' }
       }
     }));
   };
@@ -128,6 +158,14 @@ export default function SettingsPage() {
     });
   };
 
+  useEffect(() => {
+    localStorage.setItem('templates', JSON.stringify(templates));
+  }, [templates]);
+
+  useEffect(() => {
+    localStorage.setItem('profileSourceMappings', JSON.stringify(profileSourceMappings));
+  }, [profileSourceMappings]);
+
   const handleSave = async () => {
     setIsSaving(true);
     await saveKIConfigs(models);
@@ -136,12 +174,23 @@ export default function SettingsPage() {
     localStorage.setItem('stylePrompts', JSON.stringify(prompts.styles));
     localStorage.setItem('autoloadPrompts', JSON.stringify(autoloadPrompts));
     localStorage.setItem('defaultStyle', defaultStyle);
+    localStorage.setItem('templates', JSON.stringify(templates));
+    localStorage.setItem('profileSourceMappings', JSON.stringify(profileSourceMappings));
     setIsSaving(false);
     navigate(-1);
   };
 
   const handleExport = () => {
-    const data = { models, prompts, autoloadPrompts, defaultStyle };
+    const dbMapping = localStorage.getItem('databaseMapping');
+    const data = {
+      models,
+      prompts,
+      templates,
+      profileSourceMappings,
+      autoloadPrompts,
+      defaultStyle,
+      databaseMapping: dbMapping ? JSON.parse(dbMapping) : null
+    };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -159,10 +208,19 @@ export default function SettingsPage() {
     try {
       const content = await file.text();
       const data = JSON.parse(content);
-      if (data.models) setModels(data.models);
-      if (data.prompts) setPrompts(data.prompts);
+      if (!data.models || !data.prompts) {
+        throw new Error('Ungültiges Einstellungsformat');
+      }
+      setModels(data.models);
+      setPrompts(data.prompts);
+      if (Array.isArray(data.templates)) setTemplates(data.templates);
+      if (Array.isArray(data.profileSourceMappings))
+        setProfileSourceMappings(data.profileSourceMappings);
       if (typeof data.autoloadPrompts === 'boolean') setAutoloadPrompts(data.autoloadPrompts);
       if (data.defaultStyle) setDefaultStyle(data.defaultStyle);
+      if (data.databaseMapping) {
+        localStorage.setItem('databaseMapping', JSON.stringify(data.databaseMapping));
+      }
     } catch (err) {
       console.error('Failed to import settings', err);
     }
@@ -170,11 +228,12 @@ export default function SettingsPage() {
   };
 
   const tabs = [
-    { id: 'ai', label: 'KI-Konfiguration', icon: Brain },
-    { id: 'prompts', label: 'Prompt-Verwaltung', icon: FileText },
-    { id: 'import', label: 'Import/Export', icon: Download },
-    { id: 'database', label: 'Datenbankstatus', icon: DatabaseIcon },
-    { id: 'advanced', label: 'Erweiterte Optionen', icon: SlidersHorizontal }
+    { id: 'general', label: 'Allgemein', icon: SlidersHorizontal },
+    { id: 'ai', label: 'KI-Einstellungen', icon: Brain },
+    { id: 'prompts', label: 'Prompt-Vorlagen', icon: FileText },
+    { id: 'database', label: 'Datenbank', icon: DatabaseIcon },
+    { id: 'templates', label: 'Template-Manager', icon: FileText },
+    { id: 'import', label: 'Import/Export', icon: Download }
   ] as const;
 
   return (
@@ -209,6 +268,37 @@ export default function SettingsPage() {
           </aside>
 
           <div className="flex-1 overflow-y-auto p-6 space-y-6">
+            {activeTab === 'general' && (
+              <div className="space-y-4">
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={autoloadPrompts}
+                    onChange={(e) => setAutoloadPrompts(e.target.checked)}
+                    className="rounded border-gray-300"
+                    style={{ accentColor: '#F29400' }}
+                  />
+                  <span className="text-sm">Prompts beim Start automatisch laden</span>
+                </label>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Standard-Stil</label>
+                  <select
+                    value={defaultStyle}
+                    onChange={(e) => setDefaultStyle(e.target.value)}
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                    style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                  >
+                    <option value="">Keiner</option>
+                    {Object.entries(prompts.styles).map(([key, p]) => (
+                      <option key={key} value={key}>
+                        {p.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            )}
+
             {activeTab === 'ai' && (
               <div className="space-y-6">
                 <div className="text-right">
@@ -364,6 +454,50 @@ export default function SettingsPage() {
                                 style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
                               />
                             </label>
+                            {cat === 'documents' && (
+                              <>
+                                <label className="space-y-1">
+                                  <span className="text-sm font-medium text-gray-700">Titel</span>
+                                  <input
+                                    type="text"
+                                    value={p.title || ''}
+                                    onChange={(e) => updatePrompt(cat, key, 'title', e.target.value)}
+                                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                                    style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                                  />
+                                </label>
+                                <label className="space-y-1">
+                                  <span className="text-sm font-medium text-gray-700">Rolle</span>
+                                  <input
+                                    type="text"
+                                    value={p.role || ''}
+                                    onChange={(e) => updatePrompt(cat, key, 'role', e.target.value)}
+                                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                                    style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                                  />
+                                </label>
+                                <label className="space-y-1">
+                                  <span className="text-sm font-medium text-gray-700">Stil</span>
+                                  <input
+                                    type="text"
+                                    value={p.style || ''}
+                                    onChange={(e) => updatePrompt(cat, key, 'style', e.target.value)}
+                                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                                    style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                                  />
+                                </label>
+                                <label className="space-y-1 md:col-span-2">
+                                  <span className="text-sm font-medium text-gray-700">Beispiele</span>
+                                  <textarea
+                                    value={p.examples || ''}
+                                    onChange={(e) => updatePrompt(cat, key, 'examples', e.target.value)}
+                                    rows={2}
+                                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                                    style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                                  />
+                                </label>
+                              </>
+                            )}
                           </div>
                           <div className="text-right">
                             <button
@@ -406,39 +540,30 @@ export default function SettingsPage() {
 
             {activeTab === 'database' && (
               <div className="space-y-6">
-                <DatabaseStatusPanel />
+                <DatabaseStatus />
+                <ProfileSourceSettings
+                  sourceMappings={profileSourceMappings}
+                  onSourceMappingsChange={setProfileSourceMappings}
+                />
                 <DatabaseMappingSection />
               </div>
             )}
 
-            {activeTab === 'advanced' && (
+            {activeTab === 'templates' && (
               <div className="space-y-4">
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={autoloadPrompts}
-                    onChange={(e) => setAutoloadPrompts(e.target.checked)}
-                    className="rounded border-gray-300"
-                    style={{ accentColor: '#F29400' }}
-                  />
-                  <span className="text-sm">Prompts beim Start automatisch laden</span>
-                </label>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Standard-Stil</label>
-                  <select
-                    value={defaultStyle}
-                    onChange={(e) => setDefaultStyle(e.target.value)}
-                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-                    style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-                  >
-                    <option value="">Keiner</option>
-                    {Object.entries(prompts.styles).map(([key, p]) => (
-                      <option key={key} value={key}>
-                        {p.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <button
+                  onClick={() => setShowTemplateModal(true)}
+                  className="px-4 py-2 text-white rounded-md"
+                  style={{ backgroundColor: '#F29400' }}
+                >
+                  Vorlagen verwalten
+                </button>
+                <ul className="list-disc pl-5 text-sm">
+                  {templates.map((t) => (
+                    <li key={t.id}>{t.name}</li>
+                  ))}
+                  {templates.length === 0 && <li>Keine Vorlagen</li>}
+                </ul>
               </div>
             )}
           </div>
@@ -481,6 +606,16 @@ export default function SettingsPage() {
             />
           </div>
         </div>
+      )}
+
+      {showTemplateModal && (
+        <TemplateManagerModal
+          isOpen={showTemplateModal}
+          onClose={() => setShowTemplateModal(false)}
+          onInsertTemplate={() => {}}
+          templates={templates}
+          onTemplatesChange={setTemplates}
+        />
       )}
     </div>
   );
