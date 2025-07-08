@@ -196,7 +196,7 @@ export default function SettingsPage() {
     const newModel: KIModelSettings = {
       id: crypto.randomUUID(),
       name: 'Neues Modell',
-      apiKey: '',
+      api_key: '',
       endpoint: ENDPOINT_MAP['mistral-7b-instruct'],
       model: 'mistral-7b-instruct',
       temperature: 0.7,
