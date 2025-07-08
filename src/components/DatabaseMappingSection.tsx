@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Database as DatabaseIcon, Plus, Trash2 } from 'lucide-react';
+import { fetchTableColumns } from '../services/supabaseService';
 
 interface MappingRow {
   dbField: string;
@@ -30,6 +31,30 @@ export default function DatabaseMappingSection() {
   const [tableName, setTableName] = useState(initial.tableName);
   const [isActive, setIsActive] = useState<boolean>(initial.isActive);
   const [mappings, setMappings] = useState<MappingRow[]>(initial.mappings);
+  const [columnCache, setColumnCache] = useState<Record<string, string[]>>({});
+  const [columns, setColumns] = useState<string[]>([]);
+  const [error, setError] = useState<string>('');
+
+  useEffect(() => {
+    const loadColumns = async () => {
+      if (!tableName) {
+        setColumns([]);
+        return;
+      }
+
+      if (columnCache[tableName]) {
+        setColumns(columnCache[tableName]);
+        return;
+      }
+
+      const cols = await fetchTableColumns(tableName);
+      setColumnCache(prev => ({ ...prev, [tableName]: cols }));
+      setColumns(cols);
+    };
+
+    loadColumns();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tableName]);
 
   const updateRow = (index: number, field: keyof MappingRow, value: string) => {
     setMappings(prev => prev.map((row, i) => (i === index ? { ...row, [field]: value } : row)));
@@ -44,6 +69,16 @@ export default function DatabaseMappingSection() {
   };
 
   const handleSave = () => {
+    if (tableName && columnCache[tableName]) {
+      const cols = columnCache[tableName];
+      const invalid = mappings.some(row => row.dbField && !cols.includes(row.dbField));
+      if (invalid) {
+        setError('Einige Datenbankfelder existieren nicht');
+        return;
+      }
+    }
+
+    setError('');
     const data = { tableName, isActive, mappings };
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -88,13 +123,23 @@ export default function DatabaseMappingSection() {
         </div>
         {mappings.map((row, index) => (
           <div key={index} className="grid grid-cols-2 gap-2 items-center">
-            <input
-              type="text"
-              value={row.dbField}
-              onChange={e => updateRow(index, 'dbField', e.target.value)}
-              className="px-2 py-1 border rounded focus:outline-none focus:ring-2"
-              style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-            />
+            <div>
+              <input
+                type="text"
+                list={`cols-${index}`}
+                value={row.dbField}
+                onChange={e => updateRow(index, 'dbField', e.target.value)}
+                className="w-full px-2 py-1 border rounded focus:outline-none focus:ring-2"
+                style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+              />
+              {columns.length > 0 && (
+                <datalist id={`cols-${index}`}>
+                  {columns.map(c => (
+                    <option key={c} value={c} />
+                  ))}
+                </datalist>
+              )}
+            </div>
             <div className="flex items-center space-x-2">
               <input
                 type="text"
@@ -121,6 +166,8 @@ export default function DatabaseMappingSection() {
           <span>Zeile hinzufügen</span>
         </button>
       </div>
+
+      {error && <p className="text-sm text-red-600">{error}</p>}
 
       <div className="text-right">
         <button

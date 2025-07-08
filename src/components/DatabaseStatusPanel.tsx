@@ -18,7 +18,7 @@ export default function DatabaseStatusPanel() {
         setStatus('error');
         setMessage('Fehler bei Verbindung');
       }
-    } catch (err) {
+    } catch {
       setStatus('error');
       setMessage('Fehler beim Testen');
     }
