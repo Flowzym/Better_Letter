@@ -1,6 +1,6 @@
 import { KIModelSettings } from "../types/KIModelSettings";
 
-export async function generateText(prompt: string, config: KIModelSettings) {
+async function generateText(prompt: string, config: KIModelSettings) {
   const body = {
     model: config.model,
     temperature: config.temperature,
@@ -23,7 +23,7 @@ export async function generateText(prompt: string, config: KIModelSettings) {
   return data.choices?.[0]?.message?.content ?? "";
 }
 
-export async function generateCoverLetter(
+async function generateCoverLetter(
   input: string,
   systemPrompt: string,
   config: KIModelSettings,
@@ -53,7 +53,7 @@ export async function generateCoverLetter(
   return data.choices?.[0]?.message?.content ?? "";
 }
 
-export async function editCoverLetter(
+async function editCoverLetter(
   existingText: string,
   instruction: string,
   config: KIModelSettings,
@@ -82,4 +82,6 @@ export async function editCoverLetter(
   const data = await res.json();
   return data.choices?.[0]?.message?.content ?? "";
 }
+
+export { generateText, editCoverLetter, generateCoverLetter };
 
