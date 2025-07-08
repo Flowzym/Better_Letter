@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { Check, ChevronDown } from 'lucide-react';
 import { KIModelSettings } from '../types/KIModelSettings';
 
@@ -32,7 +32,7 @@ const ENDPOINT_MAP: Record<string, string> = {
   'mistral-7b-instruct': 'https://api.mistral.ai/v1/chat/completions',
   'mistral-tiny': 'https://api.mistral.ai/v1/chat/completions',
   'mistral-small': 'https://api.mistral.ai/v1/chat/completions',
-  'mistral-medium': 'https://api.mistral.ai/v1/chat/completions',
+  'mistral-medium': 'https://api.openrouter.ai/v1/chat/completions',
   'mistral-large': 'https://api.mistral.ai/v1/chat/completions',
   'mixtral-8x7b': 'https://api.mistral.ai/v1/chat/completions',
   'openrouter/mixtral': 'https://openrouter.ai/api/v1/chat/completions',
@@ -49,12 +49,6 @@ function KIModelSettingsItem({
   setActiveModel,
   removeModel
 }: KIModelSettingsItemProps) {
-  const [isOpen, setIsOpen] = useState(model.active);
-
-  const toggleOpen = useCallback(() => {
-    setIsOpen((o) => !o);
-  }, []);
-
   const onModelChange = useCallback(
     (selected: string) => {
       handleModelSelection(model.id, selected);
@@ -75,8 +69,7 @@ function KIModelSettingsItem({
 
   return (
     <details
-      open={isOpen}
-      onToggle={toggleOpen}
+      open={model.active}
       className={`group border rounded-lg p-4 shadow-sm ${
         model.active ? 'border-orange-400 bg-orange-50' : 'border-gray-200'
       }`}
