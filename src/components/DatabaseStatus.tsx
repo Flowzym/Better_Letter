@@ -97,20 +97,34 @@ function DatabaseStatus() {
         )}
 
         {/* Statistics */}
-        {stats && stats.categoryCounts && (
+        {stats && (
           <div className="bg-gray-50 rounded-lg p-4">
             <h3 className="font-medium text-gray-900 mb-3">Datenbank-Statistiken</h3>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
               <div>
-                <span className="text-gray-600">Gesamt Vorschläge:</span>
-                <div className="font-medium">{stats.totalSuggestions || 0}</div>
+                <span className="text-gray-600">Gesamt Einträge:</span>
+                <div className="font-medium">{stats.totalFromMappings || 0}</div>
               </div>
-              {Object.entries(stats.categoryCounts).map(([category, count]) => (
-                <div key={category}>
-                  <span className="text-gray-600 capitalize">{category}:</span>
-                  <div className="font-medium">{count as number}</div>
-                </div>
-              ))}
+              <div>
+                <span className="text-gray-600">Berufe:</span>
+                <div className="font-medium">{stats.berufe}</div>
+              </div>
+              <div>
+                <span className="text-gray-600">Tätigkeiten:</span>
+                <div className="font-medium">{stats.taetigkeiten}</div>
+              </div>
+              <div>
+                <span className="text-gray-600">Fachliche Kompetenzen:</span>
+                <div className="font-medium">{stats.skills}</div>
+              </div>
+              <div>
+                <span className="text-gray-600">Persönliche Kompetenzen:</span>
+                <div className="font-medium">{stats.softskills}</div>
+              </div>
+              <div>
+                <span className="text-gray-600">Ausbildung/Qualifikationen:</span>
+                <div className="font-medium">{stats.ausbildung}</div>
+              </div>
             </div>
           </div>
         )}
