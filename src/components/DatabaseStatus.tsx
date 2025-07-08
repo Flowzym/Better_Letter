@@ -97,13 +97,13 @@ export default function DatabaseStatus() {
         )}
 
         {/* Statistics */}
-        {stats && (
+        {stats && stats.categoryCounts && (
           <div className="bg-gray-50 rounded-lg p-4">
             <h3 className="font-medium text-gray-900 mb-3">Datenbank-Statistiken</h3>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
               <div>
                 <span className="text-gray-600">Gesamt Vorschläge:</span>
-                <div className="font-medium">{stats.totalSuggestions}</div>
+                <div className="font-medium">{stats.totalSuggestions || 0}</div>
               </div>
               {Object.entries(stats.categoryCounts).map(([category, count]) => (
                 <div key={category}>

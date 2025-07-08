@@ -19,7 +19,7 @@ export interface ProfileSourceMapping {
 
 export interface DatabaseStats {
   totalSuggestions: number;
-  categoryCounts: Record<string, number>;
+  categoryCounts?: Record<string, number>;
 }
 
 export interface SupabaseTable {
@@ -123,21 +123,33 @@ async function testTableColumnMapping(table: string, column: string) {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function getDatabaseStats(): Promise<any> {
-  const { data, error } = await supabase
-    .from("system_status")
-    .select("*")
-    .order("created_at", { ascending: false })
-    .limit(1);
+  try {
+    // Get profile suggestions count
+    const { data: suggestionsData, error: suggestionsError } = await supabase
+      .from("profile_suggestions")
+      .select("category")
+      .order("created_at", { ascending: false });
 
-  if (error) {
-    console.error(
-      "Fehler beim Abrufen der Datenbankstatistiken:",
-      error.message
-    );
-    return null;
+    if (suggestionsError) {
+      console.error("Fehler beim Abrufen der Vorschläge:", suggestionsError.message);
+      return { totalSuggestions: 0, categoryCounts: {} };
+    }
+
+    const categoryCounts: Record<string, number> = {};
+    let totalSuggestions = 0;
+
+    if (suggestionsData) {
+      totalSuggestions = suggestionsData.length;
+      suggestionsData.forEach((item: { category: string }) => {
+        categoryCounts[item.category] = (categoryCounts[item.category] || 0) + 1;
+      });
+    }
+
+    return { totalSuggestions, categoryCounts };
+  } catch (error) {
+    console.error("Fehler beim Abrufen der Datenbankstatistiken:", error);
+    return { totalSuggestions: 0, categoryCounts: {} };
   }
-
-  return data?.[0] ?? null;
 }
 
 function isSupabaseConfigured(): boolean {

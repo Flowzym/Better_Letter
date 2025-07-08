@@ -38,17 +38,22 @@ export default function DatabaseMappingSection() {
 
   useEffect(() => {
     const loadMappings = async () => {
-      const mappings = await getFieldMappings();
-      const grouped: Record<string, string[]> = {};
-      mappings.forEach((m: any) => {
-        const table = m.table_name || m.table;
-        const field = m.field_name || m.column_name;
-        if (!table || !field) return;
-        if (!grouped[table]) grouped[table] = [];
-        if (!grouped[table].includes(field)) grouped[table].push(field);
-      });
-      setTableColumns(grouped);
-      setAvailableTables(Object.keys(grouped));
+      try {
+        const mappings = await getFieldMappings();
+        const grouped: Record<string, string[]> = {};
+        mappings.forEach((m: any) => {
+          const table = m.table_name || m.table;
+          const field = m.field_name || m.column_name;
+          if (!table || !field) return;
+          if (!grouped[table]) grouped[table] = [];
+          if (!grouped[table].includes(field)) grouped[table].push(field);
+        });
+        setTableColumns(grouped);
+        setAvailableTables(Object.keys(grouped));
+      } catch (error) {
+        console.error('Error loading field mappings:', error);
+        setError('Fehler beim Laden der Feld-Zuordnungen');
+      }
     };
 
     loadMappings();
