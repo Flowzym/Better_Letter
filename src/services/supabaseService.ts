@@ -130,7 +130,7 @@ async function testTableColumnMapping(table: string, column: string) {
   return { success: true, sampleData: samples };
 }
 
-export async function getDatabaseStats(
+async function getDatabaseStats(
   mappings: ProfileSourceMapping[] = []
 ): Promise<DatabaseStats> {
   const counts: Record<keyof ProfileConfig, number> = {
