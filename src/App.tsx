@@ -446,7 +446,10 @@ function App() {
           {/* BOLT-UI-ANPASSUNG 2025-01-15: Nur Zahnradsymbol oben rechts */}
           <div className="absolute top-0 right-0">
             <button
-              onClick={() => setShowSettings(true)}
+              onClick={() => {
+                console.log("Settings-Button geklickt");
+                setShowSettings(true);
+              }}
               className="flex items-center p-2 bg-white rounded-lg shadow-sm border hover:bg-gray-50 transition-colors duration-200"
               title="App-Konfiguration öffnen"
             >
@@ -469,14 +472,6 @@ function App() {
         <SettingsPage
           isOpen={showSettings}
           onClose={() => setShowSettings(false)}
-          documentTypes={documentTypes}
-          onDocumentTypesChange={setDocumentTypes}
-          editPrompts={editPrompts}
-          onEditPromptsChange={setEditPrompts}
-          stylePrompts={stylePrompts}
-          onStylePromptsChange={setStylePrompts}
-          profileSourceMappings={profileSourceMappings}
-          onProfileSourceMappingsChange={setProfileSourceMappings}
         />
 
         {/* Document Type Selector */}
