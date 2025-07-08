@@ -18,8 +18,12 @@ export interface ProfileSourceMapping {
 }
 
 export interface DatabaseStats {
-  totalSuggestions: number;
-  categoryCounts?: Record<string, number>;
+  totalFromMappings: number;
+  berufe: number;
+  taetigkeiten: number;
+  skills: number;
+  softskills: number;
+  ausbildung: number;
 }
 
 export interface SupabaseTable {
@@ -126,37 +130,39 @@ async function testTableColumnMapping(table: string, column: string) {
   return { success: true, sampleData: samples };
 }
 
-export async function getDatabaseStats(): Promise<{
-  totalSuggestions: number;
-  categoryCounts: Record<string, number>;
-}> {
-  try {
-    // Get profile suggestions count
-    const { data: suggestionsData, error: suggestionsError } = await supabase
-      .from("profile_suggestions")
-      .select("category")
-      .order("created_at", { ascending: false });
+export async function getDatabaseStats(
+  mappings: ProfileSourceMapping[] = []
+): Promise<DatabaseStats> {
+  const counts: Record<keyof ProfileConfig, number> = {
+    berufe: 0,
+    taetigkeiten: 0,
+    skills: 0,
+    softskills: 0,
+    ausbildung: 0,
+  };
 
-    if (suggestionsError) {
-      console.error("Fehler beim Abrufen der Vorschläge:", suggestionsError.message);
-      return { totalSuggestions: 0, categoryCounts: {} };
+  for (const m of mappings.filter((m) => m.isActive)) {
+    try {
+      const { count, error } = await supabase
+        .from(m.tableName)
+        .select('*', { count: 'exact', head: true });
+      if (error) {
+        console.error('Fehler beim Abrufen der Statistiken:', error.message);
+        continue;
+      }
+      const c = count ?? 0;
+      counts[m.category] += c;
+    } catch (err) {
+      console.error('Fehler beim Abrufen der Statistiken:', err);
     }
-
-    const categoryCounts: Record<string, number> = {};
-    let totalSuggestions = 0;
-
-    if (suggestionsData) {
-      totalSuggestions = suggestionsData.length;
-      suggestionsData.forEach((item: { category: string }) => {
-        categoryCounts[item.category] = (categoryCounts[item.category] || 0) + 1;
-      });
-    }
-
-    return { totalSuggestions, categoryCounts };
-  } catch (error) {
-    console.error("Fehler beim Abrufen der Datenbankstatistiken:", error);
-    return { totalSuggestions: 0, categoryCounts: {} };
   }
+
+  const totalFromMappings = Object.values(counts).reduce(
+    (sum, val) => sum + val,
+    0
+  );
+
+  return { totalFromMappings, ...counts };
 }
 
 function isSupabaseConfigured(): boolean {
@@ -227,6 +233,7 @@ export {
   invalidateTableCache,
   getTableColumns,
   testTableColumnMapping,
+  getDatabaseStats,
   getFieldMappings,
   getPromptTemplates,
 };
