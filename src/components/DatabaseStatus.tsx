@@ -16,7 +16,7 @@ export default function DatabaseStatus() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const checkStatus = async () => {
+  const checkStatus = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     
@@ -46,11 +46,11 @@ export default function DatabaseStatus() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     checkStatus();
-  }, []);
+  }, [checkStatus]);
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200 mb-8">
@@ -98,7 +98,7 @@ export default function DatabaseStatus() {
 
         {/* Statistics */}
         {stats && stats.categoryCounts && (
-          <div>
+          <div className="bg-gray-50 rounded-lg p-4">
             <h3 className="font-medium text-gray-900 mb-3">Datenbank-Statistiken</h3>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
               <div>

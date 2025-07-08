@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Database as DatabaseIcon, Plus, Trash2 } from 'lucide-react';
 import { getFieldMappings } from '../services/supabaseService';
 
@@ -9,28 +9,29 @@ interface MappingRow {
 
 const STORAGE_KEY = 'databaseMapping';
 
-export default function DatabaseMappingSection() {
-  const loadInitial = () => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        return {
-          tableName: parsed.tableName || '',
-          isActive: parsed.isActive ?? true,
-          mappings: Array.isArray(parsed.mappings) ? parsed.mappings : []
-        };
-      }
-    } catch {
-      // ignore
+// Helper function moved outside component to prevent re-creation
+const loadInitial = () => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return {
+        tableName: parsed.tableName || '',
+        isActive: parsed.isActive ?? true,
+        mappings: Array.isArray(parsed.mappings) ? parsed.mappings : []
+      };
     }
-    return { tableName: '', isActive: true, mappings: [] as MappingRow[] };
-  };
+  } catch {
+    // ignore
+  }
+  return { tableName: '', isActive: true, mappings: [] as MappingRow[] };
+};
 
-  const initial = loadInitial();
-  const [tableName, setTableName] = useState(initial.tableName);
-  const [isActive, setIsActive] = useState<boolean>(initial.isActive);
-  const [mappings, setMappings] = useState<MappingRow[]>(initial.mappings);
+export default function DatabaseMappingSection() {
+  // Use lazy initial state to prevent re-execution
+  const [state, setState] = useState(loadInitial);
+  const { tableName, isActive, mappings } = state;
+  
   const [availableTables, setAvailableTables] = useState<string[]>([]);
   const [availableColumns, setAvailableColumns] = useState<string[]>([]);
   const [tableColumns, setTableColumns] = useState<Record<string, string[]>>({});
@@ -67,19 +68,28 @@ export default function DatabaseMappingSection() {
     setAvailableColumns(tableColumns[tableName] || []);
   }, [tableName, tableColumns]);
 
-  const updateRow = (index: number, field: keyof MappingRow, value: string) => {
-    setMappings(prev => prev.map((row, i) => (i === index ? { ...row, [field]: value } : row)));
-  };
+  const updateRow = useCallback((index: number, field: keyof MappingRow, value: string) => {
+    setState(prev => ({
+      ...prev,
+      mappings: prev.mappings.map((row, i) => (i === index ? { ...row, [field]: value } : row))
+    }));
+  }, []);
 
-  const addRow = () => {
-    setMappings(prev => [...prev, { dbField: '', appField: '' }]);
-  };
+  const addRow = useCallback(() => {
+    setState(prev => ({
+      ...prev,
+      mappings: [...prev.mappings, { dbField: '', appField: '' }]
+    }));
+  }, []);
 
-  const removeRow = (index: number) => {
-    setMappings(prev => prev.filter((_, i) => i !== index));
-  };
+  const removeRow = useCallback((index: number) => {
+    setState(prev => ({
+      ...prev,
+      mappings: prev.mappings.filter((_, i) => i !== index)
+    }));
+  }, []);
 
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     if (tableName && availableColumns.length > 0) {
       const invalid = mappings.some(
         row => row.dbField && !availableColumns.includes(row.dbField)
@@ -97,7 +107,15 @@ export default function DatabaseMappingSection() {
     } catch (err) {
       console.error('Failed to save mapping', err);
     }
-  };
+  }, [tableName, isActive, mappings, availableColumns]);
+
+  const setTableName = useCallback((newTableName: string) => {
+    setState(prev => ({ ...prev, tableName: newTableName }));
+  }, []);
+
+  const setIsActive = useCallback((newIsActive: boolean) => {
+    setState(prev => ({ ...prev, isActive: newIsActive }));
+  }, []);
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200 space-y-4">

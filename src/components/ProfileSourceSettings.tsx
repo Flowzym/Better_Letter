@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Database, Plus, Trash2, X, AlertCircle, RefreshCw, TestTube, Search } from 'lucide-react';
 import { 
   getSupabaseTableNames, 
@@ -47,7 +47,7 @@ export default function ProfileSourceSettings({
   const [isLoadingColumns, setIsLoadingColumns] = useState<string | null>(null);
   const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null);
 
-  const loadTables = async (forceRefresh: boolean = false) => {
+  const loadTables = useCallback(async (forceRefresh: boolean = false) => {
     setIsLoadingTables(true);
     setError(null);
     
@@ -74,9 +74,9 @@ export default function ProfileSourceSettings({
     } finally {
       setIsLoadingTables(false);
     }
-  };
+  }, []);
 
-  const refreshTableColumns = async (tableName: string) => {
+  const refreshTableColumns = useCallback(async (tableName: string) => {
     setIsLoadingColumns(tableName);
     try {
       console.log(`Refreshing columns for table: ${tableName}`);
@@ -95,13 +95,13 @@ export default function ProfileSourceSettings({
     } finally {
       setIsLoadingColumns(null);
     }
-  };
+  }, []);
 
   useEffect(() => {
     loadTables();
-  }, []);
+  }, [loadTables]);
 
-  const addMapping = () => {
+  const addMapping = useCallback(() => {
     if (!newMapping.category || !newMapping.tableName || !newMapping.columnName) {
       return;
     }
@@ -121,21 +121,21 @@ export default function ProfileSourceSettings({
       isActive: true
     });
     setShowNewMappingForm(false);
-  };
+  }, [newMapping, sourceMappings, onSourceMappingsChange]);
 
-  const removeMapping = (index: number) => {
+  const removeMapping = useCallback((index: number) => {
     const newMappings = sourceMappings.filter((_, i) => i !== index);
     onSourceMappingsChange(newMappings);
-  };
+  }, [sourceMappings, onSourceMappingsChange]);
 
-  const toggleMappingActive = (index: number) => {
+  const toggleMappingActive = useCallback((index: number) => {
     const newMappings = sourceMappings.map((mapping, i) => 
       i === index ? { ...mapping, isActive: !mapping.isActive } : mapping
     );
     onSourceMappingsChange(newMappings);
-  };
+  }, [sourceMappings, onSourceMappingsChange]);
 
-  const testMapping = async (mapping: ProfileSourceMapping) => {
+  const testMapping = useCallback(async (mapping: ProfileSourceMapping) => {
     const testKey = `${mapping.tableName}.${mapping.columnName}`;
     setIsTestingMapping(testKey);
     
@@ -161,20 +161,20 @@ export default function ProfileSourceSettings({
     } finally {
       setIsTestingMapping(null);
     }
-  };
+  }, []);
 
-  const getSelectedTable = () => {
+  const getSelectedTable = useCallback(() => {
     return availableTables.find(table => table.table_name === newMapping.tableName);
-  };
+  }, [availableTables, newMapping.tableName]);
 
-  const handleTableChange = async (tableName: string) => {
+  const handleTableChange = useCallback(async (tableName: string) => {
     setNewMapping({ ...newMapping, tableName, columnName: '' });
     
     // Aktualisiere Spalten für die ausgewählte Tabelle
     if (tableName) {
       await refreshTableColumns(tableName);
     }
-  };
+  }, [newMapping, refreshTableColumns]);
 
   // Filtere Tabellen basierend auf Suchbegriff
   const filteredTables = availableTables.filter(table => 
