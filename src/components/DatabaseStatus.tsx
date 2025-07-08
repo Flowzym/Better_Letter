@@ -50,7 +50,7 @@ export default function DatabaseStatus() {
 
   useEffect(() => {
     checkStatus();
-  }, [checkStatus]);
+  }, []);
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200 mb-8">
