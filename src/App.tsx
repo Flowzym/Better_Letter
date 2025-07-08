@@ -14,7 +14,7 @@ import {
   ProfileConfig,
   ProfileSourceMapping,
   DatabaseStats,
-  testDatabaseConnection,
+  testSupabaseConnection,
   getDatabaseStats
 } from './services/supabaseService';
 
@@ -295,7 +295,7 @@ function HomePage() {
     const loadStats = async () => {
       if (isSupabaseConfigured()) {
         try {
-          const isConnected = await testDatabaseConnection();
+          const isConnected = await testSupabaseConnection();
 
           if (isConnected) {
             try {
