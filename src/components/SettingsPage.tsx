@@ -50,12 +50,31 @@ export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<Tab>('ai');
   const modelOptions = [
     'mistral-7b-instruct',
-    'mixtral-8x7b-instruct',
+    'mistral-tiny',
+    'mistral-small',
+    'mistral-medium',
+    'mistral-large',
+    'mixtral-8x7b',
+    'openrouter/mixtral',
     'gpt-3.5-turbo',
     'gpt-4',
     'claude-3-opus'
   ];
+
+  const endpointMap: Record<string, string> = {
+    'mistral-7b-instruct': 'https://api.mistral.ai/v1/chat/completions',
+    'mistral-tiny': 'https://api.mistral.ai/v1/chat/completions',
+    'mistral-small': 'https://api.mistral.ai/v1/chat/completions',
+    'mistral-medium': 'https://api.mistral.ai/v1/chat/completions',
+    'mistral-large': 'https://api.mistral.ai/v1/chat/completions',
+    'mixtral-8x7b': 'https://api.mistral.ai/v1/chat/completions',
+    'openrouter/mixtral': 'https://openrouter.ai/api/v1/chat/completions',
+    'gpt-3.5-turbo': 'https://api.openai.com/v1/chat/completions',
+    'gpt-4': 'https://api.openai.com/v1/chat/completions',
+    'claude-3-opus': 'https://api.anthropic.com/v1/messages'
+  };
   const [models, setModels] = useState<KIModelSettings[]>([]);
+  const [openModels, setOpenModels] = useState<string[]>([]);
   const [showModelModal, setShowModelModal] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [connStatus, setConnStatus] = useState<'idle' | 'success' | 'error' | 'loading'>('idle');
@@ -99,6 +118,7 @@ export default function SettingsPage() {
         else merged.push(m);
       });
       setModels(merged);
+      setOpenModels(merged.filter((m) => m.active).map((m) => m.id));
     };
 
     const loadPrompts = (key: string) => {
@@ -127,8 +147,19 @@ export default function SettingsPage() {
     setModels((prev) => prev.map((m) => (m.id === id ? { ...m, [field]: value } : m)));
   };
 
+  const handleModelSelection = (id: string, modelName: string) => {
+    setModels((prev) =>
+      prev.map((m) =>
+        m.id === id
+          ? { ...m, model: modelName, endpoint: endpointMap[modelName] ?? m.endpoint }
+          : m
+      )
+    );
+  };
+
   const setActiveModel = (id: string) => {
     setModels((prev) => prev.map((m) => ({ ...m, active: m.id === id })));
+    setOpenModels((prev) => (prev.includes(id) ? prev : [...prev, id]));
   };
 
   const addModel = () => {
@@ -136,7 +167,7 @@ export default function SettingsPage() {
       id: `model_${Date.now()}`,
       name: 'Neues Modell',
       apiKey: '',
-      endpoint: '',
+      endpoint: endpointMap['mistral-7b-instruct'],
       model: 'mistral-7b-instruct',
       temperature: 0.7,
       top_p: 0.95,
@@ -144,6 +175,7 @@ export default function SettingsPage() {
       active: false
     };
     setModels((prev) => [...prev, newModel]);
+    setOpenModels((prev) => [...prev, newModel.id]);
   };
 
   const removeModel = (id: string) => {
@@ -372,16 +404,26 @@ export default function SettingsPage() {
                   </button>
                 </div>
                 <div className="space-y-4">
-                  {[...models].sort((a, b) => (a.active === b.active ? 0 : a.active ? -1 : 1)).map((model) => {
-                    const selected = modelOptions.includes(model.model) ? model.model : 'custom';
-                    return (
-                      <details
-                        key={model.id}
-                        open={model.active}
-                        className={`group border rounded-lg p-4 shadow-sm ${
-                          model.active ? 'border-orange-400 bg-orange-50' : 'border-gray-200'
-                        }`}
-                      >
+                  {[...models]
+                    .sort((a, b) => (a.active === b.active ? 0 : a.active ? -1 : 1))
+                    .map((model) => {
+                      const selected = modelOptions.includes(model.model) ? model.model : 'custom';
+                      const isOpen = openModels.includes(model.id);
+                      return (
+                        <details
+                          key={model.id}
+                          open={isOpen}
+                          onToggle={() =>
+                            setOpenModels((prev) =>
+                              prev.includes(model.id)
+                                ? prev.filter((id) => id !== model.id)
+                                : [...prev, model.id]
+                            )
+                          }
+                          className={`group border rounded-lg p-4 shadow-sm ${
+                            model.active ? 'border-orange-400 bg-orange-50' : 'border-gray-200'
+                          }`}
+                        >
                         <summary className="cursor-pointer flex items-center justify-between">
                           <span className="text-lg font-medium">{model.name}</span>
                           <div className="flex items-center space-x-2">
@@ -400,7 +442,7 @@ export default function SettingsPage() {
                               value={selected}
                               onChange={(e) => {
                                 if (e.target.value === 'custom') return;
-                                handleModelField(model.id, 'model', e.target.value);
+                                handleModelSelection(model.id, e.target.value);
                               }}
                               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
                               style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
@@ -410,7 +452,7 @@ export default function SettingsPage() {
                                   {opt}
                                 </option>
                               ))}
-                              <option value="custom">custom...</option>
+                              <option value="custom">Benutzerdefiniert…</option>
                             </select>
                             {selected === 'custom' && (
                               <input
