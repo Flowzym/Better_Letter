@@ -42,9 +42,25 @@ function isSupabaseConfigured(): boolean {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function loadProfileSuggestions(): Promise<any[]> {
+  const { data, error } = await supabase
+    .from("profile_suggestions")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error(error.message);
+    return [];
+  }
+
+  return data ?? [];
+}
+
 export {
   loadKIConfigs,
   saveKIConfigs,
   getDatabaseStats,
   isSupabaseConfigured,
+  loadProfileSuggestions,
 };
