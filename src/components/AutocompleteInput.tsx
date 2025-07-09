@@ -12,6 +12,7 @@ interface AutocompleteInputProps {
   className?: string;
   buttonColor?: string;
   showFavoritesButton?: boolean;
+  showAddButton?: boolean;
   id?: string;
   label?: string;
 }
@@ -27,6 +28,7 @@ export default function AutocompleteInput({
   className = '',
   buttonColor = 'orange',
   showFavoritesButton = false,
+  showAddButton = true,
   id,
   label
 }: AutocompleteInputProps) {
@@ -283,19 +285,20 @@ export default function AutocompleteInput({
         )}
         
         {/* Add button */}
-        <button
-          id={addButtonId}
-          name={`add-${inputId}`}
-          onClick={() => onAdd()}
-          disabled={disabled || !value.trim()}
-          className={`px-3 py-2 text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 ${getButtonColorClasses()}`}
-          style={{ backgroundColor: '#F29400' }}
-          title="Hinzufügen"
-          aria-label="Hinzufügen"
-        >
-          <Plus className="h-4 w-4" />
-        </button>
+        {showAddButton && (
+          <button
+            id={addButtonId}
+            name={`add-${inputId}`}
+            onClick={() => onAdd()}
+            disabled={disabled || !value.trim()}
+            className={`px-3 py-2 text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 ${getButtonColorClasses()}`}
+            style={{ backgroundColor: '#F29400' }}
+            title="Hinzufügen"
+            aria-label="Hinzufügen"
+          >
+            <Plus className="h-4 w-4" />
+          </button>
+        )}
       </div>
     </div>
-  );
-}
+  );}
