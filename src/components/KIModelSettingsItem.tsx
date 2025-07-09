@@ -14,7 +14,6 @@ import StyledButton from './StyledButton';
 
 interface KIModelSettingsItemProps {
   model: KIModelSettings;
-  index: number;
   handleModelField: (
     id: string,
     field: keyof KIModelSettings,
@@ -53,13 +52,11 @@ const ENDPOINT_MAP: Record<string, string> = {
 
 function KIModelSettingsItem({
   model,
-  index,
   handleModelField,
   handleModelSelection,
   setActiveModel,
   removeModel
 }: KIModelSettingsItemProps) {
-  const [testState, setTestState] = useState<'untested' | 'success' | 'error'>('untested');
   const [isTesting, setIsTesting] = useState(false);
 
   const onModelChange = useCallback(
@@ -104,12 +101,6 @@ function KIModelSettingsItem({
     }
   }, [model]);
 
-  const statusColor =
-    testState === 'success'
-      ? 'bg-green-500'
-      : testState === 'error'
-      ? 'bg-red-500'
-      : 'bg-yellow-500';
 
   return (
     <Accordion>

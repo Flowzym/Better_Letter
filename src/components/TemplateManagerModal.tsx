@@ -159,7 +159,7 @@ export default function TemplateManagerModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-6xl max-h-[95vh] flex flex-col overflow-hidden">
+      <div className="bg-white rounded-lg shadow-xl w-full max-h-[95vh] flex flex-col overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200 flex-shrink-0">
           <div className="flex items-center space-x-3">
@@ -298,7 +298,7 @@ export default function TemplateManagerModal({
         {/* New Template Form Modal */}
         {showNewTemplateForm && (
           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+            <div className="bg-white rounded-lg shadow-xl w-full max-h-[90vh] flex flex-col">
               <div className="flex items-center justify-between p-6 border-b border-gray-200">
                 <h3 className="text-lg font-semibold text-gray-900">Neue Vorlage erstellen</h3>
                 <button
@@ -365,7 +365,7 @@ export default function TemplateManagerModal({
         {/* Edit Template Modal */}
         {editingTemplate && (
           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+            <div className="bg-white rounded-lg shadow-xl w-full max-h-[90vh] flex flex-col">
               <div className="flex items-center justify-between p-6 border-b border-gray-200">
                 <h3 className="text-lg font-semibold text-gray-900">Vorlage bearbeiten</h3>
                 <button

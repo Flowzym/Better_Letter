@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { User, Briefcase, Sparkles, AlertTriangle, Settings } from 'lucide-react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
-import InputSection from './components/InputSection';
-import CoverLetterDisplay from './components/CoverLetterDisplay';
-import StyleSelector from './components/StyleSelector';
-import DocumentTypeSelector from './components/DocumentTypeSelector';
+import { Routes, Route } from 'react-router-dom';
+import Sidebar from './components/Sidebar';
+import ProfileInput from './components/ProfileInput';
+import JobInputAndPreview from './components/JobInputAndPreview';
 import SettingsPage from './components/SettingsPage';
 import { generateCoverLetter, editCoverLetter } from './services/mistralService';
 import 'react-quill/dist/quill.snow.css';
@@ -261,7 +259,6 @@ function saveToStorage<T>(key: string, value: T): void {
 }
 
 function HomePage() {
-  const navigate = useNavigate();
   const [cvContent, setCvContent] = useState('');
   const [jobContent, setJobContent] = useState('');
   const [coverLetter, setCoverLetter] = useState('');
@@ -468,131 +465,38 @@ function HomePage() {
 
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        {/* BOLT-UI-ANPASSUNG 2025-01-15: Header - Titel und Icon linksbündig, Header kleiner */}
-        <div className="relative mb-8">
-          {/* BOLT-UI-ANPASSUNG 2025-01-15: Nur Zahnradsymbol oben rechts */}
-          <div className="absolute top-0 right-0">
-            <button
-              onClick={() => navigate('/settings')}
-              className="flex items-center p-2 bg-white rounded-lg shadow-sm border hover:bg-gray-50 transition-colors duration-200"
-              title="App-Konfiguration öffnen"
-            >
-              <Settings className="h-5 w-5 text-gray-500" />
-            </button>
-          </div>
-          
-          {/* BOLT-UI-ANPASSUNG 2025-01-15: Titel und Logo linksbündig und kleiner */}
-          <div className="flex items-center space-x-3 mb-4">
-            <div className="bg-orange-500 p-2 rounded-xl shadow-lg" style={{ backgroundColor: '#F29400' }}>
-              <Sparkles className="h-6 w-6 text-white" />
-            </div>
-            <h1 className="text-2xl font-bold text-gray-900">
-              Bewerbungsschreiben Generator
-            </h1>
-          </div>
-        </div>
-
-        {/* Document Type Selector */}
-        <DocumentTypeSelector
-          documentTypes={documentTypes}
-          selectedType={selectedDocumentType}
-          onTypeChange={setSelectedDocumentType}
-        />
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          {/* CV Input */}
-          <InputSection
-            title="Lebenslauf / Profil"
-            icon={<User className="h-6 w-6 text-orange-600" />}
-            onContentChange={setCvContent}
-            placeholder="Geben Sie hier Ihre beruflichen Erfahrungen, Qualifikationen, Fähigkeiten und relevanten Informationen aus Ihrem Lebenslauf ein..."
-            isProfileSection={true}
-            profileConfig={profileConfig}
-          />
-
-          {/* Job Description Input */}
-          <InputSection
-            title="Stellenanzeige"
-            icon={<Briefcase className="h-6 w-6 text-orange-600" />}
-            onContentChange={setJobContent}
-            placeholder="Fügen Sie hier die Stellenanzeige ein, einschließlich Anforderungen, Aufgaben und Unternehmensinfos..."
-            showUrlInput={true}
-            profileConfig={profileConfig}
-          />
-        </div>
-
-        {/* Style Selector */}
-        <StyleSelector
-          selectedStyles={selectedStyles}
-          onStylesChange={setSelectedStyles}
-          stylePrompts={stylePrompts}
-        />
-
-        {/* Generate Button */}
-        <div className="flex justify-center mb-8">
-          <button
-            onClick={handleGenerate}
-            disabled={isGenerating || !cvContent.trim() || !jobContent.trim()}
-            className="flex items-center space-x-3 px-8 py-4 text-white font-semibold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 transition-all duration-200 shadow-lg"
-            style={{ 
-              backgroundColor: '#F29400',
-              ':hover': { backgroundColor: '#E8850C' }
-            } as React.CSSProperties}
-          >
-            {/* BOLT-UI-ANPASSUNG 2025-01-15: Animation beim Generieren */}
-            {isGenerating ? (
-              <>
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                <span className="text-lg">Wird generiert...</span>
-              </>
-            ) : (
-              <>
-                <Sparkles className="h-5 w-5" />
-                <span className="text-lg">Bewerbungsschreiben generieren</span>
-              </>
-            )}
-          </button>
-        </div>
-
-        {/* Error Display */}
-        {error && (
-          <div className="mb-8 bg-red-50 border border-red-200 rounded-lg p-4">
-            <div className="flex items-center space-x-2 text-red-700">
-              <AlertTriangle className="h-5 w-5 flex-shrink-0" />
-              <p className="font-medium">{error}</p>
-            </div>
-          </div>
-        )}
-
-
-        {/* Cover Letter Display */}
-        <CoverLetterDisplay
-          content={coverLetter}
-          isLoading={isGenerating}
-          isEditing={isEditing}
-          onEdit={handleEdit}
-          onContentChange={handleDirectContentChange}
-          editPrompts={editPrompts}
-        />
-
-        {/* Footer */}
-        <div className="mt-12 text-center">
-          <p className="text-gray-500">
-            Powered by Mistral AI • Quill Editor
-            {isSupabaseConfigured() && (
-              <span className="ml-2">• Profil-Daten von Supabase</span>
-            )}
-            {profileSourceMappings.length > 0 && (
-              <span className="ml-2">• {profileSourceMappings.filter(m => m.isActive).length} aktive Datenquellen</span>
-            )}
-            {databaseStats && databaseStats.totalFromMappings > 0 && (
-              <span className="ml-2">• {databaseStats.totalFromMappings.toLocaleString('de-DE')} Mapping-Einträge</span>
-            )}
-          </p>
-        </div>
-      </div>
+    <div className="grid grid-cols-[22%_40%_38%] gap-4 p-4 max-w-none w-full h-screen">
+      <Sidebar
+        className="col-span-1"
+        documentTypes={documentTypes}
+        selectedType={selectedDocumentType}
+        onTypeChange={setSelectedDocumentType}
+      />
+      <ProfileInput
+        className="col-span-1"
+        onContentChange={setCvContent}
+        profileConfig={profileConfig}
+      />
+      <JobInputAndPreview
+        className="col-span-1"
+        jobContent={jobContent}
+        onJobContentChange={setJobContent}
+        onGenerate={handleGenerate}
+        isGenerating={isGenerating}
+        cvContent={cvContent}
+        coverLetter={coverLetter}
+        isEditing={isEditing}
+        onEdit={handleEdit}
+        onContentChange={handleDirectContentChange}
+        editPrompts={editPrompts}
+        selectedStyles={selectedStyles}
+        onStylesChange={setSelectedStyles}
+        stylePrompts={stylePrompts}
+        error={error}
+        profileConfig={profileConfig}
+        profileSourceMappings={profileSourceMappings}
+        databaseStats={databaseStats}
+      />
     </div>
   );
 }
