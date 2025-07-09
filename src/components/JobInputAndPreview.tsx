@@ -3,7 +3,6 @@ import { Briefcase } from 'lucide-react';
 import InputSection from './InputSection';
 
 interface JobInputProps {
-  jobContent: string;
   onJobContentChange: (content: string) => void;
   profileConfig: {
     berufe: string[];
@@ -14,11 +13,7 @@ interface JobInputProps {
   };
 }
 
-export default function JobInput({
-  jobContent,
-  onJobContentChange,
-  profileConfig,
-}: JobInputProps) {
+export default function JobInput({ onJobContentChange, profileConfig }: JobInputProps) {
   return (
     <InputSection
       title="Stellenanzeige"
@@ -28,5 +23,4 @@ export default function JobInput({
       showUrlInput={true}
       profileConfig={profileConfig}
     />
-  );
-}
+  );}

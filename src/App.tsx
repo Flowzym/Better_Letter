@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
-import ProfileInput from './components/ProfileInput';
-import JobInputAndPreview from './components/JobInputAndPreview';
+import { Settings } from 'lucide-react';
 import SettingsPage from './components/SettingsPage';
 import InputSection from './components/InputSection';
 import StyleSelector from './components/StyleSelector';
@@ -262,6 +261,7 @@ function saveToStorage<T>(key: string, value: T): void {
 }
 
 function HomePage() {
+  const navigate = useNavigate();
   const [cvContent, setCvContent] = useState('');
   const [jobContent, setJobContent] = useState('');
   const [coverLetter, setCoverLetter] = useState('');
@@ -469,8 +469,15 @@ function HomePage() {
 
   return (
     <div className="min-h-screen w-full flex flex-col">
-      <header className="sticky top-0 z-20 bg-white shadow-md py-4">
+      <header className="relative sticky top-0 z-20 bg-white shadow-md py-4">
         <h1 className="text-2xl font-bold text-center">Bewerbungsschreiben Generator</h1>
+        <button
+          onClick={() => navigate('/settings')}
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+          title="Einstellungen öffnen"
+        >
+          <Settings size={20} />
+        </button>
       </header>
       
       {/* OBERER BEREICH: 3-SPALTEN-LAYOUT */}
