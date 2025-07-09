@@ -35,7 +35,7 @@ export default function DocumentTypeSelector({ documentTypes, selectedType, onTy
       
       <fieldset>
         <legend className="sr-only">Dokumenttyp auswählen</legend>
-        <div className="flex flex-col space-y-2">
+        <div className="flex flex-wrap gap-2">
           {typeEntries.map(([typeKey, typeData]) => {
             const IconComponent = ICON_MAP[typeKey] || FileText;
             const isSelected = selectedType === typeKey;
@@ -53,19 +53,16 @@ export default function DocumentTypeSelector({ documentTypes, selectedType, onTy
                   className="sr-only"
                 />
                 <div
-                  className={`flex items-center space-x-3 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 border-2 text-left ${
-                      isSelected
-                        ? 'text-white border-transparent shadow-md'
-                        : 'bg-white border-gray-300 text-gray-700 hover:border-orange-300 hover:bg-orange-50'
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 border-2 ${
+                    isSelected
+                      ? 'text-white border-transparent shadow-md'
+                      : 'bg-white border-gray-300 text-gray-700 hover:border-orange-300 hover:bg-orange-50'
                   }`}
                   style={isSelected ? { backgroundColor: '#F29400' } : {}}
                   title={`Klicken Sie hier, um "${typeData.label}" auszuwählen`}
                 >
-                  <IconComponent className="h-5 w-5 flex-shrink-0" />
-                  <div className="flex-1">
-                    <div className="font-medium">{typeData.label}</div>
-                    {/* BOLT-UI-ANPASSUNG 2025-01-15: "Ausgewählt"-Text entfernt */}
-                  </div>
+                  <IconComponent className="h-4 w-4 flex-shrink-0" />
+                  {typeData.label}
                 </div>
               </label>
             );
