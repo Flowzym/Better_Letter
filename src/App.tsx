@@ -7,6 +7,7 @@ import InputColumns from './components/layout/InputColumns';
 import DocumentTypeBlock from './components/layout/DocumentTypeBlock';
 import GenerateControls from './components/layout/GenerateControls';
 import EditorBlock from './components/layout/EditorBlock';
+import LebenslaufPlaceholder from './components/LebenslaufPlaceholder';
 import { generateCoverLetter, editCoverLetter } from './services/mistralService';
 import 'react-quill/dist/quill.snow.css';
 import {
@@ -493,43 +494,49 @@ function HomePage() {
           onChange={setActiveTab}
         />
 
-        <InputColumns
-          onCvChange={setCvContent}
-          onJobChange={setJobContent}
-          profileConfig={profileConfig}
-        />
+        {activeTab === 'resume' ? (
+          <LebenslaufPlaceholder />
+        ) : (
+          <>
+            <InputColumns
+              onCvChange={setCvContent}
+              onJobChange={setJobContent}
+              profileConfig={profileConfig}
+            />
 
-        <DocumentTypeBlock
-          documentTypes={documentTypes}
-          selected={selectedDocumentType}
-          onChange={setSelectedDocumentType}
-        />
+            <DocumentTypeBlock
+              documentTypes={documentTypes}
+              selected={selectedDocumentType}
+              onChange={setSelectedDocumentType}
+            />
 
-        <GenerateControls
-          selectedStyles={selectedStyles}
-          onStylesChange={setSelectedStyles}
-          stylePrompts={stylePrompts}
-          onGenerate={handleGenerate}
-          disabled={isGenerating || !cvContent.trim() || !jobContent.trim()}
-          generating={isGenerating}
-        />
+            <GenerateControls
+              selectedStyles={selectedStyles}
+              onStylesChange={setSelectedStyles}
+              stylePrompts={stylePrompts}
+              onGenerate={handleGenerate}
+              disabled={isGenerating || !cvContent.trim() || !jobContent.trim()}
+              generating={isGenerating}
+            />
 
-        {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-            <div className="flex items-center space-x-2 text-red-700">
-              <div className="h-5 w-5 flex-shrink-0">⚠️</div>
-              <p className="font-medium">{error}</p>
-            </div>
-          </div>
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                <div className="flex items-center space-x-2 text-red-700">
+                  <div className="h-5 w-5 flex-shrink-0">⚠️</div>
+                  <p className="font-medium">{error}</p>
+                </div>
+              </div>
+            )}
+
+            <EditorBlock
+              content={coverLetter}
+              isEditing={isEditing}
+              onEdit={handleEdit}
+              onContentChange={handleDirectContentChange}
+              editPrompts={editPrompts}
+            />
+          </>
         )}
-
-        <EditorBlock
-          content={coverLetter}
-          isEditing={isEditing}
-          onEdit={handleEdit}
-          onContentChange={handleDirectContentChange}
-          editPrompts={editPrompts}
-        />
 
         <div className="text-center text-gray-500 text-sm">
           Powered by Mistral AI • Quill Editor
