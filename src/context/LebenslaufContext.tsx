@@ -5,6 +5,11 @@ export interface Erfahrung {
   position: string;
   zeitraum: string;
   beschreibung: string;
+  startMonth: number | null;
+  startYear: number | null;
+  endMonth: number | null;
+  endYear: number | null;
+  isCurrent: boolean;
 }
 
 export interface Ausbildung {
