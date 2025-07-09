@@ -4,6 +4,9 @@ import Sidebar from './components/Sidebar';
 import ProfileInput from './components/ProfileInput';
 import JobInputAndPreview from './components/JobInputAndPreview';
 import SettingsPage from './components/SettingsPage';
+import InputSection from './components/InputSection';
+import StyleSelector from './components/StyleSelector';
+import CoverLetterDisplay from './components/CoverLetterDisplay';
 import { generateCoverLetter, editCoverLetter } from './services/mistralService';
 import 'react-quill/dist/quill.snow.css';
 import {
