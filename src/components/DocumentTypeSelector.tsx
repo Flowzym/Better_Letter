@@ -26,7 +26,7 @@ export default function DocumentTypeSelector({ documentTypes, selectedType, onTy
   const typeEntries = Object.entries(documentTypes);
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 mb-8 border border-gray-200">
+    <div className="bg-white rounded-lg shadow-md p-6 mb-8 border border-gray-200 sticky top-0 z-10">
       <div className="flex items-center space-x-3 mb-4">
         <FileText className="h-6 w-6" style={{ color: '#F29400' }} />
         {/* BOLT-UI-ANPASSUNG 2025-01-15: Titel geändert */}
@@ -35,7 +35,7 @@ export default function DocumentTypeSelector({ documentTypes, selectedType, onTy
       
       <fieldset>
         <legend className="sr-only">Dokumenttyp auswählen</legend>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="flex flex-col space-y-4">
           {typeEntries.map(([typeKey, typeData]) => {
             const IconComponent = ICON_MAP[typeKey] || FileText;
             const isSelected = selectedType === typeKey;
