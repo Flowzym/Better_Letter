@@ -469,7 +469,11 @@ function HomePage() {
 
 
 
-  const [activeTab, setActiveTab] = useState('coverLetter');
+  const [activeTab, setActiveTab] = useState<'bewerbung' | 'lebenslauf'>('bewerbung');
+  const tabs = [
+    { id: 'bewerbung', label: 'Bewerbung' },
+    { id: 'lebenslauf', label: 'Lebenslauf' },
+  ];
 
   return (
     <div className="min-h-screen w-full flex flex-col">
@@ -485,29 +489,20 @@ function HomePage() {
       </header>
 
       <main className="flex-1 px-4 py-6 space-y-6">
-        <TabNavigation
-          tabs={[
-            { id: 'coverLetter', label: 'Bewerbung' },
-            { id: 'resume', label: 'Lebenslauf' },
-          ]}
-          active={activeTab}
-          onChange={setActiveTab}
-        />
+        <TabNavigation tabs={tabs} active={activeTab} onChange={setActiveTab} />
 
-        {activeTab === 'resume' ? (
-          <LebenslaufPlaceholder />
-        ) : (
+        {activeTab === 'bewerbung' && (
           <>
-            <InputColumns
-              onCvChange={setCvContent}
-              onJobChange={setJobContent}
-              profileConfig={profileConfig}
-            />
-
             <DocumentTypeBlock
               documentTypes={documentTypes}
               selected={selectedDocumentType}
               onChange={setSelectedDocumentType}
+            />
+
+            <InputColumns
+              onCvChange={setCvContent}
+              onJobChange={setJobContent}
+              profileConfig={profileConfig}
             />
 
             <GenerateControls
@@ -536,6 +531,12 @@ function HomePage() {
               editPrompts={editPrompts}
             />
           </>
+        )}
+
+        {activeTab === 'lebenslauf' && (
+          <div className="p-6">
+            <LebenslaufPlaceholder />
+          </div>
         )}
 
         <div className="text-center text-gray-500 text-sm">
