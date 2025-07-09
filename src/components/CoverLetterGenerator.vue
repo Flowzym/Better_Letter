@@ -1,37 +1,34 @@
 <template>
-  <div class="w-full px-6 py-4 space-y-6">
-    <!-- 3-Spalten-Hauptlayout -->
-    <div class="grid gap-4 grid-cols-1 lg:grid-cols-[260px_1fr_1fr]">
-      <section class="lg:sticky lg:top-0 lg:w-64">
-        <h2 class="text-lg font-semibold mb-2">📄 Dokument-Typ</h2>
-        <!-- Dokumenttyp-Komponente (nicht einklappbar) -->
+  <div class="w-full px-6 py-4 space-y-8">
+    <!-- OBERER BEREICH: 3-SPALTEN-LAYOUT -->
+    <div class="grid grid-cols-[260px_1fr_1fr] gap-6">
+      <!-- Dokumenttyp -->
+      <div>
+        <h2 class="text-lg font-bold mb-2">📄 Dokument-Typ</h2>
         <DocumentTypeSelector />
-      </section>
+      </div>
 
-      <section>
-        <h2 class="text-lg font-semibold mb-2">👤 Lebenslauf / Profil</h2>
-        <!-- Profil-Komponente mit Tabs -->
+      <!-- Lebenslauf / Profil -->
+      <div class="overflow-visible min-h-[400px]">
+        <h2 class="text-lg font-bold mb-2">👤 Lebenslauf / Profil</h2>
         <ProfilTabs />
-      </section>
+      </div>
 
-      <section>
-        <h2 class="text-lg font-semibold mb-2">🏢 Stellenanzeige</h2>
-        <!-- Stellenanzeige-Komponente -->
+      <!-- Stellenanzeige -->
+      <div>
+        <h2 class="text-lg font-bold mb-2">🏢 Stellenanzeige</h2>
         <JobAdInput />
-      </section>
+      </div>
     </div>
 
-    <!-- Unterer Bereich: Prompt + Generieren + Texteditor -->
-    <div class="w-full border-t pt-6 space-y-4">
-      <!-- Prompt-Eingabefeld -->
+    <!-- UNTERER BEREICH: PROMPT + GENERIERUNG + ERGEBNIS -->
+    <div class="w-full space-y-4 border-t pt-6">
       <PromptEditor />
 
-      <!-- Button rechtsbündig -->
       <div class="flex justify-end">
         <GenerateButton />
       </div>
 
-      <!-- Ergebniseditor -->
       <CoverLetterEditor />
     </div>
   </div>
