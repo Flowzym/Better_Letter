@@ -7,7 +7,7 @@ import InputColumns from './components/layout/InputColumns';
 import DocumentTypeBlock from './components/layout/DocumentTypeBlock';
 import GenerateControls from './components/layout/GenerateControls';
 import EditorBlock from './components/layout/EditorBlock';
-import LebenslaufPlaceholder from './components/LebenslaufPlaceholder';
+import LebenslaufInput from './components/LebenslaufInput';
 import { generateCoverLetter, editCoverLetter } from './services/mistralService';
 import 'react-quill/dist/quill.snow.css';
 import {
@@ -535,7 +535,7 @@ function HomePage() {
 
         {activeTab === 'lebenslauf' && (
           <div className="p-6">
-            <LebenslaufPlaceholder />
+            <LebenslaufInput />
           </div>
         )}
 
