@@ -465,20 +465,24 @@ function HomePage() {
 
 
   return (
-    <div className="grid grid-cols-[22%_40%_38%] gap-4 p-4 max-w-none w-full h-screen">
-      <Sidebar
-        className="col-span-1"
-        documentTypes={documentTypes}
-        selectedType={selectedDocumentType}
-        onTypeChange={setSelectedDocumentType}
-      />
-      <ProfileInput
-        className="col-span-1"
-        onContentChange={setCvContent}
-        profileConfig={profileConfig}
-      />
-      <JobInputAndPreview
-        className="col-span-1"
+    <div className="h-screen w-screen overflow-hidden flex flex-col">
+      <header className="sticky top-0 z-20 bg-white shadow-md py-4">
+        <h1 className="text-2xl font-bold text-center">Bewerbungsschreiben Generator</h1>
+      </header>
+      <div className="grid grid-cols-[22%_40%_38%] gap-4 flex-1 overflow-hidden">
+        <Sidebar
+          className="col-span-1 h-full overflow-y-auto"
+          documentTypes={documentTypes}
+          selectedType={selectedDocumentType}
+          onTypeChange={setSelectedDocumentType}
+        />
+        <ProfileInput
+          className="col-span-1 h-full overflow-y-auto"
+          onContentChange={setCvContent}
+          profileConfig={profileConfig}
+        />
+        <JobInputAndPreview
+          className="col-span-1 h-full overflow-y-auto"
         jobContent={jobContent}
         onJobContentChange={setJobContent}
         onGenerate={handleGenerate}
@@ -497,6 +501,7 @@ function HomePage() {
         profileSourceMappings={profileSourceMappings}
         databaseStats={databaseStats}
       />
+      </div>
     </div>
   );
 }

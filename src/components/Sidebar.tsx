@@ -22,7 +22,7 @@ export default function Sidebar({
   const [open, setOpen] = useState(true);
 
   return (
-    <div className={className}>
+    <div className={`${className} overflow-y-auto`}>
       <button
         onClick={() => setOpen(!open)}
         className="mb-2 text-sm text-gray-700"

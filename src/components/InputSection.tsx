@@ -94,14 +94,15 @@ export default function InputSection({
   const isJobSection = title.toLowerCase().includes('stellenanzeige');
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <div className="flex items-center space-x-3 mb-6">
-        {/* BOLT-UI-ANPASSUNG 2025-01-15: Icons in #F29400 einfärben */}
-        {React.cloneElement(icon as React.ReactElement, { style: { color: '#F29400' } })}
-        <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
-      </div>
+    <div className="bg-white rounded-lg shadow-md p-6 h-full flex flex-col overflow-y-auto">
+      <div className="sticky top-0 bg-white pb-4 z-10">
+        <div className="flex items-center space-x-3 mb-6">
+          {/* BOLT-UI-ANPASSUNG 2025-01-15: Icons in #F29400 einfärben */}
+          {React.cloneElement(icon as React.ReactElement, { style: { color: '#F29400' } })}
+          <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+        </div>
 
-      <div className="flex space-x-1 mb-6 bg-gray-100 p-1 rounded-lg">
+        <div className="flex space-x-1 mb-6 bg-gray-100 p-1 rounded-lg">
         {isProfileSection && (
           <>
             <button
@@ -192,6 +193,7 @@ export default function InputSection({
             <span>URL</span>
           </button>
         )}
+      </div>
       </div>
 
       {mode === 'structured' && isProfileSection && (
