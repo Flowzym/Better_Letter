@@ -1,6 +1,26 @@
 import React, { useEffect } from 'react';
-import { useLebenslaufData } from '../context/LebenslaufContext';
+import { useLebenslaufData, Erfahrung } from '../context/LebenslaufContext';
 import TagSelectorWithFavorites from './TagSelectorWithFavorites';
+import ZeitraumPicker from './ZeitraumPicker';
+
+function formatZeitraumText({
+  startMonth,
+  startYear,
+  endMonth,
+  endYear,
+  isCurrent,
+}: {
+  startMonth: number | null;
+  startYear: number | null;
+  endMonth: number | null;
+  endYear: number | null;
+  isCurrent: boolean;
+}) {
+  const format = (m: number | null, y: number | null) => (m ? `${m}/${y}` : y);
+  const start = format(startMonth, startYear);
+  const end = isCurrent ? 'heute' : format(endMonth, endYear);
+  return `${start} – ${end}`;
+}
 
 export default function LebenslaufInput() {
   const { daten, setDaten } = useLebenslaufData();
@@ -16,6 +36,11 @@ export default function LebenslaufInput() {
             position: '',
             zeitraum: '',
             beschreibung: '',
+            startMonth: null,
+            startYear: null,
+            endMonth: null,
+            endYear: null,
+            isCurrent: false,
           },
         ],
       }));
@@ -24,7 +49,10 @@ export default function LebenslaufInput() {
 
   const erfahrung = daten.erfahrungen[0];
 
-  const updateErfahrung = (field: keyof typeof erfahrung, value: string) => {
+  const updateErfahrung = <K extends keyof Erfahrung>(
+    field: K,
+    value: Erfahrung[K],
+  ) => {
     const updated = [...daten.erfahrungen];
     updated[0] = { ...updated[0], [field]: value };
     setDaten(prev => ({ ...prev, erfahrungen: updated }));
@@ -56,12 +84,20 @@ export default function LebenslaufInput() {
             ]}
             allowCustom={true}
           />
-          <input
-            type="text"
-            placeholder="Zeitraum"
-            className="w-full px-3 py-2 border rounded"
-            value={erfahrung?.zeitraum || ''}
-            onChange={e => updateErfahrung('zeitraum', e.target.value)}
+          <ZeitraumPicker
+            startMonth={erfahrung?.startMonth ?? null}
+            startYear={erfahrung?.startYear ?? null}
+            endMonth={erfahrung?.endMonth ?? null}
+            endYear={erfahrung?.endYear ?? null}
+            isCurrent={erfahrung?.isCurrent ?? false}
+            onChange={(data) => {
+              updateErfahrung('startMonth', data.startMonth);
+              updateErfahrung('startYear', data.startYear);
+              updateErfahrung('endMonth', data.endMonth);
+              updateErfahrung('endYear', data.endYear);
+              updateErfahrung('isCurrent', data.isCurrent);
+              updateErfahrung('zeitraum', formatZeitraumText(data));
+            }}
           />
           <textarea
             placeholder="Aufgabenbeschreibung"
