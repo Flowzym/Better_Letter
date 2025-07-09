@@ -1,6 +1,16 @@
 import React, { useCallback, useState } from 'react';
-import { Trash2, TestTube, RefreshCw } from 'lucide-react';
+import { TestTube, RefreshCw } from 'lucide-react';
 import { KIModelSettings } from '../types/KIModelSettings';
+import {
+  Accordion,
+  AccordionItem,
+  AccordionHeader,
+  AccordionContent,
+} from './Accordion';
+import EditableText from './EditableText';
+import StatusDot from './StatusDot';
+import SimpleInput from './SimpleInput';
+import StyledButton from './StyledButton';
 
 interface KIModelSettingsItemProps {
   model: KIModelSettings;
@@ -63,7 +73,6 @@ function KIModelSettingsItem({
   );
 
   const handleRemove = useCallback(() => removeModel(model.id), [removeModel, model.id]);
-
   const handleSetActive = useCallback(() => setActiveModel(model.id), [setActiveModel, model.id]);
 
   const selected = MODEL_OPTIONS.includes(model.model) ? model.model : 'custom';
@@ -103,129 +112,102 @@ function KIModelSettingsItem({
       : 'bg-yellow-500';
 
   return (
-    <div data-index={index} className="relative">
-      <button
-        onClick={handleRemove}
-        className="absolute top-2 right-2 p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
-        title="Entfernen"
-      >
-        <Trash2 className="h-4 w-4" />
-      </button>
-
-      <details
-        className={`border rounded-lg shadow-sm ${model.active ? 'border-orange-400 bg-orange-50' : 'border-gray-200'}`}
-        open
-      >
-        <summary
-          onClick={handleSetActive}
-          className="flex items-center justify-between p-4 pr-8 cursor-pointer list-none"
-        >
-          <div className="flex items-center space-x-2">
-            <span className={`w-3 h-3 rounded-full ${statusColor}`}></span>
-            <span className="text-lg font-medium">{model.name}</span>
-            {model.active && (
-              <span
-                className="ml-2 px-2 py-0.5 text-xs text-white rounded"
-                style={{ backgroundColor: '#F29400' }}
-              >
-                Aktiv
-              </span>
-            )}
+    <Accordion>
+      <AccordionItem key={model.id} defaultOpen={false}>
+        <AccordionHeader>
+          <div className="flex items-center justify-between w-full">
+            <EditableText
+              value={model.name}
+              onChange={(name) => handleModelField(model.id, 'name', name)}
+            />
+            <StatusDot active={model.active} />
           </div>
-        </summary>
+        </AccordionHeader>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 pt-0 text-sm">
-          <label className="space-y-1">
-            <span className="text-gray-700">Modell</span>
-            <select
-              value={selected}
-              onChange={(e) => e.target.value !== 'custom' && onModelChange(e.target.value)}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-              style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-            >
-              {MODEL_OPTIONS.map((opt) => (
-                <option key={opt} value={opt}>
-                  {opt}
-                </option>
-              ))}
-              <option value="custom">Benutzerdefiniert…</option>
-            </select>
-            {selected === 'custom' && (
-              <input
-                type="text"
-                value={model.model}
-                onChange={(e) => handleModelField(model.id, 'model', e.target.value)}
-                className="w-full mt-2 px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-                style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-              />
-            )}
-          </label>
+        <AccordionContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <label className="space-y-1">
+              <span className="text-gray-700">Modell</span>
+              <select
+                value={selected}
+                onChange={(e) =>
+                  e.target.value !== 'custom' && onModelChange(e.target.value)
+                }
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                style={{
+                  borderColor: '#F29400',
+                  '--tw-ring-color': '#F29400',
+                } as React.CSSProperties}
+              >
+                {MODEL_OPTIONS.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
+                  </option>
+                ))}
+                <option value="custom">Benutzerdefiniert…</option>
+              </select>
+              {selected === 'custom' && (
+                <input
+                  type="text"
+                  value={model.model}
+                  onChange={(e) =>
+                    handleModelField(model.id, 'model', e.target.value)
+                  }
+                  className="w-full mt-2 px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                  style={{
+                    borderColor: '#F29400',
+                    '--tw-ring-color': '#F29400',
+                  } as React.CSSProperties}
+                />
+              )}
+            </label>
 
-          <label className="space-y-1">
-            <span className="text-gray-700">API-Key</span>
-            <input
-              type="text"
+            <SimpleInput
+              label="API-Key"
               value={model.api_key}
-              onChange={(e) => handleModelField(model.id, 'api_key', e.target.value)}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-              style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+              onChange={(val) => handleModelField(model.id, 'api_key', val)}
             />
-          </label>
 
-          <label className="space-y-1">
-            <span className="text-gray-700">Endpoint</span>
-            <input
-              type="text"
+            <SimpleInput
+              label="Endpoint"
               value={model.endpoint}
-              onChange={(e) => handleModelField(model.id, 'endpoint', e.target.value)}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-              style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+              onChange={(val) => handleModelField(model.id, 'endpoint', val)}
             />
-          </label>
 
-          <label className="space-y-1">
-            <span className="text-gray-700">Temperature</span>
-            <input
+            <SimpleInput
+              label="Temperature"
               type="number"
-              min={0}
-              max={2}
-              step={0.1}
               value={model.temperature}
-              onChange={(e) => handleModelField(model.id, 'temperature', parseFloat(e.target.value))}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-              style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+              onChange={(val) =>
+                handleModelField(model.id, 'temperature', parseFloat(val))
+              }
             />
-          </label>
 
-          <label className="space-y-1">
-            <span className="text-gray-700">Max Tokens</span>
-            <input
+            <SimpleInput
+              label="Max Tokens"
               type="number"
-              min={1}
               value={model.max_tokens}
-              onChange={(e) => handleModelField(model.id, 'max_tokens', parseInt(e.target.value, 10))}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-              style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+              onChange={(val) =>
+                handleModelField(model.id, 'max_tokens', parseInt(val, 10))
+              }
             />
-          </label>
-        </div>
+          </div>
 
-        <div className="px-4 pb-4">
-          <button
-            onClick={testModel}
-            disabled={isTesting}
-            className="flex items-center space-x-1 px-3 py-1 bg-purple-100 text-purple-800 hover:bg-purple-200 rounded-md text-xs disabled:opacity-50"
-          >
-            {isTesting ? (
-              <RefreshCw className="h-3 w-3 animate-spin" />
-            ) : (
-              <TestTube className="h-3 w-3" />
-            )}
-            <span>Testen</span>
-          </button>
-        </div>
-      </details>
-    </div>
+          <div className="flex justify-between mt-3">
+            <StyledButton onClick={testModel} disabled={isTesting} className="flex items-center space-x-1 bg-purple-100 text-purple-800 hover:bg-purple-200 disabled:opacity-50">
+              {isTesting ? (
+                <RefreshCw className="h-3 w-3 animate-spin" />
+              ) : (
+                <TestTube className="h-3 w-3" />
+              )}
+              <span>Testen</span>
+            </StyledButton>
+            <StyledButton onClick={handleSetActive}>Aktivieren</StyledButton>
+            <StyledButton variant="destructive" onClick={handleRemove}>🗑️</StyledButton>
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
   );
 }
 

@@ -11,7 +11,6 @@ import {
   X,
   Save
 } from 'lucide-react';
-import SettingsModal from './SettingsModal';
 import TemplateManagerModal, { Template } from './TemplateManagerModal';
 import ProfileSourceSettings from './ProfileSourceSettings';
 import DatabaseStatus from './DatabaseStatus';
@@ -76,7 +75,6 @@ export default function SettingsPage() {
   // Core state
   const [activeTab, setActiveTab] = useState<Tab>('ai');
   const [models, setModels] = useState<KIModelSettings[]>([]);
-  const [showModelModal, setShowModelModal] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   
   // Prompt state
@@ -363,20 +361,13 @@ export default function SettingsPage() {
 
             {activeTab === 'ai' && (
               <div className="space-y-6">
-                <div className="flex justify-between">
+                <div className="flex justify-start space-x-2">
                   <button
                     onClick={addModel}
                     className="px-3 py-2 text-sm text-white rounded-md"
                     style={{ backgroundColor: '#F29400' }}
                   >
                     Modell hinzufügen
-                  </button>
-                  <button
-                    onClick={() => setShowModelModal(true)}
-                    className="px-3 py-2 text-sm text-white rounded-md"
-                    style={{ backgroundColor: '#F29400' }}
-                  >
-                    Modelle im Modal bearbeiten
                   </button>
                 </div>
                 <div className="space-y-4">
@@ -468,25 +459,6 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      {showModelModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-[95vh] overflow-y-auto p-6">
-            <div className="flex justify-between mb-4">
-              <h3 className="text-lg font-semibold">KI Modelle bearbeiten</h3>
-              <button onClick={() => setShowModelModal(false)} className="text-gray-400 hover:text-gray-600">
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-            <SettingsModal
-              models={models}
-              onSave={(updated) => {
-                setModels(updated);
-                setShowModelModal(false);
-              }}
-            />
-          </div>
-        </div>
-      )}
 
       {showTemplateModal && (
         <TemplateManagerModal
@@ -498,5 +470,4 @@ export default function SettingsPage() {
         />
       )}
     </div>
-  );
-}
+  );}
