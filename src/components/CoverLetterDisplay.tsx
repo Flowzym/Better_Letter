@@ -238,18 +238,13 @@ export default function CoverLetterDisplay({
   return (
     <div className="bg-white rounded-lg shadow-lg border border-gray-200">
       <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center">
           <h3 className="text-lg font-semibold text-gray-900">
             {/* BOLT-UI-ANPASSUNG 2025-01-15: Titel geändert */}
             {hasRealContent
               ? "Bearbeiten & optimieren"
               : "Bearbeiten & optimieren"}
           </h3>
-          <div className="flex items-center space-x-2">
-            <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
-              ✅ Quill.js Rich Text Editor
-            </span>
-          </div>
         </div>
         <div className="flex space-x-2">
           <button
