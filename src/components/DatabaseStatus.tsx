@@ -10,6 +10,7 @@ function DatabaseStatus() {
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [connStatus, setConnStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
   const checkStatus = useCallback(async () => {
     setIsLoading(true);
@@ -32,25 +33,54 @@ function DatabaseStatus() {
     }
   }, []);
 
+  const handleTestSupabase = useCallback(async () => {
+    setConnStatus('loading');
+    try {
+      const ok = await testSupabaseConnection();
+      setConnStatus(ok ? 'success' : 'error');
+    } catch (err) {
+      console.error('Supabase test error:', err);
+      setConnStatus('error');
+    }
+  }, []);
+
   useEffect(() => {
     checkStatus();
   }, [checkStatus]);
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200 mb-8">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-start justify-between mb-4">
         <div className="flex items-center space-x-3">
           <Database className="h-6 w-6" style={{ color: '#F29400' }} />
-          <h2 className="text-xl font-semibold text-gray-900">Datenbank-Status</h2>
         </div>
-        <button
-          onClick={checkStatus}
-          disabled={isLoading}
-          className="flex items-center space-x-2 px-3 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg transition-colors duration-200 disabled:opacity-50"
-        >
-          <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-          <span>Aktualisieren</span>
-        </button>
+        <div className="flex justify-end space-x-2">
+          <button
+            onClick={handleTestSupabase}
+            disabled={connStatus === 'loading'}
+            className={`px-3 py-1 text-sm h-8 rounded-md text-white ${
+              connStatus === 'success'
+                ? 'bg-green-600'
+                : connStatus === 'error'
+                ? 'bg-red-600'
+                : 'bg-blue-600'
+            }`}
+          >
+            {connStatus === 'success'
+              ? 'Verbindung erfolgreich'
+              : connStatus === 'error'
+              ? 'Verbindung fehlgeschlagen'
+              : 'Supabase testen'}
+          </button>
+          <button
+            onClick={checkStatus}
+            disabled={isLoading}
+            className="flex items-center space-x-2 px-3 py-1 text-sm h-8 bg-blue-600 text-white hover:bg-blue-700 rounded-md transition-colors duration-200 disabled:opacity-50"
+          >
+            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+            <span>Aktualisieren</span>
+          </button>
+        </div>
       </div>
 
       <div className="space-y-4">

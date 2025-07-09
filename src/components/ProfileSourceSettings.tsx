@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Database, Plus, Trash2, X, AlertCircle, RefreshCw, TestTube, Search } from 'lucide-react';
+import { Database, Plus, Trash2, X, AlertCircle, RefreshCw, TestTube } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { 
   getSupabaseTableNames, 
@@ -83,6 +83,19 @@ function ProfileSourceSettings({
     }, [table, column]);
 
     return count;
+  };
+
+  const ColumnCount: React.FC<{ table: string; column: string }> = ({ table, column }) => {
+    const count = useColumnCount(table, column);
+    return (
+      <span className="text-slate-600 text-sm ml-2">
+        {count === undefined
+          ? '?'
+          : count === null
+          ? 'keine Daten'
+          : `${count} Einträge`}
+      </span>
+    );
   };
 
   const loadTables = useCallback(async (forceRefresh: boolean = false) => {
@@ -220,9 +233,6 @@ function ProfileSourceSettings({
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-lg font-medium text-gray-900">Datenquellen-Zuordnungen</h3>
-          <p className="text-sm text-gray-600 mt-1">
-            Ordnen Sie Profilkategorien zu spezifischen Tabellen und Spalten in Ihrer Supabase-Datenbank zu.
-          </p>
           {lastRefreshTime && (
             <p className="text-xs text-gray-500 mt-1">
               Letzte Aktualisierung: {lastRefreshTime.toLocaleTimeString('de-DE')}
@@ -233,7 +243,7 @@ function ProfileSourceSettings({
           <button
             onClick={() => loadTables(true)}
             disabled={isLoadingTables}
-            className="flex items-center space-x-2 px-3 py-2 text-white hover:opacity-90 rounded-lg transition-colors duration-200 disabled:opacity-50"
+            className="flex items-center space-x-2 px-3 py-1 text-sm h-8 text-white hover:opacity-90 rounded-lg transition-colors duration-200 disabled:opacity-50"
             style={{ backgroundColor: '#F29400' }}
             title="Lädt alle Tabellen neu und invalidiert den Cache"
           >
@@ -242,7 +252,7 @@ function ProfileSourceSettings({
           </button>
           <button
             onClick={() => setShowNewMappingForm(true)}
-            className="flex items-center space-x-2 px-4 py-2 text-white rounded-lg transition-colors duration-200"
+            className="flex items-center space-x-2 px-3 py-1 text-sm h-8 text-white rounded-lg transition-colors duration-200"
             style={{ backgroundColor: '#F29400' }}
           >
             <Plus className="h-4 w-4" />
@@ -408,7 +418,6 @@ function ProfileSourceSettings({
             {sourceMappings.map((mapping, index) => {
               const testKey = `${mapping.tableName}.${mapping.columnName}`;
               const testResult = testResults[testKey];
-              const count = useColumnCount(mapping.tableName, mapping.columnName);
               
               return (
                 <div key={index} className={`border rounded-lg p-4 ${
@@ -429,13 +438,7 @@ function ProfileSourceSettings({
                         <span className="font-medium text-gray-900">
                           {mapping.tableName}.{mapping.columnName}
                         </span>
-                        <span className="text-slate-600 text-sm ml-2">
-                          {count === undefined
-                            ? '?'
-                            : count === null
-                            ? 'keine Daten'
-                            : `${count} Einträge`}
-                        </span>
+                        <ColumnCount table={mapping.tableName} column={mapping.columnName} />
                         {mapping.isActive && (
                           <span className="px-2 py-1 text-white text-xs rounded-full" style={{ backgroundColor: '#F29400' }}>
                             Aktiv
