@@ -45,7 +45,7 @@ export default function LebenslaufInput() {
           />
           <TagSelectorWithFavorites
             label="Position"
-            value={erfahrung.position ? [erfahrung.position] : []}
+            value={erfahrung?.position ? [erfahrung.position] : []}
             onChange={(val) => updateErfahrung('position', val[0] || '')}
             favoritenKey="positionFavoriten"
             options={[
