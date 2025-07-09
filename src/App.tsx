@@ -465,42 +465,114 @@ function HomePage() {
 
 
   return (
-    <div className="h-screen w-screen overflow-hidden flex flex-col">
+    <div className="min-h-screen w-full flex flex-col">
       <header className="sticky top-0 z-20 bg-white shadow-md py-4">
         <h1 className="text-2xl font-bold text-center">Bewerbungsschreiben Generator</h1>
       </header>
-      <div className="grid grid-cols-[260px_1fr_1fr] gap-4 w-full px-4 flex-1 overflow-hidden">
-        <Sidebar
-          className="col-span-1 h-full overflow-y-auto"
-          documentTypes={documentTypes}
-          selectedType={selectedDocumentType}
-          onTypeChange={setSelectedDocumentType}
-        />
-        <ProfileInput
-          className="col-span-1 h-full overflow-y-auto"
-          onContentChange={setCvContent}
-          profileConfig={profileConfig}
-        />
-        <JobInputAndPreview
-          className="col-span-1 h-full overflow-y-auto"
-        jobContent={jobContent}
-        onJobContentChange={setJobContent}
-        onGenerate={handleGenerate}
-        isGenerating={isGenerating}
-        cvContent={cvContent}
-        coverLetter={coverLetter}
-        isEditing={isEditing}
-        onEdit={handleEdit}
-        onContentChange={handleDirectContentChange}
-        editPrompts={editPrompts}
-        selectedStyles={selectedStyles}
-        onStylesChange={setSelectedStyles}
-        stylePrompts={stylePrompts}
-        error={error}
-        profileConfig={profileConfig}
-        profileSourceMappings={profileSourceMappings}
-        databaseStats={databaseStats}
-      />
+      
+      {/* OBERER BEREICH: 3-SPALTEN-LAYOUT */}
+      <div className="w-full px-4 py-6">
+        <div className="grid grid-cols-[260px_1fr_1fr] gap-6 min-h-[600px]">
+          {/* Dokumenttyp-Spalte */}
+          <div className="overflow-y-auto">
+            <Sidebar
+              documentTypes={documentTypes}
+              selectedType={selectedDocumentType}
+              onTypeChange={setSelectedDocumentType}
+            />
+          </div>
+          
+          {/* Lebenslauf/Profil-Spalte */}
+          <div className="overflow-visible min-h-0">
+            <InputSection
+              title="Lebenslauf / Profil"
+              icon={<div className="h-6 w-6 text-orange-600">👤</div>}
+              onContentChange={setCvContent}
+              placeholder="Geben Sie hier Ihren Lebenslauf ein..."
+              isProfileSection={true}
+              profileConfig={profileConfig}
+            />
+          </div>
+          
+          {/* Stellenanzeige-Spalte */}
+          <div className="overflow-y-auto">
+            <InputSection
+              title="Stellenanzeige"
+              icon={<div className="h-6 w-6 text-orange-600">🏢</div>}
+              onContentChange={setJobContent}
+              placeholder="Fügen Sie hier die Stellenanzeige ein..."
+              showUrlInput={true}
+              profileConfig={profileConfig}
+            />
+          </div>
+        </div>
+      </div>
+      
+      {/* UNTERER BEREICH: STIL-AUSWAHL + GENERIERUNG + EDITOR */}
+      <div className="w-full px-4 py-6 border-t border-gray-200 bg-gray-50">
+        <div className="max-w-7xl mx-auto space-y-6">
+          {/* Stil-Auswahl */}
+          <StyleSelector
+            selectedStyles={selectedStyles}
+            onStylesChange={setSelectedStyles}
+            stylePrompts={stylePrompts}
+          />
+
+          {/* Generieren-Button */}
+          <div className="flex justify-center">
+            <button
+              onClick={handleGenerate}
+              disabled={isGenerating || !cvContent.trim() || !jobContent.trim()}
+              className="flex items-center space-x-3 px-8 py-4 text-white font-semibold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 transition-all duration-200 shadow-lg"
+              style={{ backgroundColor: '#F29400' }}
+            >
+              {isGenerating ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                  <span className="text-lg">Wird generiert...</span>
+                </>
+              ) : (
+                <>
+                  <div className="h-5 w-5">✨</div>
+                  <span className="text-lg">Bewerbungsschreiben generieren</span>
+                </>
+              )}
+            </button>
+          </div>
+
+          {/* Fehleranzeige */}
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <div className="flex items-center space-x-2 text-red-700">
+                <div className="h-5 w-5 flex-shrink-0">⚠️</div>
+                <p className="font-medium">{error}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Editor für generiertes Bewerbungsschreiben */}
+          <CoverLetterDisplay
+            content={coverLetter}
+            isEditing={isEditing}
+            onEdit={handleEdit}
+            onContentChange={handleDirectContentChange}
+            editPrompts={editPrompts}
+          />
+
+          {/* Footer-Info */}
+          <div className="text-center text-gray-500 text-sm">
+            Powered by Mistral AI • Quill Editor
+            {isSupabaseConfigured() && (
+              <span className="ml-2">• Profil-Daten von Supabase</span>
+            )}
+            {profileSourceMappings.length > 0 && (
+              <span className="ml-2">• {profileSourceMappings.filter(m => m.isActive).length} aktive Datenquellen</span>
+            )}
+            {databaseStats && databaseStats.totalFromMappings > 0 && (
+              <span className="ml-2">• {databaseStats.totalFromMappings.toLocaleString('de-DE')} Mapping-Einträge</span>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

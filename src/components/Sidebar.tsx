@@ -2,7 +2,6 @@ import React from 'react';
 import DocumentTypeSelector from './DocumentTypeSelector';
 
 interface SidebarProps {
-  className?: string;
   documentTypes: {
     [key: string]: {
       label: string;
