@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
-import { Settings } from 'lucide-react';
+import { Settings, User, ClipboardList } from 'lucide-react';
 import SettingsPage from './components/SettingsPage';
 import InputSection from './components/InputSection';
 import StyleSelector from './components/StyleSelector';
@@ -496,7 +496,7 @@ function HomePage() {
           <div className="overflow-visible min-h-0">
             <InputSection
               title="Lebenslauf / Profil"
-              icon={<div className="h-6 w-6 text-orange-600">👤</div>}
+              icon={<User className="h-6 w-6 !text-[#F29400]" />}
               onContentChange={setCvContent}
               placeholder="Geben Sie hier Ihren Lebenslauf ein..."
               isProfileSection={true}
@@ -508,7 +508,7 @@ function HomePage() {
           <div className="overflow-y-auto">
             <InputSection
               title="Stellenanzeige"
-              icon={<div className="h-6 w-6 text-orange-600">🏢</div>}
+              icon={<ClipboardList className="h-6 w-6 !text-[#F29400]" />}
               onContentChange={setJobContent}
               placeholder="Fügen Sie hier die Stellenanzeige ein..."
               showUrlInput={true}
