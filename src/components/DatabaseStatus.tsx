@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Database, CheckCircle, XCircle, AlertCircle, RefreshCw } from 'lucide-react';
+import { CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import {
   isSupabaseConfigured,
   testSupabaseConnection
@@ -50,11 +50,9 @@ function DatabaseStatus() {
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200 mb-8">
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center space-x-3">
-          <Database className="h-6 w-6" style={{ color: '#F29400' }} />
-        </div>
-        <div className="flex justify-end space-x-2">
+      <div className="flex justify-between items-center mb-2">
+        <h2 className="text-lg font-semibold">Datenbankstatus</h2>
+        <div className="flex gap-2">
           <button
             onClick={handleTestSupabase}
             disabled={connStatus === 'loading'}
@@ -75,10 +73,9 @@ function DatabaseStatus() {
           <button
             onClick={checkStatus}
             disabled={isLoading}
-            className="flex items-center space-x-2 px-3 py-1 text-sm h-8 bg-blue-600 text-white hover:bg-blue-700 rounded-md transition-colors duration-200 disabled:opacity-50"
+            className="px-3 py-1 text-sm h-8 bg-blue-600 text-white hover:bg-blue-700 rounded-md transition-colors duration-200 disabled:opacity-50"
           >
-            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-            <span>Aktualisieren</span>
+            Aktualisieren
           </button>
         </div>
       </div>
