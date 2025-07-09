@@ -18,13 +18,12 @@ import DatabaseStatus from './DatabaseStatus';
 import KIModelSettingsItem from './KIModelSettingsItem';
 import PromptTemplateManager from './PromptTemplateManager';
 import { KIModelSettings } from '../types/KIModelSettings';
-import { PromptConfig, PromptState } from '../types/Prompt';
+import { PromptState } from '../types/Prompt';
 import { defaultKIModels } from '../constants/kiDefaults';
 import {
   loadKIConfigs,
   saveKIConfigs,
-  ProfileSourceMapping,
-  testSupabaseConnection
+  ProfileSourceMapping
 } from '../services/supabaseService';
 
 // Tabs handled in this page
@@ -79,7 +78,6 @@ export default function SettingsPage() {
   const [models, setModels] = useState<KIModelSettings[]>([]);
   const [showModelModal, setShowModelModal] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [connStatus, setConnStatus] = useState<'idle' | 'success' | 'error' | 'loading'>('idle');
   
   // Prompt state
   const [prompts, setPrompts] = useState<PromptState>({
@@ -231,16 +229,6 @@ export default function SettingsPage() {
     }
   }, [models, prompts, autoloadPrompts, defaultStyle, templates, profileSourceMappings, navigate]);
 
-  const handleTestSupabase = useCallback(async () => {
-    setConnStatus('loading');
-    try {
-      const ok = await testSupabaseConnection();
-      setConnStatus(ok ? 'success' : 'error');
-    } catch (error) {
-      console.error('Supabase test error:', error);
-      setConnStatus('error');
-    }
-  }, []);
 
   const handleExport = useCallback(() => {
     const dbMapping = loadFromLocalStorage('databaseMapping', null);
@@ -433,26 +421,6 @@ export default function SettingsPage() {
 
             {activeTab === 'database' && (
               <div className="space-y-6">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-semibold">Datenbankstatus</h3>
-                  <button
-                    onClick={handleTestSupabase}
-                    disabled={connStatus === 'loading'}
-                    className={`px-3 py-2 text-white rounded-md text-sm ${
-                      connStatus === 'success'
-                        ? 'bg-green-600'
-                        : connStatus === 'error'
-                        ? 'bg-red-600'
-                        : 'bg-blue-600'
-                    }`}
-                  >
-                    {connStatus === 'success'
-                      ? 'Verbindung erfolgreich'
-                      : connStatus === 'error'
-                      ? 'Verbindung fehlgeschlagen'
-                      : 'Supabase testen'}
-                  </button>
-                </div>
                 <DatabaseStatus />
                 <ProfileSourceSettings
                   sourceMappings={profileSourceMappings}

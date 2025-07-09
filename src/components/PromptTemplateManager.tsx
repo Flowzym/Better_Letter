@@ -39,7 +39,8 @@ export default function PromptTemplateManager({
   };
 
   const handleDelete = (cat: keyof PromptState, key: string) => {
-    const { [key]: _removed, ...rest } = prompts[cat];
+    const rest = { ...prompts[cat] };
+    delete rest[key];
     onChange({ ...prompts, [cat]: rest });
   };
 
