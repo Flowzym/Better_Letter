@@ -513,7 +513,7 @@ function HomePage() {
       
       {/* UNTERER BEREICH: STIL-AUSWAHL + GENERIERUNG + EDITOR */}
       <div className="w-full px-4 py-6 border-t border-gray-200 bg-gray-50">
-        <div className="max-w-7xl mx-auto space-y-6">
+        <div className="w-full space-y-6">
           {/* Stil-Auswahl */}
           <StyleSelector
             selectedStyles={selectedStyles}
