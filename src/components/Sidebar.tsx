@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import DocumentTypeSelector from './DocumentTypeSelector';
 
 interface SidebarProps {
@@ -19,23 +19,13 @@ export default function Sidebar({
   selectedType,
   onTypeChange,
 }: SidebarProps) {
-  const [open, setOpen] = useState(true);
-
   return (
     <div className={`${className} overflow-y-auto`}>
-      <button
-        onClick={() => setOpen(!open)}
-        className="mb-2 text-sm text-gray-700"
-      >
-        {open ? '▾ Dokument-Typ' : '▸ Dokument-Typ'}
-      </button>
-      {open && (
-        <DocumentTypeSelector
-          documentTypes={documentTypes}
-          selectedType={selectedType}
-          onTypeChange={onTypeChange}
-        />
-      )}
+      <DocumentTypeSelector
+        documentTypes={documentTypes}
+        selectedType={selectedType}
+        onTypeChange={onTypeChange}
+      />
     </div>
   );
 }
