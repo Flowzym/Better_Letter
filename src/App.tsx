@@ -469,7 +469,7 @@ function HomePage() {
       <header className="sticky top-0 z-20 bg-white shadow-md py-4">
         <h1 className="text-2xl font-bold text-center">Bewerbungsschreiben Generator</h1>
       </header>
-      <div className="grid grid-cols-[22%_40%_38%] gap-4 flex-1 overflow-hidden">
+      <div className="grid grid-cols-[260px_1fr_1fr] gap-4 w-full px-4 flex-1 overflow-hidden">
         <Sidebar
           className="col-span-1 h-full overflow-y-auto"
           documentTypes={documentTypes}
