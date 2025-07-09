@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useLebenslaufData } from '../context/LebenslaufContext';
+import TagSelectorWithFavorites from './TagSelectorWithFavorites';
 
 export default function LebenslaufInput() {
   const { daten, setDaten } = useLebenslaufData();
@@ -42,12 +43,18 @@ export default function LebenslaufInput() {
             value={erfahrung?.firma || ''}
             onChange={e => updateErfahrung('firma', e.target.value)}
           />
-          <input
-            type="text"
-            placeholder="Position"
-            className="w-full px-3 py-2 border rounded"
-            value={erfahrung?.position || ''}
-            onChange={e => updateErfahrung('position', e.target.value)}
+          <TagSelectorWithFavorites
+            label="Position"
+            value={erfahrung.position ? [erfahrung.position] : []}
+            onChange={(val) => updateErfahrung('position', val[0] || '')}
+            favoritenKey="positionFavoriten"
+            options={[
+              'Projektmanager',
+              'Buchhalter',
+              'Verkäufer',
+              'Teamleiter',
+            ]}
+            allowCustom={true}
           />
           <input
             type="text"
