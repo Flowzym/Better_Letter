@@ -83,7 +83,7 @@ export default function ZeitraumPicker({
   return (
     <div className="border rounded-md p-4 space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-2 sm:space-y-0">
-        <span className="text-sm font-medium text-gray-700 w-24">Start</span>
+        <span className="text-sm font-medium text-gray-700 w-24">Startdatum</span>
         <select
           value={startMonth ?? ''}
           onChange={(e) =>
@@ -96,11 +96,14 @@ export default function ZeitraumPicker({
           style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
         >
           <option value="">Monat</option>
-          {months.map((m, idx) => (
-            <option key={idx + 1} value={idx + 1}>
-              {m}
-            </option>
-          ))}
+          {months.map((m, idx) => {
+            const num = String(idx + 1).padStart(2, '0');
+            return (
+              <option key={idx + 1} value={idx + 1}>
+                {num} - {m}
+              </option>
+            );
+          })}
         </select>
         <select
           value={startYear ?? ''}
@@ -122,7 +125,7 @@ export default function ZeitraumPicker({
         </select>
       </div>
       <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-2 sm:space-y-0">
-        <span className="text-sm font-medium text-gray-700 w-24">Ende</span>
+        <span className="text-sm font-medium text-gray-700 w-24">Enddatum</span>
         <select
           value={endMonth ?? ''}
           onChange={(e) =>
@@ -136,11 +139,14 @@ export default function ZeitraumPicker({
           style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
         >
           <option value="">Monat</option>
-          {months.map((m, idx) => (
-            <option key={idx + 1} value={idx + 1}>
-              {m}
-            </option>
-          ))}
+          {months.map((m, idx) => {
+            const num = String(idx + 1).padStart(2, '0');
+            return (
+              <option key={idx + 1} value={idx + 1}>
+                {num} - {m}
+              </option>
+            );
+          })}
         </select>
         <select
           value={endYear ?? ''}
@@ -169,7 +175,7 @@ export default function ZeitraumPicker({
           onChange={(e) => updateField('isCurrent', e.target.checked)}
           className="rounded border-gray-300 text-orange-500 focus:ring-orange-500"
         />
-        <span className="text-sm text-gray-700">Läuft aktuell</span>
+        <span className="text-sm text-gray-700">Derzeit beschäftigt</span>
       </label>
     </div>
   );
