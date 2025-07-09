@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Database as DatabaseIcon, CheckCircle, XCircle, RefreshCw, AlertCircle } from 'lucide-react';
+import { CheckCircle, XCircle, RefreshCw, AlertCircle } from 'lucide-react';
 import { testSupabaseConnection } from '../services/supabaseService';
 
 export default function DatabaseStatusPanel() {
@@ -39,21 +39,30 @@ export default function DatabaseStatusPanel() {
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200 space-y-4">
-      <div className="flex items-center space-x-3">
-        <DatabaseIcon className="h-6 w-6" style={{ color: '#F29400' }} />
+      <div className="flex justify-between items-center mb-2">
+        <h2 className="text-lg font-semibold">Datenbankstatus</h2>
+        <div className="flex gap-2">
+          <button
+            onClick={handleTest}
+            disabled={status === 'loading'}
+            className="px-3 py-2 text-white rounded-md disabled:opacity-50"
+            style={{ backgroundColor: '#F29400' }}
+          >
+            Supabase testen
+          </button>
+          <button
+            onClick={handleTest}
+            disabled={status === 'loading'}
+            className="px-3 py-2 border border-gray-300 rounded-md text-sm disabled:opacity-50"
+          >
+            Aktualisieren
+          </button>
+        </div>
       </div>
       <div className="flex items-center space-x-2">
         {renderIcon()}
         {message && <span className="text-sm">{message}</span>}
       </div>
-      <button
-        onClick={handleTest}
-        disabled={status === 'loading'}
-        className="px-3 py-2 text-white rounded-md disabled:opacity-50"
-        style={{ backgroundColor: '#F29400' }}
-      >
-        Verbindung testen
-      </button>
     </div>
   );
 }
