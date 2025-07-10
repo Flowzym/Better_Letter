@@ -35,6 +35,7 @@ export default function LebenslaufInput() {
       const data = berufserfahrungen.find(exp => exp.id === selectedExperienceId);
       if (data) {
         // remove id when loading into form
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { id, ...rest } = data;
         setForm(rest);
       }
