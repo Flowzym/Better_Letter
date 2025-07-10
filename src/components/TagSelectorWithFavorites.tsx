@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronDown, Star, X } from 'lucide-react';
+import { Star, X } from 'lucide-react';
 import AutocompleteInput from './AutocompleteInput';
 
 interface TagSelectorWithFavoritesProps {
@@ -145,44 +145,6 @@ export default function TagSelectorWithFavorites({
         </div>
       )}
 
-      {options.length > 0 && (
-        <details className="group">
-          <summary className="cursor-pointer text-sm font-medium text-gray-700 hover:text-gray-900 flex items-center space-x-2">
-            <span>Alle verfügbaren Optionen ({options.length})</span>
-            <ChevronDown className="h-4 w-4 group-open:rotate-180 transition-transform" style={{ color: '#F29400' }} />
-          </summary>
-          <div className="mt-3 space-y-3">
-            <div className="max-h-64 overflow-y-auto border border-gray-200 rounded-lg p-3 bg-gray-50">
-              <div className="flex flex-wrap gap-2">
-                {options
-                  .filter((opt) => !value.includes(opt))
-                  .map((opt) => (
-                    <div key={opt} className="flex items-center space-x-1">
-                      <button
-                        onClick={() => addTag(opt)}
-                        className="inline-flex items-center justify-between px-3 py-1 bg-white text-gray-700 text-sm rounded-full transition-colors duration-200 border border-gray-300 hover:bg-gray-100"
-                      >
-                        <span className="mr-2">{opt}</span>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleFavorite(opt);
-                          }}
-                          className={`transition-colors duration-200 ${favorites.includes(opt) ? 'hover:opacity-80' : 'text-gray-400 hover:opacity-80'}`}
-                          style={{ color: favorites.includes(opt) ? '#F29400' : undefined }}
-                          aria-label={favorites.includes(opt) ? `${opt} aus Favoriten entfernen` : `${opt} zu Favoriten hinzufügen`}
-                          title={favorites.includes(opt) ? 'Aus Favoriten entfernen' : 'Zu Favoriten hinzufügen'}
-                        >
-                          <Star className={`h-3 w-3 ${favorites.includes(opt) ? 'fill-current' : ''}`} />
-                        </button>
-                      </button>
-                    </div>
-                  ))}
-              </div>
-            </div>
-          </div>
-        </details>
-      )}
     </div>
   );
 }
