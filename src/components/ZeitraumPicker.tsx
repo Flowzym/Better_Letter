@@ -15,20 +15,10 @@ interface ZeitraumPickerProps {
   }) => void;
 }
 
-const months = [
-  "J\u00e4nner",
-  "Februar",
-  "M\u00e4rz",
-  "April",
-  "Mai",
-  "Juni",
-  "Juli",
-  "August",
-  "September",
-  "Oktober",
-  "November",
-  "Dezember",
-];
+// Months displayed as two digit numbers (01 - 12)
+const months = Array.from({ length: 12 }, (_, i) =>
+  String(i + 1).padStart(2, "0"),
+);
 
 export default function ZeitraumPicker({
   startMonth,
@@ -39,9 +29,10 @@ export default function ZeitraumPicker({
   onChange,
 }: ZeitraumPickerProps) {
   const currentYear = new Date().getFullYear();
+  // Years descending from currentYear down to 1950
   const years = Array.from(
-    { length: currentYear - 1970 + 1 },
-    (_, i) => 1970 + i,
+    { length: currentYear - 1950 + 1 },
+    (_, i) => currentYear - i,
   );
 
   const updateField = (
@@ -108,14 +99,11 @@ export default function ZeitraumPicker({
           }
         >
           <option value="">Monat</option>
-          {months.map((m, idx) => {
-            const num = String(idx + 1).padStart(2, "0");
-            return (
-              <option key={idx + 1} value={idx + 1}>
-                {num} - {m}
-              </option>
-            );
-          })}
+          {months.map((month) => (
+            <option key={month} value={parseInt(month, 10)}>
+              {month}
+            </option>
+          ))}
         </select>
         <select
           value={startYear ?? ""}
@@ -163,14 +151,11 @@ export default function ZeitraumPicker({
             }
           >
             <option value="">Monat</option>
-            {months.map((m, idx) => {
-              const num = String(idx + 1).padStart(2, "0");
-              return (
-                <option key={idx + 1} value={idx + 1}>
-                  {num} - {m}
-                </option>
-              );
-            })}
+            {months.map((month) => (
+              <option key={month} value={parseInt(month, 10)}>
+                {month}
+              </option>
+            ))}
           </select>
           <select
             value={endYear ?? ""}
