@@ -1,8 +1,7 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import TagSelectorWithFavorites from './TagSelectorWithFavorites';
 import ZeitraumPicker from './ZeitraumPicker';
 import AufgabenbereichInput from './AufgabenbereichInput';
-import { getTaskSuggestionsForBeruf } from '../constants/taskSuggestions';
 import {
   Berufserfahrung,
   useLebenslaufContext,
@@ -50,11 +49,6 @@ export default function LebenslaufInput() {
     setForm(prev => ({ ...prev, [field]: value }));
   };
 
-  const aufgabenVorschlaege = useMemo(() => {
-    const pos = form.position[0];
-    return pos ? getTaskSuggestionsForBeruf(pos) : [];
-  }, [form.position]);
-
   const handleSubmit = () => {
     if (selectedExperienceId !== null) {
       updateExperience(selectedExperienceId, form);
@@ -65,11 +59,12 @@ export default function LebenslaufInput() {
     selectExperience(null);
   };
 
-
   return (
     <div className="space-y-8">
       <section>
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">💼 Berufserfahrung</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          💼 Berufserfahrung
+        </h2>
         <div className="border border-gray-300 rounded-lg p-4 bg-gray-50 space-y-2">
           <ZeitraumPicker
             value={{
@@ -88,7 +83,9 @@ export default function LebenslaufInput() {
               );
               updateField(
                 'startYear',
-                data.startYear !== undefined && data.startYear !== null ? String(data.startYear) : '',
+                data.startYear !== undefined && data.startYear !== null
+                  ? String(data.startYear)
+                  : '',
               );
               updateField(
                 'endMonth',
@@ -98,7 +95,9 @@ export default function LebenslaufInput() {
               );
               updateField(
                 'endYear',
-                data.endYear !== undefined && data.endYear !== null ? String(data.endYear) : null,
+                data.endYear !== undefined && data.endYear !== null
+                  ? String(data.endYear)
+                  : null,
               );
               updateField('isCurrent', data.isCurrent ?? false);
             }}
@@ -121,7 +120,7 @@ export default function LebenslaufInput() {
           <AufgabenbereichInput
             value={form.aufgabenbereiche}
             onChange={(val) => updateField('aufgabenbereiche', val)}
-            vorschlaege={aufgabenVorschlaege}
+            positionen={form.position}
           />
         </div>
         <button

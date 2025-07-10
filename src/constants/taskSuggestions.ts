@@ -12,6 +12,7 @@ export const TASK_SUGGESTIONS: Record<string, string[]> = {
     'Budgetkontrolle',
     'Stakeholder-Kommunikation'
   ],
+  Techniker: ['Reparatur', 'Wartung', 'Ressourcenmanagement'],
   'Marketing Manager': [
     'Kampagnenplanung',
     'Marktanalysen',
