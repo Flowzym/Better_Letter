@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { X, Pencil, Star, ChevronDown } from 'lucide-react';
 import AutocompleteInput from './AutocompleteInput';
+import { getTaskSuggestionsForBeruf } from '../constants/taskSuggestions';
 
 interface AufgabenbereichInputProps {
   value: string[];
   onChange: (neueListe: string[]) => void;
+  positionen: string[];
   vorschlaege?: string[];
   favoriten?: string[];
 }
@@ -12,6 +14,7 @@ interface AufgabenbereichInputProps {
 export default function AufgabenbereichInput({
   value,
   onChange,
+  positionen,
   vorschlaege = [],
   favoriten = [],
 }: AufgabenbereichInputProps) {
@@ -41,7 +44,15 @@ export default function AufgabenbereichInput({
     }
   }, [favorites]);
 
-  const allOptions = Array.from(new Set(vorschlaege));
+  const allOptions = useMemo(() => {
+    const fromPositions = positionen.flatMap((p) =>
+      getTaskSuggestionsForBeruf(p)
+    );
+    const combined = [...fromPositions, ...vorschlaege];
+    const unique = Array.from(new Set(combined));
+    unique.sort((a, b) => a.localeCompare(b, 'de', { sensitivity: 'base' }));
+    return unique;
+  }, [positionen, vorschlaege]);
 
   const addTask = (task?: string) => {
     const t = (task ?? inputValue).trim();
