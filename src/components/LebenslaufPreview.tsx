@@ -24,7 +24,7 @@ export default function LebenslaufPreview() {
           className={`border rounded p-4 cursor-pointer ${selectedExperienceIndex === idx ? 'bg-orange-50' : 'bg-gray-50'}`}
         >
           <div className="font-semibold">
-            {exp.position} bei {exp.firma}
+            {exp.position.join(' / ')} bei {exp.firma}
           </div>
           <div className="text-sm text-gray-500 mb-2">
             {formatZeitraum(exp.startMonth, exp.startYear, exp.endMonth, exp.endYear, exp.isCurrent)}

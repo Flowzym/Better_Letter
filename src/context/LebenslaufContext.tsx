@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 export interface Berufserfahrung {
   firma: string;
-  position: string;
+  position: string[];
   startMonth: string | null;
   startYear: string;
   endMonth: string | null;
