@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { X, Pencil, Star, ChevronDown } from 'lucide-react';
+import { X, Pencil, Star } from 'lucide-react';
 import AutocompleteInput from './AutocompleteInput';
 import { getTaskSuggestionsForBeruf } from '../constants/taskSuggestions';
 
@@ -183,7 +183,7 @@ export default function AufgabenbereichInput({
       {favorites.filter((f) => !value.includes(f)).length > 0 && (
         <div>
           <div className="flex items-center space-x-2 mb-2">
-            <Star className="h-4 w-4 fill-current" style={{ color: '#F29400' }} />
+            <Star className="h-4 w-4" style={{ color: '#F29400' }} />
             <h4 className="text-sm font-medium text-gray-700">Favoriten:</h4>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -193,8 +193,7 @@ export default function AufgabenbereichInput({
                 <button
                   key={item}
                   onClick={() => addTask(item)}
-                  className="inline-flex items-center justify-between px-3 py-1 text-gray-700 text-sm rounded-full border hover:bg-gray-200 transition-colors duration-200"
-                  style={{ backgroundColor: '#F3F4F6', borderColor: '#F29400' }}
+                  className="inline-flex items-center justify-between px-3 py-1 bg-white text-gray-700 text-sm rounded-full transition-colors duration-200 border border-gray-300 hover:bg-gray-100"
                 >
                   <span className="mr-2">{item}</span>
                   <button
@@ -202,11 +201,11 @@ export default function AufgabenbereichInput({
                       e.stopPropagation();
                       toggleFavorite(item);
                     }}
-                    className="text-gray-600 hover:text-gray-800"
+                    className="transition-colors duration-200 text-gray-400 hover:opacity-80"
                     aria-label={`${item} aus Favoriten entfernen`}
                     title="Aus Favoriten entfernen"
                   >
-                    <X className="h-3 w-3" />
+                    <Star className="h-3 w-3 fill-current" />
                   </button>
                 </button>
               ))}
@@ -214,49 +213,6 @@ export default function AufgabenbereichInput({
         </div>
       )}
 
-      {gefilterteVorschlaege.length > 0 && (
-        <details className="group">
-          <summary className="cursor-pointer text-sm font-medium text-gray-700 hover:text-gray-900 flex items-center space-x-2">
-            <span>Alle verfügbaren Optionen ({gefilterteVorschlaege.length})</span>
-            <ChevronDown
-              className="h-4 w-4 group-open:rotate-180 transition-transform"
-              style={{ color: '#F29400' }}
-            />
-          </summary>
-          <div className="mt-3 space-y-3">
-            <div className="max-h-64 overflow-y-auto border border-gray-200 rounded-lg p-3 bg-gray-50">
-              <div className="flex flex-wrap gap-2">
-                {gefilterteVorschlaege.map((opt) => (
-                    <div key={opt} className="flex items-center space-x-1">
-                      <button
-                        onClick={() => addTask(opt)}
-                        className="inline-flex items-center justify-between px-3 py-1 bg-white text-gray-700 text-sm rounded-full transition-colors duration-200 border border-gray-300 hover:bg-gray-100"
-                      >
-                        <span className="mr-2">{opt}</span>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleFavorite(opt);
-                          }}
-                          className={`transition-colors duration-200 ${favorites.includes(opt) ? 'hover:opacity-80' : 'text-gray-400 hover:opacity-80'}`}
-                          style={{ color: favorites.includes(opt) ? '#F29400' : undefined }}
-                          aria-label={
-                            favorites.includes(opt)
-                              ? `${opt} aus Favoriten entfernen`
-                              : `${opt} zu Favoriten hinzufügen`
-                          }
-                          title={favorites.includes(opt) ? 'Aus Favoriten entfernen' : 'Zu Favoriten hinzufügen'}
-                        >
-                          <Star className={`h-3 w-3 ${favorites.includes(opt) ? 'fill-current' : ''}`} />
-                        </button>
-                      </button>
-                    </div>
-                  ))}
-              </div>
-            </div>
-          </div>
-        </details>
-      )}
     </div>
   );
 }
