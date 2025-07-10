@@ -35,6 +35,9 @@ export default function ZeitraumPicker({
     (_, i) => currentYear - i,
   );
 
+  console.log("startMonth", startMonth);
+  console.log("startYear", startYear);
+
   const updateField = (
     field: keyof Omit<ZeitraumPickerProps, "onChange">,
     value: number | boolean | null,
@@ -71,9 +74,7 @@ export default function ZeitraumPicker({
         break;
     }
 
-    if (data.startYear !== null && (data.isCurrent || data.endYear !== null)) {
-      onChange(data);
-    }
+    onChange(data);
   };
 
   return (
