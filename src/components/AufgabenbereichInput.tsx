@@ -54,6 +54,10 @@ export default function AufgabenbereichInput({
     return unique;
   }, [positionen, vorschlaege]);
 
+  const gefilterteVorschlaege = allOptions.filter(
+    (option) => !value.includes(option)
+  );
+
   const addTask = (task?: string) => {
     const t = (task ?? inputValue).trim();
     if (!t || value.includes(t)) return;
@@ -103,15 +107,15 @@ export default function AufgabenbereichInput({
         onChange={setInputValue}
         onAdd={() => addTask()}
         onAddToFavorites={(val) => addToFavorites(val ?? inputValue)}
-        suggestions={allOptions}
+        suggestions={gefilterteVorschlaege}
         placeholder="Hinzufügen..."
         buttonColor="orange"
         showFavoritesButton
       />
 
-      {allOptions.length > 0 && (
+      {gefilterteVorschlaege.length > 0 && (
         <div className="flex flex-wrap gap-2">
-          {allOptions.map((s) => (
+          {gefilterteVorschlaege.map((s) => (
             <button
               key={s}
               onClick={() => addTask(s)}
@@ -131,13 +135,15 @@ export default function AufgabenbereichInput({
       )}
 
       {value.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {value.map((task, index) => (
-            <div
-              key={`${task}-${index}`}
-              className="inline-flex items-center px-3 py-1 text-sm rounded-full text-white"
-              style={{ backgroundColor: '#F29400' }}
-            >
+        <div>
+          <h4 className="text-sm font-medium text-gray-700 mb-2">Ausgewählt:</h4>
+          <div className="flex flex-wrap gap-2">
+            {value.map((task, index) => (
+              <div
+                key={`${task}-${index}`}
+                className="inline-flex items-center px-3 py-1 text-sm rounded-full text-white"
+                style={{ backgroundColor: '#F29400' }}
+              >
               {editIndex === index ? (
                 <input
                   value={editValue}
@@ -168,8 +174,9 @@ export default function AufgabenbereichInput({
               >
                 <X className="h-3 w-3" />
               </button>
-            </div>
-          ))}
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
@@ -207,10 +214,10 @@ export default function AufgabenbereichInput({
         </div>
       )}
 
-      {allOptions.length > 0 && (
+      {gefilterteVorschlaege.length > 0 && (
         <details className="group">
           <summary className="cursor-pointer text-sm font-medium text-gray-700 hover:text-gray-900 flex items-center space-x-2">
-            <span>Alle verfügbaren Optionen ({allOptions.length})</span>
+            <span>Alle verfügbaren Optionen ({gefilterteVorschlaege.length})</span>
             <ChevronDown
               className="h-4 w-4 group-open:rotate-180 transition-transform"
               style={{ color: '#F29400' }}
@@ -219,9 +226,7 @@ export default function AufgabenbereichInput({
           <div className="mt-3 space-y-3">
             <div className="max-h-64 overflow-y-auto border border-gray-200 rounded-lg p-3 bg-gray-50">
               <div className="flex flex-wrap gap-2">
-                {allOptions
-                  .filter((opt) => !value.includes(opt))
-                  .map((opt) => (
+                {gefilterteVorschlaege.map((opt) => (
                     <div key={opt} className="flex items-center space-x-1">
                       <button
                         onClick={() => addTask(opt)}
