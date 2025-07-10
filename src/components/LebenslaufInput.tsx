@@ -8,7 +8,7 @@ import {
 
 const initialExperience: Berufserfahrung = {
   firma: '',
-  position: '',
+  position: [],
   startMonth: null,
   startYear: '',
   endMonth: null,
@@ -72,9 +72,9 @@ export default function LebenslaufInput() {
             onChange={e => updateField('firma', e.target.value)}
           />
           <TagSelectorWithFavorites
-            label="Position"
-            value={form.position ? [form.position] : []}
-            onChange={val => updateField('position', val[0] || '')}
+            label="Positionen"
+            value={form.position}
+            onChange={val => updateField('position', val)}
             favoritenKey="positionFavoriten"
             options={['Projektmanager', 'Buchhalter', 'Verkäufer', 'Teamleiter']}
             allowCustom={true}
