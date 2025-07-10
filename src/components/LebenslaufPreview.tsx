@@ -61,12 +61,9 @@ export default function LebenslaufPreview() {
           </p>
           <p className="italic text-gray-500">{exp.firma}</p>
           <ul className="list-disc list-inside mt-2 space-y-1 text-black">
-            {exp.aufgabenbeschreibung
-              .split("\n")
-              .filter((a) => a.trim() !== "")
-              .map((aufgabe, i) => (
-                <li key={i}>{aufgabe}</li>
-              ))}
+            {exp.aufgabenbereiche.map((aufgabe, i) => (
+              <li key={i}>{aufgabe}</li>
+            ))}
           </ul>
         </div>
       ))}
