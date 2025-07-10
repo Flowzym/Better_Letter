@@ -138,25 +138,29 @@ export default function ZeitraumPicker({
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  const handleMonthClick = (month: string) => {
+  const handleMonthSelect = (month: string) => {
     if (activeField === "start") {
       setStartMonth(month);
+      setStartInput(displayDate(month, startYear));
       if (startYear) closePopup();
     }
     if (activeField === "end") {
       setEndMonth(month);
+      setEndInput(displayDate(month, endYear));
       if (endYear) closePopup();
     }
   };
 
-  const handleYearClick = (year: string) => {
+  const handleYearSelect = (year: string) => {
     if (activeField === "start") {
       setStartYear(year);
+      setStartInput(displayDate(startMonth, year));
       if (startMonth) {
         closePopup();
       }
     } else if (activeField === "end") {
       setEndYear(year);
+      setEndInput(displayDate(endMonth, year));
       if (endMonth) {
         closePopup();
       }
@@ -226,10 +230,10 @@ export default function ZeitraumPicker({
               return (
                 <button
                   key={m}
-                  onClick={() => handleMonthClick(m)}
-                  className={`px-2 py-1 border rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 ${selected ? "bg-[#F29400] text-white" : ""}`}
+                  onMouseDown={() => handleMonthSelect(m)}
+                  className={`px-2 py-1 border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 ${selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"}`}
                 >
-                  {m} {selected && <span className="ml-1">✓</span>}
+                  {m}
                 </button>
               );
             })}
@@ -241,10 +245,10 @@ export default function ZeitraumPicker({
               return (
                 <button
                   key={y}
-                  onClick={() => handleYearClick(y)}
-                  className={`px-2 py-1 text-left border rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 ${selected ? "bg-[#F29400] text-white" : ""}`}
+                  onMouseDown={() => handleYearSelect(y)}
+                  className={`px-2 py-1 text-left border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 ${selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"}`}
                 >
-                  {y} {selected && <span className="ml-1">✓</span>}
+                  {y}
                 </button>
               );
             })}
