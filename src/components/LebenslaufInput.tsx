@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import TagSelectorWithFavorites from './TagSelectorWithFavorites';
 import ZeitraumPicker from './ZeitraumPicker';
+import AufgabenbereichInput from './AufgabenbereichInput';
 import {
   Berufserfahrung,
   useLebenslaufContext,
@@ -16,7 +17,7 @@ const initialExperience: BerufserfahrungForm = {
   endMonth: null,
   endYear: null,
   isCurrent: false,
-  aufgabenbeschreibung: '',
+  aufgabenbereiche: [],
 };
 
 export default function LebenslaufInput() {
@@ -47,6 +48,17 @@ export default function LebenslaufInput() {
   const updateField = <K extends keyof BerufserfahrungForm>(field: K, value: BerufserfahrungForm[K]) => {
     setForm(prev => ({ ...prev, [field]: value }));
   };
+
+  const aufgabenVorschlaege = useMemo(() => {
+    const mapping: Record<string, string[]> = {
+      Projektmanager: ['Projektkoordination', 'Teamleitung', 'Zeitplanung'],
+      Buchhalter: ['Finanzbuchhaltung', 'Kostenrechnung', 'Jahresabschlüsse'],
+      Verkäufer: ['Kundenberatung', 'Produktpräsentation', 'Verkaufsabschlüsse'],
+      Teamleiter: ['Mitarbeiterführung', 'Schichtplanung', 'Motivation'],
+    };
+    const pos = form.position[0];
+    return pos && mapping[pos] ? mapping[pos] : [];
+  }, [form.position]);
 
   const handleSubmit = () => {
     if (selectedExperienceId !== null) {
@@ -111,11 +123,10 @@ export default function LebenslaufInput() {
             options={['Projektmanager', 'Buchhalter', 'Verkäufer', 'Teamleiter']}
             allowCustom={true}
           />
-          <textarea
-            placeholder="Aufgabenbeschreibung"
-            className="w-full px-3 py-2 border rounded h-24"
-            value={form.aufgabenbeschreibung}
-            onChange={e => updateField('aufgabenbeschreibung', e.target.value)}
+          <AufgabenbereichInput
+            value={form.aufgabenbereiche}
+            onChange={(val) => updateField('aufgabenbereiche', val)}
+            vorschlaege={aufgabenVorschlaege}
           />
         </div>
         <button

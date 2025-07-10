@@ -10,7 +10,7 @@ export interface Berufserfahrung {
   endMonth: string | null;
   endYear: string | null;
   isCurrent: boolean;
-  aufgabenbeschreibung: string;
+  aufgabenbereiche: string[];
 }
 
 interface LebenslaufContextType {
