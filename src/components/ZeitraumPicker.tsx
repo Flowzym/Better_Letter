@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from "react";
 
 interface ZeitraumValue {
   startMonth?: string;
@@ -13,14 +13,28 @@ interface ZeitraumPickerProps {
   onChange?: (val: ZeitraumValue) => void;
 }
 
-export default function ZeitraumPicker({ value, onChange }: ZeitraumPickerProps) {
-  const [startMonth, setStartMonth] = useState<string | undefined>(value?.startMonth);
-  const [startYear, setStartYear] = useState<string | undefined>(value?.startYear);
+export default function ZeitraumPicker({
+  value,
+  onChange,
+}: ZeitraumPickerProps) {
+  const [startMonth, setStartMonth] = useState<string | undefined>(
+    value?.startMonth,
+  );
+  const [startYear, setStartYear] = useState<string | undefined>(
+    value?.startYear,
+  );
   const [endMonth, setEndMonth] = useState<string | undefined>(value?.endMonth);
   const [endYear, setEndYear] = useState<string | undefined>(value?.endYear);
-  const [isCurrent, setIsCurrent] = useState<boolean>(value?.isCurrent ?? false);
-  const [activeField, setActiveField] = useState<'start' | 'end' | null>(null);
-  const [tempMonth, setTempMonth] = useState<string | undefined>();
+  const [isCurrent, setIsCurrent] = useState<boolean>(
+    value?.isCurrent ?? false,
+  );
+  const [activeField, setActiveField] = useState<"start" | "end" | null>(null);
+  const [startInput, setStartInput] = useState<string>(
+    displayDate(value?.startMonth, value?.startYear),
+  );
+  const [endInput, setEndInput] = useState<string>(
+    displayDate(value?.endMonth, value?.endYear),
+  );
   const popupRef = useRef<HTMLDivElement>(null);
 
   // synchronize internal state with incoming value without triggering loops
@@ -34,31 +48,64 @@ export default function ZeitraumPicker({ value, onChange }: ZeitraumPickerProps)
       if ((value.isCurrent ?? false) !== isCurrent)
         setIsCurrent(value.isCurrent ?? false);
     }
-  }, [value?.startMonth, value?.startYear, value?.endMonth, value?.endYear, value?.isCurrent]);
+  }, [
+    value?.startMonth,
+    value?.startYear,
+    value?.endMonth,
+    value?.endYear,
+    value?.isCurrent,
+  ]);
   /* eslint-enable react-hooks/exhaustive-deps */
 
-  const years = Array.from({ length: 2025 - 1950 + 1 }, (_, i) => String(2025 - i));
-  const months = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'));
+  const years = Array.from({ length: 2025 - 1950 + 1 }, (_, i) =>
+    String(2025 - i),
+  );
+  const months = Array.from({ length: 12 }, (_, i) =>
+    String(i + 1).padStart(2, "0"),
+  );
 
   const displayDate = (month?: string, year?: string) => {
-    if (!year) return '';
+    if (!year) return "";
     return month ? `${month}.${year}` : year;
+  };
+
+  const parseInput = (val: string): { month?: string; year?: string } => {
+    const trimmed = val.trim();
+    const monthYear = /^(\d{1,2})\.(\d{4})$/.exec(trimmed);
+    if (monthYear) {
+      return {
+        month: monthYear[1].padStart(2, "0"),
+        year: monthYear[2],
+      };
+    }
+    const onlyYear = /^(\d{4})$/.exec(trimmed);
+    if (onlyYear) {
+      return { year: onlyYear[1] };
+    }
+    return {};
   };
 
   const closePopup = () => {
     setActiveField(null);
-    setTempMonth(undefined);
   };
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         closePopup();
       }
     };
-    document.addEventListener('keydown', handleKey);
-    return () => document.removeEventListener('keydown', handleKey);
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
   }, []);
+
+  useEffect(() => {
+    setStartInput(displayDate(startMonth, startYear));
+  }, [startMonth, startYear]);
+
+  useEffect(() => {
+    setEndInput(displayDate(endMonth, endYear));
+  }, [endMonth, endYear]);
 
   const prevValueRef = useRef<ZeitraumValue>({});
 
@@ -84,35 +131,36 @@ export default function ZeitraumPicker({ value, onChange }: ZeitraumPickerProps)
         closePopup();
       }
     };
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
   const handleMonthClick = (month: string) => {
-    setTempMonth(month);
-    if (activeField === 'start' && startYear) {
+    if (activeField === "start") {
       setStartMonth(month);
-      closePopup();
+      setStartInput(displayDate(month, startYear));
+      if (startYear) closePopup();
     }
-    if (activeField === 'end' && endYear) {
+    if (activeField === "end") {
       setEndMonth(month);
-      closePopup();
+      setEndInput(displayDate(month, endYear));
+      if (endYear) closePopup();
     }
   };
 
   const handleYearClick = (year: string) => {
-    if (activeField === 'start') {
+    if (activeField === "start") {
       setStartYear(year);
-      if (tempMonth) {
-        setStartMonth(tempMonth);
+      setStartInput(displayDate(startMonth, year));
+      if (startMonth) {
+        closePopup();
       }
-      closePopup();
-    } else if (activeField === 'end') {
+    } else if (activeField === "end") {
       setEndYear(year);
-      if (tempMonth) {
-        setEndMonth(tempMonth);
+      setEndInput(displayDate(endMonth, year));
+      if (endMonth) {
+        closePopup();
       }
-      closePopup();
     }
   };
 
@@ -132,22 +180,34 @@ export default function ZeitraumPicker({ value, onChange }: ZeitraumPickerProps)
       <div className="flex items-center space-x-2">
         <input
           type="text"
-          readOnly
-          value={displayDate(startMonth, startYear)}
+          value={startInput}
           placeholder="von"
-          onFocus={() => setActiveField('start')}
+          onFocus={() => setActiveField("start")}
+          onChange={(e) => {
+            const val = e.target.value;
+            setStartInput(val);
+            const parsed = parseInput(val);
+            setStartMonth(parsed.month);
+            setStartYear(parsed.year);
+          }}
           className="w-32 px-2 py-1 border rounded-md focus:outline-none focus:ring-2"
-          style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
+          style={{ "--tw-ring-color": "#F29400" } as React.CSSProperties}
         />
         {!isCurrent && (
           <input
             type="text"
-            readOnly
-            value={displayDate(endMonth, endYear)}
+            value={endInput}
             placeholder="bis"
-            onFocus={() => setActiveField('end')}
+            onFocus={() => setActiveField("end")}
+            onChange={(e) => {
+              const val = e.target.value;
+              setEndInput(val);
+              const parsed = parseInput(val);
+              setEndMonth(parsed.month);
+              setEndYear(parsed.year);
+            }}
             className="w-32 px-2 py-1 border rounded-md focus:outline-none focus:ring-2"
-            style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
+            style={{ "--tw-ring-color": "#F29400" } as React.CSSProperties}
           />
         )}
         <label className="ml-2 flex items-center space-x-1 text-sm">
@@ -156,32 +216,42 @@ export default function ZeitraumPicker({ value, onChange }: ZeitraumPickerProps)
         </label>
       </div>
       {activeField && (
-        <div className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 flex z-50" ref={popupRef}>
+        <div
+          className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 flex z-50"
+          ref={popupRef}
+        >
           <div className="grid grid-cols-3 gap-2 mr-4">
-            {months.map((m) => (
-              <button
-                key={m}
-                onClick={() => handleMonthClick(m)}
-                className="px-2 py-1 border rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2"
-              >
-                {m}
-              </button>
-            ))}
+            {months.map((m) => {
+              const selected =
+                activeField === "start" ? startMonth === m : endMonth === m;
+              return (
+                <button
+                  key={m}
+                  onClick={() => handleMonthClick(m)}
+                  className={`px-2 py-1 border rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 ${selected ? "bg-[#F29400] text-white" : ""}`}
+                >
+                  {m}
+                </button>
+              );
+            })}
           </div>
           <div className="h-48 overflow-y-auto flex flex-col space-y-1 pr-1">
-            {years.map((y) => (
-              <button
-                key={y}
-                onClick={() => handleYearClick(y)}
-                className="px-2 py-1 text-left border rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2"
-              >
-                {y}
-              </button>
-            ))}
+            {years.map((y) => {
+              const selected =
+                activeField === "start" ? startYear === y : endYear === y;
+              return (
+                <button
+                  key={y}
+                  onClick={() => handleYearClick(y)}
+                  className={`px-2 py-1 text-left border rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 ${selected ? "bg-[#F29400] text-white" : ""}`}
+                >
+                  {y}
+                </button>
+              );
+            })}
           </div>
         </div>
       )}
     </div>
   );
 }
-
