@@ -1,197 +1,154 @@
-import React from "react";
+import { useState, useRef, useEffect } from 'react';
 
-interface ZeitraumPickerProps {
-  startMonth: number | null;
-  startYear: number | null;
-  endMonth: number | null;
-  endYear: number | null;
-  isCurrent: boolean;
-  onChange: (data: {
-    startMonth: number | null;
-    startYear: number | null;
-    endMonth: number | null;
-    endYear: number | null;
-    isCurrent: boolean;
-  }) => void;
+interface ZeitraumValue {
+  startMonth?: string;
+  startYear?: string;
+  endMonth?: string;
+  endYear?: string;
+  isCurrent?: boolean;
 }
 
-// Months displayed as two digit numbers (01 - 12)
-const months = Array.from({ length: 12 }, (_, i) =>
-  String(i + 1).padStart(2, "0"),
-);
+interface ZeitraumPickerProps {
+  value?: ZeitraumValue;
+  onChange?: (val: ZeitraumValue) => void;
+}
 
-export default function ZeitraumPicker({
-  startMonth,
-  startYear,
-  endMonth,
-  endYear,
-  isCurrent,
-  onChange,
-}: ZeitraumPickerProps) {
-  const currentYear = new Date().getFullYear();
-  // Years descending from currentYear down to 1950
-  const years = Array.from(
-    { length: currentYear - 1950 + 1 },
-    (_, i) => currentYear - i,
-  );
+export default function ZeitraumPicker({ value, onChange }: ZeitraumPickerProps) {
+  const [startMonth, setStartMonth] = useState<string | undefined>(value?.startMonth);
+  const [startYear, setStartYear] = useState<string | undefined>(value?.startYear);
+  const [endMonth, setEndMonth] = useState<string | undefined>(value?.endMonth);
+  const [endYear, setEndYear] = useState<string | undefined>(value?.endYear);
+  const [isCurrent, setIsCurrent] = useState<boolean>(value?.isCurrent ?? false);
+  const [activeField, setActiveField] = useState<'start' | 'end' | null>(null);
+  const [tempMonth, setTempMonth] = useState<string | undefined>();
+  const popupRef = useRef<HTMLDivElement>(null);
 
-  console.log("startMonth", startMonth);
-  console.log("startYear", startYear);
+  const years = Array.from({ length: 2025 - 1950 + 1 }, (_, i) => String(2025 - i));
+  const months = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'));
 
-  const updateField = (
-    field: keyof Omit<ZeitraumPickerProps, "onChange">,
-    value: number | boolean | null,
-  ) => {
-    const data = {
-      startMonth,
-      startYear,
-      endMonth,
-      endYear,
-      isCurrent,
+  const displayDate = (month?: string, year?: string) => {
+    if (!year) return '';
+    return month ? `${month}/${year}` : `—/${year}`;
+  };
+
+  const closePopup = () => {
+    setActiveField(null);
+    setTempMonth(undefined);
+  };
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        closePopup();
+      }
     };
+    document.addEventListener('keydown', handleKey);
+    return () => document.removeEventListener('keydown', handleKey);
+  }, []);
 
-    switch (field) {
-      case "startMonth":
-        data.startMonth = value as number | null;
-        break;
-      case "startYear":
-        data.startYear = value as number | null;
-        break;
-      case "endMonth":
-        data.endMonth = value as number | null;
-        break;
-      case "endYear":
-        data.endYear = value as number | null;
-        break;
-      case "isCurrent":
-        data.isCurrent = value as boolean;
-        if (data.isCurrent) {
-          data.endMonth = null;
-          data.endYear = null;
-        }
-        break;
-      default:
-        break;
+  useEffect(() => {
+    if (onChange) {
+      onChange({ startMonth, startYear, endMonth, endYear, isCurrent });
     }
+  }, [startMonth, startYear, endMonth, endYear, isCurrent, onChange]);
 
-    onChange(data);
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (popupRef.current && !popupRef.current.contains(e.target as Node)) {
+        closePopup();
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
+  const handleMonthClick = (month: string) => {
+    setTempMonth(month);
+    if (activeField === 'start' && startYear) {
+      setStartMonth(month);
+      closePopup();
+    }
+    if (activeField === 'end' && endYear) {
+      setEndMonth(month);
+      closePopup();
+    }
+  };
+
+  const handleYearClick = (year: string) => {
+    if (activeField === 'start') {
+      setStartYear(year);
+      if (tempMonth) {
+        setStartMonth(tempMonth);
+      }
+      closePopup();
+    } else if (activeField === 'end') {
+      setEndYear(year);
+      if (tempMonth) {
+        setEndMonth(tempMonth);
+      }
+      closePopup();
+    }
+  };
+
+  const toggleCurrent = () => {
+    setIsCurrent((prev) => !prev);
   };
 
   return (
-    <div className="border rounded-md p-4 space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-4">
-      <div className="flex items-center space-x-2">
-        <span className="text-sm font-medium text-gray-700 w-24">
-          Startdatum
-        </span>
-        <select
-          value={startMonth ?? ""}
-          onChange={(e) =>
-            updateField(
-              "startMonth",
-              e.target.value ? parseInt(e.target.value, 10) : null,
-            )
-          }
-          className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-          style={
-            {
-              borderColor: "#F29400",
-              "--tw-ring-color": "#F29400",
-            } as React.CSSProperties
-          }
-        >
-          <option value="">Monat</option>
-          {months.map((month) => (
-            <option key={month} value={parseInt(month, 10)}>
-              {month}
-            </option>
-          ))}
-        </select>
-        <select
-          value={startYear ?? ""}
-          onChange={(e) =>
-            updateField(
-              "startYear",
-              e.target.value ? parseInt(e.target.value, 10) : null,
-            )
-          }
-          className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-          style={
-            {
-              borderColor: "#F29400",
-              "--tw-ring-color": "#F29400",
-            } as React.CSSProperties
-          }
-        >
-          <option value="">Jahr</option>
-          {years.map((y) => (
-            <option key={y} value={y}>
-              {y}
-            </option>
-          ))}
-        </select>
+    <div className="space-y-2 relative">
+      <div className="flex space-x-2">
+        <input
+          type="text"
+          readOnly
+          value={displayDate(startMonth, startYear)}
+          placeholder="Startdatum"
+          onFocus={() => setActiveField('start')}
+          className="w-32 px-2 py-1 border rounded-md focus:outline-none focus:ring-2"
+          style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
+        />
+        {!isCurrent && (
+          <input
+            type="text"
+            readOnly
+            value={displayDate(endMonth, endYear)}
+            placeholder="Enddatum"
+            onFocus={() => setActiveField('end')}
+            className="w-32 px-2 py-1 border rounded-md focus:outline-none focus:ring-2"
+            style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
+          />
+        )}
       </div>
-      {!isCurrent && (
-        <div className="flex items-center space-x-2">
-          <span className="text-sm font-medium text-gray-700 w-24">
-            Enddatum
-          </span>
-          <select
-            value={endMonth ?? ""}
-            onChange={(e) =>
-              updateField(
-                "endMonth",
-                e.target.value ? parseInt(e.target.value, 10) : null,
-              )
-            }
-            className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-            style={
-              {
-                borderColor: "#F29400",
-                "--tw-ring-color": "#F29400",
-              } as React.CSSProperties
-            }
-          >
-            <option value="">Monat</option>
-            {months.map((month) => (
-              <option key={month} value={parseInt(month, 10)}>
-                {month}
-              </option>
+      <label className="flex items-center space-x-2 text-sm">
+        <input type="checkbox" checked={isCurrent} onChange={toggleCurrent} />
+        <span>Derzeit beschäftigt</span>
+      </label>
+      {activeField && (
+        <div className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 flex z-50" ref={popupRef}>
+          <div className="grid grid-cols-3 gap-2 mr-4">
+            {months.map((m) => (
+              <button
+                key={m}
+                onClick={() => handleMonthClick(m)}
+                className="px-2 py-1 border rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2"
+              >
+                {m}
+              </button>
             ))}
-          </select>
-          <select
-            value={endYear ?? ""}
-            onChange={(e) =>
-              updateField(
-                "endYear",
-                e.target.value ? parseInt(e.target.value, 10) : null,
-              )
-            }
-            className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-            style={
-              {
-                borderColor: "#F29400",
-                "--tw-ring-color": "#F29400",
-              } as React.CSSProperties
-            }
-          >
-            <option value="">Jahr</option>
+          </div>
+          <div className="h-48 overflow-y-auto flex flex-col space-y-1 pr-1">
             {years.map((y) => (
-              <option key={y} value={y}>
+              <button
+                key={y}
+                onClick={() => handleYearClick(y)}
+                className="px-2 py-1 text-left border rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2"
+              >
                 {y}
-              </option>
+              </button>
             ))}
-          </select>
+          </div>
         </div>
       )}
-      <label className="inline-flex items-center space-x-2">
-        <input
-          type="checkbox"
-          checked={isCurrent}
-          onChange={(e) => updateField("isCurrent", e.target.checked)}
-          className="rounded border-gray-300 text-orange-500 focus:ring-orange-500"
-        />
-        <span className="text-sm text-gray-700">Derzeit beschäftigt</span>
-      </label>
     </div>
   );
 }
+
