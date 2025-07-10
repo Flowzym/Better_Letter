@@ -19,16 +19,22 @@ export default function LebenslaufPreview() {
 
   const formatZeitraum = (
     startMonth: string | null,
-    startYear: string,
+    startYear: string | null,
     endMonth: string | null,
     endYear: string | null,
     isCurrent: boolean,
   ) => {
-    const format = (m: string | null, y: string | null) =>
-      m ? `${m}.${y}` : (y ?? "");
-    const start = format(startMonth, startYear);
-    const end = isCurrent ? "heute" : format(endMonth, endYear);
-    return `${start} – ${end}`;
+    const format = (m: string | null | undefined, y: string | null | undefined) => {
+      if (!y) return '';
+      return m ? `${m}.${y}` : y;
+    };
+
+    const start = format(startMonth ?? undefined, startYear ?? undefined);
+    const end = isCurrent ? 'heute' : format(endMonth ?? undefined, endYear ?? undefined);
+
+    if (!start && !end) return '';
+    if (start && end) return `${start} – ${end}`;
+    return start || end;
   };
 
   return (

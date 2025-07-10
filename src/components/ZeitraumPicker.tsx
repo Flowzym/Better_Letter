@@ -23,12 +23,20 @@ export default function ZeitraumPicker({ value, onChange }: ZeitraumPickerProps)
   const [tempMonth, setTempMonth] = useState<string | undefined>();
   const popupRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    setStartMonth(value?.startMonth);
+    setStartYear(value?.startYear);
+    setEndMonth(value?.endMonth);
+    setEndYear(value?.endYear);
+    setIsCurrent(value?.isCurrent ?? false);
+  }, [value]);
+
   const years = Array.from({ length: 2025 - 1950 + 1 }, (_, i) => String(2025 - i));
   const months = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'));
 
   const displayDate = (month?: string, year?: string) => {
     if (!year) return '';
-    return month ? `${month}/${year}` : `—/${year}`;
+    return month ? `${month}.${year}` : year;
   };
 
   const closePopup = () => {
@@ -91,17 +99,24 @@ export default function ZeitraumPicker({ value, onChange }: ZeitraumPickerProps)
   };
 
   const toggleCurrent = () => {
-    setIsCurrent((prev) => !prev);
+    setIsCurrent((prev) => {
+      const next = !prev;
+      if (next) {
+        setEndMonth(undefined);
+        setEndYear(undefined);
+      }
+      return next;
+    });
   };
 
   return (
-    <div className="space-y-2 relative">
-      <div className="flex space-x-2">
+    <div className="relative space-y-2">
+      <div className="flex items-center space-x-2">
         <input
           type="text"
           readOnly
           value={displayDate(startMonth, startYear)}
-          placeholder="Startdatum"
+          placeholder="von"
           onFocus={() => setActiveField('start')}
           className="w-32 px-2 py-1 border rounded-md focus:outline-none focus:ring-2"
           style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
@@ -111,17 +126,17 @@ export default function ZeitraumPicker({ value, onChange }: ZeitraumPickerProps)
             type="text"
             readOnly
             value={displayDate(endMonth, endYear)}
-            placeholder="Enddatum"
+            placeholder="bis"
             onFocus={() => setActiveField('end')}
             className="w-32 px-2 py-1 border rounded-md focus:outline-none focus:ring-2"
             style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
           />
         )}
+        <label className="ml-2 flex items-center space-x-1 text-sm">
+          <input type="checkbox" checked={isCurrent} onChange={toggleCurrent} />
+          <span>laufend</span>
+        </label>
       </div>
-      <label className="flex items-center space-x-2 text-sm">
-        <input type="checkbox" checked={isCurrent} onChange={toggleCurrent} />
-        <span>Derzeit beschäftigt</span>
-      </label>
       {activeField && (
         <div className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 flex z-50" ref={popupRef}>
           <div className="grid grid-cols-3 gap-2 mr-4">

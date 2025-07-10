@@ -58,11 +58,6 @@ export default function LebenslaufInput() {
     selectExperience(null);
   };
 
-  const parseMonth = (val: string | null): number | null =>
-    val !== null && val !== '' ? parseInt(val, 10) : null;
-
-  const parseYear = (val: string | null): number | null =>
-    val !== null && val !== '' ? parseInt(val, 10) : null;
 
   return (
     <div className="space-y-8">
@@ -85,17 +80,35 @@ export default function LebenslaufInput() {
             allowCustom={true}
           />
           <ZeitraumPicker
-            startMonth={parseMonth(form.startMonth)}
-            startYear={parseYear(form.startYear) ?? null}
-            endMonth={parseMonth(form.endMonth)}
-            endYear={parseYear(form.endYear)}
-            isCurrent={form.isCurrent}
+            value={{
+              startMonth: form.startMonth ?? undefined,
+              startYear: form.startYear ?? undefined,
+              endMonth: form.endMonth ?? undefined,
+              endYear: form.endYear ?? undefined,
+              isCurrent: form.isCurrent,
+            }}
             onChange={data => {
-              updateField('startMonth', data.startMonth !== null ? String(data.startMonth).padStart(2, '0') : null);
-              updateField('startYear', data.startYear !== null ? String(data.startYear) : '');
-              updateField('endMonth', data.endMonth !== null ? String(data.endMonth).padStart(2, '0') : null);
-              updateField('endYear', data.endYear !== null ? String(data.endYear) : null);
-              updateField('isCurrent', data.isCurrent);
+              updateField(
+                'startMonth',
+                data.startMonth !== undefined && data.startMonth !== null
+                  ? String(data.startMonth).padStart(2, '0')
+                  : null,
+              );
+              updateField(
+                'startYear',
+                data.startYear !== undefined && data.startYear !== null ? String(data.startYear) : '',
+              );
+              updateField(
+                'endMonth',
+                data.endMonth !== undefined && data.endMonth !== null
+                  ? String(data.endMonth).padStart(2, '0')
+                  : null,
+              );
+              updateField(
+                'endYear',
+                data.endYear !== undefined && data.endYear !== null ? String(data.endYear) : null,
+              );
+              updateField('isCurrent', data.isCurrent ?? false);
             }}
           />
           <textarea
