@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface Berufserfahrung {
+  id: string;
   firma: string;
   position: string[];
   startMonth: string | null;
@@ -13,33 +15,35 @@ export interface Berufserfahrung {
 
 interface LebenslaufContextType {
   berufserfahrungen: Berufserfahrung[];
-  selectedExperienceIndex: number | null;
-  addExperience: (data: Berufserfahrung) => void;
-  updateExperience: (index: number, data: Berufserfahrung) => void;
-  selectExperience: (index: number | null) => void;
+  selectedExperienceId: string | null;
+  addExperience: (data: Omit<Berufserfahrung, 'id'>) => void;
+  updateExperience: (id: string, data: Omit<Berufserfahrung, 'id'>) => void;
+  selectExperience: (id: string | null) => void;
 }
 
 const LebenslaufContext = createContext<LebenslaufContextType | undefined>(undefined);
 
 export function LebenslaufProvider({ children }: { children: ReactNode }) {
   const [berufserfahrungen, setBerufserfahrungen] = useState<Berufserfahrung[]>([]);
-  const [selectedExperienceIndex, setSelectedExperienceIndex] = useState<number | null>(null);
+  const [selectedExperienceId, setSelectedExperienceId] = useState<string | null>(null);
 
-  const addExperience = (data: Berufserfahrung) => {
-    setBerufserfahrungen(prev => [...prev, data]);
+  const addExperience = (data: Omit<Berufserfahrung, 'id'>) => {
+    setBerufserfahrungen(prev => [...prev, { ...data, id: uuidv4() }]);
   };
 
-  const updateExperience = (index: number, data: Berufserfahrung) => {
-    setBerufserfahrungen(prev => prev.map((exp, i) => (i === index ? data : exp)));
+  const updateExperience = (id: string, data: Omit<Berufserfahrung, 'id'>) => {
+    setBerufserfahrungen(prev =>
+      prev.map(exp => (exp.id === id ? { ...data, id } : exp))
+    );
   };
 
-  const selectExperience = (index: number | null) => {
-    setSelectedExperienceIndex(index);
+  const selectExperience = (id: string | null) => {
+    setSelectedExperienceId(id);
   };
 
   return (
     <LebenslaufContext.Provider
-      value={{ berufserfahrungen, selectedExperienceIndex, addExperience, updateExperience, selectExperience }}
+      value={{ berufserfahrungen, selectedExperienceId, addExperience, updateExperience, selectExperience }}
     >
       {children}
     </LebenslaufContext.Provider>

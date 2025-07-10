@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { useLebenslaufContext } from "../context/LebenslaufContext";
 
 export default function LebenslaufPreview() {
-  const { berufserfahrungen, selectExperience, selectedExperienceIndex } =
+  const { berufserfahrungen, selectExperience, selectedExperienceId } =
     useLebenslaufContext();
 
   const sortedErfahrungen = useMemo(() => {
@@ -33,12 +33,12 @@ export default function LebenslaufPreview() {
 
   return (
     <div className="space-y-4">
-      {sortedErfahrungen.map((exp, idx) => (
+      {sortedErfahrungen.map((exp) => (
         <div
-          key={idx}
-          onClick={() => selectExperience(idx)}
+          key={exp.id}
+          onClick={() => selectExperience(exp.id)}
           className={`mb-6 border rounded p-4 cursor-pointer ${
-            selectedExperienceIndex === idx ? "bg-orange-50" : "bg-gray-50"
+            selectedExperienceId === exp.id ? "bg-orange-50" : "bg-gray-50"
           }`}
         >
           <p className="text-sm text-gray-500">

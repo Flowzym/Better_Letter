@@ -6,7 +6,9 @@ import {
   useLebenslaufContext,
 } from '../context/LebenslaufContext';
 
-const initialExperience: Berufserfahrung = {
+type BerufserfahrungForm = Omit<Berufserfahrung, 'id'>;
+
+const initialExperience: BerufserfahrungForm = {
   firma: '',
   position: [],
   startMonth: null,
@@ -20,32 +22,34 @@ const initialExperience: Berufserfahrung = {
 export default function LebenslaufInput() {
   const {
     berufserfahrungen,
-    selectedExperienceIndex,
+    selectedExperienceId,
     addExperience,
     updateExperience,
     selectExperience,
   } = useLebenslaufContext();
 
-  const [form, setForm] = useState<Berufserfahrung>(initialExperience);
+  const [form, setForm] = useState<BerufserfahrungForm>(initialExperience);
 
   useEffect(() => {
-    if (selectedExperienceIndex !== null) {
-      const data = berufserfahrungen[selectedExperienceIndex];
+    if (selectedExperienceId !== null) {
+      const data = berufserfahrungen.find(exp => exp.id === selectedExperienceId);
       if (data) {
-        setForm(data);
+        // remove id when loading into form
+        const { id, ...rest } = data;
+        setForm(rest);
       }
     } else {
       setForm(initialExperience);
     }
-  }, [selectedExperienceIndex, berufserfahrungen]);
+  }, [selectedExperienceId, berufserfahrungen]);
 
-  const updateField = <K extends keyof Berufserfahrung>(field: K, value: Berufserfahrung[K]) => {
+  const updateField = <K extends keyof BerufserfahrungForm>(field: K, value: BerufserfahrungForm[K]) => {
     setForm(prev => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = () => {
-    if (selectedExperienceIndex !== null) {
-      updateExperience(selectedExperienceIndex, form);
+    if (selectedExperienceId !== null) {
+      updateExperience(selectedExperienceId, form);
     } else {
       addExperience(form);
     }
