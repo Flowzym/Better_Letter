@@ -14,8 +14,10 @@ interface ZeitraumPickerProps {
 }
 
 function displayDate(month?: string, year?: string) {
-  if (!year) return "";
-  return month ? `${month}.${year}` : year;
+  if (month && year) return `${month}.${year}`;
+  if (year) return year;
+  if (month) return month;
+  return "";
 }
 
 export default function ZeitraumPicker({
@@ -139,12 +141,10 @@ export default function ZeitraumPicker({
   const handleMonthClick = (month: string) => {
     if (activeField === "start") {
       setStartMonth(month);
-      setStartInput(displayDate(month, startYear));
       if (startYear) closePopup();
     }
     if (activeField === "end") {
       setEndMonth(month);
-      setEndInput(displayDate(month, endYear));
       if (endYear) closePopup();
     }
   };
@@ -152,13 +152,11 @@ export default function ZeitraumPicker({
   const handleYearClick = (year: string) => {
     if (activeField === "start") {
       setStartYear(year);
-      setStartInput(displayDate(startMonth, year));
       if (startMonth) {
         closePopup();
       }
     } else if (activeField === "end") {
       setEndYear(year);
-      setEndInput(displayDate(endMonth, year));
       if (endMonth) {
         closePopup();
       }
@@ -231,7 +229,7 @@ export default function ZeitraumPicker({
                   onClick={() => handleMonthClick(m)}
                   className={`px-2 py-1 border rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 ${selected ? "bg-[#F29400] text-white" : ""}`}
                 >
-                  {m}
+                  {m} {selected && <span className="ml-1">✓</span>}
                 </button>
               );
             })}
@@ -246,7 +244,7 @@ export default function ZeitraumPicker({
                   onClick={() => handleYearClick(y)}
                   className={`px-2 py-1 text-left border rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 ${selected ? "bg-[#F29400] text-white" : ""}`}
                 >
-                  {y}
+                  {y} {selected && <span className="ml-1">✓</span>}
                 </button>
               );
             })}
