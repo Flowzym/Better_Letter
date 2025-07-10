@@ -1,4 +1,4 @@
-export const TASK_SUGGESTIONS: Record<string, string[]> = {
+export const POSITIONS_TO_TASKS: Record<string, string[]> = {
   Softwareentwickler: [
     'Programmierung',
     'Code Review',
@@ -21,6 +21,11 @@ export const TASK_SUGGESTIONS: Record<string, string[]> = {
   ],
 };
 
-export function getTaskSuggestionsForBeruf(beruf: string): string[] {
-  return TASK_SUGGESTIONS[beruf] || [];
+export function getTasksForPosition(position: string): string[] {
+  return POSITIONS_TO_TASKS[position] || [];
+}
+
+export function getTasksForPositions(positions: string[]): string[] {
+  const tasks = positions.flatMap(p => getTasksForPosition(p));
+  return Array.from(new Set(tasks));
 }
