@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { X, Pencil, Star } from 'lucide-react';
 import AutocompleteInput from './AutocompleteInput';
-import { getTaskSuggestionsForBeruf } from '../constants/taskSuggestions';
+import { getTasksForPositions } from '../constants/positionsToTasks';
 
 interface AufgabenbereichInputProps {
   value: string[];
@@ -45,9 +45,7 @@ export default function AufgabenbereichInput({
   }, [favorites]);
 
   const allOptions = useMemo(() => {
-    const fromPositions = positionen.flatMap((p) =>
-      getTaskSuggestionsForBeruf(p)
-    );
+    const fromPositions = getTasksForPositions(positionen);
     const combined = [...fromPositions, ...vorschlaege];
     const unique = Array.from(new Set(combined));
     unique.sort((a, b) => a.localeCompare(b, 'de', { sensitivity: 'base' }));
@@ -116,20 +114,39 @@ export default function AufgabenbereichInput({
       {gefilterteVorschlaege.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {gefilterteVorschlaege.map((s) => (
-            <button
-              key={s}
-              onClick={() => addTask(s)}
-              className={`px-3 py-1 text-sm rounded-full border ${
-                value.includes(s) ? 'text-white' : 'hover:bg-gray-100'
-              }`}
-              style={
-                value.includes(s)
-                  ? { backgroundColor: '#F29400', borderColor: '#F29400' }
-                  : { borderColor: '#F29400' }
-              }
-            >
-              {s}
-            </button>
+            <div key={s} className="flex items-center space-x-1">
+              <button
+                onClick={() => addTask(s)}
+                className={`px-3 py-1 text-sm rounded-full border ${
+                  value.includes(s) ? 'text-white' : 'hover:bg-gray-100'
+                }`}
+                style={
+                  value.includes(s)
+                    ? { backgroundColor: '#F29400', borderColor: '#F29400' }
+                    : { borderColor: '#F29400' }
+                }
+              >
+                {s}
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleFavorite(s);
+                }}
+                className={`transition-colors duration-200 ${
+                  favorites.includes(s) ? 'hover:opacity-80' : 'text-gray-400 hover:opacity-80'
+                }`}
+                style={{ color: favorites.includes(s) ? '#F29400' : undefined }}
+                aria-label={
+                  favorites.includes(s)
+                    ? `${s} aus Favoriten entfernen`
+                    : `${s} zu Favoriten hinzufügen`
+                }
+                title={favorites.includes(s) ? 'Aus Favoriten entfernen' : 'Zu Favoriten hinzufügen'}
+              >
+                <Star className={`h-3 w-3 ${favorites.includes(s) ? 'fill-current' : ''}`} />
+              </button>
+            </div>
           ))}
         </div>
       )}

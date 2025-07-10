@@ -30,6 +30,7 @@ export default function LebenslaufInput() {
   } = useLebenslaufContext();
 
   const [form, setForm] = useState<BerufserfahrungForm>(initialExperience);
+  const [selectedPositions, setSelectedPositions] = useState<string[]>([]);
 
   useEffect(() => {
     if (selectedExperienceId !== null) {
@@ -39,9 +40,11 @@ export default function LebenslaufInput() {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { id, ...rest } = data;
         setForm(rest);
+        setSelectedPositions(rest.position);
       }
     } else {
       setForm(initialExperience);
+      setSelectedPositions([]);
     }
   }, [selectedExperienceId, berufserfahrungen]);
 
@@ -56,6 +59,7 @@ export default function LebenslaufInput() {
       addExperience(form);
     }
     setForm(initialExperience);
+    setSelectedPositions([]);
     selectExperience(null);
   };
 
@@ -111,8 +115,11 @@ export default function LebenslaufInput() {
           />
           <TagSelectorWithFavorites
             label="Positionen"
-            value={form.position}
-            onChange={val => updateField('position', val)}
+            value={selectedPositions}
+            onChange={(val) => {
+              setSelectedPositions(val);
+              updateField('position', val);
+            }}
             favoritenKey="positionFavoriten"
             options={['Projektmanager', 'Buchhalter', 'Verkäufer', 'Teamleiter']}
             allowCustom={true}
@@ -120,7 +127,7 @@ export default function LebenslaufInput() {
           <AufgabenbereichInput
             value={form.aufgabenbereiche}
             onChange={(val) => updateField('aufgabenbereiche', val)}
-            positionen={form.position}
+            positionen={selectedPositions}
           />
         </div>
         <button
