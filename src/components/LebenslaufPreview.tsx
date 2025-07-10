@@ -1,9 +1,21 @@
-import React from "react";
+import React, { useMemo } from 'react';
 import { useLebenslaufContext } from "../context/LebenslaufContext";
 
 export default function LebenslaufPreview() {
   const { berufserfahrungen, selectExperience, selectedExperienceIndex } =
     useLebenslaufContext();
+
+  const sortedErfahrungen = useMemo(() => {
+    return [...berufserfahrungen].sort((a, b) => {
+      const yearA = parseInt(a.startYear || '0', 10);
+      const yearB = parseInt(b.startYear || '0', 10);
+      const monthA = parseInt(a.startMonth || '0', 10);
+      const monthB = parseInt(b.startMonth || '0', 10);
+
+      if (yearA !== yearB) return yearB - yearA;
+      return monthB - monthA;
+    });
+  }, [berufserfahrungen]);
 
   const formatZeitraum = (
     startMonth: string | null,
@@ -21,7 +33,7 @@ export default function LebenslaufPreview() {
 
   return (
     <div className="space-y-4">
-      {berufserfahrungen.map((exp, idx) => (
+      {sortedErfahrungen.map((exp, idx) => (
         <div
           key={idx}
           onClick={() => selectExperience(idx)}
