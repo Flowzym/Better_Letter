@@ -2,29 +2,32 @@ import React, { useEffect, useState } from 'react';
 import { X, Pencil } from 'lucide-react';
 import { ReactSortable } from 'react-sortablejs';
 import AutocompleteInput from './AutocompleteInput';
-import { getTaskSuggestionsForBeruf } from '../constants/taskSuggestions';
 
 interface AufgabenbereichInputProps {
-  beruf: string;
+  /** Aktuelle Liste der Aufgaben */
   value: string[];
+  /** Callback bei Änderungen */
   onChange: (tasks: string[]) => void;
+  /** Optionale Vorschläge */
+  vorschlaege?: string[];
+  /** Drag & Drop aktivieren */
   enableReorder?: boolean;
 }
 
 export default function AufgabenbereichInput({
-  beruf,
   value,
   onChange,
+  vorschlaege = [],
   enableReorder = false,
 }: AufgabenbereichInputProps) {
   const [inputValue, setInputValue] = useState('');
-  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [suggestions, setSuggestions] = useState<string[]>(vorschlaege);
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [editValue, setEditValue] = useState('');
 
   useEffect(() => {
-    setSuggestions(getTaskSuggestionsForBeruf(beruf));
-  }, [beruf]);
+    setSuggestions(vorschlaege);
+  }, [vorschlaege]);
 
   const addTask = (task?: string) => {
     const t = (task ?? inputValue).trim();
