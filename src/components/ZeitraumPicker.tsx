@@ -23,13 +23,19 @@ export default function ZeitraumPicker({ value, onChange }: ZeitraumPickerProps)
   const [tempMonth, setTempMonth] = useState<string | undefined>();
   const popupRef = useRef<HTMLDivElement>(null);
 
+  // synchronize internal state with incoming value without triggering loops
+  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
-    setStartMonth(value?.startMonth);
-    setStartYear(value?.startYear);
-    setEndMonth(value?.endMonth);
-    setEndYear(value?.endYear);
-    setIsCurrent(value?.isCurrent ?? false);
-  }, [value]);
+    if (value) {
+      if (value.startMonth !== startMonth) setStartMonth(value.startMonth);
+      if (value.startYear !== startYear) setStartYear(value.startYear);
+      if (value.endMonth !== endMonth) setEndMonth(value.endMonth);
+      if (value.endYear !== endYear) setEndYear(value.endYear);
+      if ((value.isCurrent ?? false) !== isCurrent)
+        setIsCurrent(value.isCurrent ?? false);
+    }
+  }, [value?.startMonth, value?.startYear, value?.endMonth, value?.endYear, value?.isCurrent]);
+  /* eslint-enable react-hooks/exhaustive-deps */
 
   const years = Array.from({ length: 2025 - 1950 + 1 }, (_, i) => String(2025 - i));
   const months = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'));
@@ -54,9 +60,21 @@ export default function ZeitraumPicker({ value, onChange }: ZeitraumPickerProps)
     return () => document.removeEventListener('keydown', handleKey);
   }, []);
 
+  const prevValueRef = useRef<ZeitraumValue>({});
+
   useEffect(() => {
-    if (onChange) {
-      onChange({ startMonth, startYear, endMonth, endYear, isCurrent });
+    if (!onChange) return;
+    const newVal = { startMonth, startYear, endMonth, endYear, isCurrent };
+    const prev = prevValueRef.current;
+    if (
+      prev.startMonth !== newVal.startMonth ||
+      prev.startYear !== newVal.startYear ||
+      prev.endMonth !== newVal.endMonth ||
+      prev.endYear !== newVal.endYear ||
+      prev.isCurrent !== newVal.isCurrent
+    ) {
+      prevValueRef.current = newVal;
+      onChange(newVal);
     }
   }, [startMonth, startYear, endMonth, endYear, isCurrent, onChange]);
 

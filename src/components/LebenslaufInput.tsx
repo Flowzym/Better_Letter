@@ -64,21 +64,6 @@ export default function LebenslaufInput() {
       <section>
         <h2 className="text-lg font-semibold text-gray-900 mb-4">💼 Berufserfahrung</h2>
         <div className="border border-gray-300 rounded-lg p-4 bg-gray-50 space-y-2">
-          <input
-            type="text"
-            placeholder="Firma"
-            className="w-full px-3 py-2 border rounded"
-            value={form.firma}
-            onChange={e => updateField('firma', e.target.value)}
-          />
-          <TagSelectorWithFavorites
-            label="Positionen"
-            value={form.position}
-            onChange={val => updateField('position', val)}
-            favoritenKey="positionFavoriten"
-            options={['Projektmanager', 'Buchhalter', 'Verkäufer', 'Teamleiter']}
-            allowCustom={true}
-          />
           <ZeitraumPicker
             value={{
               startMonth: form.startMonth ?? undefined,
@@ -110,6 +95,21 @@ export default function LebenslaufInput() {
               );
               updateField('isCurrent', data.isCurrent ?? false);
             }}
+          />
+          <input
+            type="text"
+            placeholder="Firma"
+            className="w-full px-3 py-2 border rounded"
+            value={form.firma}
+            onChange={e => updateField('firma', e.target.value)}
+          />
+          <TagSelectorWithFavorites
+            label="Positionen"
+            value={form.position}
+            onChange={val => updateField('position', val)}
+            favoritenKey="positionFavoriten"
+            options={['Projektmanager', 'Buchhalter', 'Verkäufer', 'Teamleiter']}
+            allowCustom={true}
           />
           <textarea
             placeholder="Aufgabenbeschreibung"
