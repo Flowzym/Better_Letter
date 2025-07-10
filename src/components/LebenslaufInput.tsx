@@ -1,66 +1,66 @@
-import React, { useEffect } from 'react';
-import { useLebenslaufData, Erfahrung } from '../context/LebenslaufContext';
+import React, { useEffect, useState } from 'react';
 import TagSelectorWithFavorites from './TagSelectorWithFavorites';
 import ZeitraumPicker from './ZeitraumPicker';
+import {
+  Berufserfahrung,
+  useLebenslaufContext,
+} from '../context/LebenslaufContext';
 
-function formatZeitraumText({
-  startMonth,
-  startYear,
-  endMonth,
-  endYear,
-  isCurrent,
-}: {
-  startMonth: number | null;
-  startYear: number | null;
-  endMonth: number | null;
-  endYear: number | null;
-  isCurrent: boolean;
-}) {
-  const format = (m: number | null, y: number | null) => (m ? `${m}/${y}` : y);
-  const start = format(startMonth, startYear);
-  const end = isCurrent ? 'heute' : format(endMonth, endYear);
-  return `${start} – ${end}`;
-}
+const initialExperience: Berufserfahrung = {
+  firma: '',
+  position: '',
+  startMonth: null,
+  startYear: '',
+  endMonth: null,
+  endYear: null,
+  isCurrent: false,
+  aufgabenbeschreibung: '',
+};
 
 export default function LebenslaufInput() {
-  const { daten, setDaten } = useLebenslaufData();
+  const {
+    berufserfahrungen,
+    selectedExperienceIndex,
+    addExperience,
+    updateExperience,
+    selectExperience,
+  } = useLebenslaufContext();
 
-  // Init: mind. 1 Erfahrungseintrag sicherstellen
+  const [form, setForm] = useState<Berufserfahrung>(initialExperience);
+
   useEffect(() => {
-    if (daten.erfahrungen.length === 0) {
-      setDaten(prev => ({
-        ...prev,
-        erfahrungen: [
-          {
-            firma: '',
-            position: '',
-            zeitraum: '',
-            beschreibung: '',
-            startMonth: null,
-            startYear: null,
-            endMonth: null,
-            endYear: null,
-            isCurrent: false,
-          },
-        ],
-      }));
+    if (selectedExperienceIndex !== null) {
+      const data = berufserfahrungen[selectedExperienceIndex];
+      if (data) {
+        setForm(data);
+      }
+    } else {
+      setForm(initialExperience);
     }
-  }, [daten.erfahrungen, setDaten]);
+  }, [selectedExperienceIndex, berufserfahrungen]);
 
-  const erfahrung = daten.erfahrungen[0];
-
-  const updateErfahrung = <K extends keyof Erfahrung>(
-    field: K,
-    value: Erfahrung[K],
-  ) => {
-    const updated = [...daten.erfahrungen];
-    updated[0] = { ...updated[0], [field]: value };
-    setDaten(prev => ({ ...prev, erfahrungen: updated }));
+  const updateField = <K extends keyof Berufserfahrung>(field: K, value: Berufserfahrung[K]) => {
+    setForm(prev => ({ ...prev, [field]: value }));
   };
+
+  const handleSubmit = () => {
+    if (selectedExperienceIndex !== null) {
+      updateExperience(selectedExperienceIndex, form);
+    } else {
+      addExperience(form);
+    }
+    setForm(initialExperience);
+    selectExperience(null);
+  };
+
+  const parseMonth = (val: string | null): number | null =>
+    val !== null && val !== '' ? parseInt(val, 10) : null;
+
+  const parseYear = (val: string | null): number | null =>
+    val !== null && val !== '' ? parseInt(val, 10) : null;
 
   return (
     <div className="space-y-8">
-      {/* Berufserfahrung */}
       <section>
         <h2 className="text-lg font-semibold text-gray-900 mb-4">💼 Berufserfahrung</h2>
         <div className="border border-gray-300 rounded-lg p-4 bg-gray-50 space-y-2">
@@ -68,46 +68,44 @@ export default function LebenslaufInput() {
             type="text"
             placeholder="Firma"
             className="w-full px-3 py-2 border rounded"
-            value={erfahrung?.firma || ''}
-            onChange={e => updateErfahrung('firma', e.target.value)}
+            value={form.firma}
+            onChange={e => updateField('firma', e.target.value)}
           />
           <TagSelectorWithFavorites
             label="Position"
-            value={erfahrung?.position ? [erfahrung.position] : []}
-            onChange={(val) => updateErfahrung('position', val[0] || '')}
+            value={form.position ? [form.position] : []}
+            onChange={val => updateField('position', val[0] || '')}
             favoritenKey="positionFavoriten"
-            options={[
-              'Projektmanager',
-              'Buchhalter',
-              'Verkäufer',
-              'Teamleiter',
-            ]}
+            options={['Projektmanager', 'Buchhalter', 'Verkäufer', 'Teamleiter']}
             allowCustom={true}
           />
           <ZeitraumPicker
-            startMonth={erfahrung?.startMonth ?? null}
-            startYear={erfahrung?.startYear ?? null}
-            endMonth={erfahrung?.endMonth ?? null}
-            endYear={erfahrung?.endYear ?? null}
-            isCurrent={erfahrung?.isCurrent ?? false}
-            onChange={(data) => {
-              updateErfahrung('startMonth', data.startMonth);
-              updateErfahrung('startYear', data.startYear);
-              updateErfahrung('endMonth', data.endMonth);
-              updateErfahrung('endYear', data.endYear);
-              updateErfahrung('isCurrent', data.isCurrent);
-              updateErfahrung('zeitraum', formatZeitraumText(data));
+            startMonth={parseMonth(form.startMonth)}
+            startYear={parseYear(form.startYear) ?? null}
+            endMonth={parseMonth(form.endMonth)}
+            endYear={parseYear(form.endYear)}
+            isCurrent={form.isCurrent}
+            onChange={data => {
+              updateField('startMonth', data.startMonth !== null ? String(data.startMonth).padStart(2, '0') : null);
+              updateField('startYear', data.startYear !== null ? String(data.startYear) : '');
+              updateField('endMonth', data.endMonth !== null ? String(data.endMonth).padStart(2, '0') : null);
+              updateField('endYear', data.endYear !== null ? String(data.endYear) : null);
+              updateField('isCurrent', data.isCurrent);
             }}
           />
           <textarea
             placeholder="Aufgabenbeschreibung"
             className="w-full px-3 py-2 border rounded h-24"
-            value={erfahrung?.beschreibung || ''}
-            onChange={e => updateErfahrung('beschreibung', e.target.value)}
+            value={form.aufgabenbeschreibung}
+            onChange={e => updateField('aufgabenbeschreibung', e.target.value)}
           />
         </div>
-        <button className="text-sm text-orange-600 hover:underline mt-2">
-          + Weitere Erfahrung hinzufügen
+        <button
+          type="button"
+          onClick={handleSubmit}
+          className="mt-2 text-sm text-orange-600 hover:underline"
+        >
+          +
         </button>
       </section>
     </div>

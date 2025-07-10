@@ -1,58 +1,55 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-export interface Erfahrung {
+export interface Berufserfahrung {
   firma: string;
   position: string;
-  zeitraum: string;
-  beschreibung: string;
-  startMonth: number | null;
-  startYear: number | null;
-  endMonth: number | null;
-  endYear: number | null;
+  startMonth: string | null;
+  startYear: string;
+  endMonth: string | null;
+  endYear: string | null;
   isCurrent: boolean;
-}
-
-export interface Ausbildung {
-  institution: string;
-  abschluss: string;
-  zeitraum: string;
-}
-
-export interface LebenslaufDaten {
-  erfahrungen: Erfahrung[];
-  ausbildung: Ausbildung[];
-  kompetenzen: string[];
-  zieltext: string;
+  aufgabenbeschreibung: string;
 }
 
 interface LebenslaufContextType {
-  daten: LebenslaufDaten;
-  setDaten: React.Dispatch<React.SetStateAction<LebenslaufDaten>>;
+  berufserfahrungen: Berufserfahrung[];
+  selectedExperienceIndex: number | null;
+  addExperience: (data: Berufserfahrung) => void;
+  updateExperience: (index: number, data: Berufserfahrung) => void;
+  selectExperience: (index: number | null) => void;
 }
-
-const defaultDaten: LebenslaufDaten = {
-  erfahrungen: [],
-  ausbildung: [],
-  kompetenzen: [],
-  zieltext: '',
-};
 
 const LebenslaufContext = createContext<LebenslaufContextType | undefined>(undefined);
 
 export function LebenslaufProvider({ children }: { children: ReactNode }) {
-  const [daten, setDaten] = useState<LebenslaufDaten>(defaultDaten);
+  const [berufserfahrungen, setBerufserfahrungen] = useState<Berufserfahrung[]>([]);
+  const [selectedExperienceIndex, setSelectedExperienceIndex] = useState<number | null>(null);
+
+  const addExperience = (data: Berufserfahrung) => {
+    setBerufserfahrungen(prev => [...prev, data]);
+  };
+
+  const updateExperience = (index: number, data: Berufserfahrung) => {
+    setBerufserfahrungen(prev => prev.map((exp, i) => (i === index ? data : exp)));
+  };
+
+  const selectExperience = (index: number | null) => {
+    setSelectedExperienceIndex(index);
+  };
 
   return (
-    <LebenslaufContext.Provider value={{ daten, setDaten }}>
+    <LebenslaufContext.Provider
+      value={{ berufserfahrungen, selectedExperienceIndex, addExperience, updateExperience, selectExperience }}
+    >
       {children}
     </LebenslaufContext.Provider>
   );
 }
 
-export function useLebenslaufData() {
+export function useLebenslaufContext() {
   const context = useContext(LebenslaufContext);
   if (!context) {
-    throw new Error('useLebenslaufData muss innerhalb von LebenslaufProvider verwendet werden');
+    throw new Error('useLebenslaufContext must be used within LebenslaufProvider');
   }
   return context;
 }
