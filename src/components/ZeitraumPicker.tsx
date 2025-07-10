@@ -13,6 +13,11 @@ interface ZeitraumPickerProps {
   onChange?: (val: ZeitraumValue) => void;
 }
 
+function displayDate(month?: string, year?: string) {
+  if (!year) return "";
+  return month ? `${month}.${year}` : year;
+}
+
 export default function ZeitraumPicker({
   value,
   onChange,
@@ -64,10 +69,6 @@ export default function ZeitraumPicker({
     String(i + 1).padStart(2, "0"),
   );
 
-  const displayDate = (month?: string, year?: string) => {
-    if (!year) return "";
-    return month ? `${month}.${year}` : year;
-  };
 
   const parseInput = (val: string): { month?: string; year?: string } => {
     const trimmed = val.trim();
