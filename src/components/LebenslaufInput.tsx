@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import TagSelectorWithFavorites from './TagSelectorWithFavorites';
 import ZeitraumPicker from './ZeitraumPicker';
 import AufgabenbereichInput from './AufgabenbereichInput';
+import { getTaskSuggestionsForBeruf } from '../constants/taskSuggestions';
 import {
   Berufserfahrung,
   useLebenslaufContext,
@@ -50,14 +51,8 @@ export default function LebenslaufInput() {
   };
 
   const aufgabenVorschlaege = useMemo(() => {
-    const mapping: Record<string, string[]> = {
-      Projektmanager: ['Projektkoordination', 'Teamleitung', 'Zeitplanung'],
-      Buchhalter: ['Finanzbuchhaltung', 'Kostenrechnung', 'Jahresabschlüsse'],
-      Verkäufer: ['Kundenberatung', 'Produktpräsentation', 'Verkaufsabschlüsse'],
-      Teamleiter: ['Mitarbeiterführung', 'Schichtplanung', 'Motivation'],
-    };
     const pos = form.position[0];
-    return pos && mapping[pos] ? mapping[pos] : [];
+    return pos ? getTaskSuggestionsForBeruf(pos) : [];
   }, [form.position]);
 
   const handleSubmit = () => {
