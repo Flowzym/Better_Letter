@@ -3,6 +3,7 @@ import { X } from 'lucide-react';
 import AutocompleteInput from './AutocompleteInput';
 import PositionTag from './PositionTag';
 import TagButton from './TagButton';
+import TagContext from '../types/TagContext';
 import { useLebenslaufContext } from '../context/LebenslaufContext';
 
 interface TagSelectorWithFavoritesProps {
@@ -140,7 +141,7 @@ export default function TagSelectorWithFavorites({
                 <TagButton
                   key={item}
                   label={item}
-                  variant="favorite"
+                  variant={TagContext.Favorites}
                   isFavorite
                   type="position"
                   onClick={() => addTag(item)}

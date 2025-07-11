@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLebenslaufContext } from '../context/LebenslaufContext';
 import TagButton from './TagButton';
+import TagContext from '../types/TagContext';
 
 interface PositionTagProps {
   label: string;
@@ -15,7 +16,7 @@ export default function PositionTag({ label, onRemove, onEdit }: PositionTagProp
   return (
     <TagButton
       label={label}
-      variant="selected"
+      variant={TagContext.Selected}
       isFavorite={isFavorite}
       type="position"
       onToggleFavorite={toggleFavoritePosition}
