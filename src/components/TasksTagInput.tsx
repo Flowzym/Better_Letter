@@ -82,6 +82,7 @@ export default function TasksTagInput({
         suggestions={filteredSuggestions}
         placeholder="Hinzufügen..."
         buttonColor="orange"
+        inputBorderColor="#D1D5DB"
         showFavoritesButton
       />
 
