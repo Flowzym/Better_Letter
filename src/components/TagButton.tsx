@@ -54,15 +54,15 @@ export default function TagButton({
     <button type="button" onClick={onClick} className={`${baseClasses} ${variantClasses}`}>
       <span>{label}</span>
       {variant !== 'favorite' && onToggleFavorite && (
-        <button
-          type="button"
+        <span
           onClick={handleToggleFavorite}
-          className="ml-1"
+          className="ml-1 cursor-pointer"
+          role="button"
           aria-label="Favorit"
           title="Favorit"
         >
           <Star className="w-3 h-3" stroke={starStroke} fill={starFill} />
-        </button>
+        </span>
       )}
       {variant === 'selected' && onEdit && (
         <button
