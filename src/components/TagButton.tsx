@@ -22,10 +22,15 @@ export default function TagButton({
   const baseClasses =
     'rounded-full text-sm border flex items-center gap-1 px-3 py-1';
 
-  const variantClasses =
-    variant === 'selected'
-      ? 'bg-[#F29400] text-white border-[#F29400]'
-      : 'bg-white text-black border-[#F29400]';
+  let variantClasses = '';
+  if (variant === 'selected') {
+    variantClasses = 'bg-[#F29400] text-white border-[#F29400]';
+  } else if (variant === 'suggestion') {
+    variantClasses = 'bg-white text-gray-700 border-gray-300';
+  } else {
+    // favorite
+    variantClasses = 'bg-white text-gray-700 border-[#F29400]';
+  }
 
   const starStroke = variant === 'suggestion' ? '#F29400' : 'white';
   const starFill = variant === 'selected' && isFavorite ? '#FDE047' : 'none';

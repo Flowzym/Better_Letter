@@ -86,11 +86,7 @@ export default function TasksTagInput({
       />
 
       {value.length > 0 && (
-        <div>
-          <h4 className="text-sm font-medium text-gray-700 mb-2">
-            Ausgewählt:
-          </h4>
-          <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2">
             {value.map((task, index) => (
               editIndex === index ? (
                 <div key={`${task}-${index}`} className="tag">
@@ -122,7 +118,6 @@ export default function TasksTagInput({
               )
             ))}
           </div>
-        </div>
       )}
 
       {filteredSuggestions.length > 0 && (
@@ -154,12 +149,15 @@ export default function TasksTagInput({
               height="16"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="#000000"
+              stroke="#9CA3AF"
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
             >
-              <polygon points="12 2 15 8.5 22 9.3 17 14 18.2 21 12 17.8 5.8 21 7 14 2 9.3 9 8.5 12 2" />
+              <polygon
+                points="12 2 15 8.5 22 9.3 17 14 18.2 21 12 17.8 5.8 21 7 14 2 9.3 9 8.5 12 2"
+                fill="none"
+              />
             </svg>
             <h4 className="text-sm font-medium text-gray-700">Favoriten:</h4>
           </div>
