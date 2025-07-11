@@ -7,6 +7,7 @@ interface MonthYearInputProps {
 export default function MonthYearInput({ value = '', onChange }: MonthYearInputProps) {
   const [month, setMonth] = useState('');
   const [year, setYear] = useState('');
+  const [isInvalid, setIsInvalid] = useState(false);
   const textRef = useRef<HTMLInputElement>(null);
   const pickerRef = useRef<HTMLInputElement>(null);
 
@@ -29,18 +30,30 @@ export default function MonthYearInput({ value = '', onChange }: MonthYearInputP
     return { month: '', year: '' };
   };
 
+  const validMonth = (val: string) => {
+    const m = parseInt(val, 10);
+    return val.length === 2 && m >= 1 && m <= 12;
+  };
+
+  const validYear = (val: string) => {
+    const y = parseInt(val, 10);
+    return val.length === 4 && y >= 1955 && y <= 2055;
+  };
+
   useEffect(() => {
     const parsed = parseValue(value);
     if (parsed.month !== month) setMonth(parsed.month);
     if (parsed.year !== year) setYear(parsed.year);
+    setIsInvalid(!(validMonth(parsed.month) && validYear(parsed.year)));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let raw = e.target.value.replace(/[^0-9]/g, '');
+    const raw = e.target.value.replace(/[^0-9]/g, '');
     if (raw.length === 0) {
       setMonth('');
       setYear('');
+      setIsInvalid(false);
       onChange?.('');
       return;
     }
@@ -49,6 +62,7 @@ export default function MonthYearInput({ value = '', onChange }: MonthYearInputP
       const m = raw.padStart(2, '0');
       setMonth(m);
       setYear('');
+      setIsInvalid(!(validMonth(m) && validYear('')));
       onChange?.(m + '/');
       return;
     }
@@ -58,7 +72,11 @@ export default function MonthYearInput({ value = '', onChange }: MonthYearInputP
       const y = raw.slice(2, 6);
       setMonth(m);
       setYear(y);
+      setIsInvalid(!(validMonth(m) && validYear(y)));
       onChange?.(`${m}/${y}`);
+    }
+    if (raw.length >= 2 && raw.length < 4) {
+      setIsInvalid(true);
     }
   };
 
@@ -69,6 +87,7 @@ export default function MonthYearInput({ value = '', onChange }: MonthYearInputP
     if (yearStr && monthStr) {
       setMonth(monthStr);
       setYear(yearStr);
+      setIsInvalid(!(validMonth(monthStr) && validYear(yearStr)));
       const formatted = `${monthStr}/${yearStr}`;
       onChange?.(formatted);
       textRef.current?.focus();
@@ -101,9 +120,6 @@ export default function MonthYearInput({ value = '', onChange }: MonthYearInputP
     setTimeout(() => input.setSelectionRange(0, Math.min(2, input.value.length)), 0);
   };
 
-  const invalid =
-    (month.length === 2 && (Number(month) < 1 || Number(month) > 12)) ||
-    (year.length === 4 && (Number(year) < 1900 || Number(year) > 2099));
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
@@ -115,6 +131,7 @@ export default function MonthYearInput({ value = '', onChange }: MonthYearInputP
     const newYear = String(numYear);
     setYear(newYear);
     const newVal = month ? `${month}/${newYear}` : newYear;
+    setIsInvalid(!(validMonth(month) && validYear(newYear)));
     onChange?.(newVal);
     setTimeout(() => {
       const input = textRef.current;
@@ -141,7 +158,7 @@ export default function MonthYearInput({ value = '', onChange }: MonthYearInputP
         inputMode="numeric"
         pattern="\d{2}/\d{4}"
         maxLength={7}
-        className={`border px-2 py-1 rounded w-28 ${invalid ? 'border-red-500' : ''}`}
+        className={`border px-2 py-1 rounded w-28 ${isInvalid ? 'border-red-500' : 'border-gray-300'}`}
       />
       <button
         type="button"
