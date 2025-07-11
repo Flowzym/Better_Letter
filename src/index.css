@@ -3,7 +3,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import "./styles/Tags.css";
+@import "./styles/_tags.scss";
 @layer base {
   body {
     font-family: "Roboto", sans-serif;

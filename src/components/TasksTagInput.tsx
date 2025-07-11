@@ -1,10 +1,11 @@
 import React, { useMemo, useState } from "react";
-import { Star, X } from "lucide-react";
+import { Star } from "lucide-react";
 import TaskTag from "./TaskTag";
+import TagButton from "./TagButton";
 import AutocompleteInput from "./AutocompleteInput";
 import { getTasksForPositions } from "../constants/positionsToTasks";
 import { useLebenslaufContext } from "../context/LebenslaufContext";
-import "../styles/Tags.css";
+import "../styles/_tags.scss";
 
 interface TasksTagInputProps {
   value: string[];
@@ -131,29 +132,14 @@ export default function TasksTagInput({
           </h4>
           <div className="flex flex-wrap gap-2">
             {filteredSuggestions.map((s) => (
-              <button
+              <TagButton
                 key={s}
+                label={s}
+                isSuggestion
+                isFavorite={favorites.includes(s)}
                 onClick={() => addTask(s)}
-                className="tag bg-white text-gray-700 border hover:bg-gray-100"
-                style={{ borderColor: "#FDE047" }}
-              >
-                <span className="mr-1">{s}</span>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleFavorite(s);
-                  }}
-                  className="star-icon"
-                  aria-label="Zu Favoriten"
-                  title="Zu Favoriten"
-                >
-                  <Star
-                    className="w-3 h-3"
-                    fill={favorites.includes(s) ? "#FDE047" : "none"}
-                    stroke="#FDE047"
-                  />
-                </button>
-              </button>
+                onToggleFavorite={() => toggleFavorite(s)}
+              />
             ))}
           </div>
         </div>
@@ -169,29 +155,14 @@ export default function TasksTagInput({
             {favorites
               .filter((item) => !value.includes(item))
               .map((item) => (
-                <button
+                <TagButton
                   key={item}
+                  label={item}
+                  isSuggestion
+                  isFavorite
                   onClick={() => addTask(item)}
-                  className="tag bg-white text-gray-700 border hover:bg-gray-100"
-                  style={{ borderColor: "#FDE047" }}
-                >
-                  <span className="mr-2">{item}</span>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleFavorite(item);
-                    }}
-                    className="star-icon"
-                    aria-label="Aus Favoriten entfernen"
-                    title="Aus Favoriten entfernen"
-                  >
-                    <Star
-                      className="w-3 h-3"
-                      fill={favorites.includes(item) ? "#FDE047" : "none"}
-                      stroke="#FDE047"
-                    />
-                  </button>
-                </button>
+                  onToggleFavorite={() => toggleFavorite(item)}
+                />
               ))}
           </div>
         </div>
