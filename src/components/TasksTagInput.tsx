@@ -133,12 +133,11 @@ export default function TasksTagInput({
                   <>
                     <button
                       onClick={() => toggleFavorite(task)}
-                      className="tag-icon-button"
+                      className={`star-icon ${favorites.includes(task) ? "active fill-current" : ""}`}
                       aria-label="Favorit"
+                      title="Favorit"
                     >
-                      <Star
-                        className={`tag-icon ${favorites.includes(task) ? "fill-current" : ""}`}
-                      />
+                      <Star className="w-3 h-3" />
                     </button>
                     <button
                       onClick={() => startEdit(index)}
@@ -169,30 +168,25 @@ export default function TasksTagInput({
           </h4>
           <div className="flex flex-wrap gap-2">
             {filteredSuggestions.map((s) => (
-              <div key={s} className="flex items-center space-x-1">
-                <button
-                  onClick={() => addTask(s)}
-                  className="tag bg-white text-gray-700 border hover:bg-gray-100"
-                  style={{ borderColor: "#F29400" }}
-                >
-                  {s}
-                </button>
+              <button
+                key={s}
+                onClick={() => addTask(s)}
+                className="tag bg-white text-gray-700 border hover:bg-gray-100"
+                style={{ borderColor: "#F29400" }}
+              >
+                <span className="mr-1">{s}</span>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     toggleFavorite(s);
                   }}
-                  className="tag-icon-button"
+                  className={`star-icon ${favorites.includes(s) ? "active fill-current" : ""}`}
                   aria-label="Zu Favoriten"
+                  title="Zu Favoriten"
                 >
-                  <Star
-                    className={`tag-icon ${favorites.includes(s) ? "fill-current" : ""}`}
-                    style={{
-                      color: favorites.includes(s) ? "#F29400" : undefined,
-                    }}
-                  />
+                  <Star className="w-3 h-3" />
                 </button>
-              </div>
+              </button>
             ))}
           </div>
         </div>
@@ -220,11 +214,11 @@ export default function TasksTagInput({
                       e.stopPropagation();
                       toggleFavorite(item);
                     }}
-                    className="tag-icon-button"
+                    className="star-icon active fill-current"
                     aria-label="Aus Favoriten entfernen"
                     title="Aus Favoriten entfernen"
                   >
-                    <Star className="tag-icon fill-current" />
+                    <Star className="w-3 h-3" />
                   </button>
                 </button>
               ))}

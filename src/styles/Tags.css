@@ -33,3 +33,15 @@
   width: 0.75rem;
   height: 0.75rem;
 }
+.tag .star-icon {
+  display: inline-flex;
+  margin-left: 0.25rem;
+  color: transparent;
+  transition: color 0.2s;
+}
+.tag .star-icon.active {
+  color: #f29400;
+}
+.tag .star-icon:hover {
+  color: #f7b24a;
+}
