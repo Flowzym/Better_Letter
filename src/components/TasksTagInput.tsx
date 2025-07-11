@@ -66,9 +66,6 @@ export default function TasksTagInput({
 
   return (
     <div className="space-y-4">
-      <h3 className="text-sm font-medium text-gray-700">
-        Aufgaben/Tätigkeiten
-      </h3>
 
       <AutocompleteInput
         value={inputValue}
