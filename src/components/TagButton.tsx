@@ -1,4 +1,5 @@
-import { Star, X } from 'lucide-react';
+import { X } from 'lucide-react';
+import IconStar from './IconStar';
 
 interface TagButtonProps {
   label: string;
@@ -36,8 +37,6 @@ export default function TagButton({
     variantClasses = 'bg-white text-gray-700 border-[#F29400]';
   }
 
-  const starStroke = '#F29400';
-  const starFill = isFavorite ? '#FDE047' : 'none';
 
   const handleToggleFavorite = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -66,12 +65,12 @@ export default function TagButton({
       {variant !== 'favorite' && onToggleFavorite && (
         <span
           onClick={handleToggleFavorite}
-          className="ml-1 cursor-pointer"
+          className="ml-auto pr-[6px] cursor-pointer flex"
           role="button"
           aria-label="Favorit"
           title="Favorit"
         >
-          <Star className="w-3 h-3" stroke={starStroke} fill={starFill} />
+          <IconStar filled={isFavorite} size={16} strokeColor="#F29400" />
         </span>
       )}
       {onRemove && (
