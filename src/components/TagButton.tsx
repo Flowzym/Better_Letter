@@ -27,7 +27,11 @@ export default function TagButton({
   if (isSuggestion) classes.push('tag--suggestion');
   if (isFavorite) classes.push('tag--favorite');
 
-  const starStroke = isSuggestion ? '#F29400' : 'white';
+  const starStroke = isFavorite
+    ? 'none'
+    : isSuggestion
+      ? '#F29400'
+      : 'white';
 
   return (
     <button type="button" onClick={onClick} className={classes.join(' ')}>
