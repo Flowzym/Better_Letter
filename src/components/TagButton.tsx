@@ -38,6 +38,10 @@ export default function TagButton({
     variantClasses = 'bg-white text-gray-700 border-[#F29400]';
   }
 
+  if (variant === TagContext.Favorites) {
+    variantClasses = 'bg-gray-100 border-gray-300 text-gray-700';
+  }
+
   let starStroke = '#4B5563';
   let starFill = 'none';
 
