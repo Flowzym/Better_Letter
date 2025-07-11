@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import CompanyTag from './CompanyTag';
 import TagButton from './TagButton';
+import TagButtonFavorite from './ui/TagButtonFavorite';
 import TagContext from '../types/TagContext';
 import { useLebenslaufContext } from '../context/LebenslaufContext';
 
@@ -82,14 +83,11 @@ export default function CompaniesTagInput({ value, onChange }: CompaniesTagInput
             {favorites
               .filter((f) => !value.includes(f))
               .map((f) => (
-                <TagButton
+                <TagButtonFavorite
                   key={f}
                   label={f}
-                  variant={TagContext.Favorite}
-                  isFavorite
                   onClick={() => addCompany(f)}
                   onRemove={() => toggleFavoriteCompany(f)}
-                  type="company"
                 />
               ))}
           </div>

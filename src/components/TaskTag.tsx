@@ -1,7 +1,6 @@
 import React from 'react';
 import { useLebenslaufContext } from '../context/LebenslaufContext';
-import TagButton from './TagButton';
-import TagContext from '../types/TagContext';
+import TagButtonSelected from './ui/TagButtonSelected';
 
 interface TaskTagProps {
   label: string;
@@ -14,12 +13,10 @@ export default function TaskTag({ label, onRemove, onEdit }: TaskTagProps) {
   const isFavorite = favoriteTasks.includes(label);
 
   return (
-    <TagButton
+    <TagButtonSelected
       label={label}
-      variant={TagContext.Selected}
       isFavorite={isFavorite}
-      type="task"
-      onToggleFavorite={toggleFavoriteTask}
+      onToggleFavorite={() => toggleFavoriteTask(label)}
       onEdit={onEdit}
       onRemove={onRemove}
     />

@@ -35,16 +35,14 @@ export default function MonthYearInput({ value = '', onChange }: MonthYearInputP
 
   const emit = (m: string, y: string) => {
     if (!onChange) return;
-    if (m) {
-      if (y) {
-        onChange(`${m}/${y}`);
-      } else if (m.length === 2) {
-        onChange(`${m}/`);
-      } else {
-        onChange(m);
-      }
-    } else {
+    if (m && y) {
+      onChange(`${m}/${y}`);
+    } else if (y) {
       onChange(y);
+    } else if (m) {
+      onChange(m);
+    } else {
+      onChange('');
     }
   };
 
@@ -93,7 +91,6 @@ export default function MonthYearInput({ value = '', onChange }: MonthYearInputP
         inputMode="numeric"
         className={`border rounded w-12 px-1 text-center ${invalid ? 'border-red-500' : 'border-gray-300'}`}
       />
-      <span>/</span>
       <input
         ref={yearRef}
         type="text"

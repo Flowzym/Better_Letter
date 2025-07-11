@@ -1,7 +1,6 @@
 import React from 'react';
 import { useLebenslaufContext } from '../context/LebenslaufContext';
-import TagButton from './TagButton';
-import TagContext from '../types/TagContext';
+import TagButtonSelected from './ui/TagButtonSelected';
 
 interface PositionTagProps {
   label: string;
@@ -14,12 +13,10 @@ export default function PositionTag({ label, onRemove, onEdit }: PositionTagProp
   const isFavorite = favoritePositions.includes(label);
 
   return (
-    <TagButton
+    <TagButtonSelected
       label={label}
-      variant={TagContext.Selected}
       isFavorite={isFavorite}
-      type="position"
-      onToggleFavorite={toggleFavoritePosition}
+      onToggleFavorite={() => toggleFavoritePosition(label)}
       onRemove={onRemove}
       onEdit={onEdit}
     />
