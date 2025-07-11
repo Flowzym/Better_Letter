@@ -48,7 +48,7 @@ export default function TagButton({
     starStroke = '#FFFFFF';
   }
 
-  const starSize = isFavorite ? 20 : 14;
+  const starSize = isFavorite ? 16 : 14;
 
 
   const handleToggleFavorite = (e: React.MouseEvent) => {
