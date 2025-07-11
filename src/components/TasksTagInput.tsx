@@ -62,11 +62,6 @@ export default function TasksTagInput({
     toggleFavoriteTask(task);
   };
 
-  const addToFavorites = (task: string) => {
-    if (!favorites.includes(task)) {
-      toggleFavoriteTask(task);
-    }
-  };
 
   return (
     <div className="space-y-4">
@@ -77,13 +72,13 @@ export default function TasksTagInput({
       <AutocompleteInput
         value={inputValue}
         onChange={setInputValue}
-        onAdd={() => addTask()}
-        onAddToFavorites={(val) => addToFavorites(val ?? inputValue)}
+        onAdd={addTask}
         suggestions={filteredSuggestions}
         placeholder="Hinzufügen..."
         buttonColor="orange"
         inputBorderColor="#D1D5DB"
-        showFavoritesButton
+        showFavoritesButton={false}
+        showAddButton={false}
       />
 
       {value.length > 0 && (
