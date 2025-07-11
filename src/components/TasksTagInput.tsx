@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import { Lightbulb, X } from "lucide-react";
 import TaskTag from "./TaskTag";
 import TagButton from "./TagButton";
+import TagContext from "../types/TagContext";
 import AutocompleteInput from "./AutocompleteInput";
 import { getTasksForPositions } from "../constants/positionsToTasks";
 import { useLebenslaufContext } from "../context/LebenslaufContext";
@@ -129,7 +130,7 @@ export default function TasksTagInput({
                 <TagButton
                   key={s}
                   label={s}
-                  variant="suggested"
+                  variant={TagContext.Suggestion}
                   isFavorite={isFavorite}
                   onClick={() => addTask(s)}
                   type="task"
@@ -168,7 +169,7 @@ export default function TasksTagInput({
                 <TagButton
                   key={item}
                   label={item}
-                  variant="favorite"
+                  variant={TagContext.Favorites}
                   isFavorite
                   type="task"
                   onClick={() => addTask(item)}

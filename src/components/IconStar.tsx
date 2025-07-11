@@ -1,15 +1,15 @@
 import React from 'react';
 
 interface IconStarProps {
-  filled?: boolean;
   size?: number;
+  fill?: string;
   stroke?: string;
   strokeWidth?: number;
 }
 
 export default function IconStar({
-  filled = false,
   size = 16,
+  fill = 'none',
   stroke = '#F29400',
   strokeWidth = 2,
 }: IconStarProps) {
@@ -18,9 +18,9 @@ export default function IconStar({
       width={size}
       height={size}
       viewBox="0 0 24 24"
-      fill={filled ? '#FDE047' : 'none'}
-      stroke={filled ? 'none' : stroke}
-      strokeWidth={filled ? undefined : strokeWidth}
+      fill={fill}
+      stroke={stroke}
+      strokeWidth={strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
     >

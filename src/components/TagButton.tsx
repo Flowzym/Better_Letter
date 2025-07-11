@@ -1,10 +1,11 @@
 import { X } from 'lucide-react';
 import IconStar from './IconStar';
+import TagContext from '../types/TagContext';
 
 interface TagButtonProps {
   label: string;
   isFavorite?: boolean;
-  variant: 'selected' | 'suggested' | 'favorite';
+  variant: TagContext;
   type?: string;
   onToggleFavorite?: (label: string, type?: string) => void;
   onRemove?: () => void;
@@ -25,16 +26,34 @@ export default function TagButton({
   const baseClasses = 'rounded-full border flex items-center gap-1';
 
   const sizeClasses =
-    variant === 'selected' ? 'text-sm px-3 py-1' : 'text-sm px-2 py-1';
+    variant === TagContext.Selected ? 'text-sm px-3 py-1' : 'text-sm px-2 py-1';
 
   let variantClasses = '';
-  if (variant === 'selected') {
+  if (variant === TagContext.Selected) {
     variantClasses = 'bg-[#F29400] text-white border-[#F29400]';
-  } else if (variant === 'suggested') {
+  } else if (variant === TagContext.Suggestion) {
     variantClasses = 'bg-white text-gray-700 border-gray-300';
   } else {
-    // favorite
+    // favorites list
     variantClasses = 'bg-white text-gray-700 border-[#F29400]';
+  }
+
+  // Visual matrix for star appearance
+  /*
+    | Kontext      | Favorit? | stroke   | fill      |
+    |--------------|----------|----------|-----------|
+    | suggestion   | nein     | #888     | none      |
+    | suggestion   | ja       | #FDE047 | #FDE047  |
+    | selected     | nein     | white    | none      |
+    | selected     | ja       | #FDE047 | #FDE047  |
+    | favorites    | immer    | #FDE047 | #FDE047  |
+  */
+
+  let starStroke = variant === TagContext.Selected ? 'white' : '#888';
+  let starFill = 'none';
+  if (isFavorite) {
+    starStroke = '#FDE047';
+    starFill = '#FDE047';
   }
 
 
@@ -62,7 +81,7 @@ export default function TagButton({
       className={`${baseClasses} ${sizeClasses} ${variantClasses}`}
     >
       <span
-        onClick={variant === 'selected' ? handleLabelClick : undefined}
+        onClick={variant === TagContext.Selected ? handleLabelClick : undefined}
         className={onEdit ? 'cursor-text' : ''}
       >
         {label}
@@ -75,12 +94,7 @@ export default function TagButton({
           aria-label="Favorit"
           title="Favorit"
         >
-          <IconStar
-            filled={isFavorite}
-            size={14}
-            stroke="white"
-            strokeWidth={1.5}
-          />
+          <IconStar size={14} stroke={starStroke} fill={starFill} strokeWidth={1.5} />
         </span>
         {onRemove && (
           <button
