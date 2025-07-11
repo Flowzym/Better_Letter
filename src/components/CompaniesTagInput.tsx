@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import TagButton from './TagButton';
 import TagContext from '../types/TagContext';
 import { useLebenslaufContext } from '../context/LebenslaufContext';
@@ -10,6 +10,7 @@ interface CompaniesTagInputProps {
 
 export default function CompaniesTagInput({ value, onChange }: CompaniesTagInputProps) {
   const [inputValue, setInputValue] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
   const { favoriteCompanies: favorites, toggleFavoriteCompany } = useLebenslaufContext();
 
   const addCompany = (val?: string) => {
@@ -17,6 +18,12 @@ export default function CompaniesTagInput({ value, onChange }: CompaniesTagInput
     if (!c || value.includes(c)) return;
     onChange([...value, c]);
     setInputValue('');
+  };
+
+  const handleEditCompany = (label: string) => {
+    removeCompany(label);
+    setInputValue(label);
+    setTimeout(() => inputRef.current?.focus(), 0);
   };
 
   const removeCompany = (c: string) => {
@@ -33,6 +40,7 @@ export default function CompaniesTagInput({ value, onChange }: CompaniesTagInput
   return (
     <div className="space-y-2">
       <input
+        ref={inputRef}
         type="text"
         placeholder="Firma hinzufügen..."
         className="w-full px-3 py-2 border rounded"
@@ -50,6 +58,7 @@ export default function CompaniesTagInput({ value, onChange }: CompaniesTagInput
               isFavorite={favorites.includes(c)}
               onToggleFavorite={toggleFavoriteCompany}
               onRemove={() => removeCompany(c)}
+              onEdit={() => handleEditCompany(c)}
               type="company"
             />
           ))}

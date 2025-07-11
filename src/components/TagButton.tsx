@@ -38,22 +38,16 @@ export default function TagButton({
     variantClasses = 'bg-white text-gray-700 border-[#F29400]';
   }
 
-  // Visual matrix for star appearance
-  /*
-    | Kontext      | Favorit? | stroke   | fill      |
-    |--------------|----------|----------|-----------|
-    | suggestion   | nein     | #888     | none      |
-    | suggestion   | ja       | #FDE047 | #FDE047  |
-    | selected     | nein     | white    | none      |
-    | selected     | ja       | #FDE047 | #FDE047  |
-    | favorites    | immer    | #FDE047 | #FDE047  |
-  */
+  const starSize = isFavorite ? 16 : 14;
 
-  let starStroke = variant === TagContext.Selected ? '#ffffff' : '#4B5563';
+  let starStroke = '#4B5563';
   let starFill = 'none';
-  if (isFavorite || variant === TagContext.Favorites) {
+
+  if (isFavorite) {
     starStroke = '#F29400';
     starFill = '#FDE047';
+  } else if (variant === TagContext.Selected) {
+    starStroke = '#ffffff';
   }
 
 
@@ -94,7 +88,12 @@ export default function TagButton({
           aria-label="Favorit"
           title="Favorit"
         >
-          <IconStar size={14} stroke={starStroke} fill={starFill} strokeWidth={1.5} />
+          <IconStar
+            size={starSize}
+            stroke={starStroke}
+            fill={starFill}
+            strokeWidth={2}
+          />
         </span>
         {onRemove && (
           <button
