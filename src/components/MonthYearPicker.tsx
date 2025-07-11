@@ -169,6 +169,20 @@ export default function MonthYearPicker({
     }, 0);
   };
 
+  const handleBlur = () => {
+    const formatted = formatValue(value);
+    const valid =
+      /^\d{4}$/.test(formatted) ||
+      (/^\d{2}\/\d{4}$/.test(formatted) &&
+        Number(formatted.slice(3)) >= 1900 &&
+        Number(formatted.slice(3)) <= 2099);
+    if (!valid) {
+      onChange("");
+    } else if (formatted !== value) {
+      onChange(formatted);
+    }
+  };
+
   return (
     <div className="relative inline-block">
       <input
@@ -186,6 +200,7 @@ export default function MonthYearPicker({
           selectSection();
         }}
         onKeyDown={handleKeyDown}
+        onBlur={handleBlur}
         inputMode="numeric"
         pattern="\d{2}/\d{4}"
         maxLength={7}
