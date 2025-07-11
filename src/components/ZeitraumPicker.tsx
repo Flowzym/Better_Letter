@@ -67,10 +67,21 @@ export default function ZeitraumPicker({
   const years = Array.from({ length: 2025 - 1950 + 1 }, (_, i) =>
     String(2025 - i),
   );
-  const months = Array.from({ length: 12 }, (_, i) =>
-    String(i + 1).padStart(2, "0"),
-  );
-
+  const months: { label: string; value?: string }[] = [
+    { label: "Kein Monat", value: undefined },
+    { label: "Januar", value: "01" },
+    { label: "Februar", value: "02" },
+    { label: "März", value: "03" },
+    { label: "April", value: "04" },
+    { label: "Mai", value: "05" },
+    { label: "Juni", value: "06" },
+    { label: "Juli", value: "07" },
+    { label: "August", value: "08" },
+    { label: "September", value: "09" },
+    { label: "Oktober", value: "10" },
+    { label: "November", value: "11" },
+    { label: "Dezember", value: "12" },
+  ];
 
   const parseInput = (val: string): { month?: string; year?: string } => {
     const trimmed = val.trim();
@@ -138,16 +149,14 @@ export default function ZeitraumPicker({
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  const handleMonthSelect = (month: string) => {
+  const handleMonthSelect = (month?: string) => {
     if (activeField === "start") {
       setStartMonth(month);
       setStartInput(displayDate(month, startYear));
-      if (startYear) closePopup();
     }
     if (activeField === "end") {
       setEndMonth(month);
       setEndInput(displayDate(month, endYear));
-      if (endYear) closePopup();
     }
   };
 
@@ -155,16 +164,11 @@ export default function ZeitraumPicker({
     if (activeField === "start") {
       setStartYear(year);
       setStartInput(displayDate(startMonth, year));
-      if (startMonth) {
-        closePopup();
-      }
     } else if (activeField === "end") {
       setEndYear(year);
       setEndInput(displayDate(endMonth, year));
-      if (endMonth) {
-        closePopup();
-      }
     }
+    closePopup();
   };
 
   const toggleCurrent = () => {
@@ -223,17 +227,19 @@ export default function ZeitraumPicker({
           className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 flex z-50"
           ref={popupRef}
         >
-          <div className="grid grid-cols-3 gap-2 mr-4">
+          <div className="grid grid-cols-2 gap-2 mr-4">
             {months.map((m) => {
               const selected =
-                activeField === "start" ? startMonth === m : endMonth === m;
+                activeField === "start"
+                  ? startMonth === m.value
+                  : endMonth === m.value;
               return (
                 <button
-                  key={m}
-                  onMouseDown={() => handleMonthSelect(m)}
+                  key={m.label}
+                  onMouseDown={() => handleMonthSelect(m.value)}
                   className={`px-2 py-1 border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 ${selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"}`}
                 >
-                  {m}
+                  {m.label}
                 </button>
               );
             })}
