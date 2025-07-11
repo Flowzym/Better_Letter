@@ -11,6 +11,16 @@ export default function MonthYearInput({ value = '', onChange }: MonthYearInputP
   const textRef = useRef<HTMLInputElement>(null);
   const pickerRef = useRef<HTMLInputElement>(null);
 
+  const selectPart = (pos: number) => {
+    const input = textRef.current;
+    if (!input) return;
+    if (pos <= 2) {
+      setTimeout(() => input.setSelectionRange(0, 2), 0);
+    } else {
+      setTimeout(() => input.setSelectionRange(3, 7), 0);
+    }
+  };
+
   const displayValue = () => {
     if (month) {
       if (year) return `${month}/${year}`;
@@ -102,43 +112,53 @@ export default function MonthYearInput({ value = '', onChange }: MonthYearInputP
     pickerRef.current?.showPicker();
   };
 
-  const handleClick = () => {
-    const input = textRef.current;
-    if (!input) return;
-    const pos = input.selectionStart ?? 0;
-    if (pos <= 2) {
-      setTimeout(() => input.setSelectionRange(0, Math.min(2, input.value.length)), 0);
-    } else {
-      const start = month ? 3 : 0;
-      setTimeout(() => input.setSelectionRange(start, input.value.length), 0);
-    }
+  const handleMouseUp = () => {
+    const pos = textRef.current?.selectionStart ?? 0;
+    selectPart(pos);
   };
 
   const handleFocus = () => {
-    const input = textRef.current;
-    if (!input) return;
-    setTimeout(() => input.setSelectionRange(0, Math.min(2, input.value.length)), 0);
+    const pos = textRef.current?.selectionStart ?? 0;
+    selectPart(pos);
   };
 
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const input = e.currentTarget;
+    const caret = input.selectionStart ?? 0;
+
+    if (e.key === 'Backspace' && caret === 3) {
+      e.preventDefault();
+      selectPart(0);
+      return;
+    }
+
+    if (e.key === '/') {
+      const raw = input.value.replace(/[^0-9]/g, '');
+      const m = parseInt(raw.slice(0, 2), 10);
+      if (raw.length !== 2 || m < 1 || m > 12) {
+        e.preventDefault();
+      }
+      return;
+    }
+
     if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
     const inc = e.key === 'ArrowUp' ? 1 : -1;
-    let numYear = Number(year || '1900');
+    let numYear = Number(year || '1955');
     numYear += inc;
-    if (numYear < 1900) numYear = 1900;
-    if (numYear > 2099) numYear = 2099;
+    if (numYear < 1955) numYear = 1955;
+    if (numYear > 2055) numYear = 2055;
     const newYear = String(numYear);
     setYear(newYear);
     const newVal = month ? `${month}/${newYear}` : newYear;
     setIsInvalid(!(validMonth(month) && validYear(newYear)));
     onChange?.(newVal);
     setTimeout(() => {
-      const input = textRef.current;
-      if (input) {
+      const node = textRef.current;
+      if (node) {
         const start = month ? 3 : 0;
         const end = newVal.length;
-        input.setSelectionRange(start, end);
+        node.setSelectionRange(start, end);
       }
     }, 0);
     e.preventDefault();
@@ -151,7 +171,7 @@ export default function MonthYearInput({ value = '', onChange }: MonthYearInputP
         placeholder="MM/YYYY"
         value={displayValue()}
         onChange={handleChange}
-        onClick={handleClick}
+        onMouseUp={handleMouseUp}
         onFocus={handleFocus}
         onKeyDown={handleKeyDown}
         ref={textRef}
