@@ -4,6 +4,7 @@
 @tailwind utilities;
 
 @import "./styles/_tags.scss";
+@import "./styles/tailwind.css";
 @layer base {
   body {
     font-family: "Roboto", sans-serif;

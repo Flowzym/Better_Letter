@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import { Lightbulb, X } from "lucide-react";
 import TaskTag from "./TaskTag";
 import TagButton from "./TagButton";
+import TagButtonFavorite from "./ui/TagButtonFavorite";
 import TagContext from "../types/TagContext";
 import AutocompleteInput from "./AutocompleteInput";
 import { getTasksForPositions } from "../constants/positionsToTasks";
@@ -163,12 +164,9 @@ export default function TasksTagInput({
             {favorites
               .filter((item) => !value.includes(item))
               .map((item) => (
-                <TagButton
+                <TagButtonFavorite
                   key={item}
                   label={item}
-                  variant={TagContext.Favorite}
-                  isFavorite
-                  type="task"
                   onClick={() => addTask(item)}
                   onRemove={() => toggleFavorite(item)}
                 />

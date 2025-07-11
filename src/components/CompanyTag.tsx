@@ -1,8 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { useLebenslaufContext } from '../context/LebenslaufContext';
-import TagButton from './TagButton';
-import TagContext from '../types/TagContext';
+import TagButtonSelected from './ui/TagButtonSelected';
 
 interface CompanyTagProps {
   label: string;
@@ -59,12 +58,10 @@ export default function CompanyTag({ label, onRemove, onEdit }: CompanyTagProps)
   }
 
   return (
-    <TagButton
+    <TagButtonSelected
       label={label}
-      variant={TagContext.Selected}
       isFavorite={isFavorite}
-      type="company"
-      onToggleFavorite={toggleFavoriteCompany}
+      onToggleFavorite={() => toggleFavoriteCompany(label)}
       onRemove={onRemove}
       onEdit={() => setEditing(true)}
     />
