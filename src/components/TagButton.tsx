@@ -38,7 +38,7 @@ export default function TagButton({
     variantClasses = 'bg-white text-gray-700 border-[#F29400]';
   }
 
-  const starSize = isFavorite ? 20 : 14;
+  const starSize = isFavorite ? 22 : 14;
 
   let starStroke = '#4B5563';
   let starFill = 'none';
@@ -80,32 +80,31 @@ export default function TagButton({
       >
         {label}
       </span>
-      <div className="ml-auto flex items-center justify-center gap-2">
-        <span
-          onClick={onToggleFavorite ? handleToggleFavorite : undefined}
-          className={`${onToggleFavorite ? 'cursor-pointer flex' : 'flex'} w-[14px] h-[14px]`}
-          role="button"
-          aria-label="Favorit"
-          title="Favorit"
+      <span
+        onClick={onToggleFavorite ? handleToggleFavorite : undefined}
+        className={`${onToggleFavorite ? 'cursor-pointer flex ml-auto' : 'flex ml-auto'} w-[14px] h-[14px]`}
+        role="button"
+        aria-label="Favorit"
+        title="Favorit"
+      >
+        <IconStar
+          size={starSize}
+          stroke={starStroke}
+          fill={starFill}
+          strokeWidth={2}
+          className="inline-block align-middle"
+        />
+      </span>
+      {onRemove && (
+        <button
+          type="button"
+          onClick={handleRemove}
+          aria-label="Entfernen"
+          className="ml-2"
         >
-          <IconStar
-            size={starSize}
-            stroke={starStroke}
-            fill={starFill}
-            strokeWidth={2}
-            style={{ verticalAlign: 'middle' }}
-          />
-        </span>
-        {onRemove && (
-          <button
-            type="button"
-            onClick={handleRemove}
-            aria-label="Entfernen"
-          >
-            <X className="w-3 h-3" />
-          </button>
-        )}
-      </div>
+          <X className="w-3 h-3" />
+        </button>
+      )}
     </button>
   );
 }
