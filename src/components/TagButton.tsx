@@ -5,7 +5,7 @@ import TagContext from '../types/TagContext';
 interface TagButtonProps {
   label: string;
   isFavorite?: boolean;
-  variant: TagContext;
+  variant: 'selected' | 'suggestion' | 'favorite';
   type?: string;
   onToggleFavorite?: (label: string, type?: string) => void;
   onRemove?: () => void;
@@ -33,13 +33,10 @@ export default function TagButton({
     variantClasses = 'bg-[#F29400] text-white border-[#F29400]';
   } else if (variant === TagContext.Suggestion) {
     variantClasses = 'bg-white text-gray-700 border-gray-300';
-  } else {
-    // favorites list
-    variantClasses = 'bg-white text-gray-700 border-[#F29400]';
-  }
-
-  if (variant === TagContext.Favorites) {
+  } else if (variant === TagContext.Favorite) {
     variantClasses = 'bg-gray-100 border-gray-300 text-gray-700';
+  } else {
+    variantClasses = 'bg-white text-gray-700 border-[#F29400]';
   }
 
   let starStroke = '#4B5563';
@@ -52,7 +49,7 @@ export default function TagButton({
     starStroke = '#FFFFFF';
   }
 
-  const starSize = isFavorite ? 16 : 14;
+  const starSize = 14;
 
 
   const handleToggleFavorite = (e: React.MouseEvent) => {
@@ -88,7 +85,7 @@ export default function TagButton({
         {isFavorite && (
           <span
             onClick={onToggleFavorite ? handleToggleFavorite : undefined}
-            className={onToggleFavorite ? 'cursor-pointer -mx-0.5' : '-mx-0.5'}
+            className={onToggleFavorite ? 'cursor-pointer' : ''}
             role="button"
             aria-label="Favorit"
             title="Favorit"
@@ -107,7 +104,11 @@ export default function TagButton({
             onClick={handleRemove}
             aria-label="Entfernen"
           >
-            <X className="w-3 h-3 text-gray-700 ml-1" />
+            <X
+              className={`w-3 h-3 ml-1 ${
+                variant === TagContext.Selected ? 'text-white' : 'text-gray-700'
+              }`}
+            />
           </button>
         )}
       </div>

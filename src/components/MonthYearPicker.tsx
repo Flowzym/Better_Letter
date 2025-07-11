@@ -211,7 +211,7 @@ export default function MonthYearPicker({
           ref={popupRef}
           className="absolute left-0 mt-1 z-10 bg-white border rounded shadow p-2 w-max"
         >
-          <div className="grid grid-cols-3 gap-x-4">
+          <div className="grid grid-cols-3 gap-x-6">
             <div className="col-span-2 grid grid-cols-2 gap-2 text-sm">
               {months.map((m, i) => (
                 <button
@@ -233,7 +233,7 @@ export default function MonthYearPicker({
                 <button
                   key={y}
                   type="button"
-                  className="py-2 px-3 text-center w-full rounded-md text-sm bg-gray-50 hover:bg-gray-100"
+                  className="text-center py-2 w-full rounded-md text-sm bg-gray-50 hover:bg-gray-100"
                   onClick={() => selectYear(y)}
                 >
                   {y}

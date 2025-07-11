@@ -166,7 +166,7 @@ export default function TasksTagInput({
                 <TagButton
                   key={item}
                   label={item}
-                  variant={TagContext.Favorites}
+                  variant={TagContext.Favorite}
                   isFavorite
                   type="task"
                   onClick={() => addTask(item)}

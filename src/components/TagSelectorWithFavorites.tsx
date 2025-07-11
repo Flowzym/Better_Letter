@@ -141,7 +141,7 @@ export default function TagSelectorWithFavorites({
                 <TagButton
                   key={item}
                   label={item}
-                  variant={TagContext.Favorites}
+                  variant={TagContext.Favorite}
                   isFavorite
                   type="position"
                   onClick={() => addTag(item)}
