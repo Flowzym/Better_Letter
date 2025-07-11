@@ -136,7 +136,7 @@ export default function TasksTagInput({
               <TagButton
                 key={s}
                 label={s}
-                isSuggestion
+                variant="suggestion"
                 isFavorite={favorites.includes(s)}
                 onClick={() => addTask(s)}
                 onToggleFavorite={() => toggleFavorite(s)}
@@ -159,10 +159,10 @@ export default function TasksTagInput({
                 <TagButton
                   key={item}
                   label={item}
-                  isSuggestion
+                  variant="favorite"
                   isFavorite
                   onClick={() => addTask(item)}
-                  onToggleFavorite={() => toggleFavorite(item)}
+                  onRemove={() => toggleFavorite(item)}
                 />
               ))}
           </div>

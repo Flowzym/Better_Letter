@@ -90,10 +90,10 @@ export default function TagSelectorWithFavorites({
                 <TagButton
                   key={item}
                   label={item}
-                  isSuggestion
+                  variant="favorite"
                   isFavorite
                   onClick={() => addTag(item)}
-                  onToggleFavorite={() => toggleFavorite(item)}
+                  onRemove={() => toggleFavorite(item)}
                 />
               ))}
           </div>

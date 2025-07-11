@@ -1,77 +1,82 @@
 import { Star, Pencil, X } from 'lucide-react';
-import '../styles/_tags.scss';
 
 interface TagButtonProps {
   label: string;
-  isSelected?: boolean;
-  isFavorite?: boolean;
-  isSuggestion?: boolean;
-  onToggleFavorite: () => void;
-  onClick?: () => void;
+  isFavorite: boolean;
+  variant: 'selected' | 'suggestion' | 'favorite';
+  onToggleFavorite?: () => void;
   onRemove?: () => void;
   onEdit?: () => void;
+  onClick?: () => void;
 }
 
 export default function TagButton({
   label,
-  isSelected = false,
-  isFavorite = false,
-  isSuggestion = false,
+  isFavorite,
+  variant,
   onToggleFavorite,
-  onClick,
   onRemove,
   onEdit,
+  onClick,
 }: TagButtonProps) {
-  const classes = ['tag'];
-  if (isSelected) classes.push('tag--selected');
-  if (isSuggestion) classes.push('tag--suggestion');
-  if (isFavorite) classes.push('tag--favorite');
+  const baseClasses =
+    'rounded-full text-sm border flex items-center gap-1 px-3 py-1';
 
-  const starStroke = isFavorite
-    ? 'none'
-    : isSuggestion
-      ? '#F29400'
-      : 'white';
+  const variantClasses =
+    variant === 'selected'
+      ? 'bg-[#F29400] text-white border-[#F29400]'
+      : 'bg-white text-black border-[#F29400]';
+
+  const starStroke = variant === 'suggestion' ? '#F29400' : 'white';
+  const starFill = variant === 'selected' && isFavorite ? '#FDE047' : 'none';
+
+  const handleToggleFavorite = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onToggleFavorite?.();
+  };
+
+  const handleRemove = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onRemove?.();
+  };
+
+  const handleEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onEdit?.();
+  };
 
   return (
-    <button type="button" onClick={onClick} className={classes.join(' ')}>
-      <span className="mr-1">{label}</span>
-      <button
-        type="button"
-        onClick={(e) => {
-          e.stopPropagation();
-          onToggleFavorite();
-        }}
-        className="star-icon"
-        aria-label="Favorit"
-        title="Favorit"
-      >
-        <Star className="w-3 h-3" fill={isFavorite ? '#FDE047' : 'none'} stroke={starStroke} />
-      </button>
-      {onEdit && (
+    <button type="button" onClick={onClick} className={`${baseClasses} ${variantClasses}`}>
+      <span>{label}</span>
+      {variant !== 'favorite' && onToggleFavorite && (
         <button
           type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onEdit();
-          }}
-          className="tag-icon-button"
+          onClick={handleToggleFavorite}
+          className="ml-1"
+          aria-label="Favorit"
+          title="Favorit"
+        >
+          <Star className="w-3 h-3" stroke={starStroke} fill={starFill} />
+        </button>
+      )}
+      {variant === 'selected' && onEdit && (
+        <button
+          type="button"
+          onClick={handleEdit}
+          className="ml-1"
           aria-label="Bearbeiten"
         >
-          <Pencil className="tag-icon" />
+          <Pencil className="w-3 h-3" />
         </button>
       )}
       {onRemove && (
         <button
           type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onRemove();
-          }}
-          className="tag-icon-button"
+          onClick={handleRemove}
+          className="ml-1"
           aria-label="Entfernen"
         >
-          <X className="tag-icon" />
+          <X className="w-3 h-3" />
         </button>
       )}
     </button>
