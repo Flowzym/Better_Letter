@@ -22,8 +22,10 @@ interface LebenslaufContextType {
   selectExperience: (id: string | null) => void;
   favoritePositions: string[];
   favoriteTasks: string[];
+  favoriteCompanies: string[];
   toggleFavoritePosition: (pos: string) => void;
   toggleFavoriteTask: (task: string) => void;
+  toggleFavoriteCompany: (company: string) => void;
 }
 
 const LebenslaufContext = createContext<LebenslaufContextType | undefined>(undefined);
@@ -34,6 +36,7 @@ export function LebenslaufProvider({ children }: { children: ReactNode }) {
   const [isEditingExperience, setIsEditingExperience] = useState(false);
   const [favoritePositions, setFavoritePositions] = useState<string[]>([]);
   const [favoriteTasks, setFavoriteTasks] = useState<string[]>([]);
+  const [favoriteCompanies, setFavoriteCompanies] = useState<string[]>([]);
 
   const addExperience = (data: Omit<Berufserfahrung, 'id'>) => {
     setBerufserfahrungen(prev => [...prev, { ...data, id: uuidv4() }]);
@@ -58,6 +61,12 @@ export function LebenslaufProvider({ children }: { children: ReactNode }) {
     );
   };
 
+  const toggleFavoriteCompany = (company: string) => {
+    setFavoriteCompanies(prev =>
+      prev.includes(company) ? prev.filter(c => c !== company) : [...prev, company]
+    );
+  };
+
   const toggleFavoriteTask = (task: string) => {
     setFavoriteTasks(prev =>
       prev.includes(task) ? prev.filter(t => t !== task) : [...prev, task]
@@ -75,8 +84,10 @@ export function LebenslaufProvider({ children }: { children: ReactNode }) {
         selectExperience,
         favoritePositions,
         favoriteTasks,
+        favoriteCompanies,
         toggleFavoritePosition,
         toggleFavoriteTask,
+        toggleFavoriteCompany,
       }}
     >
       {children}

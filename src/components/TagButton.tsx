@@ -49,10 +49,10 @@ export default function TagButton({
     | favorites    | immer    | #FDE047 | #FDE047  |
   */
 
-  let starStroke = variant === TagContext.Selected ? 'white' : '#888';
+  let starStroke = variant === TagContext.Selected ? '#ffffff' : '#4B5563';
   let starFill = 'none';
-  if (isFavorite) {
-    starStroke = '#FDE047';
+  if (isFavorite || variant === TagContext.Favorites) {
+    starStroke = '#F29400';
     starFill = '#FDE047';
   }
 
