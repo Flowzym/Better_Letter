@@ -38,7 +38,7 @@ export default function TagButton({
     variantClasses = 'bg-white text-gray-700 border-[#F29400]';
   }
 
-  const starSize = isFavorite ? 16 : 14;
+  const starSize = isFavorite ? 18 : 14;
 
   let starStroke = '#4B5563';
   let starFill = 'none';
@@ -80,7 +80,7 @@ export default function TagButton({
       >
         {label}
       </span>
-      <div className="ml-auto flex items-center gap-[4px] justify-end">
+      <div className="ml-auto flex items-center gap-[6px] justify-end">
         <span
           onClick={onToggleFavorite ? handleToggleFavorite : undefined}
           className={`${onToggleFavorite ? 'cursor-pointer flex' : 'flex'} w-[14px] h-[14px]`}
