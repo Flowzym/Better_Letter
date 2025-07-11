@@ -33,9 +33,11 @@ Mit dieser Anwendung kannst du Lebenslauf- und Stellenanzeigendaten flexibel imp
   Ein-/Ausblenden von Werkzeugleisten-Elementen, Drag & Drop-Anordnung, Platzhalter-Konfiguration, Seitenformat (A4/Letter), Ränder, Einzüge, Schriftarten (inkl. Upload eigener Fonts), Separatoren, Live-Zähler, Rechtschreibprüfung (KI oder Browser), mehrseitige Vorschau, Themes, uvm.
 - **Datei- und Datenimport:**  
   Lebensläufe und Profile als TXT, DOCX, PDF (später auch Bild/Scan). Import per Copy & Paste, Datei-Upload oder URL (für Stellenanzeigen).
-- **Flexible Datenquellen für Vorschläge:**  
+- **Flexible Datenquellen für Vorschläge:**
   Eigene Datenbanken, Cloudspeicher oder lokale Dateien als Quelle für Berufs-, Ausbildungs- und Skills-Vorschläge einbinden/konfigurieren.
-- **Profilverwaltung:**  
+- **Berufserfahrung mit mehreren Firmen:**
+  Ein Eintrag kann nun mehrere Firmen als Tags enthalten.
+- **Profilverwaltung:**
   Profile speichern, laden und bearbeiten – lokal im Browser, als Download oder in externer Datenbank (mit Datenschutzoptionen).
 - **Backup-, Import- & Restore-Funktion:**  
   Vollständige oder selektive Sicherung/Wiederherstellung aller App-Daten & Einstellungen (inkl. Editor-Konfiguration, Profile, Vorlagen, etc.).

@@ -59,7 +59,7 @@ export default function LebenslaufPreview() {
           <p className="font-bold text-lg text-gray-900">
             {exp.position.join(" / ")}
           </p>
-          <p className="italic text-gray-500">{exp.firma}</p>
+          <p className="italic text-gray-500">{exp.companies.join(', ')}</p>
           <ul className="list-disc list-inside mt-2 space-y-1 text-black">
             {exp.aufgabenbereiche.map((aufgabe, i) => (
               <li key={i}>{aufgabe}</li>

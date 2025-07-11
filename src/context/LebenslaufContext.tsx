@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 export interface Berufserfahrung {
   id: string;
-  firma: string;
+  companies: string[];
   position: string[];
   startMonth: string | null;
   startYear: string;
