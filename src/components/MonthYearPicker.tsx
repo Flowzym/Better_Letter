@@ -209,34 +209,37 @@ export default function MonthYearPicker({
       {show && (
         <div
           ref={popupRef}
-          className="absolute left-0 mt-1 z-10 bg-white border rounded shadow p-2 flex gap-4 w-max"
+          className="absolute left-0 mt-1 z-10 bg-white border rounded shadow p-2 w-max"
         >
-          <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
-            {months.map((m, i) => (
-              <button
-                key={m}
-                type="button"
-                className="px-2 py-1 hover:bg-gray-100 text-center"
-                onClick={() => selectMonth(i)}
-              >
-                {m}
-              </button>
-            ))}
-            <p className="col-span-2 text-xs mt-1 text-gray-500 text-left">
-              (Monat optional)
-            </p>
-          </div>
-          <div className="h-40 overflow-y-auto pl-2 border-l space-y-1 text-sm ml-4">
-            {years.map((y) => (
-              <button
-                key={y}
-                type="button"
-                className="block w-full text-center px-2 py-1 hover:bg-gray-100"
-                onClick={() => selectYear(y)}
-              >
-                {y}
-              </button>
-            ))}
+          <div className="grid grid-cols-3 gap-x-4">
+            <div className="col-span-2 grid grid-cols-2 gap-2 text-sm">
+              {months.map((m, i) => (
+                <button
+                  key={m}
+                  type="button"
+                  className="px-2 py-1 hover:bg-gray-100 text-center"
+                  onClick={() => selectMonth(i)}
+                >
+                  {m}
+                </button>
+              ))}
+              <p className="col-span-2 text-xs mt-1 text-gray-500 text-left">
+                (Monat optional)
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-2 pl-4">
+              {years.map((y) => (
+                <button
+                  key={y}
+                  type="button"
+                  className="py-2 px-3 text-center w-full rounded-md text-sm bg-gray-50 hover:bg-gray-100"
+                  onClick={() => selectYear(y)}
+                >
+                  {y}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       )}
