@@ -11,6 +11,7 @@ interface AutocompleteInputProps {
   disabled?: boolean;
   className?: string;
   buttonColor?: string;
+  inputBorderColor?: string;
   showFavoritesButton?: boolean;
   showAddButton?: boolean;
   id?: string;
@@ -27,6 +28,7 @@ export default function AutocompleteInput({
   disabled = false,
   className = '',
   buttonColor = 'orange',
+  inputBorderColor = '#F29400',
   showFavoritesButton = false,
   showAddButton = true,
   id,
@@ -218,9 +220,9 @@ export default function AutocompleteInput({
             placeholder={placeholder}
             disabled={disabled}
             className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2"
-            style={{ 
-              borderColor: '#F29400',
-              '--tw-ring-color': '#F29400'
+            style={{
+              borderColor: inputBorderColor,
+              '--tw-ring-color': inputBorderColor
             } as React.CSSProperties}
             aria-expanded={isOpen}
             aria-haspopup="listbox"
@@ -232,7 +234,7 @@ export default function AutocompleteInput({
           {isOpen && filteredSuggestions.length > 0 && (
             <div 
               className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-md shadow-lg max-h-48 overflow-y-auto z-50 autocomplete-dropdown" 
-              style={{ borderColor: '#F29400' }}
+              style={{ borderColor: inputBorderColor }}
               role="listbox"
               aria-label="Vorschläge"
             >

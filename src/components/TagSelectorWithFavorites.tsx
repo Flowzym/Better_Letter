@@ -78,6 +78,7 @@ export default function TagSelectorWithFavorites({
         suggestions={options}
         placeholder="Hinzufügen..."
         buttonColor="orange"
+        inputBorderColor="#D1D5DB"
         showFavoritesButton={allowCustom}
         showAddButton={allowCustom}
         label={label}

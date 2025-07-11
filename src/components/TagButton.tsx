@@ -33,7 +33,7 @@ export default function TagButton({
     variantClasses = 'bg-white text-gray-700 border-gray-300';
   } else {
     // favorite
-    variantClasses = 'bg-white text-gray-700 border-[#F29400]';
+    variantClasses = 'bg-white text-gray-700 border-[#FDE047]';
   }
 
   const starStroke = variant === 'suggested' ? '#F29400' : 'white';
