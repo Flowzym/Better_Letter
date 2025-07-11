@@ -1,4 +1,5 @@
 Better_Letter
+
 # Bewerbungsschreiben Generator
 
 **KI-gestützte Webanwendung zur individuellen Erstellung und Bearbeitung professioneller Bewerbungsschreiben**
@@ -54,49 +55,67 @@ Mit dieser Anwendung kannst du Lebenslauf- und Stellenanzeigendaten flexibel imp
 
 ## Feature-Matrix (Überblick)
 
-| Kategorie                   | Feature                               | Beschreibung                                                                        | Status        |
-|-----------------------------|---------------------------------------|-------------------------------------------------------------------------------------|---------------|
-| **Dokumentenbearbeitung & Export** | Druckfunktion                      | Print Preview, Layoutanpassung, „Nur Inhalt drucken“, PDF/Hardcopy                  | Geplant       |
-|                             | Export DOCX/TXT/PDF                   | Bewerbungsschreiben im Wunschformat exportieren                                     | Fertig        |
-|                             | Serienbrieffunktion                   | Mehrere Empfänger/Positionen in einer Session generieren                            | Geplant       |
-| **Editor & Personalisierung**   | Eigene Schriftarten                  | Upload und Nutzung eigener Fonts                                                    | Geplant       |
-|                             | Live Word-/Zeichenzähler              | Zählt Wörter/Zeichen in Echtzeit                                                    | Fertig        |
-|                             | Rechtschreib-/Grammatikprüfung        | Fehlerprüfung per KI/Browswer-API                                                   | Geplant       |
-|                             | Separator in Toolbar                  | Mehrfach platzierbare Trennsymbole in Editor-Werkzeugleiste                         | Fertig        |
-|                             | Anpassbare Toolbar/Editor             | Reihenfolge, Sichtbarkeit, Platzhalter u. v. m. individuell konfigurierbar          | Fertig        |
-| **Profile & Datenmanagement**   | Mehrfachprofile/Multi-Account        | Verwaltung mehrerer Profile (z. B. Beratungsteam)                                   | Geplant       |
-|                             | Eigene Profil-Felder                  | Nutzer:innen können Felder (z. B. Skills) anlegen                                   | Geplant       |
-|                             | Filter & Timeline                     | Bewerbungen nach Erstellungs-/Absendedatum sortieren/filtern                        | Geplant       |
-|                             | Duplikaterkennung                     | Doppelte Profile/Dokumente werden erkannt                                           | Geplant       |
-| **KI & Prompt-Handling**        | Test-Modus für Prompts               | Prompts mit Beispieldaten testen                                                    | Geplant       |
-|                             | Prompt-Bibliothek/Community-Sharing   | Prompts/Vorlagen teilen, bewerten, importieren                                      | Geplant       |
-|                             | KI-Routing/Multi-Modell               | Kombinierte Nutzung mehrerer KI-Modelle je nach Anwendungsfall                      | Geplant       |
-| **Nutzerfreundlichkeit & Barrierefreiheit** | Barrierefreier Modus                 | Kontrast, Screenreader, große Schriften, Tastatursteuerung                          | Geplant       |
-|                             | Mehrsprachigkeit (UI & KI)            | Interface/Textausgabe mehrsprachig, automatische Übersetzung                        | Geplant       |
-|                             | Onboarding-Assistent                  | Geführter Einstieg beim ersten Start                                                | Geplant       |
-|                             | Tour/Tooltip-System                   | Tooltips/Hilfen zu neuen/komplexen Features                                         | Geplant       |
-|                             | Einstellbare Status-/Fehlermeldungen  | Steuerung, wie Systemnachrichten angezeigt werden                                   | Geplant       |
-| **Sicherheit & Organisation**   | Passwort-/PIN-Schutz                  | Absicherung für lokale Profile oder App-Zugang                                      | Geplant       |
-| **Workflows & Automatisierung** | Automatischer Lebenslauf-Parser      | KI-Validierung/Strukturierung importierter Lebensläufe                              | Geplant       |
-|                             | Jobbörsen-Integration                 | Direktes Einlesen von Stellenanzeigen (AMS, karriere.at, Indeed)                    | Geplant       |
-| **Optische Anpassungen**         | Benutzerdefinierte Themes            | Eigene Farbschemata/UI-Themes                                                       | Geplant       |
-|                             | Eigenes Logo/Firmenbranding           | Export-Dokumente mit individuellem Branding                                         | Geplant       |
+| Kategorie                                   | Feature                              | Beschreibung                                                               | Status  |
+| ------------------------------------------- | ------------------------------------ | -------------------------------------------------------------------------- | ------- |
+| **Dokumentenbearbeitung & Export**          | Druckfunktion                        | Print Preview, Layoutanpassung, „Nur Inhalt drucken“, PDF/Hardcopy         | Geplant |
+|                                             | Export DOCX/TXT/PDF                  | Bewerbungsschreiben im Wunschformat exportieren                            | Fertig  |
+|                                             | Serienbrieffunktion                  | Mehrere Empfänger/Positionen in einer Session generieren                   | Geplant |
+| **Editor & Personalisierung**               | Eigene Schriftarten                  | Upload und Nutzung eigener Fonts                                           | Geplant |
+|                                             | Live Word-/Zeichenzähler             | Zählt Wörter/Zeichen in Echtzeit                                           | Fertig  |
+|                                             | Rechtschreib-/Grammatikprüfung       | Fehlerprüfung per KI/Browswer-API                                          | Geplant |
+|                                             | Separator in Toolbar                 | Mehrfach platzierbare Trennsymbole in Editor-Werkzeugleiste                | Fertig  |
+|                                             | Anpassbare Toolbar/Editor            | Reihenfolge, Sichtbarkeit, Platzhalter u. v. m. individuell konfigurierbar | Fertig  |
+| **Profile & Datenmanagement**               | Mehrfachprofile/Multi-Account        | Verwaltung mehrerer Profile (z. B. Beratungsteam)                          | Geplant |
+|                                             | Eigene Profil-Felder                 | Nutzer:innen können Felder (z. B. Skills) anlegen                          | Geplant |
+|                                             | Filter & Timeline                    | Bewerbungen nach Erstellungs-/Absendedatum sortieren/filtern               | Geplant |
+|                                             | Duplikaterkennung                    | Doppelte Profile/Dokumente werden erkannt                                  | Geplant |
+| **KI & Prompt-Handling**                    | Test-Modus für Prompts               | Prompts mit Beispieldaten testen                                           | Geplant |
+|                                             | Prompt-Bibliothek/Community-Sharing  | Prompts/Vorlagen teilen, bewerten, importieren                             | Geplant |
+|                                             | KI-Routing/Multi-Modell              | Kombinierte Nutzung mehrerer KI-Modelle je nach Anwendungsfall             | Geplant |
+| **Nutzerfreundlichkeit & Barrierefreiheit** | Barrierefreier Modus                 | Kontrast, Screenreader, große Schriften, Tastatursteuerung                 | Geplant |
+|                                             | Mehrsprachigkeit (UI & KI)           | Interface/Textausgabe mehrsprachig, automatische Übersetzung               | Geplant |
+|                                             | Onboarding-Assistent                 | Geführter Einstieg beim ersten Start                                       | Geplant |
+|                                             | Tour/Tooltip-System                  | Tooltips/Hilfen zu neuen/komplexen Features                                | Geplant |
+|                                             | Einstellbare Status-/Fehlermeldungen | Steuerung, wie Systemnachrichten angezeigt werden                          | Geplant |
+| **Sicherheit & Organisation**               | Passwort-/PIN-Schutz                 | Absicherung für lokale Profile oder App-Zugang                             | Geplant |
+| **Workflows & Automatisierung**             | Automatischer Lebenslauf-Parser      | KI-Validierung/Strukturierung importierter Lebensläufe                     | Geplant |
+|                                             | Jobbörsen-Integration                | Direktes Einlesen von Stellenanzeigen (AMS, karriere.at, Indeed)           | Geplant |
+| **Optische Anpassungen**                    | Benutzerdefinierte Themes            | Eigene Farbschemata/UI-Themes                                              | Geplant |
+|                                             | Eigenes Logo/Firmenbranding          | Export-Dokumente mit individuellem Branding                                | Geplant |
 
 ---
 
 ## Technologien
 
-**Frontend:**  
-- React, Vite, TypeScript, Tailwind CSS  
+**Frontend:**
+
+- React, Vite, TypeScript, Tailwind CSS
 - Quill.js (Rich Text Editor, konfigurierbar), lucide-react (Icons), mammoth.js (DOCX-Parsing)
 
-**KI/Backend:**  
+**KI/Backend:**
+
 - Mistral AI, GPT, lokale LLMs (Textgenerierung & -bearbeitung)
 - Modellauswahl/API-Handling über Settings
 
-**Datenbank & Integration:**  
+**Datenbank & Integration:**
+
 - Supabase (PostgreSQL, Authentifizierung)
 - Flexible Schnittstellen für externe Datenquellen
+
+### Datumsauswahlfeld (MonthYearPicker)
+
+Ein Eingabefeld für Daten im Format `MM/YYYY`. Beim Klick erscheint ein Popup mit Monaten
+und einer scrollbaren Jahresliste. Manuelle Eingabe und Auswahl im Popup sind
+synchronisiert und es werden nur Jahreszahlen von 1900 bis 2099 zugelassen.
+
+```tsx
+import MonthYearPicker from "./src/components/MonthYearPicker";
+
+function Example() {
+  const [wert, setWert] = useState("");
+  return <MonthYearPicker value={wert} onChange={setWert} />;
+}
+```
 
 ---
 
@@ -105,35 +124,37 @@ Mit dieser Anwendung kannst du Lebenslauf- und Stellenanzeigendaten flexibel imp
 ### Webanwendung
 
 1. **Repository klonen:**
-    ```bash
-    git clone https://github.com/flowzym/bewerbungsschreiben-generator.git
-    cd bewerbungsschreiben-generator
-    ```
+   ```bash
+   git clone https://github.com/flowzym/bewerbungsschreiben-generator.git
+   cd bewerbungsschreiben-generator
+   ```
 2. **Abhängigkeiten installieren:**
-    ```bash
-    npm install
-    ```
+   ```bash
+   npm install
+   ```
 3. **Konfiguration:**
-    - `.env`-Datei für Supabase und KI-APIs anlegen:
-        ```
-        VITE_SUPABASE_URL="Ihre_Supabase_URL"
-        VITE_SUPABASE_ANON_KEY="Ihr_Supabase_Anon_Key"
-        VITE_KI_API_URL="Ihre_LLM_Endpoint"
-        VITE_KI_API_KEY="Ihr_API_Key"
-        ```
-    - Weitere lokale KI-Modelle können in den Einstellungen hinzugefügt werden.
-    - Supabase-Datenbank nach mitgelieferten Migrationsskripten einrichten.
-    - Prompt-/Editor-Konfiguration über Settings importieren/anpassen.
+   - `.env`-Datei für Supabase und KI-APIs anlegen:
+     ```
+     VITE_SUPABASE_URL="Ihre_Supabase_URL"
+     VITE_SUPABASE_ANON_KEY="Ihr_Supabase_Anon_Key"
+     VITE_KI_API_URL="Ihre_LLM_Endpoint"
+     VITE_KI_API_KEY="Ihr_API_Key"
+     ```
+   - Weitere lokale KI-Modelle können in den Einstellungen hinzugefügt werden.
+   - Supabase-Datenbank nach mitgelieferten Migrationsskripten einrichten.
+   - Prompt-/Editor-Konfiguration über Settings importieren/anpassen.
 4. **Entwicklung starten:**
-    ```bash
-    npm run dev
-    ```
-    - Anwendung läuft auf [http://localhost:5173](http://localhost:5173)
+   ```bash
+   npm run dev
+   ```
+
+   - Anwendung läuft auf [http://localhost:5173](http://localhost:5173)
 5. **Produktions-Build:**
-    ```bash
-    npm run build
-    ```
-    - Build im `dist/`-Verzeichnis.
+   ```bash
+   npm run build
+   ```
+
+   - Build im `dist/`-Verzeichnis.
 
 ---
 
@@ -157,13 +178,13 @@ Mit dieser Anwendung kannst du Lebenslauf- und Stellenanzeigendaten flexibel imp
 - **KI-Modelle:** Verwaltung, API-Keys und Parameter in Settings.
 - **Prompts & Vorlagen:** Verwaltung, Erweiterung, Import/Export, Community-Sharing.
 - **Platzhalter:**  
-    Anpassung aller Platzhaltertexte und Mappings für Berufs-/Ausbildungsvorschläge.
+   Anpassung aller Platzhaltertexte und Mappings für Berufs-/Ausbildungsvorschläge.
 - **Editor-Settings:**  
-    Toolbar-Einstellungen (Icons, Separatoren, Reihenfolge), Seitenlayout, Zeichenbegrenzung, Themes, etc.
+   Toolbar-Einstellungen (Icons, Separatoren, Reihenfolge), Seitenlayout, Zeichenbegrenzung, Themes, etc.
 - **Daten & Backup:**  
-    Export/Import aller oder ausgewählter App-Komponenten, inkl. Profile, Vorlagen, Einstellungen.
+   Export/Import aller oder ausgewählter App-Komponenten, inkl. Profile, Vorlagen, Einstellungen.
 - **Profile:**  
-    Multi-Profil-Handling, individuelle Felder, Filter-/Sortierfunktionen.
+   Multi-Profil-Handling, individuelle Felder, Filter-/Sortierfunktionen.
 
 ---
 
@@ -192,4 +213,3 @@ Flor
 Kontakt: hypophobia@gmail.com
 
 ---
-
