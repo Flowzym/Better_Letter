@@ -78,35 +78,36 @@ export default function TagButton({
       onClick={onClick}
       className={`${baseClasses} ${sizeClasses} ${variantClasses}`}
     >
-      <span
-        onClick={variant === TagContext.Selected ? handleLabelClick : undefined}
-        className={onEdit ? 'cursor-text' : ''}
-      >
-        {label}
-      </span>
-      <div className="ml-auto flex items-center gap-1.5">
+      <div className="flex items-center gap-1.5">
         <span
-          onClick={onToggleFavorite ? handleToggleFavorite : undefined}
-          className={onToggleFavorite ? 'cursor-pointer' : ''}
-          role="button"
-          aria-label="Favorit"
-          title="Favorit"
+          onClick={variant === TagContext.Selected ? handleLabelClick : undefined}
+          className={onEdit ? 'cursor-text' : ''}
         >
-          <IconStar
-            size={starSize}
-            stroke={starStroke}
-            fill={starFill}
-            strokeWidth={2}
-            className="inline-block align-middle"
-          />
+          {label}
         </span>
+        {isFavorite && (
+          <span
+            onClick={onToggleFavorite ? handleToggleFavorite : undefined}
+            className={onToggleFavorite ? 'cursor-pointer -mx-0.5' : '-mx-0.5'}
+            role="button"
+            aria-label="Favorit"
+            title="Favorit"
+          >
+            <IconStar
+              size={starSize}
+              stroke={starStroke}
+              fill={starFill}
+              strokeWidth={2}
+            />
+          </span>
+        )}
         {onRemove && (
           <button
             type="button"
             onClick={handleRemove}
             aria-label="Entfernen"
           >
-            <X className="w-3 h-3" />
+            <X className="w-3 h-3 text-gray-700 ml-1" />
           </button>
         )}
       </div>
