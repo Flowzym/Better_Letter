@@ -133,11 +133,15 @@ export default function TasksTagInput({
                   <>
                     <button
                       onClick={() => toggleFavorite(task)}
-                      className={`star-icon ${favorites.includes(task) ? "active fill-current" : ""}`}
+                      className="star-icon"
                       aria-label="Favorit"
                       title="Favorit"
                     >
-                      <Star className="w-3 h-3" />
+                      <Star
+                        className="w-3 h-3"
+                        fill={favorites.includes(task) ? "#F29400" : "none"}
+                        stroke="#F29400"
+                      />
                     </button>
                     <button
                       onClick={() => startEdit(index)}
@@ -180,11 +184,15 @@ export default function TasksTagInput({
                     e.stopPropagation();
                     toggleFavorite(s);
                   }}
-                  className={`star-icon ${favorites.includes(s) ? "active fill-current" : ""}`}
+                  className="star-icon"
                   aria-label="Zu Favoriten"
                   title="Zu Favoriten"
                 >
-                  <Star className="w-3 h-3" />
+                  <Star
+                    className="w-3 h-3"
+                    fill={favorites.includes(s) ? "#F29400" : "none"}
+                    stroke="#F29400"
+                  />
                 </button>
               </button>
             ))}
@@ -214,11 +222,15 @@ export default function TasksTagInput({
                       e.stopPropagation();
                       toggleFavorite(item);
                     }}
-                    className="star-icon active fill-current"
+                    className="star-icon"
                     aria-label="Aus Favoriten entfernen"
                     title="Aus Favoriten entfernen"
                   >
-                    <Star className="w-3 h-3" />
+                    <Star
+                      className="w-3 h-3"
+                      fill={favorites.includes(item) ? "#F29400" : "none"}
+                      stroke="#F29400"
+                    />
                   </button>
                 </button>
               ))}

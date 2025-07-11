@@ -36,12 +36,10 @@
 .tag .star-icon {
   display: inline-flex;
   margin-left: 0.25rem;
-  color: transparent;
-  transition: color 0.2s;
-}
-.tag .star-icon.active {
-  color: #f29400;
+  cursor: pointer;
+  transition: fill-opacity 0.2s;
+  fill-opacity: 1;
 }
 .tag .star-icon:hover {
-  color: #f7b24a;
+  fill-opacity: 0.8;
 }
