@@ -42,6 +42,8 @@ export default function ZeitraumPicker({
   const [endInput, setEndInput] = useState<string>(
     displayDate(value?.endMonth, value?.endYear),
   );
+  const [editingStart, setEditingStart] = useState(false);
+  const [editingEnd, setEditingEnd] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
 
   // synchronize internal state with incoming value without triggering loops
@@ -82,20 +84,27 @@ export default function ZeitraumPicker({
     { label: "Dezember", value: "12" },
   ];
 
-  const parseInput = (val: string): { month?: string; year?: string } => {
-    const trimmed = val.trim();
-    const monthYear = /^(\d{1,2})\/(\d{4})$/.exec(trimmed);
-    if (monthYear) {
-      return {
-        month: monthYear[1].padStart(2, "0"),
-        year: monthYear[2],
-      };
+  const parseInput = (
+    val: string,
+  ): { formatted: string; month?: string; year?: string } => {
+    const digits = val.replace(/\D/g, "").slice(0, 6);
+    let month: string | undefined;
+    let year: string | undefined;
+    let formatted = "";
+
+    if (digits.length === 0) {
+      formatted = "";
+    } else if (digits.length <= 2) {
+      month = digits;
+      formatted = digits;
+      if (digits.length === 2) formatted += "/";
+    } else {
+      month = digits.slice(0, 2);
+      year = digits.slice(2);
+      formatted = `${month}/${year}`;
     }
-    const onlyYear = /^(\d{4})$/.exec(trimmed);
-    if (onlyYear) {
-      return { year: onlyYear[1] };
-    }
-    return {};
+
+    return { formatted, month: month || undefined, year: year || undefined };
   };
 
   const closePopup = () => {
@@ -113,20 +122,22 @@ export default function ZeitraumPicker({
   }, []);
 
   useEffect(() => {
+    if (editingStart) return;
     if (activeField !== "start" || startYear) {
       setStartInput(displayDate(startMonth, startYear));
     } else if (!startMonth) {
       setStartInput("");
     }
-  }, [startMonth, startYear, activeField]);
+  }, [startMonth, startYear, activeField, editingStart]);
 
   useEffect(() => {
+    if (editingEnd) return;
     if (activeField !== "end" || endYear) {
       setEndInput(displayDate(endMonth, endYear));
     } else if (!endMonth) {
       setEndInput("");
     }
-  }, [endMonth, endYear, activeField]);
+  }, [endMonth, endYear, activeField, editingEnd]);
 
   const prevValueRef = useRef<ZeitraumValue>({});
 
@@ -160,10 +171,12 @@ export default function ZeitraumPicker({
     if (activeField === "start") {
       setStartMonth(month);
       setStartInput(`${month ?? ""}/`);
+      setEditingStart(false);
     }
     if (activeField === "end") {
       setEndMonth(month);
       setEndInput(`${month ?? ""}/`);
+      setEditingEnd(false);
     }
   };
 
@@ -177,6 +190,7 @@ export default function ZeitraumPicker({
       } else {
         setStartInput(`__/${year}`);
       }
+      setEditingStart(false);
     } else if (activeField === "end") {
       setEndYear(year);
       if (/^\d{2}\/$/.test(endInput)) {
@@ -186,6 +200,7 @@ export default function ZeitraumPicker({
       } else {
         setEndInput(`__/${year}`);
       }
+      setEditingEnd(false);
     }
     closePopup();
   };
@@ -201,6 +216,63 @@ export default function ZeitraumPicker({
     });
   };
 
+  const validMonth = (m?: string) =>
+    !m || m.length < 2 || (Number(m) >= 1 && Number(m) <= 12);
+  const validYear = (y?: string) =>
+    !y || y.length < 4 || (Number(y) >= 1900 && Number(y) <= 2099);
+  const startInvalid = !validMonth(startMonth) || !validYear(startYear);
+  const endInvalid = !validMonth(endMonth) || !validYear(endYear);
+
+  const handleStartKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
+    e.preventDefault();
+    setEditingStart(true);
+    const inc = e.key === "ArrowUp" ? 1 : -1;
+    const digits = startInput.replace(/\D/g, "");
+    let month = "";
+    let year = "";
+    if (digits.length > 2) {
+      month = digits.slice(0, 2);
+      year = digits.slice(2);
+    } else {
+      month = digits;
+    }
+    let numYear = Number(year || "1900");
+    numYear += inc;
+    if (numYear < 1900) numYear = 1900;
+    if (numYear > 2099) numYear = 2099;
+    const newYear = String(numYear);
+    const formatted = month ? `${month}/${newYear}` : newYear;
+    setStartMonth(month || undefined);
+    setStartYear(newYear);
+    setStartInput(formatted);
+  };
+
+  const handleEndKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
+    e.preventDefault();
+    setEditingEnd(true);
+    const inc = e.key === "ArrowUp" ? 1 : -1;
+    const digits = endInput.replace(/\D/g, "");
+    let month = "";
+    let year = "";
+    if (digits.length > 2) {
+      month = digits.slice(0, 2);
+      year = digits.slice(2);
+    } else {
+      month = digits;
+    }
+    let numYear = Number(year || "1900");
+    numYear += inc;
+    if (numYear < 1900) numYear = 1900;
+    if (numYear > 2099) numYear = 2099;
+    const newYear = String(numYear);
+    const formatted = month ? `${month}/${newYear}` : newYear;
+    setEndMonth(month || undefined);
+    setEndYear(newYear);
+    setEndInput(formatted);
+  };
+
   return (
     <div className="relative space-y-2">
       <div className="flex items-center space-x-2">
@@ -208,15 +280,22 @@ export default function ZeitraumPicker({
           type="text"
           value={startInput}
           placeholder="von"
-          onFocus={() => setActiveField("start")}
-          onChange={(e) => {
-            const val = e.target.value;
-            setStartInput(val);
-            const parsed = parseInput(val);
-            setStartMonth(parsed.month);
-            setStartYear(parsed.year);
+          onFocus={() => {
+            setActiveField("start");
+            setEditingStart(true);
           }}
-          className="w-32 px-2 py-1 border rounded-md focus:outline-none focus:ring-2"
+          onBlur={() => setEditingStart(false)}
+          onChange={(e) => {
+            setEditingStart(true);
+            const { formatted, month, year } = parseInput(e.target.value);
+            setStartInput(formatted);
+            setStartMonth(month);
+            setStartYear(year);
+          }}
+          onKeyDown={handleStartKeyDown}
+          className={`w-32 px-2 py-1 border rounded-md focus:outline-none focus:ring-2 ${
+            startInvalid ? "border-red-500" : ""
+          }`}
           style={{ "--tw-ring-color": "#F29400" } as React.CSSProperties}
         />
         {!isCurrent && (
@@ -224,15 +303,22 @@ export default function ZeitraumPicker({
             type="text"
             value={endInput}
             placeholder="bis"
-            onFocus={() => setActiveField("end")}
-            onChange={(e) => {
-              const val = e.target.value;
-              setEndInput(val);
-              const parsed = parseInput(val);
-              setEndMonth(parsed.month);
-              setEndYear(parsed.year);
+            onFocus={() => {
+              setActiveField("end");
+              setEditingEnd(true);
             }}
-            className="w-32 px-2 py-1 border rounded-md focus:outline-none focus:ring-2"
+            onBlur={() => setEditingEnd(false)}
+            onChange={(e) => {
+              setEditingEnd(true);
+              const { formatted, month, year } = parseInput(e.target.value);
+              setEndInput(formatted);
+              setEndMonth(month);
+              setEndYear(year);
+            }}
+            onKeyDown={handleEndKeyDown}
+            className={`w-32 px-2 py-1 border rounded-md focus:outline-none focus:ring-2 ${
+              endInvalid ? "border-red-500" : ""
+            }`}
             style={{ "--tw-ring-color": "#F29400" } as React.CSSProperties}
           />
         )}
