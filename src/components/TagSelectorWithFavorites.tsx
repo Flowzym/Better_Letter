@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { X } from 'lucide-react';
 import AutocompleteInput from './AutocompleteInput';
 import PositionTag from './PositionTag';
 import TagButton from './TagButton';
@@ -20,6 +21,8 @@ export default function TagSelectorWithFavorites({
   allowCustom,
 }: TagSelectorWithFavoritesProps) {
   const [inputValue, setInputValue] = useState('');
+  const [editIndex, setEditIndex] = useState<number | null>(null);
+  const [editValue, setEditValue] = useState('');
   const { favoritePositions: favorites, toggleFavoritePosition } = useLebenslaufContext();
 
 
@@ -50,6 +53,21 @@ export default function TagSelectorWithFavorites({
     }
   };
 
+  const startEdit = (index: number) => {
+    setEditIndex(index);
+    setEditValue(value[index]);
+  };
+
+  const confirmEdit = () => {
+    if (editIndex === null) return;
+    const trimmed = editValue.trim();
+    if (!trimmed) return;
+    const newTags = value.map((t, i) => (i === editIndex ? trimmed : t));
+    onChange(newTags);
+    setEditIndex(null);
+    setEditValue('');
+  };
+
   return (
     <div className="space-y-4">
       <AutocompleteInput
@@ -67,9 +85,36 @@ export default function TagSelectorWithFavorites({
 
       {value.length > 0 && (
         <div className="flex flex-wrap gap-2">
-          {value.map((tag) => (
-            <PositionTag key={tag} label={tag} onRemove={() => removeTag(tag)} />
-          ))}
+          {value.map((tag, index) =>
+            editIndex === index ? (
+              <div key={`${tag}-${index}`} className="tag">
+                <input
+                  value={editValue}
+                  onChange={(e) => setEditValue(e.target.value)}
+                  onBlur={confirmEdit}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') confirmEdit();
+                  }}
+                  className="text-black px-1 py-0.5 rounded"
+                  autoFocus
+                />
+                <button
+                  onClick={() => removeTag(tag)}
+                  className="tag-icon-button"
+                  aria-label="Entfernen"
+                >
+                  <X className="tag-icon" />
+                </button>
+              </div>
+            ) : (
+              <PositionTag
+                key={`${tag}-${index}`}
+                label={tag}
+                onRemove={() => removeTag(tag)}
+                onEdit={() => startEdit(index)}
+              />
+            )
+          )}
         </div>
       )}
 

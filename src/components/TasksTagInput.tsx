@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { Lightbulb } from "lucide-react";
+import { Lightbulb, X } from "lucide-react";
 import TaskTag from "./TaskTag";
 import TagButton from "./TagButton";
 import AutocompleteInput from "./AutocompleteInput";
