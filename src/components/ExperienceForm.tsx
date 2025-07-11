@@ -1,6 +1,7 @@
 import TagSelectorWithFavorites from './TagSelectorWithFavorites';
 import ZeitraumPicker from './ZeitraumPicker';
 import TasksTagInput from './TasksTagInput';
+import CompaniesTagInput from './CompaniesTagInput';
 import { Berufserfahrung } from '../context/LebenslaufContext';
 
 interface ExperienceFormProps {
@@ -56,12 +57,9 @@ export default function ExperienceForm({
 
       <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
         <h3 className="text-sm font-medium text-gray-700 mb-2">Firma</h3>
-        <input
-          type="text"
-          placeholder="Firma"
-          className="w-full px-3 py-2 border rounded"
-          value={form.firma}
-          onChange={(e) => onUpdateField('firma', e.target.value)}
+        <CompaniesTagInput
+          value={form.companies}
+          onChange={(val) => onUpdateField('companies', val)}
         />
       </div>
 

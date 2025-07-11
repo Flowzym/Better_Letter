@@ -9,7 +9,7 @@ import {
 type BerufserfahrungForm = Omit<Berufserfahrung, "id">;
 
 const initialExperience: BerufserfahrungForm = {
-  firma: "",
+  companies: [],
   position: [],
   startMonth: null,
   startYear: "",
