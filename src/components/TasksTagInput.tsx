@@ -134,7 +134,8 @@ export default function TasksTagInput({
                 variant="suggestion"
                 isFavorite={favorites.includes(s)}
                 onClick={() => addTask(s)}
-                onToggleFavorite={() => toggleFavorite(s)}
+                type="task"
+                onToggleFavorite={toggleFavorite}
               />
             ))}
           </div>
@@ -170,6 +171,7 @@ export default function TasksTagInput({
                   label={item}
                   variant="favorite"
                   isFavorite
+                  type="task"
                   onClick={() => addTask(item)}
                   onRemove={() => toggleFavorite(item)}
                 />
