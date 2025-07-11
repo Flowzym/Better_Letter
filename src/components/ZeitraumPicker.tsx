@@ -223,13 +223,12 @@ export default function ZeitraumPicker({
       </div>
       {activeField && (
         <div
-          className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 flex z-50"
+          className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 flex items-stretch z-50"
           ref={popupRef}
         >
-          <div className="mr-4">
-            <div className="text-xs text-gray-500 mb-1">Monat optional</div>
+          <div className="mr-4 flex flex-col justify-between items-center">
             <div className="flex space-x-2">
-              <div className="flex flex-col space-y-1">
+              <div className="flex flex-col space-y-2">
                 {months.slice(0, 6).map((m) => {
                   const selected =
                     activeField === "start"
@@ -246,7 +245,7 @@ export default function ZeitraumPicker({
                   );
                 })}
               </div>
-              <div className="flex flex-col space-y-1">
+              <div className="flex flex-col space-y-2">
                 {months.slice(6).map((m) => {
                   const selected =
                     activeField === "start"
@@ -264,8 +263,15 @@ export default function ZeitraumPicker({
                 })}
               </div>
             </div>
+            <div className="text-xs text-gray-400 mt-2 text-center w-full">
+              Monat optional
+            </div>
           </div>
-          <div className="h-48 overflow-y-auto flex flex-col space-y-1 pr-1">
+          <div className="flex flex-col h-full">
+            <div
+              className="overflow-y-auto flex flex-col space-y-2 pr-1 h-full"
+              style={{ maxHeight: "15rem" }}
+            >
             {years.map((y) => {
               const selected =
                 activeField === "start" ? startYear === y : endYear === y;
@@ -279,6 +285,7 @@ export default function ZeitraumPicker({
                 </button>
               );
             })}
+            </div>
           </div>
         </div>
       )}
