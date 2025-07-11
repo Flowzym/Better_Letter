@@ -1,7 +1,9 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Star, Pencil, X } from "lucide-react";
+import React, { useMemo, useState } from "react";
+import { Star, X } from "lucide-react";
+import TaskTag from "./TaskTag";
 import AutocompleteInput from "./AutocompleteInput";
 import { getTasksForPositions } from "../constants/positionsToTasks";
+import { useLebenslaufContext } from "../context/LebenslaufContext";
 import "../styles/Tags.css";
 
 interface TasksTagInputProps {
@@ -18,28 +20,7 @@ export default function TasksTagInput({
   const [inputValue, setInputValue] = useState("");
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [editValue, setEditValue] = useState("");
-  const [favorites, setFavorites] = useState<string[]>(() => {
-    try {
-      const stored = localStorage.getItem("taskFavoriten");
-      if (stored) {
-        return JSON.parse(stored) as string[];
-      }
-    } catch {
-      // ignore
-    }
-    return [];
-  });
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(
-        "taskFavoriten",
-        JSON.stringify(favorites.slice(-10)),
-      );
-    } catch {
-      // ignore
-    }
-  }, [favorites]);
+  const { favoriteTasks: favorites, toggleFavoriteTask } = useLebenslaufContext();
 
   const suggestions = useMemo(() => {
     const fromPositions = getTasksForPositions(positionen);
@@ -77,16 +58,12 @@ export default function TasksTagInput({
   };
 
   const toggleFavorite = (task: string) => {
-    setFavorites(
-      favorites.includes(task)
-        ? favorites.filter((f) => f !== task)
-        : [...favorites.slice(-9), task],
-    );
+    toggleFavoriteTask(task);
   };
 
   const addToFavorites = (task: string) => {
     if (!favorites.includes(task)) {
-      setFavorites([...favorites.slice(-9), task]);
+      toggleFavoriteTask(task);
     }
   };
 
@@ -114,8 +91,8 @@ export default function TasksTagInput({
           </h4>
           <div className="flex flex-wrap gap-2">
             {value.map((task, index) => (
-              <div key={`${task}-${index}`} className="tag">
-                {editIndex === index ? (
+              editIndex === index ? (
+                <div key={`${task}-${index}`} className="tag">
                   <input
                     value={editValue}
                     onChange={(e) => setEditValue(e.target.value)}
@@ -126,40 +103,22 @@ export default function TasksTagInput({
                     className="text-black px-1 py-0.5 rounded"
                     autoFocus
                   />
-                ) : (
-                  <span className="mr-1">{task}</span>
-                )}
-                {editIndex !== index && (
-                  <>
-                    <button
-                      onClick={() => toggleFavorite(task)}
-                      className="star-icon"
-                      aria-label="Favorit"
-                      title="Favorit"
-                    >
-                      <Star
-                        className="w-3 h-3"
-                        fill={favorites.includes(task) ? "#F29400" : "none"}
-                        stroke="#F29400"
-                      />
-                    </button>
-                    <button
-                      onClick={() => startEdit(index)}
-                      className="tag-icon-button"
-                      aria-label="Bearbeiten"
-                    >
-                      <Pencil className="tag-icon" />
-                    </button>
-                  </>
-                )}
-                <button
-                  onClick={() => removeTask(task)}
-                  className="tag-icon-button"
-                  aria-label="Entfernen"
-                >
-                  <X className="tag-icon" />
-                </button>
-              </div>
+                  <button
+                    onClick={() => removeTask(task)}
+                    className="tag-icon-button"
+                    aria-label="Entfernen"
+                  >
+                    <X className="tag-icon" />
+                  </button>
+                </div>
+              ) : (
+                <TaskTag
+                  key={`${task}-${index}`}
+                  label={task}
+                  onRemove={() => removeTask(task)}
+                  onEdit={() => startEdit(index)}
+                />
+              )
             ))}
           </div>
         </div>
@@ -176,7 +135,7 @@ export default function TasksTagInput({
                 key={s}
                 onClick={() => addTask(s)}
                 className="tag bg-white text-gray-700 border hover:bg-gray-100"
-                style={{ borderColor: "#F29400" }}
+                style={{ borderColor: "#FDE047" }}
               >
                 <span className="mr-1">{s}</span>
                 <button
@@ -190,8 +149,8 @@ export default function TasksTagInput({
                 >
                   <Star
                     className="w-3 h-3"
-                    fill={favorites.includes(s) ? "#F29400" : "none"}
-                    stroke="#F29400"
+                    fill={favorites.includes(s) ? "#FDE047" : "none"}
+                    stroke="#FDE047"
                   />
                 </button>
               </button>
@@ -203,7 +162,7 @@ export default function TasksTagInput({
       {favorites.filter((f) => !value.includes(f)).length > 0 && (
         <div>
           <div className="flex items-center space-x-2 mb-2">
-            <Star className="h-4 w-4" style={{ color: "#F29400" }} />
+            <Star className="h-4 w-4" style={{ color: "#FDE047" }} />
             <h4 className="text-sm font-medium text-gray-700">Favoriten:</h4>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -214,7 +173,7 @@ export default function TasksTagInput({
                   key={item}
                   onClick={() => addTask(item)}
                   className="tag bg-white text-gray-700 border hover:bg-gray-100"
-                  style={{ borderColor: "#F29400" }}
+                  style={{ borderColor: "#FDE047" }}
                 >
                   <span className="mr-2">{item}</span>
                   <button
@@ -228,8 +187,8 @@ export default function TasksTagInput({
                   >
                     <Star
                       className="w-3 h-3"
-                      fill={favorites.includes(item) ? "#F29400" : "none"}
-                      stroke="#F29400"
+                      fill={favorites.includes(item) ? "#FDE047" : "none"}
+                      stroke="#FDE047"
                     />
                   </button>
                 </button>

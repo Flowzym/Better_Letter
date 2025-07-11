@@ -19,6 +19,10 @@ interface LebenslaufContextType {
   addExperience: (data: Omit<Berufserfahrung, 'id'>) => void;
   updateExperience: (id: string, data: Omit<Berufserfahrung, 'id'>) => void;
   selectExperience: (id: string | null) => void;
+  favoritePositions: string[];
+  favoriteTasks: string[];
+  toggleFavoritePosition: (pos: string) => void;
+  toggleFavoriteTask: (task: string) => void;
 }
 
 const LebenslaufContext = createContext<LebenslaufContextType | undefined>(undefined);
@@ -26,6 +30,8 @@ const LebenslaufContext = createContext<LebenslaufContextType | undefined>(undef
 export function LebenslaufProvider({ children }: { children: ReactNode }) {
   const [berufserfahrungen, setBerufserfahrungen] = useState<Berufserfahrung[]>([]);
   const [selectedExperienceId, setSelectedExperienceId] = useState<string | null>(null);
+  const [favoritePositions, setFavoritePositions] = useState<string[]>([]);
+  const [favoriteTasks, setFavoriteTasks] = useState<string[]>([]);
 
   const addExperience = (data: Omit<Berufserfahrung, 'id'>) => {
     setBerufserfahrungen(prev => [...prev, { ...data, id: uuidv4() }]);
@@ -41,9 +47,31 @@ export function LebenslaufProvider({ children }: { children: ReactNode }) {
     setSelectedExperienceId(id);
   };
 
+  const toggleFavoritePosition = (pos: string) => {
+    setFavoritePositions(prev =>
+      prev.includes(pos) ? prev.filter(p => p !== pos) : [...prev, pos]
+    );
+  };
+
+  const toggleFavoriteTask = (task: string) => {
+    setFavoriteTasks(prev =>
+      prev.includes(task) ? prev.filter(t => t !== task) : [...prev, task]
+    );
+  };
+
   return (
     <LebenslaufContext.Provider
-      value={{ berufserfahrungen, selectedExperienceId, addExperience, updateExperience, selectExperience }}
+      value={{
+        berufserfahrungen,
+        selectedExperienceId,
+        addExperience,
+        updateExperience,
+        selectExperience,
+        favoritePositions,
+        favoriteTasks,
+        toggleFavoritePosition,
+        toggleFavoriteTask,
+      }}
     >
       {children}
     </LebenslaufContext.Provider>
