@@ -33,10 +33,10 @@ export default function TagButton({
     variantClasses = 'bg-white text-gray-700 border-gray-300';
   } else {
     // favorite
-    variantClasses = 'bg-white text-gray-700 border-[#FDE047]';
+    variantClasses = 'bg-white text-gray-700 border-[#F29400]';
   }
 
-  const starStroke = variant === 'suggested' ? '#F29400' : 'white';
+  const starStroke = '#F29400';
   const starFill = isFavorite ? '#FDE047' : 'none';
 
   const handleToggleFavorite = (e: React.MouseEvent) => {
