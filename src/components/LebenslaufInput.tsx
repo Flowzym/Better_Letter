@@ -146,7 +146,7 @@ export default function LebenslaufInput() {
           />
         </div>
         <button
-          className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-xl mt-4"
+          className={`w-full border border-gray-300 bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-md hover:bg-gray-100 transition mt-4`}
           onClick={isEditingExperience ? handleUpdate : handleAdd}
         >
           {isEditingExperience ? "Aktualisieren" : "Hinzufügen"}
