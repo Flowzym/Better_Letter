@@ -177,7 +177,13 @@ export default function AutocompleteInput({
   };
 
   const handleSuggestionClick = (suggestion: string) => {
-    handleSuggestionSelect(suggestion);
+    onAdd(suggestion);
+    onChange('');
+    setIsOpen(false);
+    setHighlightedIndex(-1);
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
   };
 
   const handleAddToFavorites = () => {

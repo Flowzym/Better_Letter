@@ -42,16 +42,11 @@ export default function TagSelectorWithFavorites({
     toggleFavoritePosition(tag);
   };
 
-  const handleAddInput = () => {
-    addTag(inputValue);
+  const handleAddInput = (val?: string) => {
+    addTag(val ?? inputValue);
     setInputValue('');
   };
 
-  const addToFavorites = (tag: string) => {
-    if (!favorites.includes(tag)) {
-      toggleFavoritePosition(tag);
-    }
-  };
 
   const startEdit = (index: number) => {
     setEditIndex(index);
@@ -74,13 +69,12 @@ export default function TagSelectorWithFavorites({
         value={inputValue}
         onChange={setInputValue}
         onAdd={handleAddInput}
-        onAddToFavorites={allowCustom ? addToFavorites : undefined}
         suggestions={options}
         placeholder="Hinzufügen..."
         buttonColor="orange"
         inputBorderColor="#D1D5DB"
-        showFavoritesButton={allowCustom}
-        showAddButton={allowCustom}
+        showFavoritesButton={false}
+        showAddButton={false}
         label={label}
       />
 
