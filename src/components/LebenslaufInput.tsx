@@ -125,7 +125,6 @@ export default function LebenslaufInput() {
               setSelectedPositions(val);
               updateField("position", val);
             }}
-            favoritenKey="positionFavoriten"
             options={[
               "Projektmanager",
               "Buchhalter",
