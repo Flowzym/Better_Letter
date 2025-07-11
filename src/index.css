@@ -1,11 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+@import "./styles/Tags.css";
 @layer base {
   body {
-    font-family: 'Roboto', sans-serif;
+    font-family: "Roboto", sans-serif;
     background-color: white;
   }
 }
@@ -36,7 +37,7 @@
 .overflow-popup {
   position: absolute;
   background: white;
-  border: 2px solid #F29400;
+  border: 2px solid #f29400;
   border-radius: 8px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
   z-index: 1000;
@@ -72,7 +73,7 @@
   align-items: center;
   justify-content: center;
   padding: 8px;
-  background: #F29400;
+  background: #f29400;
   color: white;
   border: none;
   border-radius: 6px;
@@ -83,13 +84,13 @@
 }
 
 .more-button:hover {
-  background: #E8850C;
+  background: #e8850c;
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(242, 148, 0, 0.3);
 }
 
 .more-button.active {
-  background: #E8850C;
+  background: #e8850c;
   box-shadow: 0 4px 8px rgba(242, 148, 0, 0.3);
 }
 
@@ -111,25 +112,27 @@
 /* BOLT-UI-ANPASSUNG 2025-01-15: Quill Editor Styling - A4-Simulation */
 .ql-container {
   border: none !important;
-  font-family: 'Roboto', Arial, sans-serif !important;
+  font-family: "Roboto", Arial, sans-serif !important;
   font-size: 14px !important;
   line-height: 1.6 !important;
 }
 
 .ql-editor {
   padding: 64px 72px !important; /* BOLT-UI-ANPASSUNG 2025-01-15: 3cm Ränder für A4 */
-  font-family: 'Roboto', Arial, sans-serif !important;
+  font-family: "Roboto", Arial, sans-serif !important;
   font-size: 14px !important;
   line-height: 1.6 !important;
   color: #1f2937 !important;
-  min-height: calc(1123px - 128px) !important; /* BOLT-UI-ANPASSUNG 2025-01-15: A4-Höhe minus Padding */
+  min-height: calc(
+    1123px - 128px
+  ) !important; /* BOLT-UI-ANPASSUNG 2025-01-15: A4-Höhe minus Padding */
   box-sizing: border-box;
 }
 
 .ql-editor.ql-blank::before {
   font-style: normal !important;
   color: #9ca3af !important;
-  font-family: 'Roboto', Arial, sans-serif !important;
+  font-family: "Roboto", Arial, sans-serif !important;
   left: 72px !important;
   right: 72px !important;
   top: 64px !important;
@@ -181,17 +184,17 @@
 }
 
 .ql-editor blockquote {
-  border-left: 4px solid #F29400 !important;
+  border-left: 4px solid #f29400 !important;
   padding-left: 1em !important;
   margin: 1em 0 !important;
   font-style: italic !important;
-  background: #FEF7EE !important;
+  background: #fef7ee !important;
   padding: 1em !important;
   border-radius: 0 8px 8px 0 !important;
 }
 
 .ql-editor a {
-  color: #F29400 !important;
+  color: #f29400 !important;
   text-decoration: underline !important;
 }
 
@@ -226,11 +229,11 @@
 
 /* Custom fonts for Quill */
 .ql-font-serif {
-  font-family: 'Times New Roman', serif !important;
+  font-family: "Times New Roman", serif !important;
 }
 
 .ql-font-monospace {
-  font-family: 'Courier New', monospace !important;
+  font-family: "Courier New", monospace !important;
 }
 
 .ql-font-Arial {
@@ -292,27 +295,27 @@
   .toolbar-wrapper {
     padding: 0 8px;
   }
-  
+
   #custom-toolbar {
     padding: 8px 12px;
     gap: 6px;
   }
-  
+
   .editor-paper-sheet {
     max-width: 100%;
     padding: 0 16px;
   }
-  
+
   .ql-editor {
     padding: 32px 24px !important; /* Smaller margins on tablet */
   }
-  
+
   .ql-editor.ql-blank::before {
     left: 24px !important;
     right: 24px !important;
     top: 32px !important;
   }
-  
+
   .overflow-popup {
     right: 8px;
     max-width: calc(100vw - 32px);
@@ -323,27 +326,27 @@
   .toolbar-wrapper {
     padding: 0 4px;
   }
-  
+
   #custom-toolbar {
     padding: 6px 8px;
     gap: 4px;
   }
-  
+
   .editor-paper-sheet {
     max-width: 100%;
     padding: 0 8px;
   }
-  
+
   .ql-editor {
     padding: 24px 16px !important; /* Smaller margins on mobile */
   }
-  
+
   .ql-editor.ql-blank::before {
     left: 16px !important;
     right: 16px !important;
     top: 24px !important;
   }
-  
+
   .overflow-popup {
     right: 4px;
     max-width: calc(100vw - 16px);
@@ -357,7 +360,7 @@
   .overflow-popup {
     display: none !important;
   }
-  
+
   .ql-editor {
     padding: 0 !important;
     min-height: auto !important;

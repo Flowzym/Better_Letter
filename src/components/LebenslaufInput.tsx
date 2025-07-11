@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import TagSelectorWithFavorites from './TagSelectorWithFavorites';
-import ZeitraumPicker from './ZeitraumPicker';
-import AufgabenbereichInput from './AufgabenbereichInput';
+import React, { useEffect, useState } from "react";
+import TagSelectorWithFavorites from "./TagSelectorWithFavorites";
+import ZeitraumPicker from "./ZeitraumPicker";
+import TasksTagInput from "./TasksTagInput";
 import {
   Berufserfahrung,
   useLebenslaufContext,
-} from '../context/LebenslaufContext';
+} from "../context/LebenslaufContext";
 
-type BerufserfahrungForm = Omit<Berufserfahrung, 'id'>;
+type BerufserfahrungForm = Omit<Berufserfahrung, "id">;
 
 const initialExperience: BerufserfahrungForm = {
-  firma: '',
+  firma: "",
   position: [],
   startMonth: null,
-  startYear: '',
+  startYear: "",
   endMonth: null,
   endYear: null,
   isCurrent: false,
@@ -34,7 +34,9 @@ export default function LebenslaufInput() {
 
   useEffect(() => {
     if (selectedExperienceId !== null) {
-      const data = berufserfahrungen.find(exp => exp.id === selectedExperienceId);
+      const data = berufserfahrungen.find(
+        (exp) => exp.id === selectedExperienceId,
+      );
       if (data) {
         // remove id when loading into form
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -48,8 +50,11 @@ export default function LebenslaufInput() {
     }
   }, [selectedExperienceId, berufserfahrungen]);
 
-  const updateField = <K extends keyof BerufserfahrungForm>(field: K, value: BerufserfahrungForm[K]) => {
-    setForm(prev => ({ ...prev, [field]: value }));
+  const updateField = <K extends keyof BerufserfahrungForm>(
+    field: K,
+    value: BerufserfahrungForm[K],
+  ) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = () => {
@@ -78,32 +83,32 @@ export default function LebenslaufInput() {
               endYear: form.endYear ?? undefined,
               isCurrent: form.isCurrent,
             }}
-            onChange={data => {
+            onChange={(data) => {
               updateField(
-                'startMonth',
+                "startMonth",
                 data.startMonth !== undefined && data.startMonth !== null
-                  ? String(data.startMonth).padStart(2, '0')
+                  ? String(data.startMonth).padStart(2, "0")
                   : null,
               );
               updateField(
-                'startYear',
+                "startYear",
                 data.startYear !== undefined && data.startYear !== null
                   ? String(data.startYear)
-                  : '',
+                  : "",
               );
               updateField(
-                'endMonth',
+                "endMonth",
                 data.endMonth !== undefined && data.endMonth !== null
-                  ? String(data.endMonth).padStart(2, '0')
+                  ? String(data.endMonth).padStart(2, "0")
                   : null,
               );
               updateField(
-                'endYear',
+                "endYear",
                 data.endYear !== undefined && data.endYear !== null
                   ? String(data.endYear)
                   : null,
               );
-              updateField('isCurrent', data.isCurrent ?? false);
+              updateField("isCurrent", data.isCurrent ?? false);
             }}
           />
           <input
@@ -111,22 +116,27 @@ export default function LebenslaufInput() {
             placeholder="Firma"
             className="w-full px-3 py-2 border rounded"
             value={form.firma}
-            onChange={e => updateField('firma', e.target.value)}
+            onChange={(e) => updateField("firma", e.target.value)}
           />
           <TagSelectorWithFavorites
             label="Positionen"
             value={selectedPositions}
             onChange={(val) => {
               setSelectedPositions(val);
-              updateField('position', val);
+              updateField("position", val);
             }}
             favoritenKey="positionFavoriten"
-            options={['Projektmanager', 'Buchhalter', 'Verkäufer', 'Teamleiter']}
+            options={[
+              "Projektmanager",
+              "Buchhalter",
+              "Verkäufer",
+              "Teamleiter",
+            ]}
             allowCustom={true}
           />
-          <AufgabenbereichInput
+          <TasksTagInput
             value={form.aufgabenbereiche}
-            onChange={(val) => updateField('aufgabenbereiche', val)}
+            onChange={(val) => updateField("aufgabenbereiche", val)}
             positionen={selectedPositions}
           />
         </div>
