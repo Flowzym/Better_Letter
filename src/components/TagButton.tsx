@@ -1,4 +1,4 @@
-import { Star, Pencil, X } from 'lucide-react';
+import { Star, X } from 'lucide-react';
 
 interface TagButtonProps {
   label: string;
@@ -47,14 +47,16 @@ export default function TagButton({
     onRemove?.();
   };
 
-  const handleEdit = (e: React.MouseEvent) => {
+  const handleLabelClick = (e: React.MouseEvent) => {
+    if (!onEdit) return;
     e.stopPropagation();
-    onEdit?.();
+    onEdit();
   };
+
 
   return (
     <button type="button" onClick={onClick} className={`${baseClasses} ${variantClasses}`}>
-      <span>{label}</span>
+      <span onClick={variant === 'selected' ? handleLabelClick : undefined} className={onEdit ? 'cursor-text' : ''}>{label}</span>
       {variant !== 'favorite' && onToggleFavorite && (
         <span
           onClick={handleToggleFavorite}
@@ -65,16 +67,6 @@ export default function TagButton({
         >
           <Star className="w-3 h-3" stroke={starStroke} fill={starFill} />
         </span>
-      )}
-      {variant === 'selected' && onEdit && (
-        <button
-          type="button"
-          onClick={handleEdit}
-          className="ml-1"
-          aria-label="Bearbeiten"
-        >
-          <Pencil className="w-3 h-3" />
-        </button>
       )}
       {onRemove && (
         <button

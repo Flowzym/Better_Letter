@@ -5,9 +5,10 @@ import TagButton from './TagButton';
 interface PositionTagProps {
   label: string;
   onRemove: () => void;
+  onEdit?: () => void;
 }
 
-export default function PositionTag({ label, onRemove }: PositionTagProps) {
+export default function PositionTag({ label, onRemove, onEdit }: PositionTagProps) {
   const { favoritePositions, toggleFavoritePosition } = useLebenslaufContext();
   const isFavorite = favoritePositions.includes(label);
 
@@ -19,6 +20,7 @@ export default function PositionTag({ label, onRemove }: PositionTagProps) {
       type="position"
       onToggleFavorite={toggleFavoritePosition}
       onRemove={onRemove}
+      onEdit={onEdit}
     />
   );
 }
