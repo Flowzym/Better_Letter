@@ -24,6 +24,7 @@ export default function LebenslaufInput() {
   const {
     berufserfahrungen,
     selectedExperienceId,
+    isEditingExperience,
     addExperience,
     updateExperience,
     selectExperience,
@@ -57,11 +58,16 @@ export default function LebenslaufInput() {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = () => {
+  const handleAdd = () => {
+    addExperience(form);
+    setForm(initialExperience);
+    setSelectedPositions([]);
+    selectExperience(null);
+  };
+
+  const handleUpdate = () => {
     if (selectedExperienceId !== null) {
       updateExperience(selectedExperienceId, form);
-    } else {
-      addExperience(form);
     }
     setForm(initialExperience);
     setSelectedPositions([]);
@@ -140,11 +146,10 @@ export default function LebenslaufInput() {
           />
         </div>
         <button
-          type="button"
-          onClick={handleSubmit}
-          className="mt-2 text-sm text-orange-600 hover:underline"
+          className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-xl mt-4"
+          onClick={isEditingExperience ? handleUpdate : handleAdd}
         >
-          +
+          {isEditingExperience ? "Aktualisieren" : "Hinzufügen"}
         </button>
       </section>
     </div>
