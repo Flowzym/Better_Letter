@@ -127,17 +127,20 @@ export default function TasksTagInput({
             Vorschläge:
           </h4>
           <div className="flex flex-wrap gap-2">
-            {filteredSuggestions.map((s) => (
-              <TagButton
-                key={s}
-                label={s}
-                variant="suggestion"
-                isFavorite={favorites.includes(s)}
-                onClick={() => addTask(s)}
-                type="task"
-                onToggleFavorite={toggleFavorite}
-              />
-            ))}
+            {filteredSuggestions.map((s) => {
+              const isFavorite = favorites.includes(s);
+              return (
+                <TagButton
+                  key={s}
+                  label={s}
+                  variant="suggestion"
+                  isFavorite={isFavorite}
+                  onClick={() => addTask(s)}
+                  type="task"
+                  onToggleFavorite={toggleFavorite}
+                />
+              );
+            })}
           </div>
         </div>
       )}

@@ -2,7 +2,7 @@ import { Star, X } from 'lucide-react';
 
 interface TagButtonProps {
   label: string;
-  isFavorite: boolean;
+  isFavorite?: boolean;
   variant: 'selected' | 'suggestion' | 'favorite';
   type?: string;
   onToggleFavorite?: (label: string, type?: string) => void;
@@ -13,7 +13,7 @@ interface TagButtonProps {
 
 export default function TagButton({
   label,
-  isFavorite,
+  isFavorite = false,
   variant,
   type,
   onToggleFavorite,
@@ -35,7 +35,7 @@ export default function TagButton({
   }
 
   const starStroke = variant === 'suggestion' ? '#F29400' : 'white';
-  const starFill = variant === 'selected' && isFavorite ? '#FDE047' : 'none';
+  const starFill = isFavorite ? '#FDE047' : 'none';
 
   const handleToggleFavorite = (e: React.MouseEvent) => {
     e.stopPropagation();
