@@ -3,13 +3,15 @@ import React from 'react';
 interface IconStarProps {
   filled?: boolean;
   size?: number;
-  strokeColor?: string;
+  stroke?: string;
+  strokeWidth?: number;
 }
 
 export default function IconStar({
   filled = false,
   size = 16,
-  strokeColor = '#F29400',
+  stroke = '#F29400',
+  strokeWidth = 2,
 }: IconStarProps) {
   return (
     <svg
@@ -17,8 +19,8 @@ export default function IconStar({
       height={size}
       viewBox="0 0 24 24"
       fill={filled ? '#FDE047' : 'none'}
-      stroke={filled ? 'none' : strokeColor}
-      strokeWidth="2"
+      stroke={filled ? 'none' : stroke}
+      strokeWidth={filled ? undefined : strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
     >

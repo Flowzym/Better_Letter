@@ -75,7 +75,12 @@ export default function TagButton({
           aria-label="Favorit"
           title="Favorit"
         >
-          <IconStar filled={isFavorite} size={14} strokeColor="#F29400" />
+          <IconStar
+            filled={isFavorite}
+            size={14}
+            stroke="white"
+            strokeWidth={1.5}
+          />
         </span>
         {onRemove && (
           <button
