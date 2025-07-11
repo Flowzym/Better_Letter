@@ -70,12 +70,12 @@ export default function TagButton({
       <div className="ml-auto flex items-center gap-[4px] justify-end">
         <span
           onClick={onToggleFavorite ? handleToggleFavorite : undefined}
-          className={onToggleFavorite ? 'cursor-pointer flex' : 'flex'}
+          className={`${onToggleFavorite ? 'cursor-pointer flex' : 'flex'} w-[14px] h-[14px]`}
           role="button"
           aria-label="Favorit"
           title="Favorit"
         >
-          <IconStar filled={isFavorite} size={16} strokeColor="#F29400" />
+          <IconStar filled={isFavorite} size={14} strokeColor="#F29400" />
         </span>
         {onRemove && (
           <button
