@@ -18,17 +18,17 @@
 }
 
 .tag--suggestion {
-  background-color: white;
-  color: #374151;
-  border-color: #FDE047;
+  background-color: transparent;
+  color: #F29400;
+  border-color: #F29400;
 }
 
 .tag--suggestion:hover {
-  background-color: #f3f4f6;
+  background-color: rgba(242, 148, 0, 0.1);
 }
 
 .tag--favorite {
-  border-color: #FDE047;
+  border-color: #F29400;
 }
 
 .tag-icon-button {

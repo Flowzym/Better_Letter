@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { Star } from "lucide-react";
+import { Star, Lightbulb } from "lucide-react";
 import TaskTag from "./TaskTag";
 import TagButton from "./TagButton";
 import AutocompleteInput from "./AutocompleteInput";
@@ -127,7 +127,8 @@ export default function TasksTagInput({
 
       {filteredSuggestions.length > 0 && (
         <div>
-          <h4 className="text-sm font-medium text-gray-700 mb-2">
+          <h4 className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-1">
+            <Lightbulb className="h-4 w-4" />
             Vorschläge:
           </h4>
           <div className="flex flex-wrap gap-2">
