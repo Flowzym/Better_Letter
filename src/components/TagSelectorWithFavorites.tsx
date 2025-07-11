@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Star, X } from 'lucide-react';
+import { Star } from 'lucide-react';
 import AutocompleteInput from './AutocompleteInput';
 import PositionTag from './PositionTag';
+import TagButton from './TagButton';
 import { useLebenslaufContext } from '../context/LebenslaufContext';
 
 interface TagSelectorWithFavoritesProps {
@@ -86,25 +87,14 @@ export default function TagSelectorWithFavorites({
             {favorites
               .filter((item) => !value.includes(item))
               .map((item) => (
-                <button
+                <TagButton
                   key={item}
+                  label={item}
+                  isSuggestion
+                  isFavorite
                   onClick={() => addTag(item)}
-                  className="inline-flex items-center justify-between px-3 py-1 text-gray-700 text-sm rounded-full border hover:bg-gray-200 transition-colors duration-200"
-                  style={{ backgroundColor: '#F3F4F6', borderColor: '#FDE047' }}
-                >
-                  <span className="mr-2">{item}</span>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleFavorite(item);
-                    }}
-                    className="text-gray-600 hover:text-gray-800"
-                    aria-label={`${item} aus Favoriten entfernen`}
-                    title="Aus Favoriten entfernen"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </button>
+                  onToggleFavorite={() => toggleFavorite(item)}
+                />
               ))}
           </div>
         </div>
