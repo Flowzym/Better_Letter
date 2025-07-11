@@ -4,7 +4,8 @@ interface TagButtonProps {
   label: string;
   isFavorite: boolean;
   variant: 'selected' | 'suggestion' | 'favorite';
-  onToggleFavorite?: () => void;
+  type?: string;
+  onToggleFavorite?: (label: string, type?: string) => void;
   onRemove?: () => void;
   onEdit?: () => void;
   onClick?: () => void;
@@ -14,6 +15,7 @@ export default function TagButton({
   label,
   isFavorite,
   variant,
+  type,
   onToggleFavorite,
   onRemove,
   onEdit,
@@ -37,7 +39,7 @@ export default function TagButton({
 
   const handleToggleFavorite = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onToggleFavorite?.();
+    onToggleFavorite?.(label, type);
   };
 
   const handleRemove = (e: React.MouseEvent) => {

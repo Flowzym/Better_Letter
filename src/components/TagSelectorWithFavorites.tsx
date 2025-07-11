@@ -102,6 +102,7 @@ export default function TagSelectorWithFavorites({
                   label={item}
                   variant="favorite"
                   isFavorite
+                  type="position"
                   onClick={() => addTag(item)}
                   onRemove={() => toggleFavorite(item)}
                 />
