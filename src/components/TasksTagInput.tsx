@@ -133,7 +133,7 @@ export default function TasksTagInput({
                 <TagButton
                   key={s}
                   label={s}
-                  variant="suggestion"
+                  variant="suggested"
                   isFavorite={isFavorite}
                   onClick={() => addTask(s)}
                   type="task"
