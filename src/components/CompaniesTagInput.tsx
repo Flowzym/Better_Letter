@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { X } from 'lucide-react';
+import TagButton from './TagButton';
+import TagContext from '../types/TagContext';
+import { useLebenslaufContext } from '../context/LebenslaufContext';
 
 interface CompaniesTagInputProps {
   value: string[];
@@ -8,6 +10,7 @@ interface CompaniesTagInputProps {
 
 export default function CompaniesTagInput({ value, onChange }: CompaniesTagInputProps) {
   const [inputValue, setInputValue] = useState('');
+  const { favoriteCompanies: favorites, toggleFavoriteCompany } = useLebenslaufContext();
 
   const addCompany = (val?: string) => {
     const c = (val ?? inputValue).trim();
@@ -40,17 +43,51 @@ export default function CompaniesTagInput({ value, onChange }: CompaniesTagInput
       {value.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {value.map((c) => (
-            <div key={c} className="tag">
-              <span>{c}</span>
-              <button
-                onClick={() => removeCompany(c)}
-                className="tag-icon-button"
-                aria-label="Entfernen"
-              >
-                <X className="tag-icon" />
-              </button>
-            </div>
+            <TagButton
+              key={c}
+              label={c}
+              variant={TagContext.Selected}
+              isFavorite={favorites.includes(c)}
+              onToggleFavorite={toggleFavoriteCompany}
+              onRemove={() => removeCompany(c)}
+              type="company"
+            />
           ))}
+        </div>
+      )}
+
+      {favorites.filter((f) => !value.includes(f)).length > 0 && (
+        <div>
+          <div className="flex items-center space-x-2 mb-2">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#9CA3AF"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polygon points="12 2 15 8.5 22 9.3 17 14 18.2 21 12 17.8 5.8 21 7 14 2 9.3 9 8.5 12 2" fill="none" />
+            </svg>
+            <h4 className="text-sm font-medium text-gray-700">Favoriten:</h4>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {favorites
+              .filter((f) => !value.includes(f))
+              .map((f) => (
+                <TagButton
+                  key={f}
+                  label={f}
+                  variant={TagContext.Favorites}
+                  isFavorite
+                  onClick={() => addCompany(f)}
+                  onRemove={() => toggleFavoriteCompany(f)}
+                  type="company"
+                />
+              ))}
+          </div>
         </div>
       )}
     </div>
