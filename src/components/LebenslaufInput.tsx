@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
-import TagSelectorWithFavorites from "./TagSelectorWithFavorites";
-import ZeitraumPicker from "./ZeitraumPicker";
-import TasksTagInput from "./TasksTagInput";
+import React, { useEffect, useState } from 'react';
+import ExperienceForm from './ExperienceForm';
+import ExperienceSection from './ExperienceSection';
 import {
   Berufserfahrung,
   useLebenslaufContext,
@@ -76,82 +75,20 @@ export default function LebenslaufInput() {
 
   return (
     <div className="space-y-8">
-      <section>
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
-          💼 Berufserfahrung
-        </h2>
-        <div className="border border-gray-300 rounded-lg p-4 bg-gray-50 space-y-2">
-          <ZeitraumPicker
-            value={{
-              startMonth: form.startMonth ?? undefined,
-              startYear: form.startYear ?? undefined,
-              endMonth: form.endMonth ?? undefined,
-              endYear: form.endYear ?? undefined,
-              isCurrent: form.isCurrent,
-            }}
-            onChange={(data) => {
-              updateField(
-                "startMonth",
-                data.startMonth !== undefined && data.startMonth !== null
-                  ? String(data.startMonth).padStart(2, "0")
-                  : null,
-              );
-              updateField(
-                "startYear",
-                data.startYear !== undefined && data.startYear !== null
-                  ? String(data.startYear)
-                  : "",
-              );
-              updateField(
-                "endMonth",
-                data.endMonth !== undefined && data.endMonth !== null
-                  ? String(data.endMonth).padStart(2, "0")
-                  : null,
-              );
-              updateField(
-                "endYear",
-                data.endYear !== undefined && data.endYear !== null
-                  ? String(data.endYear)
-                  : null,
-              );
-              updateField("isCurrent", data.isCurrent ?? false);
-            }}
-          />
-          <input
-            type="text"
-            placeholder="Firma"
-            className="w-full px-3 py-2 border rounded"
-            value={form.firma}
-            onChange={(e) => updateField("firma", e.target.value)}
-          />
-          <TagSelectorWithFavorites
-            label="Positionen"
-            value={selectedPositions}
-            onChange={(val) => {
-              setSelectedPositions(val);
-              updateField("position", val);
-            }}
-            options={[
-              "Projektmanager",
-              "Buchhalter",
-              "Verkäufer",
-              "Teamleiter",
-            ]}
-            allowCustom={true}
-          />
-          <TasksTagInput
-            value={form.aufgabenbereiche}
-            onChange={(val) => updateField("aufgabenbereiche", val)}
-            positionen={selectedPositions}
-          />
-        </div>
+      <ExperienceSection>
+        <ExperienceForm
+          form={form}
+          selectedPositions={selectedPositions}
+          onUpdateField={updateField}
+          onPositionsChange={setSelectedPositions}
+        />
         <button
-          className={`w-full border border-gray-300 bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-md hover:bg-gray-100 transition mt-4`}
+          className={`w-full border border-gray-300 bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-md hover:bg-gray-100 transition`}
           onClick={isEditingExperience ? handleUpdate : handleAdd}
         >
-          {isEditingExperience ? "Aktualisieren" : "Hinzufügen"}
+          {isEditingExperience ? 'Aktualisieren' : 'Hinzufügen'}
         </button>
-      </section>
+      </ExperienceSection>
     </div>
   );
 }
