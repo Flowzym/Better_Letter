@@ -38,17 +38,17 @@ export default function TagButton({
     variantClasses = 'bg-white text-gray-700 border-[#F29400]';
   }
 
-  const starSize = isFavorite ? 22 : 14;
-
   let starStroke = '#4B5563';
   let starFill = 'none';
 
   if (isFavorite) {
-    starStroke = '#F29400';
+    starStroke = '#FDE047';
     starFill = '#FDE047';
   } else if (variant === TagContext.Selected) {
-    starStroke = '#ffffff';
+    starStroke = '#FFFFFF';
   }
+
+  const starSize = isFavorite ? 20 : 14;
 
 
   const handleToggleFavorite = (e: React.MouseEvent) => {
@@ -80,31 +80,32 @@ export default function TagButton({
       >
         {label}
       </span>
-      <span
-        onClick={onToggleFavorite ? handleToggleFavorite : undefined}
-        className={`${onToggleFavorite ? 'cursor-pointer flex ml-auto' : 'flex ml-auto'} w-[14px] h-[14px]`}
-        role="button"
-        aria-label="Favorit"
-        title="Favorit"
-      >
-        <IconStar
-          size={starSize}
-          stroke={starStroke}
-          fill={starFill}
-          strokeWidth={2}
-          className="inline-block align-middle"
-        />
-      </span>
-      {onRemove && (
-        <button
-          type="button"
-          onClick={handleRemove}
-          aria-label="Entfernen"
-          className="ml-2"
+      <div className="ml-auto flex items-center gap-1.5">
+        <span
+          onClick={onToggleFavorite ? handleToggleFavorite : undefined}
+          className={onToggleFavorite ? 'cursor-pointer' : ''}
+          role="button"
+          aria-label="Favorit"
+          title="Favorit"
         >
-          <X className="w-3 h-3" />
-        </button>
-      )}
+          <IconStar
+            size={starSize}
+            stroke={starStroke}
+            fill={starFill}
+            strokeWidth={2}
+            className="inline-block align-middle"
+          />
+        </span>
+        {onRemove && (
+          <button
+            type="button"
+            onClick={handleRemove}
+            aria-label="Entfernen"
+          >
+            <X className="w-3 h-3" />
+          </button>
+        )}
+      </div>
     </button>
   );
 }
