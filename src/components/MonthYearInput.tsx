@@ -36,79 +36,30 @@ export default function MonthYearInput({ value = '', onChange }: MonthYearInputP
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
-  const formatInput = (
-    raw: string,
-    prev: string,
-    pos: number,
-    inputType: string
-  ) => {
-    const isDelete = inputType.startsWith('delete');
-    const hasSlash = raw.includes('/');
-    const digits = raw.replace(/\D/g, '').slice(0, 6);
-    const prevDigits = prev.replace(/\D/g, '');
-    let caret = pos;
-    let formatted = '';
-
-    if (isDelete) {
-      if (hasSlash) {
-        const [m, y] = raw.split('/');
-        const month = m.replace(/\D/g, '').slice(0, 2);
-        const year = y.replace(/\D/g, '').slice(0, 4);
-        formatted = month + (raw.includes('/') ? '/' : '') + year;
-      } else {
-        if (digits.length > 2) {
-          formatted = digits.slice(0, 2) + '/' + digits.slice(2);
-        } else {
-          formatted = digits;
-        }
-      }
-    } else {
-      if (digits.length <= 2) {
-        formatted = digits;
-        if (
-          digits.length === 2 &&
-          !hasSlash &&
-          prevDigits.length < 2
-        ) {
-          formatted += '/';
-          if (caret >= 2) caret += 1;
-        } else if (hasSlash) {
-          formatted += '/';
-        }
-      } else {
-        formatted = digits.slice(0, 2) + '/' + digits.slice(2);
-        if (!prev.includes('/') && caret > 2) caret += 1;
-      }
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let raw = e.target.value.replace(/[^0-9]/g, '');
+    if (raw.length === 0) {
+      setMonth('');
+      setYear('');
+      onChange?.('');
+      return;
     }
 
-    return { value: formatted, caret };
-  };
-
-  const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const input = e.target;
-    const pos = input.selectionStart ?? input.value.length;
-    const current = displayValue();
-    const { value: newVal, caret } = formatInput(
-      input.value,
-      current,
-      pos,
-      (e.nativeEvent as InputEvent).inputType || ''
-    );
-    const digits = newVal.replace(/\D/g, '');
-    let newMonth = '';
-    let newYear = '';
-    if (digits.length <= 2) {
-      newMonth = digits;
-    } else {
-      newMonth = digits.slice(0, 2);
-      newYear = digits.slice(2, 6);
+    if (raw.length <= 2 && Number(raw) >= 1 && Number(raw) <= 12) {
+      const m = raw.padStart(2, '0');
+      setMonth(m);
+      setYear('');
+      onChange?.(m + '/');
+      return;
     }
-    setMonth(newMonth);
-    setYear(newYear);
-    onChange?.(newVal);
-    setTimeout(() => {
-      textRef.current?.setSelectionRange(caret, caret);
-    }, 0);
+
+    if (raw.length >= 4) {
+      const m = raw.slice(0, 2);
+      const y = raw.slice(2, 6);
+      setMonth(m);
+      setYear(y);
+      onChange?.(`${m}/${y}`);
+    }
   };
 
   const handlePickerChange = (
@@ -182,7 +133,7 @@ export default function MonthYearInput({ value = '', onChange }: MonthYearInputP
         type="text"
         placeholder="MM/YYYY"
         value={displayValue()}
-        onChange={handleTextChange}
+        onChange={handleChange}
         onClick={handleClick}
         onFocus={handleFocus}
         onKeyDown={handleKeyDown}

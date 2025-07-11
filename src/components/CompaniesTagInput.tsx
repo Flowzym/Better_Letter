@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import CompanyTag from './CompanyTag';
 import TagButton from './TagButton';
 import TagContext from '../types/TagContext';
 import { useLebenslaufContext } from '../context/LebenslaufContext';
@@ -11,7 +12,8 @@ interface CompaniesTagInputProps {
 export default function CompaniesTagInput({ value, onChange }: CompaniesTagInputProps) {
   const [inputValue, setInputValue] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
-  const { favoriteCompanies: favorites, toggleFavoriteCompany } = useLebenslaufContext();
+  const { favoriteCompanies: favorites, toggleFavoriteCompany } =
+    useLebenslaufContext();
 
   const addCompany = (val?: string) => {
     const c = (val ?? inputValue).trim();
@@ -20,14 +22,12 @@ export default function CompaniesTagInput({ value, onChange }: CompaniesTagInput
     setInputValue('');
   };
 
-  const handleEditCompany = (label: string) => {
-    removeCompany(label);
-    setInputValue(label);
-    setTimeout(() => inputRef.current?.focus(), 0);
-  };
-
   const removeCompany = (c: string) => {
     onChange(value.filter((v) => v !== c));
+  };
+
+  const updateCompany = (oldVal: string, newVal: string) => {
+    onChange(value.map((v) => (v === oldVal ? newVal : v)));
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -51,15 +51,11 @@ export default function CompaniesTagInput({ value, onChange }: CompaniesTagInput
       {value.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {value.map((c) => (
-            <TagButton
+            <CompanyTag
               key={c}
               label={c}
-              variant={TagContext.Selected}
-              isFavorite={favorites.includes(c)}
-              onToggleFavorite={toggleFavoriteCompany}
               onRemove={() => removeCompany(c)}
-              onEdit={() => handleEditCompany(c)}
-              type="company"
+              onEdit={(val) => updateCompany(c, val)}
             />
           ))}
         </div>
