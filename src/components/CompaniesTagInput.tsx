@@ -85,7 +85,7 @@ export default function CompaniesTagInput({ value, onChange }: CompaniesTagInput
                 <TagButton
                   key={f}
                   label={f}
-                  variant={TagContext.Favorites}
+                  variant={TagContext.Favorite}
                   isFavorite
                   onClick={() => addCompany(f)}
                   onRemove={() => toggleFavoriteCompany(f)}

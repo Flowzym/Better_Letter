@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { Settings } from 'lucide-react';
 import SettingsPage from './components/SettingsPage';
+import StyleTest from './pages/StyleTest';
 import TabNavigation from './components/layout/TabNavigation';
 import InputColumns from './components/layout/InputColumns';
 import DocumentTypeBlock from './components/layout/DocumentTypeBlock';
@@ -561,6 +562,7 @@ function App() {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/settings" element={<SettingsPage />} />
+      <Route path="/style-test" element={<StyleTest />} />
     </Routes>
   );
 }
