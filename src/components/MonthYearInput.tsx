@@ -176,7 +176,23 @@ export default function MonthYearInput({ value = '', onChange }: MonthYearInputP
         onChange={handleChange}
         onMouseUp={handleMouseUp}
         onFocus={handleFocus}
-        onKeyDown={handleKeyDown}
+        onKeyDown={(e) => {
+          if (e.key === 'Backspace') {
+            const caret = textRef.current?.selectionStart ?? 0;
+            const sel = (textRef.current?.selectionEnd ?? caret) - caret;
+
+            if (caret <= 2 || sel > 0) {
+              e.preventDefault();
+              setMonth('');
+              const newVal = year ? '/' + year : '';
+              setIsInvalid(!(isMonth('') && isYear(year)));
+              onChange?.(newVal);
+              setTimeout(() => textRef.current?.setSelectionRange(0, 0));
+              return;
+            }
+          }
+          handleKeyDown(e);
+        }}
         ref={textRef}
         inputMode="numeric"
         pattern="\d{2}/\d{4}"
