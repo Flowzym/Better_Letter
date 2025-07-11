@@ -1,110 +1,133 @@
-import React, { useEffect, useRef, useState, ChangeEvent, KeyboardEvent } from 'react';
+import { useState, useRef } from 'react';
 
-interface MonthYearInputProps {
-  value?: string;
-  onChange?: (value: string) => void;
-  placeholder?: string;
-  className?: string;
-}
+export default function MonthYearInput() {
+  const [value, setValue] = useState('');
+  const textRef = useRef<HTMLInputElement>(null);
+  const pickerRef = useRef<HTMLInputElement>(null);
 
-function formatValue(raw: string): string {
-  const digits = raw.replace(/\D/g, '').slice(0, 6);
-  if (digits.length <= 2) {
-    return digits;
-  }
-  return `${digits.slice(0, 2)}/${digits.slice(2)}`;
-}
+  const formatInput = (
+    raw: string,
+    prev: string,
+    pos: number,
+    inputType: string
+  ) => {
+    const isDelete = inputType.startsWith('delete');
+    const hasSlash = raw.includes('/');
+    const digits = raw.replace(/\D/g, '').slice(0, 6);
+    const prevDigits = prev.replace(/\D/g, '');
+    let caret = pos;
+    let formatted = '';
 
-function isValid(val: string): boolean {
-  const match = /^(\d{2})\/(\d{4})$/.exec(val);
-  if (!match) return false;
-  const month = parseInt(match[1], 10);
-  return month >= 1 && month <= 12;
-}
-
-export default function MonthYearInput({
-  value = '',
-  onChange,
-  placeholder = 'MM/JJJJ',
-  className = '',
-}: MonthYearInputProps) {
-  const [internal, setInternal] = useState(formatValue(value));
-  const inputRef = useRef<HTMLInputElement>(null);
-  const prevDigitsRef = useRef<string>(internal.replace(/\D/g, ''));
-  const [valid, setValid] = useState(isValid(internal));
-
-  useEffect(() => {
-    if (value !== internal) {
-      setInternal(formatValue(value));
-    }
-  }, [value]);
-
-  useEffect(() => {
-    setValid(isValid(internal));
-  }, [internal]);
-
-  const setCursorSection = (section: 'month' | 'year') => {
-    const input = inputRef.current;
-    if (!input) return;
-    if (section === 'month') {
-      input.setSelectionRange(0, Math.min(2, input.value.length));
+    if (isDelete) {
+      if (hasSlash) {
+        const [m, y] = raw.split('/');
+        const month = m.replace(/\D/g, '').slice(0, 2);
+        const year = y.replace(/\D/g, '').slice(0, 4);
+        formatted = month + (raw.includes('/') ? '/' : '') + year;
+      } else {
+        if (digits.length > 2) {
+          formatted = digits.slice(0, 2) + '/' + digits.slice(2);
+        } else {
+          formatted = digits;
+        }
+      }
     } else {
-      input.setSelectionRange(3, input.value.length);
+      if (digits.length <= 2) {
+        formatted = digits;
+        if (
+          digits.length === 2 &&
+          !hasSlash &&
+          prevDigits.length < 2
+        ) {
+          formatted += '/';
+          if (caret >= 2) caret += 1;
+        } else if (hasSlash) {
+          formatted += '/';
+        }
+      } else {
+        formatted = digits.slice(0, 2) + '/' + digits.slice(2);
+        if (!prev.includes('/') && caret > 2) caret += 1;
+      }
+    }
+
+    return { value: formatted, caret };
+  };
+
+  const handleTextChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const input = e.target;
+    const pos = input.selectionStart ?? input.value.length;
+    const { value: newVal, caret } = formatInput(
+      input.value,
+      value,
+      pos,
+      (e.nativeEvent as InputEvent).inputType || ''
+    );
+    setValue(newVal);
+    setTimeout(() => {
+      textRef.current?.setSelectionRange(caret, caret);
+    }, 0);
+  };
+
+  const handlePickerChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const [year, month] = e.target.value.split('-');
+    if (year && month) {
+      const formatted = `${month}/${year}`;
+      setValue(formatted);
+      textRef.current?.focus();
+      setTimeout(() => {
+        const p = formatted.length;
+        textRef.current?.setSelectionRange(p, p);
+      }, 0);
     }
   };
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatValue(e.target.value);
-    const digits = formatted.replace(/\D/g, '');
-    const prev = prevDigitsRef.current;
-    prevDigitsRef.current = digits;
-    setInternal(formatted);
-    if (onChange) onChange(formatted);
-    if (digits.length === 2 && prev.length < 2) {
-      setTimeout(() => setCursorSection('year'), 0);
-    }
+  const openPicker = () => {
+    pickerRef.current?.showPicker();
   };
 
   const handleClick = () => {
-    const pos = inputRef.current?.selectionStart ?? 0;
-    if (pos <= 2) setCursorSection('month');
-    else setCursorSection('year');
-  };
-
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === '/') {
-      e.preventDefault();
-      return;
-    }
-    if (e.key === 'ArrowRight') {
-      const pos = inputRef.current?.selectionStart ?? 0;
-      if (pos <= 2 && internal.length >= 7) {
-        e.preventDefault();
-        setCursorSection('year');
-      }
-    } else if (e.key === 'ArrowLeft') {
-      const pos = inputRef.current?.selectionStart ?? 0;
-      if (pos >= 3) {
-        e.preventDefault();
-        setCursorSection('month');
-      }
+    const input = textRef.current;
+    if (!input) return;
+    const pos = input.selectionStart ?? 0;
+    if (pos <= 2) {
+      setTimeout(() => input.setSelectionRange(0, 2), 0);
+    } else {
+      setTimeout(() => input.setSelectionRange(3, 7), 0);
     }
   };
 
   return (
-    <input
-      ref={inputRef}
-      type="text"
-      className={`px-2 py-1 border rounded-md focus:outline-none focus:ring-2 ${className} ${
-        valid || internal === '' ? '' : 'border-red-500'
-      }`}
-      style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
-      placeholder={placeholder}
-      value={internal}
-      onChange={handleChange}
-      onClick={handleClick}
-      onFocus={handleClick}
-      onKeyDown={handleKeyDown}
-    />
+    <div className="relative inline-flex items-center">
+      <input
+        type="text"
+        placeholder="MM/YYYY"
+        value={value}
+        onChange={handleTextChange}
+        onClick={handleClick}
+        ref={textRef}
+        inputMode="numeric"
+        pattern="\d{2}/\d{4}"
+        maxLength={7}
+        className="border px-2 py-1 rounded w-28"
+      />
+      <button
+        type="button"
+        onClick={openPicker}
+        className="absolute right-1 text-gray-500"
+      >
+        &#x1F4C5;
+      </button>
+      <input
+        type="month"
+        ref={pickerRef}
+        onChange={handlePickerChange}
+        style={{ position: 'absolute', left: '-9999px' }}
+      />
+    </div>
   );
 }
+
