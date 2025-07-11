@@ -179,14 +179,10 @@ export default function MonthYearInput({ value = '', onChange }: MonthYearInputP
         onKeyDown={(e) => {
           if (e.key === 'Backspace') {
             const caret = textRef.current?.selectionStart ?? 0;
-            const sel = (textRef.current?.selectionEnd ?? caret) - caret;
-
-            if (caret <= 2 || sel > 0) {
+            if (caret < 2 && month) {
               e.preventDefault();
               setMonth('');
-              const newVal = year ? '/' + year : '';
-              setIsInvalid(!(isMonth('') && isYear(year)));
-              onChange?.(newVal);
+              onChange?.(year ? year : '');
               setTimeout(() => textRef.current?.setSelectionRange(0, 0));
               return;
             }
