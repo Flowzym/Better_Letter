@@ -262,7 +262,7 @@ export default function MonthYearInputBase({
           setInternalValue(newValue);
           onChange(newValue);
           
-          // Cursor nach der ersten Ziffer positionieren, NICHT ans Ende
+          // Cursor nach der ersten Ziffer positionieren
           setTimeout(() => {
             if (inputRef.current) {
               inputRef.current.setSelectionRange(1, 1);
@@ -305,6 +305,21 @@ export default function MonthYearInputBase({
         return;
       }
     }
+    
+    // Nach normaler Eingabe prüfen ob Jahr markiert werden soll
+    setTimeout(() => {
+      if (inputRef.current) {
+        const currentVal = inputRef.current.value;
+        if (currentVal.includes('/')) {
+          const slashPos = currentVal.indexOf('/');
+          const monthPart = currentVal.substring(0, slashPos);
+          // Wenn Monat jetzt 2-stellig und gültig ist, Jahr markieren
+          if (monthPart.length === 2 && isValidTwoDigitMonth(monthPart)) {
+            inputRef.current.setSelectionRange(slashPos + 1, currentVal.length);
+          }
+        }
+      }
+    }, 10);
     
     // Externe KeyDown-Handler aufrufen
     onKeyDown?.(e);
