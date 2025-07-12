@@ -59,7 +59,7 @@ export default function MonthYearInput({ value, onChange }: MonthYearInputProps)
       onChange={handleChange}
       onBlur={handleBlur}
       onKeyDown={handleKeyDown}
-      className="w-20"
+      className="w-20 placeholder:text-sm"
     />
   );
 }
