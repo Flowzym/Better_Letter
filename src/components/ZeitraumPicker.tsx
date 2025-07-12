@@ -332,7 +332,7 @@ export default function ZeitraumPicker({
           className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 z-50"
           ref={popupRef}
         >
-          <div className="grid grid-cols-3 gap-x-2 items-start">
+          <div className="grid grid-cols-3 gap-x-4 items-start">
             <div className="flex flex-col space-y-2">
               {months.slice(0, 6).map((m) => {
                 const selected =
@@ -375,7 +375,7 @@ export default function ZeitraumPicker({
                   <button
                     key={y}
                     onMouseDown={() => handleYearSelect(y)}
-                    className={`px-2 py-1 h-8 text-left border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 ${selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"}`}
+                  className={`px-2 py-1 h-8 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 ${selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"}`}
                   >
                     {y}
                   </button>

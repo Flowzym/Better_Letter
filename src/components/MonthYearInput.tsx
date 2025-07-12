@@ -1,118 +1,127 @@
 import { useState, useEffect, useRef } from 'react';
 
 interface MonthYearInputProps {
-  value?: string;
-  onChange?: (value: string) => void;
+  value: string;
+  onChange: (val: string) => void;
 }
 
-export default function MonthYearInput({ value = '', onChange }: MonthYearInputProps) {
+const isValidMonth = (m: string) => /^(0[1-9]|1[0-2])$/.test(m);
+const isValidYear = (y: string) => /^(19(5[5-9]|[6-9]\d)|20([0-4]\d|5[0-5]))$/.test(y);
+
+export default function MonthYearInput({ value, onChange }: MonthYearInputProps) {
   const [month, setMonth] = useState('');
   const [year, setYear] = useState('');
-  const [invalid, setInvalid] = useState(false);
-  const monthRef = useRef<HTMLInputElement>(null);
-  const yearRef = useRef<HTMLInputElement>(null);
-  const pickerRef = useRef<HTMLInputElement>(null);
-
-  const isMonth = (m: string) => /^(0[1-9]|1[0-2])$/.test(m);
-  const isYear = (y: string) => /^(19(5[5-9]|[6-9]\d)|20([0-4]\d|5[0-5]))$/.test(y);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const match = value.match(/^(\d{2})\/(\d{4})$/);
     if (match) {
       setMonth(match[1]);
       setYear(match[2]);
-      setInvalid(!(isMonth(match[1]) && isYear(match[2])));
-    } else if (/^\d{4}$/.test(value)) {
-      setMonth('');
-      setYear(value);
-      setInvalid(!isYear(value));
     } else {
       setMonth('');
       setYear('');
-      setInvalid(false);
     }
   }, [value]);
 
-  const emit = (m: string, y: string) => {
-    if (!onChange) return;
-    if (m && y) {
-      onChange(`${m}/${y}`);
-    } else if (y) {
-      onChange(y);
-    } else if (m) {
-      onChange(m);
+  const formatValue = (raw: string) => {
+    const digits = raw.replace(/\D/g, '').slice(0, 6);
+    let m = '';
+    let y = '';
+
+    if (digits.length >= 2 && isValidMonth(digits.slice(0, 2))) {
+      m = digits.slice(0, 2);
+      y = digits.slice(2);
     } else {
-      onChange('');
+      y = digits;
+    }
+
+    if (y.length > 4) y = y.slice(0, 4);
+
+    const numYear = Number(y);
+    if (y.length === 4 && !isValidYear(y)) {
+      if (numYear < 1955) y = '1955';
+      if (numYear > 2055) y = '2055';
+    }
+
+    return m ? m + (y ? `/${y}` : '/') : y;
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target;
+    const pos = input.selectionStart ?? input.value.length;
+    const formatted = formatValue(input.value);
+    onChange(formatted);
+    const match = formatted.match(/^(\d{2})\/?(\d*)$/);
+    if (match) {
+      setMonth(match[1]);
+      setYear(match[2]);
+    } else if (/^\d{4}$/.test(formatted)) {
+      setMonth('');
+      setYear(formatted);
+    } else {
+      setMonth('');
+      setYear('');
+    }
+
+    setTimeout(() => {
+      if (inputRef.current) {
+        let caret = pos;
+        const hadSlash = value.includes('/');
+        const hasSlash = formatted.includes('/');
+        if (!hadSlash && hasSlash && pos > 2) caret += 1;
+        if (hadSlash && !hasSlash && pos > 2) caret -= 1;
+        inputRef.current.setSelectionRange(caret, caret);
+      }
+    }, 0);
+  };
+
+  const selectSection = () => {
+    const input = inputRef.current;
+    if (!input) return;
+    const pos = input.selectionStart ?? 0;
+    if (value.includes('/') && pos <= 2) {
+      setTimeout(() => input.setSelectionRange(0, 2), 0);
+    } else if (value.includes('/')) {
+      setTimeout(() => input.setSelectionRange(3, value.length), 0);
+    } else {
+      setTimeout(() => input.setSelectionRange(0, value.length), 0);
     }
   };
 
-  const handleMonthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let val = e.target.value.replace(/\D/g, '').slice(0, 2);
-    setMonth(val);
-    if (val.length === 2 && isMonth(val)) {
-      yearRef.current?.focus();
-    }
-    setInvalid(!(isMonth(val) && isYear(year)));
-    emit(val, year);
-  };
-
-  const handleYearChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let val = e.target.value.replace(/\D/g, '').slice(0, 4);
-    if (val) {
-      let num = parseInt(val, 10);
-      if (num < 1955) num = 1955;
-      if (num > 2055) num = 2055;
-      val = String(num).slice(0, 4);
-    }
-    setYear(val);
-    setInvalid(!(isMonth(month) && isYear(val)));
-    emit(month, val);
-  };
-
-  const handlePickerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const [y, m] = e.target.value.split('-');
-    if (y && m) {
-      setMonth(m);
-      setYear(y);
-      setInvalid(!(isMonth(m) && isYear(y)));
-      onChange?.(`${m}/${y}`);
-      yearRef.current?.focus();
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key !== 'Backspace') return;
+    const input = inputRef.current;
+    if (!input) return;
+    const start = input.selectionStart ?? 0;
+    const end = input.selectionEnd ?? 0;
+    if (value.includes('/') && start === 0 && end === 2) {
+      onChange(year);
+      setMonth('');
+      setTimeout(() => input.setSelectionRange(0, year.length), 0);
+      e.preventDefault();
+    } else if (value.includes('/') && start === 3 && end === value.length) {
+      onChange(month + '/');
+      setYear('');
+      setTimeout(() => input.setSelectionRange(0, 2), 0);
+      e.preventDefault();
     }
   };
 
   return (
-    <div className="relative inline-flex items-center gap-1">
-      <input
-        ref={monthRef}
-        type="text"
-        placeholder="MM"
-        value={month}
-        onChange={handleMonthChange}
-        inputMode="numeric"
-        className={`border rounded w-12 px-1 text-center ${invalid ? 'border-red-500' : 'border-gray-300'}`}
-      />
-      <input
-        ref={yearRef}
-        type="text"
-        placeholder="YYYY"
-        value={year}
-        onChange={handleYearChange}
-        inputMode="numeric"
-        className={`border rounded w-16 px-1 text-center ${invalid ? 'border-red-500' : 'border-gray-300'}`}
-      />
-      <button
-        type="button"
-        onClick={() => pickerRef.current?.showPicker()}
-        className="absolute right-1 text-gray-500"
-      >
-        &#x1F4C5;
-      </button>
-      <input
-        ref={pickerRef}
-        type="month"
-        onChange={handlePickerChange}
-        style={{ position: 'absolute', left: '-9999px' }}
-      />
-    </div>
+    <input
+      ref={inputRef}
+      type="text"
+      placeholder="MM/YYYY"
+      value={value}
+      onChange={handleChange}
+      onClick={selectSection}
+      onFocus={selectSection}
+      onKeyDown={handleKeyDown}
+      inputMode="numeric"
+      pattern="\d{2}/\d{4}"
+      maxLength={7}
+      className="border px-2 py-1 rounded w-28"
+    />
   );
 }

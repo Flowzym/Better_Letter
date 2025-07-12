@@ -1,5 +1,5 @@
-import { X } from 'lucide-react';
-import IconStar from '../IconStar';
+import React from 'react';
+import TagButton from '../TagButton';
 
 interface TagButtonFavoriteProps {
   label: string;
@@ -8,22 +8,13 @@ interface TagButtonFavoriteProps {
 }
 
 export default function TagButtonFavorite({ label, onClick, onRemove }: TagButtonFavoriteProps) {
-  const handleRemove = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onRemove?.();
-  };
-
   return (
-    <button type="button" onClick={onClick} className="tag-button-favorite flex justify-between items-center gap-1">
-      <span className="flex items-center gap-1">
-        {label}
-        <IconStar size={16} fill="#FDE047" stroke="#FDE047" />
-      </span>
-      {onRemove && (
-        <button type="button" onClick={handleRemove} aria-label="Entfernen" className="text-gray-600">
-          <X className="w-3 h-3" />
-        </button>
-      )}
-    </button>
+    <TagButton
+      label={label}
+      variant="favorite"
+      isFavorite
+      onClick={onClick}
+      onRemove={onRemove}
+    />
   );
 }
