@@ -223,7 +223,9 @@ async function loadProfileSuggestions(
     ausbildung: [],
   };
 
-  for (const m of mappings.filter((m) => m.isActive)) {
+  const validCategories: (keyof ProfileConfig)[] = ['berufe', 'taetigkeiten', 'skills', 'softskills', 'ausbildung'];
+  
+  for (const m of mappings.filter((m) => m.isActive && validCategories.includes(m.category as keyof ProfileConfig))) {
     try {
       const { data } = await supabase.from(m.tableName).select(m.columnName);
       const values = (data as Record<string, unknown>[]).map((r) =>
