@@ -33,7 +33,8 @@ export function isValidYear(year: string): boolean {
  * @param input - Die neue Eingabe
  * @param oldValue - Der vorherige Wert (für Kontext)
  * @param selectionStart - Cursor-Position vor der Änderung
- */
+  selectionStart?: number,
+  selectionEnd?: number
 export function parseMonthYearInput(input: string, oldValue?: string, selectionStart?: number): ParsedMonthYear {
   // Nur Ziffern extrahieren, maximal 6 Zeichen
   const digits = input.replace(/\D/g, '').slice(0, 6);
@@ -47,49 +48,42 @@ export function parseMonthYearInput(input: string, oldValue?: string, selectionS
     return { formatted: '', isValid: false, shouldMoveCursor: false };
   }
   
+  // ✅ KORRIGIERT: Präzise Erkennung einer Monat-Markierung
+  const wasMonthSelected = oldValue && oldValue.includes('/') && 
+    selectionStart !== undefined && selectionEnd !== undefined &&
+    selectionStart === 0 && selectionEnd === 2;
+  
   // Spezialfall: Monat wurde markiert und einzelne Ziffer eingegeben
-  if (oldValue && oldValue.includes('/') && selectionStart !== undefined && selectionStart <= 2) {
+  if (wasMonthSelected && digits.length === 1) {
     const oldParts = oldValue.split('/');
     const oldYear = oldParts[1] || '';
     
-    // Wenn nur eine Ziffer eingegeben wurde (Monat wird bearbeitet)
-    if (digits.length === 1) {
-      month = digits + '.';
-      year = oldYear;
-      formatted = `${month}/${year}`;
-      return { month, year, formatted, isValid: false, shouldMoveCursor: false };
-    }
-    
-    // Wenn zwei Ziffern eingegeben wurden (vollständiger Monat)
-    if (digits.length === 2) {
-      const num = parseInt(digits, 10);
-      if (num >= 1 && num <= 12) {
-        month = digits;
-        year = oldYear;
-        formatted = `${month}/${year}`;
-        return { month, year, formatted, isValid: true, shouldMoveCursor: true };
-      } else {
-        // Ungültiger Monat - behandle als Jahr
-        year = digits;
-        formatted = digits;
-        return { year, formatted, isValid: false, shouldMoveCursor: false };
-      }
-    }
+    // Einzelne Ziffer bei markiertem Monat → Platzhalter
+    month = digits + '.';
+    year = oldYear;
+    formatted = `${month}/${year}`;
+    return { month, year, formatted, isValid: false, shouldMoveCursor: false };
   }
   
-  // Spezialfall: Platzhalter wird vervollständigt (z.B. "1." → "11")
+  // ✅ KORRIGIERT: Platzhalter wird vervollständigt (z.B. "1." → "11")
   if (oldValue && oldValue.includes('.') && oldValue.includes('/')) {
     const oldParts = oldValue.split('/');
     const oldMonthPart = oldParts[0]; // z.B. "1."
     const oldYear = oldParts[1] || '';
     
-    if (oldMonthPart.includes('.') && digits.length === 2) {
+    // Wenn der alte Monat einen Platzhalter hatte und jetzt 2 Ziffern eingegeben wurden
+    if (oldMonthPart.includes('.') && digits.length >= 2) {
       const num = parseInt(digits, 10);
       if (num >= 1 && num <= 12) {
         month = digits.padStart(2, '0');
         year = oldYear;
         formatted = `${month}/${year}`;
         return { month, year, formatted, isValid: true, shouldMoveCursor: true };
+      } else {
+        // Ungültiger Monat → als Jahr behandeln
+        year = digits.slice(0, 4);
+        formatted = year;
+        return { year, formatted, isValid: false, shouldMoveCursor: false };
       }
     }
   }
