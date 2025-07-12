@@ -79,7 +79,7 @@ export default function TasksTagInput({
         value={inputValue}
         onChange={setInputValue}
         onAdd={addTask}
-        onAddFavorite={handleAddFavoriteInput}
+        onFavorite={handleAddFavoriteInput}
         placeholder="Hinzufügen..."
       />
 
