@@ -1,6 +1,6 @@
 /**
  * Utilities für Datumseingabe und -validierung
- * Konsolidiert die Parsing/Validierung aus MonthYearInput und MonthYearPicker
+ * Vereinfachte und robuste Implementierung
  */
 
 export interface ParsedMonthYear {
@@ -8,7 +8,7 @@ export interface ParsedMonthYear {
   year?: string;
   formatted: string;
   isValid: boolean;
-  shouldMoveCursor?: boolean;
+  isComplete: boolean;
 }
 
 /**
@@ -31,68 +31,94 @@ export function isValidYear(year: string): boolean {
 
 /**
  * Parst eine MM/YYYY Eingabe und gibt strukturierte Daten zurück
- * @param input - Die neue Eingabe
- * @param oldValue - Der vorherige Wert (für Kontext)
+ * @param input - Die Eingabe des Benutzers
  */
-export function parseMonthYearInput(input: string, oldValue?: string): ParsedMonthYear {
-  // Nur Ziffern, Schrägstriche und Punkte zulassen
-  const cleanedInput = input.replace(/[^\d/.]/g, '');
+export function parseMonthYearInput(input: string): ParsedMonthYear {
+  // Nur Ziffern und Schrägstriche zulassen
+  const cleaned = input.replace(/[^\d/]/g, '');
+  
+  if (cleaned.length === 0) {
+    return { formatted: '', isValid: false, isComplete: false };
+  }
   
   let month: string | undefined;
   let year: string | undefined;
   let formatted: string = '';
-  let shouldMoveCursor = false;
   let isValid = false;
+  let isComplete = false;
   
-  if (cleanedInput.length === 0) {
-    return { formatted: '', isValid: false };
-  }
+  // Aufteilen bei Schrägstrich
+  const parts = cleaned.split('/');
+  const monthPart = parts[0];
+  const yearPart = parts[1];
   
-  // --- Special handling for placeholder (e.g., "1." for single digit month) ---
-  const parts = cleanedInput.split('/');
-  let monthPart = parts[0];
-  let yearPart = parts[1];
-
-  // Normal parsing logic for month
-  if (monthPart.length === 2 && isValidMonth(monthPart)) {
-    month = monthPart;
-  } else if (monthPart.length === 1 && parseInt(monthPart, 10) > 1) { // e.g., user types '2', assume '02'
-    month = '0' + monthPart;
-  } else if (monthPart.length > 2) { // If more than 2 digits, assume it's part of the year or invalid month
-    yearPart = monthPart; // Treat monthPart as year
-    month = undefined;
-  }
-
-  // Normal parsing logic for year
-  if (yearPart && yearPart.length <= 4) {
-    year = yearPart;
-  } else if (monthPart && monthPart.length <= 4 && !month) { // If month is not valid, treat monthPart as year
-    year = monthPart;
-    month = undefined;
-  }
-
-  // Construct formatted string
-  if (month && year) {
-    formatted = `${month}/${year}`;
-    isValid = isValidMonth(month) && isValidYear(year);
-  } else if (month) {
-    formatted = `${month}/`;
-    isValid = isValidMonth(month);
-    shouldMoveCursor = true; // Suggest moving cursor after '/'
-  } else if (year) {
-    formatted = year;
-    isValid = isValidYear(year);
-  }
-
-  // Final validation for year range
-  if (year && year.length === 4) {
-    const numYear = parseInt(year, 10);
-    if (numYear < 1900 || numYear > 2099) {
-      isValid = false; // Year out of range
+  // Fall 1: Nur Ziffern ohne Schrägstrich
+  if (parts.length === 1) {
+    const digits = monthPart;
+    
+    if (digits.length <= 2) {
+      // 1-2 Ziffern: könnte Monat sein
+      if (digits.length === 1) {
+        const num = parseInt(digits, 10);
+        if (num >= 1 && num <= 9) {
+          month = digits; // Noch nicht formatiert
+          formatted = digits;
+          isValid = true;
+          isComplete = false;
+        }
+      } else if (digits.length === 2) {
+        const num = parseInt(digits, 10);
+        if (num >= 1 && num <= 12) {
+          month = digits;
+          formatted = digits + '/';
+          isValid = true;
+          isComplete = false;
+        } else if (num >= 13 && num <= 99) {
+          // Könnte Anfang eines Jahres sein
+          year = digits;
+          formatted = digits;
+          isValid = true;
+          isComplete = false;
+        }
+      }
+    } else if (digits.length <= 4) {
+      // 3-4 Ziffern: wahrscheinlich Jahr
+      year = digits;
+      formatted = digits;
+      isValid = digits.length === 4 ? isValidYear(digits) : true;
+      isComplete = digits.length === 4 && isValidYear(digits);
     }
   }
-
-  return { month, year, formatted, isValid, shouldMoveCursor };
+  
+  // Fall 2: Mit Schrägstrich
+  else if (parts.length === 2) {
+    if (monthPart.length > 0 && monthPart.length <= 2) {
+      const monthNum = parseInt(monthPart, 10);
+      if (monthNum >= 1 && monthNum <= 12) {
+        month = monthPart.length === 1 ? '0' + monthPart : monthPart;
+      }
+    }
+    
+    if (yearPart && yearPart.length > 0 && yearPart.length <= 4) {
+      year = yearPart;
+    }
+    
+    if (month && year) {
+      formatted = `${month}/${year}`;
+      isValid = isValidMonth(month) && (year.length === 4 ? isValidYear(year) : true);
+      isComplete = isValidMonth(month) && year.length === 4 && isValidYear(year);
+    } else if (month) {
+      formatted = `${month}/`;
+      isValid = true;
+      isComplete = false;
+    } else if (yearPart) {
+      formatted = `/${yearPart}`;
+      isValid = false;
+      isComplete = false;
+    }
+  }
+  
+  return { month, year, formatted, isValid, isComplete };
 }
 
 /**
@@ -100,48 +126,15 @@ export function parseMonthYearInput(input: string, oldValue?: string): ParsedMon
  */
 export function formatMonthYear(month?: string, year?: string): string {
   if (month && year) {
-    return `${month}/${year}`;
+    const formattedMonth = month.length === 1 ? '0' + month : month;
+    return `${formattedMonth}/${year}`;
   }
   if (year) {
     return year;
   }
   if (month) {
-    return `${month}/`;
+    const formattedMonth = month.length === 1 ? '0' + month : month;
+    return `${formattedMonth}/`;
   }
   return '';
-}
-
-/**
- * Berechnet die neue Cursor-Position nach Formatierung
- */
-export function calculateCursorPosition(
-  oldValue: string,
-  newValue: string,
-  oldPosition: number,
-  shouldMoveCursor: boolean = false
-): number {
-  // If explicitly move cursor (e.g., after "/" for month)
-  if (shouldMoveCursor && newValue.includes('/') && !oldValue.includes('/')) {
-    return newValue.indexOf('/') + 1; // Cursor after '/'
-  }
-
-  // If a slash was added and cursor was after month part
-  const hadSlash = oldValue.includes('/');
-  const hasSlash = newValue.includes('/');
-
-  if (!hadSlash && hasSlash && oldPosition > 2) {
-    return oldPosition + 1;
-  }
-
-  // If a slash was removed
-  if (hadSlash && !hasSlash && oldPosition > 2) {
-    return oldPosition - 1;
-  }
-
-  // Handle placeholder dot
-  if (newValue.includes('./') && !oldValue.includes('./')) {
-    return newValue.indexOf('.') + 1; // Cursor after '.'
-  }
-
-  return Math.min(oldPosition, newValue.length);
 }

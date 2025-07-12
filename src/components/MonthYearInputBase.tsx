@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { parseMonthYearInput, isValidMonth, isValidYear } from '../utils/dateUtils';
 
 interface MonthYearInputBaseProps {
   value: string;
@@ -13,7 +14,7 @@ interface MonthYearInputBaseProps {
 
 /**
  * Basis-Komponente für Monat/Jahr-Eingabe
- * Einfache, robuste Implementierung ohne komplexe Parsing-Logik
+ * Robuste Implementierung mit intelligenter Cursor-Positionierung
  */
 export default function MonthYearInputBase({
   value,
@@ -29,14 +30,121 @@ export default function MonthYearInputBase({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
+    const input = inputRef.current;
+    if (!input) return;
+
+    // Aktuelle Cursor-Position merken
+    const cursorPos = input.selectionStart ?? 0;
+    const oldLength = value.length;
+    const newLength = newValue.length;
     
-    // Einfache Formatierung: nur Ziffern und Schrägstrich erlauben
-    const cleaned = newValue.replace(/[^\d/]/g, '');
+    // Parse den neuen Wert
+    const parsed = parseMonthYearInput(newValue);
     
-    // Maximal 7 Zeichen (MM/YYYY)
-    const limited = cleaned.slice(0, 7);
+    // Bestimme neue Cursor-Position
+    let newCursorPos = cursorPos;
     
-    onChange(limited);
+    // Wenn Text länger wurde (Zeichen hinzugefügt)
+    if (newLength > oldLength) {
+      const diff = newLength - oldLength;
+      
+      // Wenn ein Schrägstrich automatisch hinzugefügt wurde
+      if (parsed.formatted.includes('/') && !value.includes('/')) {
+        // Cursor nach dem Schrägstrich positionieren
+        newCursorPos = parsed.formatted.indexOf('/') + 1;
+      } else {
+        // Normale Eingabe: Cursor um die Anzahl der hinzugefügten Zeichen verschieben
+        newCursorPos = cursorPos + diff;
+      }
+    }
+    // Wenn Text kürzer wurde (Zeichen gelöscht)
+    else if (newLength < oldLength) {
+      // Cursor-Position beibehalten oder anpassen
+      newCursorPos = Math.min(cursorPos, parsed.formatted.length);
+    }
+    
+    // Wert aktualisieren
+    onChange(parsed.formatted);
+    
+    // Cursor-Position setzen
+    setTimeout(() => {
+      if (inputRef.current) {
+        const finalPos = Math.min(newCursorPos, parsed.formatted.length);
+        inputRef.current.setSelectionRange(finalPos, finalPos);
+      }
+    }, 0);
+  };
+
+  const handleClick = () => {
+    const input = inputRef.current;
+    if (!input) return;
+    
+    const pos = input.selectionStart ?? 0;
+    
+    // Intelligente Selektion basierend auf Position und Inhalt
+    if (value.includes('/')) {
+      const slashPos = value.indexOf('/');
+      if (pos <= slashPos) {
+        // Monat selektieren (MM)
+        setTimeout(() => input.setSelectionRange(0, slashPos), 0);
+      } else {
+        // Jahr selektieren (YYYY)
+        setTimeout(() => input.setSelectionRange(slashPos + 1, value.length), 0);
+      }
+    } else if (value.length === 4 && isValidYear(value)) {
+      // Nur Jahr vorhanden: ganzes Jahr selektieren
+      setTimeout(() => input.setSelectionRange(0, value.length), 0);
+    } else if (value.length <= 2) {
+      // Nur Monat vorhanden: ganzen Monat selektieren
+      setTimeout(() => input.setSelectionRange(0, value.length), 0);
+    } else {
+      // Fallback: alles selektieren
+      setTimeout(() => input.setSelectionRange(0, value.length), 0);
+    }
+  };
+
+  const handleBlur = () => {
+    // Beim Verlassen des Feldes: Wert validieren und formatieren
+    const parsed = parseMonthYearInput(value);
+    
+    if (parsed.month && !parsed.year) {
+      // Nur Monat eingegeben: führende Null hinzufügen wenn nötig
+      const formattedMonth = parsed.month.length === 1 ? '0' + parsed.month : parsed.month;
+      if (isValidMonth(formattedMonth)) {
+        onChange(formattedMonth);
+      } else {
+        // Ungültiger Monat: löschen
+        onChange('');
+      }
+    } else if (parsed.year && !parsed.month) {
+      // Nur Jahr eingegeben: beibehalten wenn gültig
+      if (parsed.year.length === 4 && isValidYear(parsed.year)) {
+        onChange(parsed.year);
+      } else if (parsed.year.length < 4) {
+        // Unvollständiges Jahr: löschen
+        onChange('');
+      }
+    } else if (parsed.month && parsed.year) {
+      // Monat und Jahr: beide formatieren
+      const formattedMonth = parsed.month.length === 1 ? '0' + parsed.month : parsed.month;
+      if (isValidMonth(formattedMonth)) {
+        if (parsed.year.length === 4 && isValidYear(parsed.year)) {
+          onChange(`${formattedMonth}/${parsed.year}`);
+        } else {
+          // Ungültiges Jahr: nur Monat behalten
+          onChange(formattedMonth);
+        }
+      } else {
+        // Ungültiger Monat: alles löschen
+        onChange('');
+      }
+    } else if (value.trim() && !parsed.isValid) {
+      // Ungültige Eingabe: löschen
+      onChange('');
+    }
+    
+    // Externe onBlur-Handler aufrufen
+    onBlur?.();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -47,91 +155,58 @@ export default function MonthYearInputBase({
     const end = input.selectionEnd ?? 0;
     const hasSelection = start !== end;
     
-    // Spezialbehandlung nur für Ziffern-Eingabe bei Selektion
+    // Spezialbehandlung für Ziffern-Eingabe bei Selektion
     if (/^\d$/.test(e.key) && hasSelection) {
       const digit = e.key;
       
-      // FALL 1: "MM/YYYY" und Monat (MM) ist selektiert
-      if (value === "MM/YYYY" && start === 0 && end === 2) {
-        e.preventDefault();
-        
-        // Erste Ziffer: mit führender Null formatieren
-        const formattedMonth = digit.padStart(2, '0');
-        onChange(`${formattedMonth}/YYYY`);
-        
-        // Monat markiert lassen für weitere Eingabe
-        setTimeout(() => {
-          if (inputRef.current) {
-            inputRef.current.setSelectionRange(0, 2);
-          }
-        }, 0);
-        return;
-      }
-      
-      // FALL 2: "0X/YYYY" und Monat ist selektiert - zweite Ziffer eingeben
-      if (value.match(/^0\d\/YYYY$/) && start === 0 && end === 2) {
-        e.preventDefault();
-        
-        // Zweite Ziffer: erste Ziffer + neue Ziffer
-        const firstDigit = value[1];
-        const newMonth = firstDigit + digit;
-        
-        // Validierung: Monat muss zwischen 01-12 sein
-        const monthNum = parseInt(newMonth, 10);
-        if (monthNum >= 1 && monthNum <= 12) {
-          onChange(`${newMonth}/YYYY`);
+      // Fall 1: Monat ist selektiert
+      if (value.includes('/')) {
+        const slashPos = value.indexOf('/');
+        if (start === 0 && end === slashPos) {
+          e.preventDefault();
           
-          // Jahr markieren für nächste Eingabe
+          // Erste Ziffer für Monat
+          const yearPart = value.substring(slashPos + 1);
+          const newValue = `${digit}/${yearPart}`;
+          onChange(newValue);
+          
+          // Cursor nach der Ziffer positionieren
           setTimeout(() => {
             if (inputRef.current) {
-              inputRef.current.setSelectionRange(3, 7);
+              inputRef.current.setSelectionRange(1, 1);
             }
           }, 0);
+          return;
         }
-        return;
+        
+        // Fall 2: Jahr ist selektiert
+        if (start === slashPos + 1 && end === value.length) {
+          e.preventDefault();
+          
+          const monthPart = value.substring(0, slashPos + 1);
+          const newValue = `${monthPart}${digit}`;
+          onChange(newValue);
+          
+          // Cursor nach der Ziffer positionieren
+          setTimeout(() => {
+            if (inputRef.current) {
+              inputRef.current.setSelectionRange(slashPos + 2, slashPos + 2);
+            }
+          }, 0);
+          return;
+        }
       }
       
-      // FALL 3: "MM/YYYY" und Jahr (YYYY) ist selektiert
-      if (value === "MM/YYYY" && start === 3 && end === 7) {
+      // Fall 3: Alles ist selektiert oder nur Jahr vorhanden
+      if ((start === 0 && end === value.length) || (value.length === 4 && isValidYear(value))) {
         e.preventDefault();
         
-        onChange(`MM/${digit}`);
-        
-        // Cursor nach der eingegebenen Ziffer setzen
-        setTimeout(() => {
-          if (inputRef.current) {
-            inputRef.current.setSelectionRange(4, 4);
-          }
-        }, 0);
-        return;
-      }
-      
-      // FALL 4: Normaler Monat selektiert (z.B. "01/2024" und "01" ist markiert)
-      if (value.includes('/') && start === 0 && end === 2) {
-        e.preventDefault();
-        
-        const yearPart = value.split('/')[1] || '';
-        const formattedMonth = digit.padStart(2, '0');
-        onChange(`${formattedMonth}/${yearPart}`);
-        
-        setTimeout(() => {
-          if (inputRef.current) {
-            inputRef.current.setSelectionRange(0, 2);
-          }
-        }, 0);
-        return;
-      }
-      
-      // FALL 5: Normales Jahr selektiert (z.B. "01/2024" und "2024" ist markiert)
-      if (value.includes('/') && start === 3 && end === value.length) {
-        e.preventDefault();
-        
-        const monthPart = value.split('/')[0];
-        onChange(`${monthPart}/${digit}`);
+        // Neue Eingabe beginnen
+        onChange(digit);
         
         setTimeout(() => {
           if (inputRef.current) {
-            inputRef.current.setSelectionRange(4, 4);
+            inputRef.current.setSelectionRange(1, 1);
           }
         }, 0);
         return;
@@ -142,27 +217,6 @@ export default function MonthYearInputBase({
     onKeyDown?.(e);
   };
 
-  const handleClick = () => {
-    const input = inputRef.current;
-    if (!input) return;
-    
-    const pos = input.selectionStart ?? 0;
-    
-    // Intelligente Selektion basierend auf Position
-    if (value.includes('/')) {
-      if (pos <= 2) {
-        // Monat selektieren
-        setTimeout(() => input.setSelectionRange(0, 2), 0);
-      } else {
-        // Jahr selektieren
-        setTimeout(() => input.setSelectionRange(3, value.length), 0);
-      }
-    } else {
-      // Gesamten Wert selektieren
-      setTimeout(() => input.setSelectionRange(0, value.length), 0);
-    }
-  };
-
   return (
     <input
       ref={inputRef}
@@ -171,12 +225,11 @@ export default function MonthYearInputBase({
       onChange={handleChange}
       onClick={handleClick}
       onFocus={onFocus}
-      onBlur={onBlur}
+      onBlur={handleBlur}
       onKeyDown={handleKeyDown}
       placeholder={placeholder}
       disabled={disabled}
       inputMode="numeric"
-      pattern="\d{2}/\d{4}"
       maxLength={7}
       className={`px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-[#F29400] ${className}`}
       style={{ borderColor: '#D1D5DB' }}
