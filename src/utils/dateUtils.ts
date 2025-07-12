@@ -40,6 +40,24 @@ export function parseMonthYearInput(input: string, oldValue?: string, selectionS
   // Nur Ziffern, Schrägstriche und Punkte zulassen
   const cleanedInput = input.replace(/[^\d/.]/g, '');
   
+  // Spezielle Behandlung: Wenn Monat markiert war und eine Ziffer eingegeben wird
+  const wasMonthSelected = oldValue && oldValue.includes('/') && 
+    selectionStart === 0 && selectionEnd === 2;
+  
+  if (wasMonthSelected && cleanedInput.length === 1 && /^\d$/.test(cleanedInput)) {
+    // Benutzer hat eine Ziffer eingegeben während Monat markiert war
+    const yearPart = oldValue.split('/')[1] || '';
+    const newMonth = cleanedInput.padStart(2, '0'); // "1" wird zu "01"
+    const formatted = `${newMonth}/${yearPart}`;
+    return { 
+      month: newMonth, 
+      year: yearPart, 
+      formatted, 
+      isValid: isValidMonth(newMonth) && isValidYear(yearPart),
+      shouldMoveCursor: true 
+    };
+  }
+  
   let month: string | undefined;
   let year: string | undefined;
   let formatted: string = '';
