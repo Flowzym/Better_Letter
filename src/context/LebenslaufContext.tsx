@@ -2,14 +2,9 @@ import React, {
   createContext,
   useContext,
   useState,
-  useEffect,
   ReactNode,
 } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import {
-  fetchExperiences,
-  upsertExperience,
-} from '../services/supabaseService';
 
 export interface Berufserfahrung {
   id: string;
@@ -42,7 +37,6 @@ const LebenslaufContext = createContext<LebenslaufContextType | undefined>(undef
 
 export function LebenslaufProvider({ children }: { children: ReactNode }) {
   const LOCAL_KEY = 'berufserfahrungen';
-  const USER_ID = 'demo-user';
 
   const [berufserfahrungen, setBerufserfahrungen] = useState<Berufserfahrung[]>(() => {
     try {
@@ -59,21 +53,6 @@ export function LebenslaufProvider({ children }: { children: ReactNode }) {
   const [favoriteTasks, setFavoriteTasks] = useState<string[]>([]);
   const [favoriteCompanies, setFavoriteCompanies] = useState<string[]>([]);
 
-  // Initial load from Supabase
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const data = await fetchExperiences(USER_ID);
-        if (data.length > 0) {
-          setBerufserfahrungen(data);
-          localStorage.setItem(LOCAL_KEY, JSON.stringify(data));
-        }
-      } catch (err) {
-        console.error('Failed to load experiences from Supabase:', err);
-      }
-    };
-    load();
-  }, []);
 
   const addExperience = async (data: Omit<Berufserfahrung, 'id'>) => {
     const newExp = { ...data, id: uuidv4() };
@@ -82,11 +61,7 @@ export function LebenslaufProvider({ children }: { children: ReactNode }) {
       localStorage.setItem(LOCAL_KEY, JSON.stringify(updated));
       return updated;
     });
-    try {
-      await upsertExperience({ ...newExp, user_id: USER_ID });
-    } catch (err) {
-      console.error('Failed to save experience:', err);
-    }
+    // Persisting to Supabase removed
     setIsEditingExperience(false);
   };
 
@@ -97,11 +72,7 @@ export function LebenslaufProvider({ children }: { children: ReactNode }) {
       localStorage.setItem(LOCAL_KEY, JSON.stringify(updated));
       return updated;
     });
-    try {
-      await upsertExperience({ ...updatedExp, user_id: USER_ID });
-    } catch (err) {
-      console.error('Failed to update experience:', err);
-    }
+    // Persisting to Supabase removed
     setIsEditingExperience(false);
   };
 

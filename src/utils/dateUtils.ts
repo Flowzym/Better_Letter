@@ -113,8 +113,8 @@ export function parseMonthYearInput(input: string): ParsedMonthYear {
   
   let month: string | undefined;
   let year: string | undefined;
-  let formatted = input;
-  let isValid = raw.isValid;
+  const formatted = input;
+  const isValid = raw.isValid;
   let isComplete = false;
   
   // Monat verarbeiten

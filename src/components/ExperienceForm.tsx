@@ -71,7 +71,7 @@ export default function ExperienceForm({
             onPositionsChange(val);
             onUpdateField('position', val);
           }}
-          options={['Projektmanager', 'Buchhalter', 'Verkäufer', 'Teamleiter']}
+          options={[]}
           allowCustom={true}
         />
       </div>

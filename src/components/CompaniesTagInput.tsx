@@ -16,7 +16,7 @@ export default function CompaniesTagInput({ value, onChange }: CompaniesTagInput
     useLebenslaufContext();
 
   // unified via useTagList - konsolidierte Tag-Verwaltung
-  const { addTag: addTagToList, hasTag } = useTagList({
+  const { hasTag } = useTagList({
     initialTags: value,
     allowDuplicates: false
   });
