@@ -34,8 +34,9 @@ export function isValidYear(year: string): boolean {
  * @param oldValue - Der vorherige Wert (für Kontext)
  * @param selectionStart - Cursor-Position vor der Änderung
  * @param selectionEnd - End-Position der Selektion vor der Änderung
+ * @param selectionEnd - End-Position der Selektion vor der Änderung
  */
-export function parseMonthYearInput(input: string, oldValue?: string, selectionStart?: number): ParsedMonthYear {
+export function parseMonthYearInput(input: string, oldValue?: string, selectionStart?: number, selectionEnd?: number): ParsedMonthYear {
   // Nur Ziffern extrahieren, maximal 6 Zeichen
   const digits = input.replace(/\D/g, '').slice(0, 6);
   
