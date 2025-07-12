@@ -63,18 +63,26 @@ export default function TagSelectorWithFavorites({
     setEditValue('');
   };
 
+  const handleAddFavoriteInput = (val?: string) => {
+    const toAdd = (val ?? inputValue).trim();
+    if (!toAdd) return;
+    toggleFavorite(toAdd);
+    setInputValue('');
+  };
+
   return (
     <div className="space-y-4">
       <AutocompleteInput
         value={inputValue}
         onChange={setInputValue}
         onAdd={handleAddInput}
+        onAddToFavorites={handleAddFavoriteInput}
         suggestions={options}
         placeholder="Hinzufügen..."
         buttonColor="orange"
         inputBorderColor="#D1D5DB"
-        showFavoritesButton={false}
-        showAddButton={false}
+        showFavoritesButton
+        showAddButton
         label={label}
       />
 
