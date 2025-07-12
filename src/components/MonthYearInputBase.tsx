@@ -55,7 +55,16 @@ export default function MonthYearInputBase({
     }
     
     // 1-2 Ziffern: könnte Monat sein
-    if (cleaned.length <= 2) {
+    // Wenn wir 2 Ziffern haben und es ein gültiger Monat ist, automatisch "/" hinzufügen
+    if (cleaned.length === 2) {
+      const monthNum = parseInt(cleaned, 10);
+      if (monthNum >= 1 && monthNum <= 12) {
+        return `${cleaned}/`;
+      }
+      return cleaned;
+    }
+    
+    if (cleaned.length === 1) {
       return cleaned;
     }
     
@@ -88,8 +97,13 @@ export default function MonthYearInputBase({
     // Neue Cursor-Position berechnen
     let newCursorPos = cursorPos;
     
-    // Wenn ein Schrägstrich automatisch hinzugefügt wurde
-    if (formatted.includes('/') && !oldValue.includes('/') && !newValue.includes('/')) {
+    // Spezialfall: Automatischer Schrägstrich nach gültigem 2-stelligen Monat
+    if (formatted.includes('/') && !oldValue.includes('/') && !newValue.includes('/') && formatted.length === 3) {
+      // "11" → "11/" - Cursor soll nach dem "/" stehen
+      newCursorPos = 3;
+    }
+    // Wenn ein Schrägstrich automatisch hinzugefügt wurde bei längerer Eingabe
+    else if (formatted.includes('/') && !oldValue.includes('/') && !newValue.includes('/')) {
       const slashPos = formatted.indexOf('/');
       newCursorPos = slashPos + 1;
     }
