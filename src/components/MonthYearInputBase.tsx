@@ -257,25 +257,15 @@ export default function MonthYearInputBase({
           e.preventDefault();
           
           const yearPart = currentValue.substring(slashPos + 1);
-          let newValue = `${digit}/${yearPart}`;
-          
-          // Wenn es ein gültiger 2-stelliger Monat werden könnte, füge "/" hinzu
-          if (digit >= '0' && digit <= '1') {
-            // Warten auf zweite Ziffer
-          } else if (digit >= '2' && digit <= '9') {
-            // Einstelliger Monat, formatiere zu 0X
-            newValue = `0${digit}/${yearPart}`;
-          }
+          const newValue = `${digit}/${yearPart}`;
           
           setInternalValue(newValue);
           onChange(newValue);
-            // Nach Monats-Änderung: Jahr markieren wenn beide Teile vollständig sind
-          // Nach Monats-Änderung: Jahr markieren wenn vollständig, sonst normal positionieren
+          
+          // Cursor nach der ersten Ziffer positionieren, NICHT ans Ende
           setTimeout(() => {
             if (inputRef.current) {
-                const monthPart = newValue.substring(0, slashPos);
-                
-                // Jahr markieren wenn Monat vollständig (2-stellig) UND Jahr vollständig (4-stellig) ist
+              inputRef.current.setSelectionRange(1, 1);
             }
           }, 0);
           return;
