@@ -4,7 +4,7 @@ import TaskTag from "./TaskTag";
 import TagButton from "./TagButton";
 import TagButtonFavorite from "./ui/TagButtonFavorite";
 import TagContext from "../types/TagContext";
-import AutocompleteInput from "./AutocompleteInput";
+import InputWithActions from "./InputWithActions";
 import { getTasksForPositions } from "../constants/positionsToTasks";
 import { useLebenslaufContext } from "../context/LebenslaufContext";
 import "../styles/_tags.scss";
@@ -75,17 +75,12 @@ export default function TasksTagInput({
   return (
     <div className="space-y-4">
 
-      <AutocompleteInput
+      <InputWithActions
         value={inputValue}
         onChange={setInputValue}
         onAdd={addTask}
-        onAddToFavorites={handleAddFavoriteInput}
-        suggestions={filteredSuggestions}
+        onAddFavorite={handleAddFavoriteInput}
         placeholder="Hinzufügen..."
-        buttonColor="orange"
-        inputBorderColor="#D1D5DB"
-        showFavoritesButton
-        showAddButton
       />
 
       {value.length > 0 && (
