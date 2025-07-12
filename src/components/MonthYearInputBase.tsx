@@ -34,7 +34,7 @@ export default function MonthYearInputBase({
     const oldSelectionEnd = input.selectionEnd ?? 0;
     const oldValue = value;
     
-    console.log('🔍 Input change:', {
+    // console.log('🔍 Input change:', {
       oldValue,
       newInput: input.value,
       oldPosition,
@@ -42,10 +42,10 @@ export default function MonthYearInputBase({
       wasMonthSelected: oldValue.includes('/') && oldPosition === 0 && oldSelectionEnd === 2
     });
     
-    const parsed = parseMonthYearInput(input.value, oldValue, oldPosition, oldSelectionEnd);
+    const parsed = parseMonthYearInput(input.value, oldValue, oldPosition, oldSelectionEnd); // Pass raw input
     
-    console.log('📝 Parsed result:', parsed);
-    
+    // console.log('📝 Parsed result:', parsed);
+
     onChange(parsed.formatted);
     
     // Cursor-Position anpassen
@@ -53,7 +53,7 @@ export default function MonthYearInputBase({
       if (inputRef.current) {
         const newPosition = calculateCursorPosition(oldValue, parsed.formatted, oldPosition, parsed.shouldMoveCursor);
         console.log('🎯 Setting cursor to:', newPosition);
-        inputRef.current.setSelectionRange(newPosition, newPosition);
+        inputRef.current.setSelectionRange(newPosition, newPosition); // Ensure cursor is set
       }
     }, 0);
   };
