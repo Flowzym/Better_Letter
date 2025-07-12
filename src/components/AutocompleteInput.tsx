@@ -283,12 +283,12 @@ export default function AutocompleteInput({
             name={`favorites-${inputId}`}
             onClick={handleAddToFavorites}
             disabled={disabled || !value.trim()}
-            className="px-3 py-2 text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 hover:opacity-90"
-            style={{ backgroundColor: '#F29400' }}
+            className="px-2 py-1 text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 hover:opacity-90"
+            style={{ backgroundColor: '#FDE047' }}
             title="Zu Favoriten hinzufügen"
             aria-label="Zu Favoriten hinzufügen"
           >
-            <Star className="h-4 w-4" />
+            <Star className="h-3 w-3" />
           </button>
         )}
         

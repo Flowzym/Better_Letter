@@ -36,17 +36,40 @@ export default function CompaniesTagInput({ value, onChange }: CompaniesTagInput
     }
   };
 
+  const handleAddFavorite = () => {
+    const trimmed = inputValue.trim();
+    if (!trimmed) return;
+    toggleFavoriteCompany(trimmed);
+    setInputValue('');
+  };
+
   return (
     <div className="space-y-2">
-      <input
-        ref={inputRef}
-        type="text"
-        placeholder="Firma hinzufügen..."
-        className="w-full px-3 py-2 border rounded"
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-        onKeyDown={handleKeyDown}
-      />
+      <div className="flex space-x-1">
+        <input
+          ref={inputRef}
+          type="text"
+          placeholder="Firma hinzufügen..."
+          className="flex-1 px-3 py-2 border rounded"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={handleKeyDown}
+        />
+        <button
+          onClick={() => addCompany()}
+          className="px-3 py-2 rounded text-white bg-yellow-400"
+          aria-label="Hinzufügen"
+        >
+          +
+        </button>
+        <button
+          onClick={handleAddFavorite}
+          className="px-2 py-1 rounded text-white bg-yellow-300 text-sm"
+          aria-label="Als Favorit hinzufügen"
+        >
+          ★
+        </button>
+      </div>
       {value.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {value.map((c) => (
