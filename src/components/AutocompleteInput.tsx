@@ -10,7 +10,6 @@ interface AutocompleteInputProps {
   placeholder: string;
   disabled?: boolean;
   className?: string;
-  buttonColor?: string;
   inputBorderColor?: string;
   showFavoritesButton?: boolean;
   showAddButton?: boolean;
@@ -27,7 +26,6 @@ export default function AutocompleteInput({
   placeholder,
   disabled = false,
   className = '',
-  buttonColor = 'orange',
   inputBorderColor = '#F29400',
   showFavoritesButton = false,
   showAddButton = true,
@@ -39,6 +37,8 @@ export default function AutocompleteInput({
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const hasInput = value.trim().length > 0;
 
   // Generate unique IDs if not provided
   const inputId = id || `autocomplete-input-${Math.random().toString(36).substr(2, 9)}`;
@@ -193,16 +193,6 @@ export default function AutocompleteInput({
     }
   };
 
-  const getButtonColorClasses = () => {
-    const colorMap: { [key: string]: string } = {
-      orange: 'hover:opacity-90',
-      blue: 'bg-blue-600 hover:bg-blue-700',
-      green: 'bg-green-600 hover:bg-green-700',
-      purple: 'bg-purple-600 hover:bg-purple-700',
-      indigo: 'bg-indigo-600 hover:bg-indigo-700',
-    };
-    return colorMap[buttonColor] || colorMap.orange;
-  };
 
   return (
     <div ref={containerRef} className={`relative ${className} profile-input autocomplete-input`}>
@@ -282,13 +272,15 @@ export default function AutocompleteInput({
             id={favoritesButtonId}
             name={`favorites-${inputId}`}
             onClick={handleAddToFavorites}
-            disabled={disabled || !value.trim()}
-            className="px-2 py-1 text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 hover:opacity-90"
-            style={{ backgroundColor: '#FDE047' }}
+            disabled={disabled || !hasInput}
+            className={`w-7 h-7 flex items-center justify-center rounded-md text-white transition-opacity duration-200 hover:shadow ${
+              hasInput ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            }`}
+            style={{ backgroundColor: '#F59E0B' }}
             title="Zu Favoriten hinzufügen"
             aria-label="Zu Favoriten hinzufügen"
           >
-            <Star className="h-3 w-3" />
+            <Star className="w-4 h-4" />
           </button>
         )}
         
@@ -298,13 +290,15 @@ export default function AutocompleteInput({
             id={addButtonId}
             name={`add-${inputId}`}
             onClick={() => onAdd()}
-            disabled={disabled || !value.trim()}
-            className={`px-3 py-2 text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 ${getButtonColorClasses()}`}
-            style={{ backgroundColor: '#F29400' }}
+            disabled={disabled || !hasInput}
+            className={`w-7 h-7 flex items-center justify-center rounded-md text-white transition-opacity duration-200 hover:shadow ${
+              hasInput ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            }`}
+            style={{ backgroundColor: '#F59E0B' }}
             title="Hinzufügen"
             aria-label="Hinzufügen"
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="w-4 h-4" />
           </button>
         )}
       </div>
