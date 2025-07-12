@@ -30,11 +30,11 @@ export default function MonthYearInputBase({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target;
-    const oldPosition = input.selectionStart ?? 0;
+    const oldSelectionStart = input.selectionStart ?? 0;
     const oldSelectionEnd = input.selectionEnd ?? 0;
     const oldValue = value;
     
-    // console.log('🔍 Input change:', {
+    const parsed = parseMonthYearInput(input.value, oldValue, oldSelectionStart, oldSelectionEnd);
     //   oldValue,
     //   newInput: input.value,
     //   oldPosition,
@@ -51,7 +51,7 @@ export default function MonthYearInputBase({
     // Cursor-Position anpassen
     setTimeout(() => {
       if (inputRef.current) {
-        const newPosition = calculateCursorPosition(oldValue, parsed.formatted, oldPosition, parsed.shouldMoveCursor);
+        const newPosition = calculateCursorPosition(oldValue, parsed.formatted, oldSelectionStart, parsed.shouldMoveCursor);
         console.log('🎯 Setting cursor to:', newPosition);
         inputRef.current.setSelectionRange(newPosition, newPosition); // Ensure cursor is set
       }
