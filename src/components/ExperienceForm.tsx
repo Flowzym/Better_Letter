@@ -60,14 +60,12 @@ export default function ExperienceForm({
 
       <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
         <h3 className="text-sm font-medium text-gray-700 mb-2">Unternehmen &amp; Ort</h3>
-        <div className="flex flex-wrap gap-2">
-          <div className="w-full md:w-1/2">
-            <CompaniesTagInput
-              value={form.companies}
-              onChange={(val) => onUpdateField('companies', val)}
-              suggestions={cvSuggestions.companies}
-            />
-          </div>
+        <div className="w-full">
+          <CompaniesTagInput
+            value={form.companies}
+            onChange={(val) => onUpdateField('companies', val)}
+            suggestions={cvSuggestions.companies}
+          />
         </div>
       </div>
 
