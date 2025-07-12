@@ -2,7 +2,7 @@ import { useState } from 'react';
 import CompanyTag from './CompanyTag';
 import TagButtonFavorite from './ui/TagButtonFavorite';
 import { useLebenslaufContext } from '../context/LebenslaufContext';
-import AutocompleteInput from './AutocompleteInput';
+import InputWithActions from './InputWithActions';
 
 interface CompaniesTagInputProps {
   value: string[];
@@ -38,16 +38,12 @@ export default function CompaniesTagInput({ value, onChange }: CompaniesTagInput
 
   return (
     <div className="space-y-2">
-      <AutocompleteInput
+      <InputWithActions
         value={inputValue}
         onChange={setInputValue}
         onAdd={addCompany}
-        onAddToFavorites={handleAddFavoriteInput}
-        suggestions={[]}
+        onAddFavorite={handleAddFavoriteInput}
         placeholder="Firma hinzufügen..."
-        inputBorderColor="#D1D5DB"
-        showAddButton
-        showFavoritesButton
       />
       {value.length > 0 && (
         <div className="flex flex-wrap gap-2">
