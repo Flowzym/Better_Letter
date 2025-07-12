@@ -340,8 +340,7 @@ export default function MonthYearInputBase({
       disabled={disabled}
       inputMode="numeric"
       maxLength={7}
-      className={`px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-[#F29400] ${className}`}
-      style={{ borderColor: '#D1D5DB' }}
+      className={`w-full h-10 px-3 py-2 text-sm rounded-md border border-gray-300 ${className}`}
     />
   );
 }

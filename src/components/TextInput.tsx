@@ -1,4 +1,4 @@
-import type { CSSProperties, ChangeEvent } from 'react';
+import type { ChangeEvent } from 'react';
 
 interface TextInputProps {
   value: string;
@@ -35,11 +35,7 @@ export default function TextInput({
         onChange={(e: ChangeEvent<HTMLTextAreaElement>) => onChange(e.target.value)} // specify event type
         placeholder={placeholder}
         rows={rows}
-        className="w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 resize-vertical min-h-[120px]"
-        style={{ 
-          borderColor: '#F29400',
-          '--tw-ring-color': '#F29400'
-        } as CSSProperties}
+        className="w-full h-10 px-3 py-2 text-sm rounded-md border border-gray-300"
       />
     </div>
   );
