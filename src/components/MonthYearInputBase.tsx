@@ -32,9 +32,11 @@ export default function MonthYearInputBase({
     const input = e.target;
     const oldSelectionStart = input.selectionStart ?? 0;
     const oldSelectionEnd = input.selectionEnd ?? 0;
-    // });
+    const oldValue = value;
     
-    // console.log('📝 Parsed result:', parsed);
+    const parsed = parseMonthYearInput(input.value, oldValue, oldSelectionStart, oldSelectionEnd);
+    
+    console.log('📝 Parsed result:', parsed);
 
     onChange(parsed.formatted);
     
