@@ -1,8 +1,6 @@
 import { useState, useRef } from 'react';
 import CompanyTag from './CompanyTag';
-import TagButton from './TagButton';
 import TagButtonFavorite from './ui/TagButtonFavorite';
-import TagContext from '../types/TagContext';
 import { useLebenslaufContext } from '../context/LebenslaufContext';
 
 interface CompaniesTagInputProps {
