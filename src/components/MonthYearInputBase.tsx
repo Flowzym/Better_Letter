@@ -274,12 +274,14 @@ export default function MonthYearInputBase({
           setTimeout(() => {
             if (inputRef.current) {
               const slashIndex = newValue.indexOf('/');
-              if (yearPart && yearPart.length === 4) {
+              // Nur Jahr markieren wenn Monat vollständig (2-stellig) UND Jahr vollständig (4-stellig) ist
+              if (newValue.substring(0, slashIndex).length === 2 && yearPart && yearPart.length === 4) {
                 // Jahr ist vollständig -> markieren
                 inputRef.current.setSelectionRange(slashIndex + 1, newValue.length);
               } else {
                 // Jahr nicht vollständig -> Cursor nach Ziffer
-                inputRef.current.setSelectionRange(1, 1);
+                const monthLength = newValue.substring(0, slashIndex).length;
+                inputRef.current.setSelectionRange(monthLength, monthLength);
               }
             }
           }, 0);
