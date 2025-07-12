@@ -42,7 +42,7 @@ export default function CompaniesTagInput({ value, onChange }: CompaniesTagInput
         value={inputValue}
         onChange={setInputValue}
         onAdd={addCompany}
-        onAddFavorite={handleAddFavoriteInput}
+        onFavorite={handleAddFavoriteInput}
         placeholder="Firma hinzufügen..."
       />
       {value.length > 0 && (

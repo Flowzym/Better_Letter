@@ -32,7 +32,7 @@ export default function DebugPreview() {
         value={textValue}
         onChange={setTextValue}
         onAdd={(val) => console.log('add', val)}
-        onAddFavorite={(val) => console.log('favorite', val)}
+        onFavorite={(val) => console.log('favorite', val)}
         placeholder="Hinzufügen..."
       />
     </div>
