@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import ExperienceForm from './ExperienceForm';
 import ExperienceSection from './ExperienceSection';
+import CVSection from './CVSection';
+import AusbildungCard from './cards/AusbildungCard';
+import FachkompetenzCard from './cards/FachkompetenzCard';
+import SoftskillCard from './cards/SoftskillCard';
 import {
   Berufserfahrung,
   useLebenslaufContext,
@@ -19,14 +23,45 @@ const initialExperience: BerufserfahrungForm = {
   aufgabenbereiche: [],
 };
 
+const initialEducation = {
+  institution: "",
+  abschluss: "",
+  start: "",
+  ende: "",
+  beschreibung: "",
+};
+
+const initialSkill = {
+  kategorie: "",
+  kompetenzen: [] as string[],
+  level: "",
+};
+
+const initialSoftskill = {
+  text: "",
+  bisTags: [] as string[],
+};
+
 export default function LebenslaufInput() {
   const {
     berufserfahrungen,
+    ausbildungen,
+    fachkompetenzen,
+    softskills,
     selectedExperienceId,
     isEditingExperience,
     addExperience,
     updateExperience,
     selectExperience,
+    addEducation,
+    updateEducation,
+    deleteEducation,
+    addSkill,
+    updateSkill,
+    deleteSkill,
+    addSoftskill,
+    updateSoftskill,
+    deleteSoftskill,
     cvSuggestions,
   } = useLebenslaufContext();
 
@@ -91,6 +126,75 @@ export default function LebenslaufInput() {
           {isEditingExperience ? 'Aktualisieren' : 'Hinzufügen'}
         </button>
       </ExperienceSection>
+
+      <CVSection title="Ausbildung" icon="🎓">
+        {ausbildungen.map((entry) => (
+          <div key={entry.id} className="space-y-2">
+            <AusbildungCard
+              data={entry}
+              onChange={(data) => updateEducation(entry.id, data)}
+            />
+            <button
+              className="text-red-600 text-sm"
+              onClick={() => deleteEducation(entry.id)}
+            >
+              Entfernen
+            </button>
+          </div>
+        ))}
+        <button
+          className="w-full border border-gray-300 bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-md hover:bg-gray-100 transition"
+          onClick={() => addEducation(initialEducation)}
+        >
+          Neue Ausbildung hinzufügen
+        </button>
+      </CVSection>
+
+      <CVSection title="Fachkompetenz" icon="🛠️">
+        {fachkompetenzen.map((entry) => (
+          <div key={entry.id} className="space-y-2">
+            <FachkompetenzCard
+              data={entry}
+              onChange={(data) => updateSkill(entry.id, data)}
+            />
+            <button
+              className="text-red-600 text-sm"
+              onClick={() => deleteSkill(entry.id)}
+            >
+              Entfernen
+            </button>
+          </div>
+        ))}
+        <button
+          className="w-full border border-gray-300 bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-md hover:bg-gray-100 transition"
+          onClick={() => addSkill(initialSkill)}
+        >
+          Neue Fachkompetenz hinzufügen
+        </button>
+      </CVSection>
+
+      <CVSection title="Softskills" icon="🌟">
+        {softskills.map((entry) => (
+          <div key={entry.id} className="space-y-2">
+            <SoftskillCard
+              data={entry}
+              onChange={(data) => updateSoftskill(entry.id, data)}
+            />
+            <button
+              className="text-red-600 text-sm"
+              onClick={() => deleteSoftskill(entry.id)}
+            >
+              Entfernen
+            </button>
+          </div>
+        ))}
+        <button
+          className="w-full border border-gray-300 bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-md hover:bg-gray-100 transition"
+          onClick={() => addSoftskill(initialSoftskill)}
+        >
+          Neue Softskill hinzufügen
+        </button>
+      </CVSection>
     </div>
   );
 }

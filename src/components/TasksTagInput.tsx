@@ -1,11 +1,8 @@
-import React, { useMemo, useState } from "react";
-import { Lightbulb, X } from "lucide-react";
+import React, { useState } from "react";
+import { X } from "lucide-react";
 import TaskTag from "./TaskTag";
-import TagButton from "./TagButton";
 import TagButtonFavorite from "./ui/TagButtonFavorite";
-import TagContext from "../types/TagContext";
 import TextInputWithButtons from "./TextInputWithButtons";
-import { getTasksForPositions } from "../constants/positionsToTasks";
 import { useLebenslaufContext } from "../context/LebenslaufContext";
 import { useTagList } from "../hooks/useTagList";
 import "../styles/_tags.scss";
@@ -13,16 +10,9 @@ import "../styles/_tags.scss";
 interface TasksTagInputProps {
   value: string[];
   onChange: (tasks: string[]) => void;
-  positionen: string[];
-  suggestions?: string[];
 }
 
-export default function TasksTagInput({
-  value,
-  onChange,
-  positionen,
-  suggestions: extraSuggestions,
-}: TasksTagInputProps) {
+export default function TasksTagInput({ value, onChange }: TasksTagInputProps) {
   const [inputValue, setInputValue] = useState("");
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [editValue, setEditValue] = useState("");
@@ -34,19 +24,6 @@ export default function TasksTagInput({
     allowDuplicates: false
   });
 
-  const suggestions = useMemo(() => {
-    if (extraSuggestions && extraSuggestions.length > 0) {
-      const uniq = Array.from(new Set(extraSuggestions));
-      uniq.sort((a, b) => a.localeCompare(b, "de", { sensitivity: "base" }));
-      return uniq;
-    }
-    const fromPositions = getTasksForPositions(positionen);
-    const unique = Array.from(new Set(fromPositions));
-    unique.sort((a, b) => a.localeCompare(b, "de", { sensitivity: "base" }));
-    return unique;
-  }, [positionen, extraSuggestions]);
-
-  const filteredSuggestions = suggestions.filter((s) => !value.includes(s));
 
   const addTask = (task?: string) => {
     const t = (task ?? inputValue).trim();
