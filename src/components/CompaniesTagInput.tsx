@@ -1,10 +1,8 @@
 import { useState } from 'react';
 import CompanyTag from './CompanyTag';
 import TagButtonFavorite from './ui/TagButtonFavorite';
-import TagButton from './TagButton';
-import TagContext from '../types/TagContext';
 import { useLebenslaufContext } from '../context/LebenslaufContext';
-import TextInputWithButtons from './TextInputWithButtons';
+import AutocompleteInput from './AutocompleteInput';
 import { useTagList } from '../hooks/useTagList';
 
 interface CompaniesTagInputProps {
@@ -46,17 +44,18 @@ export default function CompaniesTagInput({ value, onChange, suggestions = [] }:
     setInputValue('');
   };
 
-  const filteredSuggestions = suggestions.filter((s) => !value.includes(s));
-
   return (
     <div className="space-y-2">
-      <TextInputWithButtons
+      <AutocompleteInput
         value={inputValue}
         onChange={setInputValue}
         onAdd={addCompany}
         onFavoriteClick={handleAddFavoriteInput}
+        suggestions={suggestions}
         placeholder="Firma hinzufügen..."
+        showFavoritesButton
       />
+      
       {value.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {value.map((c) => (
@@ -67,22 +66,6 @@ export default function CompaniesTagInput({ value, onChange, suggestions = [] }:
               onEdit={(val) => updateCompany(c, val)}
             />
           ))}
-        </div>
-      )}
-
-      {filteredSuggestions.length > 0 && (
-        <div>
-          <h4 className="text-sm font-medium text-gray-700 mb-2">Vorschläge:</h4>
-          <div className="flex flex-wrap gap-2">
-            {filteredSuggestions.map((s) => (
-              <TagButton
-                key={s}
-                label={s}
-                variant={TagContext.Suggestion}
-                onClick={() => addCompany(s)}
-              />
-            ))}
-          </div>
         </div>
       )}
 

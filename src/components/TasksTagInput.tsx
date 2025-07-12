@@ -132,30 +132,6 @@ export default function TasksTagInput({
           </div>
       )}
 
-      {filteredSuggestions.length > 0 && (
-        <div>
-          <h4 className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-1">
-            <Lightbulb className="h-4 w-4" />
-            Vorschläge:
-          </h4>
-          <div className="flex flex-wrap gap-2">
-            {filteredSuggestions.map((s) => {
-              const isFavorite = favorites.includes(s);
-              return (
-                <TagButton
-                  key={s}
-                  label={s}
-                  variant={TagContext.Suggestion}
-                  isFavorite={isFavorite}
-                  onClick={() => addTask(s)}
-                  type="task"
-                  onToggleFavorite={toggleFavorite}
-                />
-              );
-            })}
-          </div>
-        </div>
-      )}
 
       {favorites.filter((f) => !value.includes(f)).length > 0 && (
         <div>
