@@ -26,7 +26,7 @@ export default function AutocompleteInput({
   placeholder,
   disabled = false,
   className = '',
-  inputBorderColor = '#F29400',
+  inputBorderColor = '#D1D5DB',
   showFavoritesButton = false,
   showAddButton = true,
   id,
@@ -193,6 +193,11 @@ export default function AutocompleteInput({
     }
   };
 
+  const handleAdd = () => {
+    if (!hasInput) return;
+    onAdd();
+    onChange('');
+  };
 
   return (
     <div
@@ -207,7 +212,7 @@ export default function AutocompleteInput({
           {label}
         </label>
       )}
-      <div className="relative">
+      <div className="flex items-center w-full">
         <input
           ref={inputRef}
           type="text"
@@ -220,10 +225,10 @@ export default function AutocompleteInput({
           onBlur={handleBlur}
           placeholder={placeholder}
           disabled={disabled}
-          className="w-full px-3 py-2 pr-16 border rounded-md text-sm focus:outline-none focus:ring-2 focus:border-orange-500"
+          className="flex-1 px-3 h-10 border rounded-md transition-all focus:outline-none focus:ring-1"
           style={{
             borderColor: inputBorderColor,
-            '--tw-ring-color': inputBorderColor
+            '--tw-ring-color': '#F29400'
           } as React.CSSProperties}
           aria-expanded={isOpen}
           aria-haspopup="listbox"
@@ -231,81 +236,79 @@ export default function AutocompleteInput({
           role="combobox"
         />
 
-        {/* Favorites button */}
-        {showFavoritesButton && onAddToFavorites && (
-          <button
-            id={favoritesButtonId}
-            name={`favorites-${inputId}`}
-            onClick={handleAddToFavorites}
-            disabled={disabled || !hasInput}
-            className={`absolute right-8 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center rounded-md text-white transition-opacity duration-200 hover:shadow ${
-              hasInput ? 'opacity-100' : 'opacity-0 pointer-events-none'
-            }`}
-            style={{ backgroundColor: '#F59E0B' }}
-            title="Zu Favoriten hinzufügen"
-            aria-label="Zu Favoriten hinzufügen"
-          >
-            <Star className="w-4 h-4" />
-          </button>
+        {hasInput && (
+          <div className="flex gap-2 ml-2">
+            {/* Add button */}
+            {showAddButton && (
+              <button
+                id={addButtonId}
+                name={`add-${inputId}`}
+                onClick={handleAdd}
+                disabled={disabled}
+                className="w-10 h-10 bg-[#F6A800] text-white rounded-md flex items-center justify-center transition-colors duration-200 hover:bg-[#E8950C]"
+                title="Hinzufügen"
+                aria-label="Hinzufügen"
+              >
+                <Plus className="w-5 h-5" />
+              </button>
+            )}
+            
+            {/* Favorites button */}
+            {showFavoritesButton && onAddToFavorites && (
+              <button
+                id={favoritesButtonId}
+                name={`favorites-${inputId}`}
+                onClick={handleAddToFavorites}
+                disabled={disabled}
+                className="w-10 h-10 bg-[#F6A800] text-white rounded-md flex items-center justify-center transition-colors duration-200 hover:bg-[#E8950C]"
+                title="Zu Favoriten hinzufügen"
+                aria-label="Zu Favoriten hinzufügen"
+              >
+                <Star className="w-4 h-4" />
+              </button>
+            )}
+          </div>
         )}
-
-        {/* Add button */}
-        {showAddButton && (
-          <button
-            id={addButtonId}
-            name={`add-${inputId}`}
-            onClick={() => onAdd()}
-            disabled={disabled || !hasInput}
-            className={`absolute right-0 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center rounded-md text-white transition-opacity duration-200 hover:shadow ${
-              hasInput ? 'opacity-100' : 'opacity-0 pointer-events-none'
-            }`}
-            style={{ backgroundColor: '#F59E0B' }}
-            title="Hinzufügen"
-            aria-label="Hinzufügen"
-          >
-            <Plus className="w-4 h-4" />
-          </button>
-        )}
+      </div>
 
         {/* Dropdown with improved sorting */}
         {isOpen && filteredSuggestions.length > 0 && (
-          <div
-            className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-md shadow-lg max-h-48 overflow-y-auto z-50 autocomplete-dropdown"
-            style={{ borderColor: inputBorderColor }}
-            role="listbox"
-            aria-label="Vorschläge"
-          >
-            {filteredSuggestions.map((suggestion, index) => {
-              const searchTerm = value.toLowerCase();
-              const suggestionLower = suggestion.toLowerCase();
-              const startsWithSearch = suggestionLower.startsWith(searchTerm);
+        <div
+          className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-md shadow-lg max-h-48 overflow-y-auto z-50 autocomplete-dropdown"
+          style={{ borderColor: inputBorderColor }}
+          role="listbox"
+          aria-label="Vorschläge"
+        >
+          {filteredSuggestions.map((suggestion, index) => {
+            const searchTerm = value.toLowerCase();
+            const suggestionLower = suggestion.toLowerCase();
+            const startsWithSearch = suggestionLower.startsWith(searchTerm);
                 
-                return (
-                  <button
-                    key={suggestion}
-                    onClick={() => handleSuggestionClick(suggestion)}
-                    className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-100 focus:bg-gray-100 focus:outline-none ${
-                      index === highlightedIndex ? 'text-white' : 'text-gray-900'
-                    }`}
-                    style={index === highlightedIndex ? { backgroundColor: '#F29400' } : {}}
-                    title={startsWithSearch ? 'Beginnt mit Ihrer Eingabe' : 'Enthält Ihre Eingabe'}
-                    role="option"
-                    aria-selected={index === highlightedIndex}
-                  >
-                    <span className={startsWithSearch ? 'font-medium' : 'font-normal'}>
-                      {suggestion}
-                    </span>
-                    {startsWithSearch && (
-                      <span className="ml-2 text-xs opacity-60">
-                        ↗
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          )}
-      </div>
+            return (
+              <button
+                key={suggestion}
+                onClick={() => handleSuggestionClick(suggestion)}
+                className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-100 focus:bg-gray-100 focus:outline-none ${
+                  index === highlightedIndex ? 'text-white' : 'text-gray-900'
+                }`}
+                style={index === highlightedIndex ? { backgroundColor: '#F29400' } : {}}
+                title={startsWithSearch ? 'Beginnt mit Ihrer Eingabe' : 'Enthält Ihre Eingabe'}
+                role="option"
+                aria-selected={index === highlightedIndex}
+              >
+                <span className={startsWithSearch ? 'font-medium' : 'font-normal'}>
+                  {suggestion}
+                </span>
+                {startsWithSearch && (
+                  <span className="ml-2 text-xs opacity-60">
+                    ↗
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

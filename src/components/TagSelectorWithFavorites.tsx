@@ -79,8 +79,7 @@ export default function TagSelectorWithFavorites({
         onAddToFavorites={handleAddFavoriteInput}
         suggestions={options}
         placeholder="Hinzufügen..."
-        buttonColor="orange"
-        inputBorderColor="#D1D5DB"
+        inputBorderColor="#F29400"
         showFavoritesButton
         showAddButton
         label={label}
