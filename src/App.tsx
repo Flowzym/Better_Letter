@@ -167,6 +167,7 @@ const DEFAULT_STYLE_PROMPTS = {
   },
 };
 
+// Deprecated: fallback suggestions kept for offline mode
 const DEFAULT_PROFILE_CONFIG: ProfileConfig = {
   berufe: [
     'Softwareentwickler', 'Projektmanager', 'Marketing Manager', 'Vertriebsmitarbeiter', 'Buchhalter',

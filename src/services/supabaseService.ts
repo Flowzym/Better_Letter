@@ -1,6 +1,5 @@
 import { supabase } from '../lib/supabase';
 import { KIModelSettings } from '../types/KIModelSettings';
-import { ExperienceEntry } from '../types/ExperienceType';
 
 // --- Types --------------------------------------------------------------
 export interface ProfileConfig {
@@ -232,47 +231,6 @@ async function testSupabaseConnection(): Promise<boolean> {
   return true;
 }
 
-// -----------------------------------------------------------------------
-// Lebenslauf-Experiences CRUD
-async function fetchExperiences(userId: string): Promise<ExperienceEntry[]> {
-  const { data, error } = await supabase
-    .from('experiences')
-    .select('*')
-    .eq('user_id', userId)
-    .order('startYear', { ascending: false })
-    .order('startMonth', { ascending: false });
-
-  if (error) {
-    console.error('Error fetching experiences:', error.message);
-    return [];
-  }
-
-  return (data ?? []) as ExperienceEntry[];
-}
-
-async function upsertExperience(
-  experience: ExperienceEntry & { user_id?: string },
-): Promise<ExperienceEntry | null> {
-  const { data, error } = await supabase
-    .from('experiences')
-    .upsert(experience)
-    .select()
-    .single();
-
-  if (error) {
-    console.error('Error saving experience:', error.message);
-    return null;
-  }
-
-  return data as ExperienceEntry;
-}
-
-async function deleteExperience(id: string): Promise<void> {
-  const { error } = await supabase.from('experiences').delete().eq('id', id);
-  if (error) {
-    console.error('Error deleting experience:', error.message);
-  }
-}
 
 async function fetchTableColumns(tableName: string): Promise<string[]> {
   const { data, error } = await supabase
@@ -295,9 +253,6 @@ export {
   isSupabaseConfigured,
   loadProfileSuggestions,
   testSupabaseConnection,
-  fetchExperiences,
-  upsertExperience,
-  deleteExperience,
   fetchTableColumns,
   getSupabaseTableNames,
   invalidateTableCache,

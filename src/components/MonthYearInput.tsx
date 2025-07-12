@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import MonthYearInputBase from './MonthYearInputBase';
-import { parseMonthYearInput, isValidYear } from '../utils/dateUtils';
+import { parseMonthYearInput } from '../utils/dateUtils';
 
 interface MonthYearInputProps {
   value: string;
