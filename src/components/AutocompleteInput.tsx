@@ -5,12 +5,11 @@ interface AutocompleteInputProps {
   value: string;
   onChange: (value: string) => void;
   onAdd: (valueToAdd?: string) => void;
-  onAddToFavorites?: (valueToAdd?: string) => void;
+  onFavoriteClick?: (valueToAdd?: string) => void;
   suggestions: string[];
   placeholder: string;
   disabled?: boolean;
   className?: string;
-  inputBorderColor?: string;
   showFavoritesButton?: boolean;
   showAddButton?: boolean;
   id?: string;
@@ -21,12 +20,11 @@ export default function AutocompleteInput({
   value,
   onChange,
   onAdd,
-  onAddToFavorites,
+  onFavoriteClick,
   suggestions,
   placeholder,
   disabled = false,
   className = '',
-  inputBorderColor = '#D1D5DB',
   showFavoritesButton = false,
   showAddButton = true,
   id,
@@ -187,8 +185,8 @@ export default function AutocompleteInput({
   };
 
   const handleAddToFavorites = () => {
-    if (onAddToFavorites && value.trim()) {
-      onAddToFavorites(value.trim());
+    if (onFavoriteClick && value.trim()) {
+      onFavoriteClick(value.trim());
       onChange('');
     }
   };
@@ -254,7 +252,7 @@ export default function AutocompleteInput({
             )}
             
             {/* Favorites button */}
-            {showFavoritesButton && onAddToFavorites && (
+            {showFavoritesButton && onFavoriteClick && (
               <button
                 id={favoritesButtonId}
                 name={`favorites-${inputId}`}
@@ -274,8 +272,7 @@ export default function AutocompleteInput({
         {/* Dropdown with improved sorting */}
         {isOpen && filteredSuggestions.length > 0 && (
         <div
-          className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-md shadow-lg max-h-48 overflow-y-auto z-50 autocomplete-dropdown"
-          style={{ borderColor: inputBorderColor }}
+          className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto z-50 autocomplete-dropdown"
           role="listbox"
           aria-label="Vorschläge"
         >

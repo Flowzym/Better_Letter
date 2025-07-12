@@ -104,10 +104,9 @@ export default function AufgabenbereichInput({
         value={inputValue}
         onChange={setInputValue}
         onAdd={() => addTask()}
-        onAddToFavorites={(val) => addToFavorites(val ?? inputValue)}
+        onFavoriteClick={(val) => addToFavorites(val ?? inputValue)}
         suggestions={gefilterteVorschlaege}
         placeholder="Hinzufügen..."
-        buttonColor="orange"
         showFavoritesButton
       />
 

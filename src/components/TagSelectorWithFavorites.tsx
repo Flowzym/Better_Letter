@@ -76,7 +76,7 @@ export default function TagSelectorWithFavorites({
         value={inputValue}
         onChange={setInputValue}
         onAdd={handleAddInput}
-        onAddToFavorites={handleAddFavoriteInput}
+        onFavoriteClick={handleAddFavoriteInput}
         suggestions={options}
         placeholder="Hinzufügen..."
         showFavoritesButton
