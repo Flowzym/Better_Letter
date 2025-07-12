@@ -60,9 +60,6 @@ export default function LebenslaufPreview() {
             {exp.position.join(" / ")}
           </p>
           <p className="italic text-gray-500">{exp.companies.join(', ')}</p>
-          {(exp.ort || []).length > 0 && (
-            <p className="italic text-gray-500">{(exp.ort || []).join(', ')}</p>
-          )}
           <ul className="list-disc list-inside mt-2 space-y-1 text-black">
             {(exp.aufgabenbereiche || []).map((aufgabe, i) => (
               <li key={i}>{aufgabe}</li>

@@ -23,8 +23,7 @@ const CATEGORY_LABELS = {
   ausbildung: 'Ausbildung/Qualifikationen',
   companies: 'Firmen',
   positions: 'Positionen',
-  aufgabenbereiche: 'Aufgabenbereiche',
-  orte: 'Ort'
+  aufgabenbereiche: 'Aufgabenbereiche'
 };
 
 function ProfileSourceSettings({
