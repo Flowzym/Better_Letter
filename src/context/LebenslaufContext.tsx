@@ -1,5 +1,15 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import {
+  fetchExperiences,
+  upsertExperience,
+} from '../services/supabaseService';
 
 export interface Berufserfahrung {
   id: string;
@@ -17,8 +27,8 @@ interface LebenslaufContextType {
   berufserfahrungen: Berufserfahrung[];
   selectedExperienceId: string | null;
   isEditingExperience: boolean;
-  addExperience: (data: Omit<Berufserfahrung, 'id'>) => void;
-  updateExperience: (id: string, data: Omit<Berufserfahrung, 'id'>) => void;
+  addExperience: (data: Omit<Berufserfahrung, 'id'>) => Promise<void>;
+  updateExperience: (id: string, data: Omit<Berufserfahrung, 'id'>) => Promise<void>;
   selectExperience: (id: string | null) => void;
   favoritePositions: string[];
   favoriteTasks: string[];
@@ -31,22 +41,67 @@ interface LebenslaufContextType {
 const LebenslaufContext = createContext<LebenslaufContextType | undefined>(undefined);
 
 export function LebenslaufProvider({ children }: { children: ReactNode }) {
-  const [berufserfahrungen, setBerufserfahrungen] = useState<Berufserfahrung[]>([]);
+  const LOCAL_KEY = 'berufserfahrungen';
+  const USER_ID = 'demo-user';
+
+  const [berufserfahrungen, setBerufserfahrungen] = useState<Berufserfahrung[]>(() => {
+    try {
+      const saved = localStorage.getItem(LOCAL_KEY);
+      return saved ? (JSON.parse(saved) as Berufserfahrung[]) : [];
+    } catch (err) {
+      console.error('Failed to load experiences from localStorage:', err);
+      return [];
+    }
+  });
   const [selectedExperienceId, setSelectedExperienceId] = useState<string | null>(null);
   const [isEditingExperience, setIsEditingExperience] = useState(false);
   const [favoritePositions, setFavoritePositions] = useState<string[]>([]);
   const [favoriteTasks, setFavoriteTasks] = useState<string[]>([]);
   const [favoriteCompanies, setFavoriteCompanies] = useState<string[]>([]);
 
-  const addExperience = (data: Omit<Berufserfahrung, 'id'>) => {
-    setBerufserfahrungen(prev => [...prev, { ...data, id: uuidv4() }]);
+  // Initial load from Supabase
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const data = await fetchExperiences(USER_ID);
+        if (data.length > 0) {
+          setBerufserfahrungen(data);
+          localStorage.setItem(LOCAL_KEY, JSON.stringify(data));
+        }
+      } catch (err) {
+        console.error('Failed to load experiences from Supabase:', err);
+      }
+    };
+    load();
+  }, []);
+
+  const addExperience = async (data: Omit<Berufserfahrung, 'id'>) => {
+    const newExp = { ...data, id: uuidv4() };
+    setBerufserfahrungen(prev => {
+      const updated = [...prev, newExp];
+      localStorage.setItem(LOCAL_KEY, JSON.stringify(updated));
+      return updated;
+    });
+    try {
+      await upsertExperience({ ...newExp, user_id: USER_ID });
+    } catch (err) {
+      console.error('Failed to save experience:', err);
+    }
     setIsEditingExperience(false);
   };
 
-  const updateExperience = (id: string, data: Omit<Berufserfahrung, 'id'>) => {
-    setBerufserfahrungen(prev =>
-      prev.map(exp => (exp.id === id ? { ...data, id } : exp))
-    );
+  const updateExperience = async (id: string, data: Omit<Berufserfahrung, 'id'>) => {
+    const updatedExp = { ...data, id };
+    setBerufserfahrungen(prev => {
+      const updated = prev.map(exp => (exp.id === id ? updatedExp : exp));
+      localStorage.setItem(LOCAL_KEY, JSON.stringify(updated));
+      return updated;
+    });
+    try {
+      await upsertExperience({ ...updatedExp, user_id: USER_ID });
+    } catch (err) {
+      console.error('Failed to update experience:', err);
+    }
     setIsEditingExperience(false);
   };
 
