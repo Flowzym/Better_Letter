@@ -35,12 +35,12 @@ export default function MonthYearInputBase({
     const oldValue = value;
     
     // console.log('🔍 Input change:', {
-      oldValue,
-      newInput: input.value,
-      oldPosition,
-      oldSelectionEnd,
-      wasMonthSelected: oldValue.includes('/') && oldPosition === 0 && oldSelectionEnd === 2
-    });
+    //   oldValue,
+    //   newInput: input.value,
+    //   oldPosition,
+    //   oldSelectionEnd,
+    //   wasMonthSelected: oldValue.includes('/') && oldPosition === 0 && oldSelectionEnd === 2
+    // });
     
     const parsed = parseMonthYearInput(input.value, oldValue, oldPosition, oldSelectionEnd); // Pass raw input
     
