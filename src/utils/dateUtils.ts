@@ -38,9 +38,10 @@ export function parseMonthYearInput(input: string): ParsedMonthYear {
   let month: string | undefined;
   let year: string | undefined;
   let formatted = '';
+  let shouldMoveCursor = false;
   
   if (digits.length === 0) {
-    return { formatted: '', isValid: false };
+    return { formatted: '', isValid: false, shouldMoveCursor: false };
   }
   
   if (digits.length <= 2) {
@@ -50,11 +51,13 @@ export function parseMonthYearInput(input: string): ParsedMonthYear {
       // Gültiger Monat - füge "/" hinzu
       month = digits.padStart(2, '0');
       formatted = digits + '/';
+      shouldMoveCursor = true; // Cursor soll nach "/" springen
     } else {
       // Ungültiger Monat oder nur eine Ziffer - behandle als Jahr
+      year = digits;
       formatted = digits;
     }
-  } else if (digits.length <= 4) {
+  } else if (digits.length <= 6) {
     // 3-4 Ziffern: Prüfe ersten zwei Ziffern
     const firstTwo = digits.slice(0, 2);
     const num = parseInt(firstTwo, 10);
@@ -62,25 +65,11 @@ export function parseMonthYearInput(input: string): ParsedMonthYear {
     if (num >= 1 && num <= 12) {
       // Erste zwei Ziffern sind gültiger Monat
       month = firstTwo;
-      year = digits.slice(2);
+      year = digits.slice(2, 6); // Maximal 4 Ziffern für Jahr
       formatted = `${month}/${year}`;
     } else {
       // Erste zwei Ziffern sind kein gültiger Monat - behandle als Jahr
-      year = digits;
-      formatted += '/';
-    }
-  } else {
-    // Mehr als 4 Ziffern: Monat und Jahr
-    const monthPart = digits.slice(0, 2);
-    const yearPart = digits.slice(2);
-    
-    if (isValidMonth(monthPart)) {
-      month = monthPart;
-      year = yearPart;
-      formatted = `${month}/${year}`;
-    } else {
-      // Ungültiger Monat - behandle als Jahr (maximal 4 Ziffern)
-      year = digits.slice(0, 4);
+      year = digits.slice(0, 4); // Maximal 4 Ziffern für Jahr
       formatted = year;
     }
   }
@@ -94,7 +83,8 @@ export function parseMonthYearInput(input: string): ParsedMonthYear {
     month,
     year,
     formatted,
-    isValid
+    isValid,
+    shouldMoveCursor
   };
 }
 
@@ -120,8 +110,14 @@ export function formatMonthYear(month?: string, year?: string): string {
 export function calculateCursorPosition(
   oldValue: string,
   newValue: string,
-  oldPosition: number
+  oldPosition: number,
+  shouldMoveCursor: boolean = false
 ): number {
+  // Wenn explizit Cursor bewegt werden soll (z.B. nach "/" bei Monat)
+  if (shouldMoveCursor && newValue.includes('/') && !oldValue.includes('/')) {
+    return newValue.length; // Cursor ans Ende (nach "/")
+  }
+  
   // Wenn ein Slash hinzugefügt wurde und der Cursor nach Position 2 war
   const hadSlash = oldValue.includes('/');
   const hasSlash = newValue.includes('/');

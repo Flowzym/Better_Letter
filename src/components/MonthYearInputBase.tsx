@@ -38,7 +38,7 @@ export default function MonthYearInputBase({
     // Cursor-Position anpassen
     setTimeout(() => {
       if (inputRef.current) {
-        const newPosition = calculateCursorPosition(value, parsed.formatted, oldPosition);
+        const newPosition = calculateCursorPosition(value, parsed.formatted, oldPosition, parsed.shouldMoveCursor);
         inputRef.current.setSelectionRange(newPosition, newPosition);
       }
     }, 0);
