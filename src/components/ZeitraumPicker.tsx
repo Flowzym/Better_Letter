@@ -257,9 +257,9 @@ export default function ZeitraumPicker({
       <div className="flex items-center space-x-2">
         <MonthYearInputBase
           value={startInput}
-          onChange={(e) => {
+          onChange={(newValue) => {
             setEditingStart(true);
-            const parsed = parseMonthYearInput(newValue, endInput);
+            const parsed = parseMonthYearInput(newValue, startInput);
             setStartInput(parsed.formatted);
             setStartMonth(parsed.month);
             setStartYear(parsed.year);
