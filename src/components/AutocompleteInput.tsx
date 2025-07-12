@@ -138,19 +138,10 @@ export default function AutocompleteInput({
         setHighlightedIndex(prev => 
           prev < filteredSuggestions.length - 1 ? prev + 1 : 0
         );
-        // Update input field with highlighted suggestion
-        if (highlightedIndex < filteredSuggestions.length - 1) {
-          onChange(filteredSuggestions[highlightedIndex + 1]);
-        } else {
-          onChange(filteredSuggestions[0]);
-        }
         break;
       case 'ArrowUp':
         e.preventDefault();
         setHighlightedIndex(prev => prev > 0 ? prev - 1 : filteredSuggestions.length - 1);
-        // Update input field with highlighted suggestion
-        const newIndex = highlightedIndex > 0 ? highlightedIndex - 1 : filteredSuggestions.length - 1;
-        onChange(filteredSuggestions[newIndex]);
         break;
       case 'Enter':
         e.preventDefault();
