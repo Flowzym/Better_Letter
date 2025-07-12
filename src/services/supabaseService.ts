@@ -11,7 +11,15 @@ export interface ProfileConfig {
 }
 
 export interface ProfileSourceMapping {
-  category: keyof ProfileConfig;
+  category:
+    | 'berufe'
+    | 'taetigkeiten'
+    | 'skills'
+    | 'softskills'
+    | 'ausbildung'
+    | 'companies'
+    | 'positions'
+    | 'aufgabenbereiche';
   tableName: string;
   columnName: string;
   isActive: boolean;
@@ -29,6 +37,12 @@ export interface DatabaseStats {
 export interface SupabaseTable {
   table_name: string;
   columns: string[];
+}
+
+export interface CVSuggestionConfig {
+  companies: string[];
+  positions: string[];
+  aufgabenbereiche: string[];
 }
 
 // -----------------------------------------------------------------------
@@ -172,7 +186,9 @@ async function getDatabaseStats(
         continue;
       }
       const c = count ?? 0;
-      counts[m.category] += c;
+      if (m.category in counts) {
+        counts[m.category as keyof ProfileConfig] += c;
+      }
     } catch (err) {
       console.error(
         `Fehler beim Abrufen der Statistiken f\u00fcr ${m.tableName}:`,
@@ -220,6 +236,41 @@ async function loadProfileSuggestions(
   }
 
   return result;
+}
+
+async function getSuggestionsFor(
+  category: ProfileSourceMapping['category'],
+  mappings: ProfileSourceMapping[]
+): Promise<string[]> {
+  const suggestions: string[] = [];
+  for (const m of mappings.filter(
+    (m) => m.isActive && m.category === category
+  )) {
+    try {
+      const { data } = await supabase.from(m.tableName).select(m.columnName);
+      const values = (data as Record<string, unknown>[]).map((r) =>
+        String(r[m.columnName] ?? '')
+      );
+      suggestions.push(...values);
+    } catch (err) {
+      console.error('Error loading suggestions:', err);
+    }
+  }
+  return suggestions;
+}
+
+export async function loadCVSuggestions(
+  mappings: ProfileSourceMapping[]
+): Promise<CVSuggestionConfig> {
+  const relevant = mappings.filter((m) =>
+    ['companies', 'positions', 'aufgabenbereiche'].includes(m.category)
+  );
+
+  const companies = await getSuggestionsFor('companies', relevant);
+  const positions = await getSuggestionsFor('positions', relevant);
+  const aufgabenbereiche = await getSuggestionsFor('aufgabenbereiche', relevant);
+
+  return { companies, positions, aufgabenbereiche };
 }
 
 async function testSupabaseConnection(): Promise<boolean> {

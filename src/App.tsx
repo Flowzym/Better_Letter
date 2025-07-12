@@ -537,7 +537,7 @@ function HomePage() {
 
         {activeTab === 'lebenslauf' && (
           <div className="p-6">
-            <LebenslaufEditor />
+            <LebenslaufEditor profileSourceMappings={profileSourceMappings} />
           </div>
         )}
 

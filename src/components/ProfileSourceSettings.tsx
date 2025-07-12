@@ -20,7 +20,10 @@ const CATEGORY_LABELS = {
   taetigkeiten: 'Tätigkeiten',
   skills: 'Fachliche Kompetenzen',
   softskills: 'Persönliche Kompetenzen',
-  ausbildung: 'Ausbildung/Qualifikationen'
+  ausbildung: 'Ausbildung/Qualifikationen',
+  companies: 'Firmen',
+  positions: 'Positionen',
+  aufgabenbereiche: 'Aufgabenbereiche'
 };
 
 function ProfileSourceSettings({

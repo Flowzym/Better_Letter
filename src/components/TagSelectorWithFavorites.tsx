@@ -9,16 +9,18 @@ interface TagSelectorWithFavoritesProps {
   label: string;
   value: string[];
   onChange: (val: string[]) => void;
-  options: string[];
+  options?: string[];
   allowCustom: boolean;
+  suggestions?: string[];
 }
 
 export default function TagSelectorWithFavorites({
   label,
   value,
   onChange,
-  options,
+  options = [],
   allowCustom,
+  suggestions,
 }: TagSelectorWithFavoritesProps) {
   const [inputValue, setInputValue] = useState('');
   const [editIndex, setEditIndex] = useState<number | null>(null);
@@ -29,7 +31,8 @@ export default function TagSelectorWithFavorites({
   const addTag = (tag: string) => {
     const trimmed = tag.trim();
     if (!trimmed) return;
-    if (!allowCustom && !options.includes(trimmed)) return;
+    const opts = suggestions ?? options;
+    if (!allowCustom && !opts.includes(trimmed)) return;
     if (value.includes(trimmed)) return;
     onChange([...value, trimmed]);
   };
@@ -77,7 +80,7 @@ export default function TagSelectorWithFavorites({
         onChange={setInputValue}
         onAdd={handleAddInput}
         onFavoriteClick={handleAddFavoriteInput}
-        suggestions={options}
+        suggestions={suggestions ?? options}
         placeholder="Hinzufügen..."
         showFavoritesButton
         showAddButton

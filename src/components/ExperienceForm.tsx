@@ -3,12 +3,14 @@ import ZeitraumPicker from './ZeitraumPicker';
 import TasksTagInput from './TasksTagInput';
 import CompaniesTagInput from './CompaniesTagInput';
 import { Berufserfahrung } from '../context/LebenslaufContext';
+import { CVSuggestionConfig } from '../services/supabaseService';
 
 interface ExperienceFormProps {
   form: Omit<Berufserfahrung, 'id'>;
   selectedPositions: string[];
   onUpdateField: <K extends keyof Omit<Berufserfahrung, 'id'>>(field: K, value: Omit<Berufserfahrung, 'id'>[K]) => void;
   onPositionsChange: (val: string[]) => void;
+  cvSuggestions: CVSuggestionConfig;
 }
 
 export default function ExperienceForm({
@@ -16,6 +18,7 @@ export default function ExperienceForm({
   selectedPositions,
   onUpdateField,
   onPositionsChange,
+  cvSuggestions,
 }: ExperienceFormProps) {
   return (
     <div className="space-y-4">
@@ -60,6 +63,7 @@ export default function ExperienceForm({
         <CompaniesTagInput
           value={form.companies}
           onChange={(val) => onUpdateField('companies', val)}
+          suggestions={cvSuggestions.companies}
         />
       </div>
 
@@ -71,8 +75,8 @@ export default function ExperienceForm({
             onPositionsChange(val);
             onUpdateField('position', val);
           }}
-          options={[]}
           allowCustom={true}
+          suggestions={cvSuggestions.positions}
         />
       </div>
 
@@ -82,6 +86,7 @@ export default function ExperienceForm({
           value={form.aufgabenbereiche}
           onChange={(val) => onUpdateField('aufgabenbereiche', val)}
           positionen={selectedPositions}
+          suggestions={cvSuggestions.aufgabenbereiche}
         />
       </div>
     </div>

@@ -27,6 +27,7 @@ export default function LebenslaufInput() {
     addExperience,
     updateExperience,
     selectExperience,
+    cvSuggestions,
   } = useLebenslaufContext();
 
   const [form, setForm] = useState<BerufserfahrungForm>(initialExperience);
@@ -81,6 +82,7 @@ export default function LebenslaufInput() {
           selectedPositions={selectedPositions}
           onUpdateField={updateField}
           onPositionsChange={setSelectedPositions}
+          cvSuggestions={cvSuggestions}
         />
         <button
           className={`w-full border border-gray-300 bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-md hover:bg-gray-100 transition`}

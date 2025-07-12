@@ -3,8 +3,14 @@ import React, {
   useContext,
   useState,
   ReactNode,
+  useEffect,
 } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import {
+  CVSuggestionConfig,
+  loadCVSuggestions,
+  ProfileSourceMapping,
+} from '../services/supabaseService';
 
 export interface Berufserfahrung {
   id: string;
@@ -31,11 +37,18 @@ interface LebenslaufContextType {
   toggleFavoritePosition: (pos: string) => void;
   toggleFavoriteTask: (task: string) => void;
   toggleFavoriteCompany: (company: string) => void;
+  cvSuggestions: CVSuggestionConfig;
 }
 
 const LebenslaufContext = createContext<LebenslaufContextType | undefined>(undefined);
 
-export function LebenslaufProvider({ children }: { children: ReactNode }) {
+export function LebenslaufProvider({
+  children,
+  profileSourceMappings = [],
+}: {
+  children: ReactNode;
+  profileSourceMappings?: ProfileSourceMapping[];
+}) {
   const LOCAL_KEY = 'berufserfahrungen';
 
   const [berufserfahrungen, setBerufserfahrungen] = useState<Berufserfahrung[]>(() => {
@@ -52,6 +65,17 @@ export function LebenslaufProvider({ children }: { children: ReactNode }) {
   const [favoritePositions, setFavoritePositions] = useState<string[]>([]);
   const [favoriteTasks, setFavoriteTasks] = useState<string[]>([]);
   const [favoriteCompanies, setFavoriteCompanies] = useState<string[]>([]);
+  const [cvSuggestions, setCvSuggestions] = useState<CVSuggestionConfig>({
+    companies: [],
+    positions: [],
+    aufgabenbereiche: [],
+  });
+
+  useEffect(() => {
+    if (profileSourceMappings?.length > 0) {
+      loadCVSuggestions(profileSourceMappings).then(setCvSuggestions);
+    }
+  }, [profileSourceMappings]);
 
 
   const addExperience = async (data: Omit<Berufserfahrung, 'id'>) => {
@@ -114,6 +138,7 @@ export function LebenslaufProvider({ children }: { children: ReactNode }) {
         toggleFavoritePosition,
         toggleFavoriteTask,
         toggleFavoriteCompany,
+        cvSuggestions,
       }}
     >
       {children}

@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import CompanyTag from './CompanyTag';
 import TagButtonFavorite from './ui/TagButtonFavorite';
+import TagButton from './TagButton';
+import TagContext from '../types/TagContext';
 import { useLebenslaufContext } from '../context/LebenslaufContext';
 import TextInputWithButtons from './TextInputWithButtons';
 import { useTagList } from '../hooks/useTagList';
@@ -8,9 +10,10 @@ import { useTagList } from '../hooks/useTagList';
 interface CompaniesTagInputProps {
   value: string[];
   onChange: (companies: string[]) => void;
+  suggestions?: string[];
 }
 
-export default function CompaniesTagInput({ value, onChange }: CompaniesTagInputProps) {
+export default function CompaniesTagInput({ value, onChange, suggestions = [] }: CompaniesTagInputProps) {
   const [inputValue, setInputValue] = useState('');
   const { favoriteCompanies: favorites, toggleFavoriteCompany } =
     useLebenslaufContext();
@@ -43,6 +46,8 @@ export default function CompaniesTagInput({ value, onChange }: CompaniesTagInput
     setInputValue('');
   };
 
+  const filteredSuggestions = suggestions.filter((s) => !value.includes(s));
+
   return (
     <div className="space-y-2">
       <TextInputWithButtons
@@ -62,6 +67,22 @@ export default function CompaniesTagInput({ value, onChange }: CompaniesTagInput
               onEdit={(val) => updateCompany(c, val)}
             />
           ))}
+        </div>
+      )}
+
+      {filteredSuggestions.length > 0 && (
+        <div>
+          <h4 className="text-sm font-medium text-gray-700 mb-2">Vorschläge:</h4>
+          <div className="flex flex-wrap gap-2">
+            {filteredSuggestions.map((s) => (
+              <TagButton
+                key={s}
+                label={s}
+                variant={TagContext.Suggestion}
+                onClick={() => addCompany(s)}
+              />
+            ))}
+          </div>
         </div>
       )}
 
