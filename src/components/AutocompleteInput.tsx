@@ -227,7 +227,7 @@ export default function AutocompleteInput({
           disabled={disabled}
           className="flex-1 px-3 h-10 border rounded-md transition-all focus:outline-none focus:ring-1"
           style={{
-            borderColor: inputBorderColor,
+            borderColor: '#D1D5DB', // Standard grau
             '--tw-ring-color': '#F29400'
           } as React.CSSProperties}
           aria-expanded={isOpen}
