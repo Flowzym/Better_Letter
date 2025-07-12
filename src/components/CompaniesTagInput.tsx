@@ -1,7 +1,8 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import CompanyTag from './CompanyTag';
 import TagButtonFavorite from './ui/TagButtonFavorite';
 import { useLebenslaufContext } from '../context/LebenslaufContext';
+import AutocompleteInput from './AutocompleteInput';
 
 interface CompaniesTagInputProps {
   value: string[];
@@ -10,7 +11,6 @@ interface CompaniesTagInputProps {
 
 export default function CompaniesTagInput({ value, onChange }: CompaniesTagInputProps) {
   const [inputValue, setInputValue] = useState('');
-  const inputRef = useRef<HTMLInputElement>(null);
   const { favoriteCompanies: favorites, toggleFavoriteCompany } =
     useLebenslaufContext();
 
@@ -29,15 +29,8 @@ export default function CompaniesTagInput({ value, onChange }: CompaniesTagInput
     onChange(value.map((v) => (v === oldVal ? newVal : v)));
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' || e.key === ',') {
-      e.preventDefault();
-      addCompany();
-    }
-  };
-
-  const handleAddFavorite = () => {
-    const trimmed = inputValue.trim();
+  const handleAddFavoriteInput = (val?: string) => {
+    const trimmed = (val ?? inputValue).trim();
     if (!trimmed) return;
     toggleFavoriteCompany(trimmed);
     setInputValue('');
@@ -45,31 +38,17 @@ export default function CompaniesTagInput({ value, onChange }: CompaniesTagInput
 
   return (
     <div className="space-y-2">
-      <div className="flex space-x-1">
-        <input
-          ref={inputRef}
-          type="text"
-          placeholder="Firma hinzufügen..."
-          className="flex-1 px-3 py-2 border rounded"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={handleKeyDown}
-        />
-        <button
-          onClick={() => addCompany()}
-          className="px-3 py-2 rounded text-white bg-yellow-400"
-          aria-label="Hinzufügen"
-        >
-          +
-        </button>
-        <button
-          onClick={handleAddFavorite}
-          className="px-2 py-1 rounded text-white bg-yellow-300 text-sm"
-          aria-label="Als Favorit hinzufügen"
-        >
-          ★
-        </button>
-      </div>
+      <AutocompleteInput
+        value={inputValue}
+        onChange={setInputValue}
+        onAdd={addCompany}
+        onAddToFavorites={handleAddFavoriteInput}
+        suggestions={[]}
+        placeholder="Firma hinzufügen..."
+        inputBorderColor="#D1D5DB"
+        showAddButton
+        showFavoritesButton
+      />
       {value.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {value.map((c) => (
