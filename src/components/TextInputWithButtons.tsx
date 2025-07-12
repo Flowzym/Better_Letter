@@ -1,5 +1,5 @@
 import { Plus, Star } from 'lucide-react';
-import { useState, type ChangeEvent, type KeyboardEvent } from 'react';
+import type { ChangeEvent, KeyboardEvent } from 'react';
 
 interface TextInputWithButtonsProps {
   value: string;
@@ -16,16 +16,17 @@ export default function TextInputWithButtons({
   onAddFavorite,
   placeholder = '',
 }: TextInputWithButtonsProps) {
+  const trimmed = value.trim();
+  const hasValue = trimmed.length > 0;
+
   const handleAdd = () => {
-    const trimmed = value.trim();
-    if (!trimmed) return;
+    if (!hasValue) return;
     onAdd(trimmed);
     onChange('');
   };
 
   const handleAddFavorite = () => {
-    const trimmed = value.trim();
-    if (!trimmed) return;
+    if (!hasValue) return;
     onAddFavorite(trimmed);
     onChange('');
   };
@@ -38,30 +39,28 @@ export default function TextInputWithButtons({
   };
 
   return (
-    <div className="flex items-center gap-2 w-full">
+    <div className="flex items-center w-full">
       <input
         type="text"
-        className={`transition-all duration-200 border rounded-md px-3 py-2 flex-grow focus:outline-none focus:ring-2 focus:ring-[#F29400] ${
-          value ? 'w-[calc(100%-90px)]' : 'w-full'
-        }`}
-        placeholder={placeholder}
         value={value}
         onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
         onKeyDown={handleKeyDown}
+        placeholder={placeholder}
+        className="flex-1 px-3 py-2 border rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-[#F29400]"
       />
-      {value.trim() && (
-        <div className="flex gap-1">
+      {hasValue && (
+        <div className="flex gap-2 ml-2">
           <button
             type="button"
             onClick={handleAdd}
-            className="bg-[#F5A623] hover:bg-[#e4941f] w-9 h-9 flex items-center justify-center rounded"
+            className="w-10 h-10 bg-[#F6A800] text-white rounded-md flex items-center justify-center"
           >
             <Plus className="w-5 h-5" />
           </button>
           <button
             type="button"
             onClick={handleAddFavorite}
-            className="bg-[#F5A623] hover:bg-[#e4941f] w-9 h-9 flex items-center justify-center rounded"
+            className="w-10 h-10 bg-[#F6A800] text-white rounded-md flex items-center justify-center"
           >
             <Star className="w-5 h-5" />
           </button>
