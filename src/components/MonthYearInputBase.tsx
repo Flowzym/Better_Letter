@@ -1,5 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { parseMonthYearInput, calculateCursorPosition } from '../utils/dateUtils';
+import React, { useRef } from 'react';
 
 interface MonthYearInputBaseProps {
   value: string;
@@ -14,7 +13,7 @@ interface MonthYearInputBaseProps {
 
 /**
  * Basis-Komponente für Monat/Jahr-Eingabe
- * Konsolidiert die gemeinsame Logik aus MonthYearInput und MonthYearPicker
+ * Einfache, robuste Implementierung ohne komplexe Parsing-Logik
  */
 export default function MonthYearInputBase({
   value,
@@ -31,17 +30,116 @@ export default function MonthYearInputBase({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     
-    // Normale Parsing-Logik für alle anderen Fälle
-    const parsed = parseMonthYearInput(newValue, value);
-    onChange(parsed.formatted);
+    // Einfache Formatierung: nur Ziffern und Schrägstrich erlauben
+    const cleaned = newValue.replace(/[^\d/]/g, '');
     
-    // Cursor-Position anpassen
-    setTimeout(() => {
-      if (inputRef.current) {
-        const newPosition = calculateCursorPosition(value, parsed.formatted, 0, parsed.shouldMoveCursor);
-        inputRef.current.setSelectionRange(newPosition, newPosition);
+    // Maximal 7 Zeichen (MM/YYYY)
+    const limited = cleaned.slice(0, 7);
+    
+    onChange(limited);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const input = inputRef.current;
+    if (!input) return;
+    
+    const start = input.selectionStart ?? 0;
+    const end = input.selectionEnd ?? 0;
+    const hasSelection = start !== end;
+    
+    // Spezialbehandlung nur für Ziffern-Eingabe bei Selektion
+    if (/^\d$/.test(e.key) && hasSelection) {
+      const digit = e.key;
+      
+      // FALL 1: "MM/YYYY" und Monat (MM) ist selektiert
+      if (value === "MM/YYYY" && start === 0 && end === 2) {
+        e.preventDefault();
+        
+        // Erste Ziffer: mit führender Null formatieren
+        const formattedMonth = digit.padStart(2, '0');
+        onChange(`${formattedMonth}/YYYY`);
+        
+        // Monat markiert lassen für weitere Eingabe
+        setTimeout(() => {
+          if (inputRef.current) {
+            inputRef.current.setSelectionRange(0, 2);
+          }
+        }, 0);
+        return;
       }
-    }, 0);
+      
+      // FALL 2: "0X/YYYY" und Monat ist selektiert - zweite Ziffer eingeben
+      if (value.match(/^0\d\/YYYY$/) && start === 0 && end === 2) {
+        e.preventDefault();
+        
+        // Zweite Ziffer: erste Ziffer + neue Ziffer
+        const firstDigit = value[1];
+        const newMonth = firstDigit + digit;
+        
+        // Validierung: Monat muss zwischen 01-12 sein
+        const monthNum = parseInt(newMonth, 10);
+        if (monthNum >= 1 && monthNum <= 12) {
+          onChange(`${newMonth}/YYYY`);
+          
+          // Jahr markieren für nächste Eingabe
+          setTimeout(() => {
+            if (inputRef.current) {
+              inputRef.current.setSelectionRange(3, 7);
+            }
+          }, 0);
+        }
+        return;
+      }
+      
+      // FALL 3: "MM/YYYY" und Jahr (YYYY) ist selektiert
+      if (value === "MM/YYYY" && start === 3 && end === 7) {
+        e.preventDefault();
+        
+        onChange(`MM/${digit}`);
+        
+        // Cursor nach der eingegebenen Ziffer setzen
+        setTimeout(() => {
+          if (inputRef.current) {
+            inputRef.current.setSelectionRange(4, 4);
+          }
+        }, 0);
+        return;
+      }
+      
+      // FALL 4: Normaler Monat selektiert (z.B. "01/2024" und "01" ist markiert)
+      if (value.includes('/') && start === 0 && end === 2) {
+        e.preventDefault();
+        
+        const yearPart = value.split('/')[1] || '';
+        const formattedMonth = digit.padStart(2, '0');
+        onChange(`${formattedMonth}/${yearPart}`);
+        
+        setTimeout(() => {
+          if (inputRef.current) {
+            inputRef.current.setSelectionRange(0, 2);
+          }
+        }, 0);
+        return;
+      }
+      
+      // FALL 5: Normales Jahr selektiert (z.B. "01/2024" und "2024" ist markiert)
+      if (value.includes('/') && start === 3 && end === value.length) {
+        e.preventDefault();
+        
+        const monthPart = value.split('/')[0];
+        onChange(`${monthPart}/${digit}`);
+        
+        setTimeout(() => {
+          if (inputRef.current) {
+            inputRef.current.setSelectionRange(4, 4);
+          }
+        }, 0);
+        return;
+      }
+    }
+    
+    // Externe KeyDown-Handler aufrufen
+    onKeyDown?.(e);
   };
 
   const handleClick = () => {
@@ -63,98 +161,6 @@ export default function MonthYearInputBase({
       // Gesamten Wert selektieren
       setTimeout(() => input.setSelectionRange(0, value.length), 0);
     }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    const input = inputRef.current;
-    if (!input) return;
-    
-    const start = input.selectionStart ?? 0;
-    const end = input.selectionEnd ?? 0;
-    const hasSelection = start !== end;
-    
-    // Nur bei Ziffern-Eingabe und wenn Text selektiert ist
-    if (/^\d$/.test(e.key) && hasSelection) {
-      e.preventDefault(); // Verhindere Standard-Verhalten
-      
-      const digit = e.key;
-      
-      // FALL 1: Monat ist selektiert (MM/YYYY -> Monat markiert)
-      if (value === "MM/YYYY" && start === 0 && end === 2) {
-        const formattedMonth = digit.padStart(2, '0');
-        onChange(`${formattedMonth}/YYYY`);
-        setTimeout(() => {
-          if (inputRef.current) {
-            inputRef.current.setSelectionRange(0, 2); // Monat bleibt markiert
-          }
-        }, 0);
-        return;
-      }
-      
-      // FALL 2: Jahr ist selektiert (MM/YYYY -> Jahr markiert)
-      if (value.endsWith("/YYYY") && start === 3 && end === 7) {
-        const monthPart = value.split("/")[0];
-        onChange(`${monthPart}/${digit}`);
-        setTimeout(() => {
-          if (inputRef.current) {
-            inputRef.current.setSelectionRange(4, 4); // Cursor nach der eingegebenen Ziffer
-          }
-        }, 0);
-        return;
-      }
-      
-      // FALL 3: Monat ist selektiert in normalem Format (z.B. "01/2024" -> Monat markiert)
-      if (value.includes('/') && start === 0 && end === 2) {
-        const yearPart = value.split("/")[1] || '';
-        const formattedMonth = digit.padStart(2, '0');
-        onChange(`${formattedMonth}/${yearPart}`);
-        setTimeout(() => {
-          if (inputRef.current) {
-            inputRef.current.setSelectionRange(0, 2); // Monat bleibt markiert
-          }
-        }, 0);
-        return;
-      }
-      
-      // FALL 4: Jahr ist selektiert in normalem Format (z.B. "01/2024" -> Jahr markiert)
-      if (value.includes('/') && start === 3 && end === value.length) {
-        const monthPart = value.split("/")[0];
-        onChange(`${monthPart}/${digit}`);
-        setTimeout(() => {
-          if (inputRef.current) {
-            inputRef.current.setSelectionRange(4, 4); // Cursor nach der eingegebenen Ziffer
-          }
-        }, 0);
-        return;
-      }
-    }
-    
-    // Backspace-Logik für intelligentes Löschen
-    if (e.key === 'Backspace') {
-      const start = input.selectionStart ?? 0;
-      const end = input.selectionEnd ?? 0;
-      
-      // Wenn Monat selektiert ist, lösche nur Monat
-      if (value.includes('/') && start === 0 && end === 2) {
-        const yearPart = value.split('/')[1] || '';
-        onChange(yearPart);
-        setTimeout(() => input.setSelectionRange(0, yearPart.length), 0);
-        e.preventDefault();
-        return;
-      }
-      
-      // Wenn Jahr selektiert ist, lösche nur Jahr
-      if (value.includes('/') && start === 3 && end === value.length) {
-        const monthPart = value.split('/')[0];
-        onChange(monthPart + '/');
-        setTimeout(() => input.setSelectionRange(0, 2), 0);
-        e.preventDefault();
-        return;
-      }
-    }
-    
-    // Externe KeyDown-Handler aufrufen
-    onKeyDown?.(e);
   };
 
   return (
