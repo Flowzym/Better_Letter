@@ -4,7 +4,7 @@ import TaskTag from "./TaskTag";
 import TagButton from "./TagButton";
 import TagButtonFavorite from "./ui/TagButtonFavorite";
 import TagContext from "../types/TagContext";
-import InputWithActions from "./InputWithActions";
+import TextInputWithButtons from "./TextInputWithButtons";
 import { getTasksForPositions } from "../constants/positionsToTasks";
 import { useLebenslaufContext } from "../context/LebenslaufContext";
 import "../styles/_tags.scss";
@@ -75,7 +75,7 @@ export default function TasksTagInput({
   return (
     <div className="space-y-4">
 
-      <InputWithActions
+      <TextInputWithButtons
         value={inputValue}
         onChange={setInputValue}
         onAdd={addTask}

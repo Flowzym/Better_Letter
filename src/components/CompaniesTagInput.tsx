@@ -2,7 +2,7 @@ import { useState } from 'react';
 import CompanyTag from './CompanyTag';
 import TagButtonFavorite from './ui/TagButtonFavorite';
 import { useLebenslaufContext } from '../context/LebenslaufContext';
-import InputWithActions from './InputWithActions';
+import TextInputWithButtons from './TextInputWithButtons';
 
 interface CompaniesTagInputProps {
   value: string[];
@@ -38,7 +38,7 @@ export default function CompaniesTagInput({ value, onChange }: CompaniesTagInput
 
   return (
     <div className="space-y-2">
-      <InputWithActions
+      <TextInputWithButtons
         value={inputValue}
         onChange={setInputValue}
         onAdd={addCompany}
