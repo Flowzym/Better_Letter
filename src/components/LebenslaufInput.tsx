@@ -57,16 +57,16 @@ export default function LebenslaufInput() {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleAdd = () => {
-    addExperience(form);
+  const handleAdd = async () => {
+    await addExperience(form);
     setForm(initialExperience);
     setSelectedPositions([]);
     selectExperience(null);
   };
 
-  const handleUpdate = () => {
+  const handleUpdate = async () => {
     if (selectedExperienceId !== null) {
-      updateExperience(selectedExperienceId, form);
+      await updateExperience(selectedExperienceId, form);
     }
     setForm(initialExperience);
     setSelectedPositions([]);
