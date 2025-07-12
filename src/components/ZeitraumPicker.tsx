@@ -1,4 +1,6 @@
 import { useState, useRef, useEffect } from "react";
+import { parseMonthYearInput } from '../utils/dateUtils';
+import MonthYearInputBase from './MonthYearInputBase';
 
 interface ZeitraumValue {
   startMonth?: string;
@@ -83,9 +85,6 @@ export default function ZeitraumPicker({
     { label: "November", value: "11" },
     { label: "Dezember", value: "12" },
   ];
-
-import { parseMonthYearInput } from '../utils/dateUtils';
-import MonthYearInputBase from './MonthYearInputBase';
 
   const closePopup = () => {
     setActiveField(null);
