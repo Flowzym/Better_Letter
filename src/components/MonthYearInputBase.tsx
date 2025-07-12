@@ -277,6 +277,7 @@ export default function MonthYearInputBase({
                 
                 // Jahr markieren wenn Monat vollständig (2-stellig) UND Jahr vollständig (4-stellig) ist
                 if (monthPart.length === 2 && yearPart && yearPart.length === 4) {
+                }
               if (newValue.substring(0, slashIndex).length === 2 && yearPart && yearPart.length === 4) {
                 // Jahr ist vollständig -> markieren
                 inputRef.current.setSelectionRange(slashIndex + 1, newValue.length);
