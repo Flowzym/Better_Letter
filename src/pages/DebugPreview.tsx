@@ -4,11 +4,13 @@ import TagButtonFavorite from '../components/ui/TagButtonFavorite';
 import TagButtonSelected from '../components/ui/TagButtonSelected';
 import MonthYearInput from '../components/MonthYearInput';
 import MonthYearPicker from '../components/MonthYearPicker';
+import TextInputWithButtons from '../components/TextInputWithButtons';
 import TagContext from '../types/TagContext';
 
 export default function DebugPreview() {
   const [pickerValue, setPickerValue] = useState('');
   const [inputValue, setInputValue] = useState('');
+  const [textValue, setTextValue] = useState('');
 
   return (
     <div className="p-4 space-y-6">
@@ -24,6 +26,15 @@ export default function DebugPreview() {
 
       <h2 className="font-bold">MonthYearInput</h2>
       <MonthYearInput value={inputValue} onChange={setInputValue} />
+
+      <h2 className="font-bold">TextInputWithButtons</h2>
+      <TextInputWithButtons
+        value={textValue}
+        onChange={setTextValue}
+        onAdd={(val) => console.log('add', val)}
+        onAddFavorite={(val) => console.log('favorite', val)}
+        placeholder="Hinzufügen..."
+      />
     </div>
   );
 }
