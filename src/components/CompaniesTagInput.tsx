@@ -3,6 +3,7 @@ import CompanyTag from './CompanyTag';
 import TagButtonFavorite from './ui/TagButtonFavorite';
 import { useLebenslaufContext } from '../context/LebenslaufContext';
 import TextInputWithButtons from './TextInputWithButtons';
+import { useTagList } from '../hooks/useTagList';
 
 interface CompaniesTagInputProps {
   value: string[];
@@ -14,9 +15,15 @@ export default function CompaniesTagInput({ value, onChange }: CompaniesTagInput
   const { favoriteCompanies: favorites, toggleFavoriteCompany } =
     useLebenslaufContext();
 
+  // unified via useTagList - konsolidierte Tag-Verwaltung
+  const { addTag: addTagToList, hasTag } = useTagList({
+    initialTags: value,
+    allowDuplicates: false
+  });
+
   const addCompany = (val?: string) => {
     const c = (val ?? inputValue).trim();
-    if (!c || value.includes(c)) return;
+    if (!c || hasTag(c)) return;
     onChange([...value, c]);
     setInputValue('');
   };
@@ -42,7 +49,7 @@ export default function CompaniesTagInput({ value, onChange }: CompaniesTagInput
         value={inputValue}
         onChange={setInputValue}
         onAdd={addCompany}
-        onFavorite={handleAddFavoriteInput}
+        onFavoriteClick={handleAddFavoriteInput}
         placeholder="Firma hinzufügen..."
       />
       {value.length > 0 && (

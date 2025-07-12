@@ -7,6 +7,7 @@ import TagContext from "../types/TagContext";
 import TextInputWithButtons from "./TextInputWithButtons";
 import { getTasksForPositions } from "../constants/positionsToTasks";
 import { useLebenslaufContext } from "../context/LebenslaufContext";
+import { useTagList } from "../hooks/useTagList";
 import "../styles/_tags.scss";
 
 interface TasksTagInputProps {
@@ -25,6 +26,12 @@ export default function TasksTagInput({
   const [editValue, setEditValue] = useState("");
   const { favoriteTasks: favorites, toggleFavoriteTask } = useLebenslaufContext();
 
+  // unified via useTagList - konsolidierte Tag-Verwaltung
+  const { hasTag } = useTagList({
+    initialTags: value,
+    allowDuplicates: false
+  });
+
   const suggestions = useMemo(() => {
     const fromPositions = getTasksForPositions(positionen);
     const unique = Array.from(new Set(fromPositions));
@@ -36,7 +43,7 @@ export default function TasksTagInput({
 
   const addTask = (task?: string) => {
     const t = (task ?? inputValue).trim();
-    if (!t || value.includes(t)) return;
+    if (!t || hasTag(t)) return;
     onChange([...value, t]);
     setInputValue("");
   };
@@ -79,7 +86,7 @@ export default function TasksTagInput({
         value={inputValue}
         onChange={setInputValue}
         onAdd={addTask}
-        onFavorite={handleAddFavoriteInput}
+        onFavoriteClick={handleAddFavoriteInput}
         placeholder="Hinzufügen..."
       />
 

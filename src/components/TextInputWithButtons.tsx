@@ -5,7 +5,7 @@ interface TextInputWithButtonsProps {
   value: string;
   onChange: (val: string) => void;
   onAdd: (val: string) => void;
-  onFavorite: (val: string) => void;
+  onFavoriteClick: (val: string) => void;
   placeholder?: string;
   showButtons?: boolean;
 }
@@ -14,7 +14,7 @@ export default function TextInputWithButtons({
   value,
   onChange,
   onAdd,
-  onFavorite,
+  onFavoriteClick,
   placeholder = '',
   showButtons,
 }: TextInputWithButtonsProps) {
@@ -28,9 +28,9 @@ export default function TextInputWithButtons({
     onChange('');
   };
 
-  const handleFavorite = () => {
+  const handleFavoriteClick = () => {
     if (!hasValue) return;
-    onFavorite(trimmed);
+    onFavoriteClick(trimmed);
     onChange('');
   };
 
@@ -62,7 +62,7 @@ export default function TextInputWithButtons({
           </button>
           <button
             type="button"
-            onClick={handleFavorite}
+            onClick={handleFavoriteClick}
             className="w-10 h-10 bg-[#F6A800] text-white rounded-md flex items-center justify-center"
           >
             <Star className="w-5 h-5" />

@@ -84,28 +84,8 @@ export default function ZeitraumPicker({
     { label: "Dezember", value: "12" },
   ];
 
-  const parseInput = (
-    val: string,
-  ): { formatted: string; month?: string; year?: string } => {
-    const digits = val.replace(/\D/g, "").slice(0, 6);
-    let month: string | undefined;
-    let year: string | undefined;
-    let formatted = "";
-
-    if (digits.length === 0) {
-      formatted = "";
-    } else if (digits.length <= 2) {
-      month = digits;
-      formatted = digits;
-      if (digits.length === 2) formatted += "/";
-    } else {
-      month = digits.slice(0, 2);
-      year = digits.slice(2);
-      formatted = `${month}/${year}`;
-    }
-
-    return { formatted, month: month || undefined, year: year || undefined };
-  };
+import { parseMonthYearInput } from '../utils/dateUtils';
+import MonthYearInputBase from './MonthYearInputBase';
 
   const closePopup = () => {
     setActiveField(null);
@@ -277,49 +257,45 @@ export default function ZeitraumPicker({
     <div className="relative space-y-2">
       <div className="flex items-center space-x-2">
         <input
-          type="text"
           value={startInput}
-          placeholder="von"
+          onChange={(newValue) => {
+            setEditingStart(true);
+            const parsed = parseMonthYearInput(newValue);
+            setStartInput(parsed.formatted);
+            setStartMonth(parsed.month);
+            setStartYear(parsed.year);
+          }}
           onFocus={() => {
             setActiveField("start");
             setEditingStart(true);
           }}
           onBlur={() => setEditingStart(false)}
-          onChange={(e) => {
-            setEditingStart(true);
-            const { formatted, month, year } = parseInput(e.target.value);
-            setStartInput(formatted);
-            setStartMonth(month);
-            setStartYear(year);
-          }}
           onKeyDown={handleStartKeyDown}
-          className={`w-32 px-2 py-1 border rounded-md focus:outline-none focus:ring-2 ${
+          placeholder="von"
+          className={`w-32 ${
             startInvalid ? "border-red-500" : ""
           }`}
-          style={{ "--tw-ring-color": "#F29400" } as React.CSSProperties}
         />
         {!isCurrent && (
-          <input
-            type="text"
+          <MonthYearInputBase
             value={endInput}
-            placeholder="bis"
+            onChange={(newValue) => {
+              setEditingEnd(true);
+              const parsed = parseMonthYearInput(newValue);
+              setEndInput(parsed.formatted);
+              setEndMonth(parsed.month);
+              setEndYear(parsed.year);
+            }}
             onFocus={() => {
               setActiveField("end");
               setEditingEnd(true);
             }}
             onBlur={() => setEditingEnd(false)}
-            onChange={(e) => {
-              setEditingEnd(true);
-              const { formatted, month, year } = parseInput(e.target.value);
-              setEndInput(formatted);
-              setEndMonth(month);
-              setEndYear(year);
-            }}
             onKeyDown={handleEndKeyDown}
-            className={`w-32 px-2 py-1 border rounded-md focus:outline-none focus:ring-2 ${
+            placeholder="bis"
+            className={`w-32 ${
               endInvalid ? "border-red-500" : ""
             }`}
-            style={{ "--tw-ring-color": "#F29400" } as React.CSSProperties}
           />
         )}
         <label className="ml-2 flex items-center space-x-1 text-sm">
