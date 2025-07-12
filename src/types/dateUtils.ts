@@ -7,4 +7,5 @@ export interface ParsedMonthYear {
   formatted: string;
   isValid: boolean;
   shouldMoveCursor?: boolean;
+  shouldMoveCursor?: boolean;
 }
