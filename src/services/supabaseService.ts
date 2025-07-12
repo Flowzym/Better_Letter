@@ -19,8 +19,7 @@ export interface ProfileSourceMapping {
     | 'ausbildung'
     | 'companies'
     | 'positions'
-    | 'aufgabenbereiche'
-    | 'orte';
+    | 'aufgabenbereiche';
   tableName: string;
   columnName: string;
   isActive: boolean;
@@ -44,7 +43,6 @@ export interface CVSuggestionConfig {
   companies: string[];
   positions: string[];
   aufgabenbereiche: string[];
-  orte: string[];
 }
 
 // -----------------------------------------------------------------------
@@ -267,15 +265,14 @@ export async function loadCVSuggestions(
   mappings: ProfileSourceMapping[]
 ): Promise<CVSuggestionConfig> {
   const relevant = mappings.filter((m) =>
-    ['companies', 'positions', 'aufgabenbereiche', 'orte'].includes(m.category)
+    ['companies', 'positions', 'aufgabenbereiche'].includes(m.category)
   );
 
   const companies = await getSuggestionsFor('companies', relevant);
   const positions = await getSuggestionsFor('positions', relevant);
   const aufgabenbereiche = await getSuggestionsFor('aufgabenbereiche', relevant);
-  const orte = await getSuggestionsFor('orte', relevant);
 
-  return { companies, positions, aufgabenbereiche, orte };
+  return { companies, positions, aufgabenbereiche };
 }
 
 async function testSupabaseConnection(): Promise<boolean> {

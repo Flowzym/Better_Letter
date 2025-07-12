@@ -22,7 +22,6 @@ export interface Berufserfahrung {
   endYear: string | null;
   isCurrent: boolean;
   aufgabenbereiche: string[];
-  ort: string[];
 }
 
 export interface AusbildungEntry {
@@ -137,7 +136,6 @@ export function LebenslaufProvider({
     companies: [],
     positions: [],
     aufgabenbereiche: [],
-    orte: [],
   });
 
   useEffect(() => {
