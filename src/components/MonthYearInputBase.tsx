@@ -273,18 +273,9 @@ export default function MonthYearInputBase({
           // Nach Monats-Änderung: Jahr markieren wenn vollständig, sonst normal positionieren
           setTimeout(() => {
             if (inputRef.current) {
-                const monthPart = newValue.substring(0, slashIndex);
+                const monthPart = newValue.substring(0, slashPos);
                 
                 // Jahr markieren wenn Monat vollständig (2-stellig) UND Jahr vollständig (4-stellig) ist
-                if (monthPart.length === 2 && yearPart && yearPart.length === 4) {
-                }
-              if (newValue.substring(0, slashIndex).length === 2 && yearPart && yearPart.length === 4) {
-                // Jahr ist vollständig -> markieren
-                inputRef.current.setSelectionRange(slashIndex + 1, newValue.length);
-                  // Monat noch nicht vollständig -> Cursor nach der eingegebenen Ziffer im Monat
-                  inputRef.current.setSelectionRange(monthPart.length, monthPart.length);
-                inputRef.current.setSelectionRange(monthLength, monthLength);
-              }
             }
           }, 0);
           return;
