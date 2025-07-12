@@ -14,12 +14,14 @@ interface TasksTagInputProps {
   value: string[];
   onChange: (tasks: string[]) => void;
   positionen: string[];
+  suggestions?: string[];
 }
 
 export default function TasksTagInput({
   value,
   onChange,
   positionen,
+  suggestions: extraSuggestions,
 }: TasksTagInputProps) {
   const [inputValue, setInputValue] = useState("");
   const [editIndex, setEditIndex] = useState<number | null>(null);
@@ -33,11 +35,16 @@ export default function TasksTagInput({
   });
 
   const suggestions = useMemo(() => {
+    if (extraSuggestions && extraSuggestions.length > 0) {
+      const uniq = Array.from(new Set(extraSuggestions));
+      uniq.sort((a, b) => a.localeCompare(b, "de", { sensitivity: "base" }));
+      return uniq;
+    }
     const fromPositions = getTasksForPositions(positionen);
     const unique = Array.from(new Set(fromPositions));
     unique.sort((a, b) => a.localeCompare(b, "de", { sensitivity: "base" }));
     return unique;
-  }, [positionen]);
+  }, [positionen, extraSuggestions]);
 
   const filteredSuggestions = suggestions.filter((s) => !value.includes(s));
 
