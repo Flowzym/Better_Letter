@@ -313,8 +313,9 @@ export default function MonthYearInputBase({
         if (currentVal.includes('/')) {
           const slashPos = currentVal.indexOf('/');
           const monthPart = currentVal.substring(0, slashPos);
+          const yearPart = currentVal.substring(slashPos + 1);
           // Wenn Monat jetzt 2-stellig und gültig ist, Jahr markieren
-          if (monthPart.length === 2 && isValidTwoDigitMonth(monthPart)) {
+          if (monthPart.length === 2 && isValidTwoDigitMonth(monthPart) && yearPart.length === 4) {
             inputRef.current.setSelectionRange(slashPos + 1, currentVal.length);
           }
         }
