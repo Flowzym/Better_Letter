@@ -8,4 +8,5 @@ export interface ExperienceEntry {
   endYear: string | null;
   isCurrent: boolean;
   aufgabenbereiche: string[];
+  ort: string[];
 }

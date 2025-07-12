@@ -2,6 +2,7 @@ import TagSelectorWithFavorites from './TagSelectorWithFavorites';
 import ZeitraumPicker from './ZeitraumPicker';
 import TasksTagInput from './TasksTagInput';
 import CompaniesTagInput from './CompaniesTagInput';
+import OrtInput from './OrtInput';
 import { Berufserfahrung } from '../context/LebenslaufContext';
 import { CVSuggestionConfig } from '../services/supabaseService';
 
@@ -60,11 +61,22 @@ export default function ExperienceForm({
 
       <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
         <h3 className="text-sm font-medium text-gray-700 mb-2">Firma</h3>
-        <CompaniesTagInput
-          value={form.companies}
-          onChange={(val) => onUpdateField('companies', val)}
-          suggestions={cvSuggestions.companies}
-        />
+        <div className="flex gap-2">
+          <div className="flex-1">
+            <CompaniesTagInput
+              value={form.companies}
+              onChange={(val) => onUpdateField('companies', val)}
+              suggestions={cvSuggestions.companies}
+            />
+          </div>
+          <div className="w-1/3">
+            <OrtInput
+              value={form.ort}
+              onChange={(val) => onUpdateField('ort', val)}
+              suggestions={cvSuggestions.orte}
+            />
+          </div>
+        </div>
       </div>
 
       <div className="bg-white border border-gray-200 rounded shadow-sm p-4">

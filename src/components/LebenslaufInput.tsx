@@ -15,6 +15,7 @@ type BerufserfahrungForm = Omit<Berufserfahrung, "id">;
 const initialExperience: BerufserfahrungForm = {
   companies: [],
   position: [],
+  ort: [],
   startMonth: null,
   startYear: "",
   endMonth: null,
