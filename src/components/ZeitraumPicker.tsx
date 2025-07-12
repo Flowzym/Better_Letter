@@ -271,7 +271,7 @@ export default function ZeitraumPicker({
           onBlur={() => setEditingStart(false)}
           onKeyDown={handleStartKeyDown}
           placeholder="von"
-          className={`w-32 ${
+          className={`w-20 ${
             startInvalid ? "border-red-500" : ""
           }`}
         />
@@ -292,7 +292,7 @@ export default function ZeitraumPicker({
             onBlur={() => setEditingEnd(false)}
             onKeyDown={handleEndKeyDown}
             placeholder="bis"
-            className={`w-32 ${
+            className={`w-20 ${
               endInvalid ? "border-red-500" : ""
             }`}
           />
