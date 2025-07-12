@@ -44,14 +44,33 @@ export function parseMonthYearInput(input: string): ParsedMonthYear {
   }
   
   if (digits.length <= 2) {
-    // Nur Monat eingegeben
-    month = digits.padStart(2, '0');
-    formatted = digits;
-    if (digits.length === 2) {
+    // Prüfe ob es ein gültiger Monat ist (01-12)
+    const num = parseInt(digits, 10);
+    if (digits.length === 2 && num >= 1 && num <= 12) {
+      // Gültiger Monat - füge "/" hinzu
+      month = digits.padStart(2, '0');
+      formatted = digits + '/';
+    } else {
+      // Ungültiger Monat oder nur eine Ziffer - behandle als Jahr
+      formatted = digits;
+    }
+  } else if (digits.length <= 4) {
+    // 3-4 Ziffern: Prüfe ersten zwei Ziffern
+    const firstTwo = digits.slice(0, 2);
+    const num = parseInt(firstTwo, 10);
+    
+    if (num >= 1 && num <= 12) {
+      // Erste zwei Ziffern sind gültiger Monat
+      month = firstTwo;
+      year = digits.slice(2);
+      formatted = `${month}/${year}`;
+    } else {
+      // Erste zwei Ziffern sind kein gültiger Monat - behandle als Jahr
+      year = digits;
       formatted += '/';
     }
   } else {
-    // Monat und Jahr
+    // Mehr als 4 Ziffern: Monat und Jahr
     const monthPart = digits.slice(0, 2);
     const yearPart = digits.slice(2);
     
@@ -60,7 +79,7 @@ export function parseMonthYearInput(input: string): ParsedMonthYear {
       year = yearPart;
       formatted = `${month}/${year}`;
     } else {
-      // Ungültiger Monat, behandle als Jahr
+      // Ungültiger Monat - behandle als Jahr (maximal 4 Ziffern)
       year = digits.slice(0, 4);
       formatted = year;
     }
