@@ -24,7 +24,7 @@ const CATEGORY_LABELS = {
   companies: 'Firmen',
   positions: 'Positionen',
   aufgabenbereiche: 'Aufgabenbereiche',
-  orte: 'Orte'
+  orte: 'Ort'
 };
 
 function ProfileSourceSettings({
