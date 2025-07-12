@@ -8,6 +8,7 @@ export interface ParsedMonthYear {
   year?: string;
   formatted: string;
   isValid: boolean;
+  shouldMoveCursor?: boolean;
 }
 
 /**
@@ -34,19 +35,19 @@ export function isValidYear(year: string): boolean {
  * @param oldValue - Der vorherige Wert (für Kontext)
  * @param selectionStart - Cursor-Position vor der Änderung
  * @param selectionEnd - End-Position der Selektion vor der Änderung
- * @param selectionEnd - End-Position der Selektion vor der Änderung
  */
 export function parseMonthYearInput(input: string, oldValue?: string, selectionStart?: number, selectionEnd?: number): ParsedMonthYear {
-  // Nur Ziffern extrahieren, maximal 6 Zeichen
-  const digits = input.replace(/\D/g, '').slice(0, 6);
+  // Nur Ziffern, Schrägstriche und Punkte zulassen
+  const cleanedInput = input.replace(/[^\d/.]/g, '');
   
   let month: string | undefined;
   let year: string | undefined;
   let formatted: string = '';
   let shouldMoveCursor = false;
+  let isValid = false;
   
-  if (digits.length === 0) {
-    return { formatted: '', isValid: false, shouldMoveCursor: false };
+  if (cleanedInput.length === 0) {
+    return { formatted: '', isValid: false };
   }
   
   // --- Special handling for placeholder (e.g., "1." for single digit month) ---
@@ -171,30 +172,4 @@ export function calculateCursorPosition(
   }
 
   return Math.min(oldPosition, newValue.length);
-}
-    
-    if (num >= 1 && num <= 12) {
-      // Erste zwei Ziffern sind gültiger Monat
-      month = firstTwo;
-      year = digits.slice(2, 6); // Maximal 4 Ziffern für Jahr
-      formatted = `${month}/${year}`;
-    } else {
-      // Erste zwei Ziffern sind kein gültiger Monat - behandle als Jahr
-      year = digits.slice(0, 4); // Maximal 4 Ziffern für Jahr
-      formatted = year;
-    }
-  }
-  
-  // Validierung
-  const monthValid = !month || month.includes('.') || isValidMonth(month);
-  const yearValid = !year || (year.length === 4 && isValidYear(year));
-  const isValid = monthValid && yearValid;
-  
-  return {
-    month,
-    year,
-    formatted,
-    isValid,
-    shouldMoveCursor
-  };
 }
