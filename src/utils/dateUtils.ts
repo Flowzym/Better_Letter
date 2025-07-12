@@ -30,8 +30,11 @@ export function isValidYear(year: string): boolean {
 
 /**
  * Parst eine MM/YYYY Eingabe und gibt strukturierte Daten zurück
+ * @param input - Die neue Eingabe
+ * @param oldValue - Der vorherige Wert (für Kontext)
+ * @param selectionStart - Cursor-Position vor der Änderung
  */
-export function parseMonthYearInput(input: string): ParsedMonthYear {
+export function parseMonthYearInput(input: string, oldValue?: string, selectionStart?: number): ParsedMonthYear {
   // Nur Ziffern extrahieren, maximal 6 Zeichen
   const digits = input.replace(/\D/g, '').slice(0, 6);
   
@@ -42,6 +45,33 @@ export function parseMonthYearInput(input: string): ParsedMonthYear {
   
   if (digits.length === 0) {
     return { formatted: '', isValid: false, shouldMoveCursor: false };
+  }
+  
+  // Spezialfall: Monat wurde markiert und einzelne Ziffer eingegeben
+  if (oldValue && oldValue.includes('/') && selectionStart !== undefined) {
+    const oldParts = oldValue.split('/');
+    const oldMonth = oldParts[0];
+    const oldYear = oldParts[1];
+    
+    // Wenn Cursor am Anfang war (Monat markiert) und nur eine Ziffer eingegeben
+    if (selectionStart <= 2 && digits.length === 1) {
+      // Erste Ziffer des neuen Monats + Platzhalter + altes Jahr
+      month = digits + '.';
+      year = oldYear;
+      formatted = `${month}/${year}`;
+      return { month, year, formatted, isValid: false, shouldMoveCursor: false };
+    }
+    
+    // Wenn Cursor am Anfang war und zwei Ziffern eingegeben (vollständiger Monat)
+    if (selectionStart <= 2 && digits.length === 2) {
+      const num = parseInt(digits, 10);
+      if (num >= 1 && num <= 12) {
+        month = digits;
+        year = oldYear;
+        formatted = `${month}/${year}`;
+        return { month, year, formatted, isValid: true, shouldMoveCursor: true };
+      }
+    }
   }
   
   if (digits.length <= 2) {
@@ -75,7 +105,7 @@ export function parseMonthYearInput(input: string): ParsedMonthYear {
   }
   
   // Validierung
-  const monthValid = !month || isValidMonth(month);
+  const monthValid = !month || month.includes('.') || isValidMonth(month);
   const yearValid = !year || (year.length === 4 && isValidYear(year));
   const isValid = monthValid && yearValid;
   

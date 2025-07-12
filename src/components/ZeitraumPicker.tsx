@@ -259,7 +259,7 @@ export default function ZeitraumPicker({
           value={startInput}
           onChange={(e) => {
             setEditingStart(true);
-            const parsed = parseMonthYearInput(e);
+            const parsed = parseMonthYearInput(newValue, endInput);
             setStartInput(parsed.formatted);
             setStartMonth(parsed.month);
             setStartYear(parsed.year);
