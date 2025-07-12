@@ -42,7 +42,7 @@ export default function TagButton({
   } else if (variant === TagContext.Suggestion) {
     variantClasses = 'bg-white text-gray-700 border-gray-300';
   } else if (variant === TagContext.Favorite) {
-    variantClasses = 'bg-gray-100 text-black border-[#FDE047]';
+    variantClasses = 'bg-gray-50 text-gray-800 border-[#FDE047]';
   } else {
     variantClasses = 'bg-white text-gray-700 border-[#F29400]';
   }
@@ -136,14 +136,14 @@ export default function TagButton({
             type="button"
             onClick={handleRemove}
             aria-label="Entfernen"
-            className="flex items-center"
+            className="flex items-center justify-center"
           >
             <X
               className={`w-3 h-3 ${
                 variant === TagContext.Selected
                   ? 'text-white'
                   : variant === TagContext.Favorite
-                    ? 'text-black'
+                    ? 'text-gray-800'
                     : 'text-gray-700'
               }`}
             />
