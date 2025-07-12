@@ -42,7 +42,7 @@ export default function TagButton({
   } else if (variant === TagContext.Suggestion) {
     variantClasses = 'bg-white text-gray-700 border-gray-300';
   } else if (variant === TagContext.Favorite) {
-    variantClasses = 'bg-gray-100 border-gray-300 text-gray-700';
+    variantClasses = 'bg-gray-100 text-black border-[#FDE047]';
   } else {
     variantClasses = 'bg-white text-gray-700 border-[#F29400]';
   }
@@ -140,7 +140,11 @@ export default function TagButton({
           >
             <X
               className={`w-3 h-3 ${
-                variant === TagContext.Selected ? 'text-white' : 'text-gray-700'
+                variant === TagContext.Selected
+                  ? 'text-white'
+                  : variant === TagContext.Favorite
+                    ? 'text-black'
+                    : 'text-gray-700'
               }`}
             />
           </button>
