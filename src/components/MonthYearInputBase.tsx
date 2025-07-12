@@ -30,21 +30,54 @@ export default function MonthYearInputBase({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target;
-    const oldSelectionStart = input.selectionStart ?? 0;
-    const oldSelectionEnd = input.selectionEnd ?? 0;
+    const newValue = input.value;
     const oldValue = value;
     
-    const parsed = parseMonthYearInput(input.value, oldValue, oldSelectionStart, oldSelectionEnd);
+    // SPEZIALFALL: Monat war markiert (MM) und eine Ziffer wurde eingegeben
+    if (oldValue === "MM/YYYY" && newValue.length === 1 && /^\d$/.test(newValue)) {
+      const formattedMonth = newValue.padStart(2, '0');
+      onChange(`${formattedMonth}/YYYY`);
+      setTimeout(() => {
+        if (inputRef.current) {
+          inputRef.current.setSelectionRange(0, 2); // Monat bleibt markiert
+        }
+      }, 0);
+      return;
+    }
     
-    console.log('📝 Parsed result:', parsed);
+    // SPEZIALFALL: Monat war markiert und zwei Ziffern wurden eingegeben
+    if (oldValue === "MM/YYYY" && newValue.length === 2 && /^\d{2}$/.test(newValue)) {
+      const month = newValue;
+      if (parseInt(month, 10) >= 1 && parseInt(month, 10) <= 12) {
+        onChange(`${month}/YYYY`);
+        setTimeout(() => {
+          if (inputRef.current) {
+            inputRef.current.setSelectionRange(3, 7); // Jahr markieren
+          }
+        }, 0);
+      } else {
+        onChange(`${month}/YYYY`); // Auch ungültige Monate zulassen
+      }
+      return;
+    }
+    
+    // SPEZIALFALL: Jahr war markiert (YYYY) und Ziffern wurden eingegeben
+    if (oldValue.includes("/YYYY") && !newValue.includes("/")) {
+      // Jahr wurde überschrieben, Monat beibehalten
+      const monthPart = oldValue.split("/")[0];
+      onChange(`${monthPart}/${newValue}`);
+      return;
+    }
+    
+    // Normale Parsing-Logik für andere Fälle
+    const parsed = parseMonthYearInput(newValue, oldValue);
 
     onChange(parsed.formatted);
     
     // Cursor-Position anpassen
     setTimeout(() => {
       if (inputRef.current) {
-        const newPosition = calculateCursorPosition(oldValue, parsed.formatted, oldSelectionStart, parsed.shouldMoveCursor);
-        console.log('🎯 Setting cursor to:', newPosition);
+        const newPosition = calculateCursorPosition(oldValue, parsed.formatted, 0, parsed.shouldMoveCursor);
         inputRef.current.setSelectionRange(newPosition, newPosition); // Ensure cursor is set
       }
     }, 0);

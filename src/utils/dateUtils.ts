@@ -33,29 +33,10 @@ export function isValidYear(year: string): boolean {
  * Parst eine MM/YYYY Eingabe und gibt strukturierte Daten zurück
  * @param input - Die neue Eingabe
  * @param oldValue - Der vorherige Wert (für Kontext)
- * @param selectionStart - Cursor-Position vor der Änderung
- * @param selectionEnd - End-Position der Selektion vor der Änderung
  */
-export function parseMonthYearInput(input: string, oldValue?: string, selectionStart?: number, selectionEnd?: number): ParsedMonthYear {
+export function parseMonthYearInput(input: string, oldValue?: string): ParsedMonthYear {
   // Nur Ziffern, Schrägstriche und Punkte zulassen
   const cleanedInput = input.replace(/[^\d/.]/g, '');
-  
-  // Spezielle Behandlung: Wenn Monat markiert war und eine Ziffer eingegeben wird
-  if (oldValue && oldValue.includes('/') && 
-    selectionStart === 0 && selectionEnd === 2 &&
-    cleanedInput.length === 1 && /^\d$/.test(cleanedInput)) {
-    // Benutzer hat eine Ziffer eingegeben während Monat markiert war
-    const yearPart = oldValue.split('/')[1] || '';
-    const newMonth = cleanedInput.padStart(2, '0'); // "1" wird zu "01"
-    const formatted = `${newMonth}/${yearPart}`;
-    return { 
-      month: newMonth, 
-      year: yearPart, 
-      formatted, 
-      isValid: isValidMonth(newMonth) && isValidYear(yearPart),
-      shouldMoveCursor: true 
-    };
-  }
   
   let month: string | undefined;
   let year: string | undefined;
@@ -68,32 +49,6 @@ export function parseMonthYearInput(input: string, oldValue?: string, selectionS
   }
   
   // --- Special handling for placeholder (e.g., "1." for single digit month) ---
-  const wasMonthSelected = oldValue && oldValue.includes('/') && 
-    selectionStart !== undefined && selectionEnd !== undefined &&
-    selectionStart === 0 && selectionEnd === 2;
-  
-  if (wasMonthSelected && cleanedInput.length === 1 && parseInt(cleanedInput, 10) >= 0 && parseInt(cleanedInput, 10) <= 9) {
-    // User typed a single digit while month was selected, create placeholder
-    month = cleanedInput + '.';
-    const oldParts = oldValue.split('/');
-    year = oldParts[1] || ''; // Keep old year
-    formatted = `${month}/${year}`;
-    isValid = false; // Not a fully valid date yet
-    return { month, year, formatted, isValid, shouldMoveCursor: false };
-  }
-  
-  // If user types a second digit to complete a placeholder month (e.g., '1.' -> '11')
-  if (oldValue && oldValue.includes('./') && cleanedInput.length === 2 && isValidMonth(cleanedInput)) {
-    month = cleanedInput;
-    const oldParts = oldValue.split('/');
-    year = oldParts[1] || ''; // Keep old year
-    formatted = `${month}/${year}`;
-    isValid = isValidMonth(month) && isValidYear(year);
-    shouldMoveCursor = true; // Move cursor after '/'
-    return { month, year, formatted, isValid, shouldMoveCursor: true };
-  }
-  // --- End special handling ---
-
   const parts = cleanedInput.split('/');
   let monthPart = parts[0];
   let yearPart = parts[1];
