@@ -32,14 +32,6 @@ export default function MonthYearInputBase({
     const input = e.target;
     const oldSelectionStart = input.selectionStart ?? 0;
     const oldSelectionEnd = input.selectionEnd ?? 0;
-    const oldValue = value;
-    
-    const parsed = parseMonthYearInput(input.value, oldValue, oldSelectionStart, oldSelectionEnd);
-    //   oldValue,
-    //   newInput: input.value,
-    //   oldPosition,
-    //   oldSelectionEnd,
-    //   wasMonthSelected: oldValue.includes('/') && oldPosition === 0 && oldSelectionEnd === 2
     // });
     
     // console.log('📝 Parsed result:', parsed);
