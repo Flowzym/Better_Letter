@@ -244,11 +244,11 @@ export default function MonthYearInputBase({
     const start = input.selectionStart ?? 0;
     const end = input.selectionEnd ?? 0;
     const hasSelection = start !== end;
+    const currentValue = internalValue;
     
     // Spezialbehandlung für Ziffern-Eingabe bei Selektion
     if (/^\d$/.test(e.key) && hasSelection) {
       const digit = e.key;
-      const currentValue = internalValue;
       
       // Fall 1: Monat ist selektiert (MM/YYYY)
       if (currentValue.includes('/')) {
@@ -257,14 +257,30 @@ export default function MonthYearInputBase({
           e.preventDefault();
           
           const yearPart = currentValue.substring(slashPos + 1);
-          const newValue = `${digit}/${yearPart}`;
+          let newValue = `${digit}/${yearPart}`;
+          
+          // Wenn es ein gültiger 2-stelliger Monat werden könnte, füge "/" hinzu
+          if (digit >= '0' && digit <= '1') {
+            // Warten auf zweite Ziffer
+          } else if (digit >= '2' && digit <= '9') {
+            // Einstelliger Monat, formatiere zu 0X
+            newValue = `0${digit}/${yearPart}`;
+          }
+          
           setInternalValue(newValue);
           onChange(newValue);
           
-          // Cursor nach der Ziffer positionieren
+          // Nach Monats-Änderung: Jahr markieren wenn vollständig, sonst normal positionieren
           setTimeout(() => {
             if (inputRef.current) {
-              inputRef.current.setSelectionRange(1, 1);
+              const slashIndex = newValue.indexOf('/');
+              if (yearPart && yearPart.length === 4) {
+                // Jahr ist vollständig -> markieren
+                inputRef.current.setSelectionRange(slashIndex + 1, newValue.length);
+              } else {
+                // Jahr nicht vollständig -> Cursor nach Ziffer
+                inputRef.current.setSelectionRange(1, 1);
+              }
             }
           }, 0);
           return;
