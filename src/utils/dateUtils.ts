@@ -48,25 +48,45 @@ export function parseMonthYearInput(input: string, oldValue?: string, selectionS
   }
   
   // Spezialfall: Monat wurde markiert und einzelne Ziffer eingegeben
-  if (oldValue && oldValue.includes('/') && selectionStart !== undefined) {
+  if (oldValue && oldValue.includes('/') && selectionStart !== undefined && selectionStart <= 2) {
     const oldParts = oldValue.split('/');
-    const oldMonth = oldParts[0];
-    const oldYear = oldParts[1];
+    const oldYear = oldParts[1] || '';
     
-    // Wenn Cursor am Anfang war (Monat markiert) und nur eine Ziffer eingegeben
-    if (selectionStart <= 2 && digits.length === 1) {
-      // Erste Ziffer des neuen Monats + Platzhalter + altes Jahr
+    // Wenn nur eine Ziffer eingegeben wurde (Monat wird bearbeitet)
+    if (digits.length === 1) {
       month = digits + '.';
       year = oldYear;
       formatted = `${month}/${year}`;
       return { month, year, formatted, isValid: false, shouldMoveCursor: false };
     }
     
-    // Wenn Cursor am Anfang war und zwei Ziffern eingegeben (vollständiger Monat)
-    if (selectionStart <= 2 && digits.length === 2) {
+    // Wenn zwei Ziffern eingegeben wurden (vollständiger Monat)
+    if (digits.length === 2) {
       const num = parseInt(digits, 10);
       if (num >= 1 && num <= 12) {
         month = digits;
+        year = oldYear;
+        formatted = `${month}/${year}`;
+        return { month, year, formatted, isValid: true, shouldMoveCursor: true };
+      } else {
+        // Ungültiger Monat - behandle als Jahr
+        year = digits;
+        formatted = digits;
+        return { year, formatted, isValid: false, shouldMoveCursor: false };
+      }
+    }
+  }
+  
+  // Spezialfall: Platzhalter wird vervollständigt (z.B. "1." → "11")
+  if (oldValue && oldValue.includes('.') && oldValue.includes('/')) {
+    const oldParts = oldValue.split('/');
+    const oldMonthPart = oldParts[0]; // z.B. "1."
+    const oldYear = oldParts[1] || '';
+    
+    if (oldMonthPart.includes('.') && digits.length === 2) {
+      const num = parseInt(digits, 10);
+      if (num >= 1 && num <= 12) {
+        month = digits.padStart(2, '0');
         year = oldYear;
         formatted = `${month}/${year}`;
         return { month, year, formatted, isValid: true, shouldMoveCursor: true };

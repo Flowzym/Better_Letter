@@ -32,8 +32,13 @@ export default function MonthYearInputBase({
     const input = e.target;
     const oldPosition = input.selectionStart ?? 0;
     const oldValue = value;
+    const selectionStart = input.selectionStart ?? 0;
+    const selectionEnd = input.selectionEnd ?? 0;
     
-    const parsed = parseMonthYearInput(input.value, oldValue, oldPosition);
+    // Bestimme ob der Monat markiert war (Selektion am Anfang)
+    const monthWasSelected = oldValue.includes('/') && selectionStart === 0 && selectionEnd === 2;
+    
+    const parsed = parseMonthYearInput(input.value, oldValue, monthWasSelected ? 0 : oldPosition);
     onChange(parsed.formatted);
     
     // Cursor-Position anpassen

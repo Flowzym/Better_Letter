@@ -259,9 +259,9 @@ export default function ZeitraumPicker({
           value={startInput}
           onChange={(newValue) => {
             setEditingStart(true);
-            const parsed = parseMonthYearInput(newValue, startInput);
+            const parsed = parseMonthYearInput(newValue, startInput, 0);
             setStartInput(parsed.formatted);
-            setStartMonth(parsed.month);
+            setStartMonth(parsed.month?.replace('.', '') || parsed.month);
             setStartYear(parsed.year);
           }}
           onFocus={() => {
@@ -280,9 +280,9 @@ export default function ZeitraumPicker({
             value={endInput}
             onChange={(newValue) => {
               setEditingEnd(true);
-              const parsed = parseMonthYearInput(newValue);
+              const parsed = parseMonthYearInput(newValue, endInput, 0);
               setEndInput(parsed.formatted);
-              setEndMonth(parsed.month);
+              setEndMonth(parsed.month?.replace('.', '') || parsed.month);
               setEndYear(parsed.year);
             }}
             onFocus={() => {
