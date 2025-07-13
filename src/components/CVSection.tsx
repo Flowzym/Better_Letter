@@ -19,7 +19,7 @@ export default function CVSection({ title, icon, children }: CVSectionProps) {
       >
         <div className="flex items-center space-x-2">
           <span className="text-base">{icon}</span>
-          <h2 className="font-medium text-gray-900 text-sm">{title}</h2>
+          <h2 className="font-medium text-gray-900 text-base">{title}</h2>
         </div>
         {isOpen ? (
           <ChevronUp className="h-5 w-5" style={{ color: '#F29400' }} />

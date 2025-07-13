@@ -17,7 +17,7 @@ export default function ExperienceSection({ children }: ExperienceSectionProps) 
       >
         <div className="flex items-center space-x-2">
           <span className="text-base">💼</span>
-          <h2 className="font-medium text-gray-900 text-sm">Berufserfahrung</h2>
+          <h2 className="font-medium text-gray-900 text-base">Berufserfahrung</h2>
         </div>
         {isOpen ? (
           <ChevronUp className="h-5 w-5" style={{ color: '#F29400' }} />

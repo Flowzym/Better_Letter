@@ -190,8 +190,8 @@ export default function JobFieldInput({ onContentChange, profileConfig }: JobFie
             aria-controls="berufsfelder-content"
           >
             <div className="flex items-center space-x-2">
-              <span className="text-base">💼</span>
-              <h3 className="font-medium text-gray-900 text-sm">Berufsfelder</h3>
+              <span className="text-base">💼</span> 
+              <h3 className="font-medium text-gray-900 text-base">Berufsfelder</h3>
               {jobFieldData.berufsfelder.length > 0 && (
                 <span className="px-2 py-1 text-white text-xs rounded-full" style={{ backgroundColor: '#F29400' }}>
                   {jobFieldData.berufsfelder.length}

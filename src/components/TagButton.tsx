@@ -40,23 +40,23 @@ export default function TagButton({
   }, [label, editing, originalLabel]);
 
   const baseClasses =
-    "rounded-full border flex items-center gap-1";
+    "rounded-full border flex items-center";
   const contentClasses =
     variant === TagContext.Favorite
       ? "flex items-center space-x-2"
-      : "flex items-center gap-1";
+      : "flex items-center";
 
   let variantClasses = "";
   if (variant === TagContext.Selected) {
     // Ausgewählter Tag: 20px, fett, viel Padding - mit CSS-Klasse für !important
     variantClasses =
-      "bg-[#F29400] text-white border-[#F29400] px-4 py-2 tag-button-override tag-selected-override";
+      "bg-[#F29400] text-white border-[#F29400] tag-button-override tag-selected-override";
   } else if (variant === TagContext.Suggestion) {
     // Vorschlags-Tag: 16px, normales Padding - mit CSS-Klasse für !important
     variantClasses = "bg-white text-gray-700 border-gray-300 tag-button-override tag-other-override";
   } else if (variant === TagContext.Favorite) {
     // Favoriten-Tag: 16px, normales Padding - mit CSS-Klasse für !important
-    variantClasses = "bg-[#f8f8f8] border-[#FDE047] text-gray-600 tag-button-override tag-other-override";
+    variantClasses = "bg-[#f8f8f8] text-gray-600 tag-button-override tag-other-override";
   } else {
     // Fallback für andere Varianten
     variantClasses = "bg-white text-gray-700 border-[#F29400] tag-button-override tag-other-override";
@@ -68,11 +68,11 @@ export default function TagButton({
       ? "#FFFFFF"
       : "#4B5563";
   const starFill = isFavorite ? "#FDE047" : "none";
-
-  // Icon-Größen basierend auf Button-Variant - Stern größer als X für bessere Klickbarkeit
-  const starIconSize = variant === TagContext.Selected ? 22 : 14; // Stern noch größer (22px)
-  const xIconSize = variant === TagContext.Selected ? "w-4 h-4" : "w-3.5 h-3.5"; // X (16px)
+  const starStrokeWidth = isFavorite ? 0 : 1; // Dünnere Outline für ungefüllte Sterne
   
+  const starIconSize = variant === TagContext.Selected ? 16 : 14;
+  const xIconSize = variant === TagContext.Selected ? "w-3.5 h-3.5" : "w-3 h-3";
+
   // Gap zwischen Elementen - größer für ausgewählte Buttons
   const contentGapClass = variant === TagContext.Selected ? "gap-2" : "gap-1";
   
@@ -119,7 +119,7 @@ export default function TagButton({
   };
 
   return (
-    <button
+    <button 
       type="button" // Ensure it's a button type
       onClick={onClick}
       className={`${baseClasses} ${variantClasses} flex items-center`}
@@ -157,8 +157,8 @@ export default function TagButton({
             <IconStar
               size={starIconSize}
               stroke={starStroke}
-              fill={starFill}
-              strokeWidth={2}
+              fill={starFill} 
+              strokeWidth={starStrokeWidth}
             />
           </button>
         )}
@@ -173,7 +173,7 @@ export default function TagButton({
               className={`${xIconSize} ${
                 variant === TagContext.Selected
                   ? "text-white"
-                  : variant === TagContext.Favorite
+                  : variant === TagContext.Favorite 
                     ? "text-gray-800"
                     : "text-gray-700"
               }`}

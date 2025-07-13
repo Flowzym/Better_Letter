@@ -3,7 +3,7 @@ import React from 'react';
 interface IconStarProps {
   size?: number;
   fill?: string;
-  stroke?: string;
+  stroke?: string; 
   strokeWidth?: number;
 }
 
