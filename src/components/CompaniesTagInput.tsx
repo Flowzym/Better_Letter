@@ -52,7 +52,7 @@ export default function CompaniesTagInput({ value, onChange, suggestions = [] }:
         onAdd={addCompany}
         onFavoriteClick={handleAddFavoriteInput}
         suggestions={suggestions}
-        placeholder="Firma hinzufügen..."
+        placeholder="Hinzufügen..."
         showFavoritesButton
       />
       
