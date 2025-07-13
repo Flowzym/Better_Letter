@@ -48,7 +48,8 @@ export default function TagButton({
 
   let variantClasses = "";
   if (variant === TagContext.Selected) {
-    variantClasses = "bg-[#F29400] text-white border-[#F29400]";
+    variantClasses =
+      "bg-[#F29400] text-white border-[#F29400] px-3 py-1.5 text-base";
   } else if (variant === TagContext.Suggestion) {
     variantClasses = "bg-white text-gray-700 border-gray-300";
   } else if (variant === TagContext.Favorite) {
