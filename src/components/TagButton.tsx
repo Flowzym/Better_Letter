@@ -39,52 +39,13 @@ export default function TagButton({
     }
   }, [label, editing, originalLabel]);
 
-  const baseClasses =
-    "rounded-full border flex items-center";
-  const contentClasses =
-    variant === TagContext.Favorite
-      ? "flex items-center space-x-2"
-      : "flex items-center";
-
-  let variantClasses = "";
-  if (variant === TagContext.Selected) {
-    // Ausgewählter Tag: 20px, fett, viel Padding - mit CSS-Klasse für !important
-    variantClasses =
-      "bg-[#F29400] text-white border-[#F29400] tag-button-override tag-selected-override";
-  } else if (variant === TagContext.Suggestion) {
-    // Vorschlags-Tag: 16px, normales Padding - mit CSS-Klasse für !important
-    variantClasses = "bg-white text-gray-700 border-gray-300 tag-button-override tag-other-override";
-  } else if (variant === TagContext.Favorite) {
-    // Favoriten-Tag: 16px, normales Padding - mit CSS-Klasse für !important
-    variantClasses = "bg-[#f8f8f8] text-gray-600 tag-button-override tag-other-override";
-  } else {
-    // Fallback für andere Varianten
-    variantClasses = "bg-white text-gray-700 border-[#F29400] tag-button-override tag-other-override";
-  }
-
-  const starStroke = isFavorite
-    ? "#FDE047"
-    : variant === TagContext.Selected
-      ? "#FFFFFF"
-      : "#4B5563";
-  const starFill = isFavorite ? "#FDE047" : "none";
-  const starStrokeWidth = isFavorite 
-    ? (variant === TagContext.Selected ? 1 : 0) // Gefüllte Sterne in ausgewählten Buttons bekommen Outline
-    : 1;
-  
-  const starIconSize = variant === TagContext.Selected ? 16 : (variant === TagContext.Favorite ? 18 : 16); // Größerer Stern für Favoriten
-  const xIconSize = variant === TagContext.Selected ? "w-3.5 h-3.5" : "w-3 h-3";
-
-  // Gap zwischen Elementen - angepasst für bessere Zentrierung
-  const contentGapClass = variant === TagContext.Favorite ? "gap-0.5" : "gap-2"; // Viel kleinerer Gap für Favoriten, größerer für Selected
-  
   const startEditing = (e: React.MouseEvent) => {
     if (!editable) return;
     e.stopPropagation();
     setEditValue(label);
     setOriginalLabel(label);
     setEditing(true);
-    setTimeout(() => inputRef.current?.select(), 0); // Select text on focus
+    setTimeout(() => inputRef.current?.select(), 0);
   };
 
   const finishEditing = () => {
@@ -95,9 +56,13 @@ export default function TagButton({
     setEditing(false);
   };
 
+  const cancelEditing = () => {
+    setEditValue(originalLabel);
+    setEditing(false);
+  };
+
   const handleEditKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      setEditValue(originalLabel);
       e.preventDefault();
       finishEditing();
     } else if (e.key === "Escape") {
@@ -116,74 +81,115 @@ export default function TagButton({
   };
 
   const handleRemove = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent button click when removing
+    e.stopPropagation();
     onRemove?.();
   };
 
+  // Basis-Klassen für alle Buttons
+  const baseClasses = "inline-flex items-center rounded-full border transition-colors duration-200";
+  
+  // Varianten-spezifische Klassen
+  let variantClasses = "";
+  let textClasses = "";
+  let containerClasses = "";
+  let starSize = 16;
+  let xSize = "w-3 h-3";
+  let starStroke = "#4B5563";
+  let starFill = "none";
+  let starStrokeWidth = 1;
+  
+  if (variant === TagContext.Selected) {
+    // Ausgewählter Button: Orange, größer, fett
+    variantClasses = "bg-[#F29400] text-white border-[#F29400] px-4 py-2";
+    textClasses = "text-sm font-bold";
+    containerClasses = "flex items-center justify-between w-full";
+    starSize = 16;
+    xSize = "w-3.5 h-3.5";
+    starStroke = isFavorite ? "#FDE047" : "#FFFFFF";
+    starFill = isFavorite ? "#FDE047" : "none";
+    starStrokeWidth = isFavorite ? 1 : 1;
+  } else if (variant === TagContext.Favorite) {
+    // Favoriten-Button: Grau mit dicker gelber Umrandung
+    variantClasses = "bg-[#f8f8f8] text-gray-600 px-3 py-1.5";
+    textClasses = "text-sm font-normal";
+    containerClasses = "flex items-center justify-between w-full";
+    starSize = 18; // Größerer Stern für Favoriten
+    xSize = "w-3 h-3";
+    starStroke = isFavorite ? "#FDE047" : "#4B5563";
+    starFill = isFavorite ? "#FDE047" : "none";
+    starStrokeWidth = isFavorite ? 1 : 1;
+  } else {
+    // Suggestion/Standard Button
+    variantClasses = "bg-white text-gray-700 border-gray-300 px-3 py-1.5";
+    textClasses = "text-sm font-normal";
+    containerClasses = "flex items-center justify-between w-full";
+    starSize = 16;
+    xSize = "w-3 h-3";
+    starStroke = isFavorite ? "#FDE047" : "#4B5563";
+    starFill = isFavorite ? "#FDE047" : "none";
+    starStrokeWidth = isFavorite ? 1 : 1;
+  }
+
   return (
     <button 
-      type="button" // Ensure it's a button type
+      type="button"
       onClick={onClick}
-      className={`${baseClasses} ${variantClasses} flex items-center`}
+      className={`${baseClasses} ${variantClasses} ${variant === TagContext.Favorite ? 'border-[#ffde59] border-4' : ''}`}
     >
-      <div className={`${contentClasses} flex-shrink-0 flex items-center justify-center ${contentGapClass}`}>
-        {editing ? (
-          <input
-            ref={inputRef}
-            value={editValue}
-            onChange={handleEditChange}
-            onBlur={finishEditing}
-            onKeyDown={handleEditKey}
-            className="bg-transparent outline-none text-current px-2 py-1"
-            size={Math.max(editValue.length + 2, 5)}
-            style={{ 
-              width: `${Math.max(editValue.length + 3, 8)}ch`,
-              minWidth: `${Math.max(editValue.length + 3, 8)}ch`
-            }}
-          />
-        ) : (
-          <span /* Use span for text to allow click for editing */
-            onClick={startEditing}
-            className={editable ? "cursor-text" : ""}
-          >
-            {label}
-          </span>
-        )}
-        {onToggleFavorite && (
-          <button
-            type="button"
-            onClick={handleToggleFavorite} /* Use specific handler for favorite toggle */
-            aria-label="Favorit"
-            className="flex items-center justify-center flex-shrink-0"
-          >
-            <IconStar
-              size={starIconSize}
-              stroke={starStroke}
-              fill={starFill} 
-              strokeWidth={starStrokeWidth}
+      <div className={containerClasses}>
+        {/* Text-Bereich */}
+        <div className="flex-1 text-left">
+          {editing ? (
+            <input
+              ref={inputRef}
+              value={editValue}
+              onChange={handleEditChange}
+              onBlur={finishEditing}
+              onKeyDown={handleEditKey}
+              className="bg-transparent outline-none text-current w-full"
+              style={{ 
+                width: `${Math.max(editValue.length + 3, 8)}ch`,
+                minWidth: `${Math.max(editValue.length + 3, 8)}ch`
+              }}
             />
-          </button>
-        )}
-        {onRemove && (
-          <button
-            type="button"
-            onClick={handleRemove} /* Use specific handler for remove */
-            aria-label="Entfernen"
-            className={`flex items-center justify-center flex-shrink-0 ${
-              variant === TagContext.Favorite ? 'ml-0.5' : ''
-            }`}
-          >
-            <X
-              className={`${xIconSize} ${
-                variant === TagContext.Selected
-                  ? "text-white"
-                  : variant === TagContext.Favorite 
-                    ? "text-gray-600"
-                    : "text-gray-700"
-              }`}
-            />
-          </button>
-        )}
+          ) : (
+            <span 
+              onClick={startEditing}
+              className={`${textClasses} ${editable ? "cursor-text" : ""} leading-none`}
+            >
+              {label}
+            </span>
+          )}
+        </div>
+        
+        {/* Icon-Bereich */}
+        <div className="flex items-center ml-2 space-x-1">
+          {onToggleFavorite && (
+            <button
+              type="button"
+              onClick={handleToggleFavorite}
+              aria-label="Favorit"
+              className="flex items-center justify-center flex-shrink-0"
+            >
+              <IconStar
+                size={starSize}
+                stroke={starStroke}
+                fill={starFill} 
+                strokeWidth={starStrokeWidth}
+              />
+            </button>
+          )}
+          {onRemove && (
+            <button
+              type="button"
+              onClick={handleRemove}
+              aria-label="Entfernen"
+              className="flex items-center justify-center flex-shrink-0"
+            >
+              <X className={`${xSize} text-current`} />
+            </button>
+          )}
+        </div>
       </div>
     </button>
   );
