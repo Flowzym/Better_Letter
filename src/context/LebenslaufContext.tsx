@@ -55,6 +55,7 @@ interface LebenslaufContextType {
   isEditingExperience: boolean;
   addExperience: (data: Omit<Berufserfahrung, 'id'>) => Promise<void>;
   updateExperience: (id: string, data: Omit<Berufserfahrung, 'id'>) => Promise<void>;
+  deleteExperience: (id: string) => Promise<void>;
   selectExperience: (id: string | null) => void;
   addEducation: (data: Omit<AusbildungEntry, 'id'>) => Promise<void>;
   updateEducation: (id: string, data: Omit<AusbildungEntry, 'id'>) => Promise<void>;
@@ -164,6 +165,16 @@ export function LebenslaufProvider({
       return updated;
     });
     // Persisting to Supabase removed
+    setIsEditingExperience(false);
+  };
+
+  const deleteExperience = async (id: string) => {
+    setBerufserfahrungen(prev => {
+      const updated = prev.filter(exp => exp.id !== id);
+      localStorage.setItem(LOCAL_KEY, JSON.stringify(updated));
+      return updated;
+    });
+    setSelectedExperienceId(null);
     setIsEditingExperience(false);
   };
 
@@ -279,6 +290,7 @@ export function LebenslaufProvider({
         isEditingExperience,
         addExperience,
         updateExperience,
+        deleteExperience,
         selectExperience,
         addEducation,
         updateEducation,
