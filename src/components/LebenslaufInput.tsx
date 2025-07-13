@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import ExperienceForm from './ExperienceForm';
 import ExperienceSection from './ExperienceSection';
 import CVSection from './CVSection';
@@ -68,6 +68,20 @@ export default function LebenslaufInput() {
   const [form, setForm] = useState<BerufserfahrungForm>(initialExperience);
   const [selectedPositions, setSelectedPositions] = useState<string[]>([]);
 
+  const hasCurrentExperienceData = useMemo(() => {
+    return (
+      form.companies.length > 0 ||
+      form.position.length > 0 ||
+      form.aufgabenbereiche.length > 0 ||
+      form.startMonth !== null ||
+      form.startYear.trim() !== '' ||
+      form.endMonth !== null ||
+      form.endYear !== null ||
+      form.isCurrent === true ||
+      isEditingExperience
+    );
+  }, [form, isEditingExperience]);
+
   useEffect(() => {
     if (selectedExperienceId !== null) {
       const data = berufserfahrungen.find(
@@ -109,6 +123,14 @@ export default function LebenslaufInput() {
     selectExperience(null);
   };
 
+  const handleSubmit = async () => {
+    if (isEditingExperience) {
+      await handleUpdate();
+    } else {
+      await handleAdd();
+    }
+  };
+
   return (
     <div className="space-y-8">
       <ExperienceSection>
@@ -119,16 +141,19 @@ export default function LebenslaufInput() {
           onPositionsChange={setSelectedPositions}
           cvSuggestions={cvSuggestions}
         />
-        <button
-          className={`block w-1/2 mx-auto text-white font-medium py-2 px-4 rounded-full transition-colors duration-200 ${
-            isEditingExperience
-              ? 'bg-[#207199] hover:bg-[#1A5C80]'
-              : 'bg-[#4A8919] hover:bg-[#3A6C14]'
-          }`}
-          onClick={isEditingExperience ? handleUpdate : handleAdd}
-        >
-          {isEditingExperience ? 'Aktualisieren' : 'Hinzufügen'}
-        </button>
+        {hasCurrentExperienceData && (
+          <button
+            type="button"
+            onClick={handleSubmit}
+            className={`block w-1/5 mx-auto text-white font-medium py-2 px-4 rounded-full transition-colors duration-200 ${
+              isEditingExperience
+                ? 'bg-[#207199] hover:bg-[#1A5C80]'
+                : 'bg-[#3E7B0F] hover:bg-[#356A0C]'
+            }`}
+          >
+            {isEditingExperience ? 'Aktualisieren' : 'Hinzufügen'}
+          </button>
+        )}
       </ExperienceSection>
 
       <CVSection title="Ausbildung" icon="🎓">
