@@ -74,7 +74,7 @@
   justify-content: center;
   padding: 8px;
   background: #f29400;
-  color: white;
+  color: white; /* Keep white for selected */
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -156,22 +156,22 @@
 
 /* BOLT-UI-ANPASSUNG 2025-01-15: Tag Button Specific Overrides */
 .tag-button-override {
-  font-size: inherit !important;
+  font-size: inherit !important; /* Ensure font size is inherited from specific classes */
   font-family: "Roboto", Arial, sans-serif !important;
 }
 
-/* Ausgewählte Tag-Buttons - größere Schrift */
+/* Ausgewählte Tag-Buttons - 16px, fett, kleineres Padding */
 .tag-selected-override {
-  font-size: 16px !important;
-  font-weight: bold !important;
-  font-family: "Roboto", Arial, sans-serif !important;
+  font-size: 16px !important; /* text-base */
+  font-weight: bold !important; /* font-bold */
+  padding: 0.25rem 0.5rem !important; /* px-2 py-1 */
 }
 
-/* Andere Tag-Buttons - normale Schrift */
+/* Andere Tag-Buttons - 14px, normal, Standard-Padding */
 .tag-other-override {
-  font-size: 14px !important;
-  font-weight: normal !important;
-  font-family: "Roboto", Arial, sans-serif !important;
+  font-size: 14px !important; /* text-sm */
+  font-weight: normal !important; /* font-normal */
+  padding: 0.375rem 0.75rem !important; /* px-3 py-1.5 */
 }
 .ql-editor h1 {
   font-size: 1.5em !important;

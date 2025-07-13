@@ -70,15 +70,15 @@ export default function TagButton({
   const starFill = isFavorite ? "#FDE047" : "none";
 
   // Icon-Größen basierend auf Button-Variant - Stern größer als X für bessere Klickbarkeit
-  const starIconSize = variant === TagContext.Selected ? 18 : 14; // Stern größer
-  const xIconSize = variant === TagContext.Selected ? "w-4 h-4" : "w-3.5 h-3.5";
+  const starIconSize = variant === TagContext.Selected ? 22 : 14; // Stern größer (22px)
+  const xIconSize = variant === TagContext.Selected ? "w-4 h-4" : "w-3.5 h-3.5"; // X (16px)
   const startEditing = (e: React.MouseEvent) => {
     if (!editable) return;
     e.stopPropagation();
     setEditValue(label);
     setOriginalLabel(label);
     setEditing(true);
-    setTimeout(() => inputRef.current?.select(), 0);
+    setTimeout(() => inputRef.current?.select(), 0); // Select text on focus
   };
 
   const finishEditing = () => {
@@ -110,13 +110,13 @@ export default function TagButton({
   };
 
   const handleRemove = (e: React.MouseEvent) => {
-    e.stopPropagation();
+    e.stopPropagation(); // Prevent button click when removing
     onRemove?.();
   };
 
   return (
     <button
-      type="button"
+      type="button" // Ensure it's a button type
       onClick={onClick}
       className={`${baseClasses} ${variantClasses}`}
     >
@@ -136,7 +136,7 @@ export default function TagButton({
             }}
           />
         ) : (
-          <span
+          <span /* Use span for text to allow click for editing */
             onClick={startEditing}
             className={editable ? "cursor-text" : ""}
           >
@@ -146,7 +146,7 @@ export default function TagButton({
         {onToggleFavorite && (
           <button
             type="button"
-            onClick={handleToggleFavorite}
+            onClick={handleToggleFavorite} /* Use specific handler for favorite toggle */
             aria-label="Favorit"
             className="flex items-center"
           >
@@ -161,7 +161,7 @@ export default function TagButton({
         {onRemove && (
           <button
             type="button"
-            onClick={handleRemove}
+            onClick={handleRemove} /* Use specific handler for remove */
             aria-label="Entfernen"
             className="flex items-center justify-center ml-1"
           >
