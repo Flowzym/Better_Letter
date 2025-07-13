@@ -40,7 +40,7 @@ export default function TagButton({
   }, [label, editing, originalLabel]);
 
   const baseClasses =
-    "rounded-full border flex items-center gap-1 text-xs";
+    "rounded-full border flex items-center gap-1";
   const contentClasses =
     variant === TagContext.Favorite
       ? "flex items-center space-x-2"
@@ -48,18 +48,18 @@ export default function TagButton({
 
   let variantClasses = "";
   if (variant === TagContext.Selected) {
-    // Ausgewählter Tag: text-lg (18px), fett, viel Padding - wie im Bild
+    // Ausgewählter Tag: 20px, fett, viel Padding - mit CSS-Klasse für !important
     variantClasses =
-      "bg-[#F29400] text-white border-[#F29400] font-bold px-6 py-3 text-lg";
+      "bg-[#F29400] text-white border-[#F29400] px-6 py-3 tag-button-override tag-selected-override";
   } else if (variant === TagContext.Suggestion) {
-    // Vorschlags-Tag: text-base (16px), mehr Padding
-    variantClasses = "bg-white text-gray-700 border-gray-300 px-4 py-2 text-base";
+    // Vorschlags-Tag: 16px, normales Padding - mit CSS-Klasse für !important
+    variantClasses = "bg-white text-gray-700 border-gray-300 px-4 py-2 tag-button-override tag-other-override";
   } else if (variant === TagContext.Favorite) {
-    // Favoriten-Tag: text-base (16px), mehr Padding - wie der gelbe Button im Bild
-    variantClasses = "bg-[#f8f8f8] border-[#FDE047] text-black px-4 py-2 text-base";
+    // Favoriten-Tag: 16px, normales Padding - mit CSS-Klasse für !important
+    variantClasses = "bg-[#f8f8f8] border-[#FDE047] text-black px-4 py-2 tag-button-override tag-other-override";
   } else {
     // Fallback für andere Varianten
-    variantClasses = "bg-white text-gray-700 border-[#F29400] px-4 py-2 text-base";
+    variantClasses = "bg-white text-gray-700 border-[#F29400] px-4 py-2 tag-button-override tag-other-override";
   }
 
   const starStroke = isFavorite
