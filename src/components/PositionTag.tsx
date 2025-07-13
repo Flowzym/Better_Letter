@@ -18,7 +18,7 @@ export default function PositionTag({ label, onRemove, onEdit }: PositionTagProp
       isFavorite={isFavorite}
       onToggleFavorite={() => toggleFavoritePosition(label)}
       onRemove={onRemove}
-      onEdit={onEdit}
+      onEdit={(newLabel) => onEdit?.(newLabel)}
     />
   );
 }

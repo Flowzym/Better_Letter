@@ -22,7 +22,7 @@ export default function TagButtonSelected({
       variant="selected"
       editable
       isFavorite={isFavorite}
-      onToggleFavorite={onToggleFavorite ? () => onToggleFavorite() : undefined}
+      onToggleFavorite={onToggleFavorite}
       onRemove={onRemove}
       onEdit={onEdit}
     />

@@ -17,7 +17,7 @@ export default function TaskTag({ label, onRemove, onEdit }: TaskTagProps) {
       label={label}
       isFavorite={isFavorite}
       onToggleFavorite={() => toggleFavoriteTask(label)}
-      onEdit={onEdit}
+      onEdit={(newLabel) => onEdit?.(newLabel)}
       onRemove={onRemove}
     />
   );
