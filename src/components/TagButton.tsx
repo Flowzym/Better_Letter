@@ -68,13 +68,13 @@ export default function TagButton({
       ? "#FFFFFF"
       : "#4B5563";
   const starFill = isFavorite ? "#FDE047" : "none";
-  const starStrokeWidth = isFavorite ? 0 : 1; // Dünnere Outline für ungefüllte Sterne
+  const starStrokeWidth = isFavorite ? 0 : 1;
   
   const starIconSize = variant === TagContext.Selected ? 16 : 14;
   const xIconSize = variant === TagContext.Selected ? "w-3.5 h-3.5" : "w-3 h-3";
 
-  // Gap zwischen Elementen - größer für ausgewählte Buttons
-  const contentGapClass = variant === TagContext.Selected ? "gap-2" : "gap-1";
+  // Gap zwischen Elementen - einheitlich für alle Buttons
+  const contentGapClass = "gap-1";
   
   const startEditing = (e: React.MouseEvent) => {
     if (!editable) return;
@@ -174,7 +174,7 @@ export default function TagButton({
                 variant === TagContext.Selected
                   ? "text-white"
                   : variant === TagContext.Favorite 
-                    ? "text-gray-800"
+                    ? "text-gray-600"
                     : "text-gray-700"
               }`}
             />

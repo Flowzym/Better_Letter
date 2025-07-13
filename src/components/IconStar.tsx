@@ -11,7 +11,7 @@ export default function IconStar({
   size = 16,
   fill = 'none',
   stroke = '#F29400',
-  strokeWidth = 2,
+  strokeWidth = 1,
 }: IconStarProps) {
   return (
     <svg

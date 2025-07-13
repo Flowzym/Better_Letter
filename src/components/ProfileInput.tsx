@@ -236,7 +236,7 @@ export default function ProfileInput({ onContentChange, profileConfig, initialCo
         >
           <div className="flex items-center space-x-2">
             <span className="text-base">{icon}</span> 
-            <h3 className="font-medium text-gray-900 text-base">{title}</h3>
+            <h3 className="font-medium text-gray-900 text-lg">{title}</h3>
             {selectedItems.length > 0 && (
               <span className="px-2 py-1 text-white text-xs rounded-full" style={{ backgroundColor: '#F29400' }}>
                 {selectedItems.length}
