@@ -43,7 +43,7 @@ export default function CompanyTag({ label, onRemove, onEdit }: CompanyTagProps)
           onKeyDown={(e) => {
             if (e.key === 'Enter') confirmEdit();
           }}
-          className="text-black px-1 py-0.5 rounded"
+          className="flex-1 text-black px-1 py-0.5 rounded"
           autoFocus
         />
         <button
