@@ -50,7 +50,7 @@ export default function TagButton({
   if (variant === TagContext.Selected) {
     // Ausgewählter Tag: 20px, fett, viel Padding - mit CSS-Klasse für !important
     variantClasses =
-      "bg-[#F29400] text-white border-[#F29400] px-5 py-2.5 tag-button-override tag-selected-override";
+      "bg-[#F29400] text-white border-[#F29400] px-4 py-2 tag-button-override tag-selected-override";
   } else if (variant === TagContext.Suggestion) {
     // Vorschlags-Tag: 16px, normales Padding - mit CSS-Klasse für !important
     variantClasses = "bg-white text-gray-700 border-gray-300 px-4 py-2 tag-button-override tag-other-override";
@@ -69,8 +69,8 @@ export default function TagButton({
       : "#4B5563";
   const starFill = isFavorite ? "#FDE047" : "none";
 
-  // Icon-Größen basierend auf Button-Variant
-  const iconSize = variant === TagContext.Selected ? 16 : 14;
+  // Icon-Größen basierend auf Button-Variant - Stern größer als X für bessere Klickbarkeit
+  const starIconSize = variant === TagContext.Selected ? 18 : 14; // Stern größer
   const xIconSize = variant === TagContext.Selected ? "w-4 h-4" : "w-3.5 h-3.5";
   const startEditing = (e: React.MouseEvent) => {
     if (!editable) return;
@@ -151,7 +151,7 @@ export default function TagButton({
             className="flex items-center"
           >
             <IconStar
-              size={iconSize}
+              size={starIconSize}
               stroke={starStroke}
               fill={starFill}
               strokeWidth={2}
@@ -163,7 +163,7 @@ export default function TagButton({
             type="button"
             onClick={handleRemove}
             aria-label="Entfernen"
-            className="flex items-center justify-center"
+            className="flex items-center justify-center ml-1"
           >
             <X
               className={`${xIconSize} ${
