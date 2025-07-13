@@ -162,16 +162,18 @@
 
 /* Ausgewählte Tag-Buttons - 16px, fett, kleineres Padding */
 .tag-selected-override {
-  font-size: 14px !important; /* text-sm */
+  font-size: 14px !important;
   font-weight: bold !important; /* font-bold */
-  padding: 0.25rem 0.75rem 0.25rem 0.75rem !important; /* px-3 py-1 - minimaler Abstand zum Rahmen */
+  padding: 0.25rem 0.75rem 0.25rem 0.875rem !important; /* mehr linker Einzug */
+  line-height: 1 !important; /* bessere vertikale Zentrierung */
 }
 
 /* Andere Tag-Buttons - 14px, normal, Standard-Padding */
 .tag-other-override {
   font-size: 14px !important; /* text-sm */
   font-weight: normal !important; /* font-normal */
-  padding: 0.25rem 0.5rem 0.25rem 0.625rem !important; /* px-2 py-1 - kompakter */
+  padding: 0.25rem 0.5rem 0.25rem 0.75rem !important; /* mehr linker Einzug */
+  line-height: 1 !important; /* bessere vertikale Zentrierung */
 }
 .ql-editor h1 {
   font-size: 1.5em !important;
