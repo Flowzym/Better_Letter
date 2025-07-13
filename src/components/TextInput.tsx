@@ -38,7 +38,7 @@ export default function TextInput({
           onChange={(e: ChangeEvent<HTMLTextAreaElement>) => onChange(e.target.value)}
           placeholder={placeholder}
           rows={rows}
-          className="w-full h-10 px-3 py-2 text-sm placeholder:text-sm rounded-md border border-gray-300"
+          className="w-full px-3 py-2 text-sm placeholder:text-sm rounded-md border border-gray-300 pr-10"
         />
         {hasValue && (
           <button
