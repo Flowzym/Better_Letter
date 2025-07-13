@@ -100,13 +100,11 @@ export default function ExperienceForm({
             </button>
           )}
         </div>
-        <div className="w-full">
-          <CompaniesTagInput
-            value={form.companies}
-            onChange={(val) => onUpdateField('companies', val)}
-            suggestions={cvSuggestions.companies}
-          />
-        </div>
+        <CompaniesTagInput
+          value={form.companies}
+          onChange={(val) => onUpdateField('companies', val)}
+          suggestions={cvSuggestions.companies}
+        />
       </div>
 
       <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
