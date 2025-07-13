@@ -42,7 +42,7 @@ export default function TextInputWithButtons({
   };
 
   return (
-    <div className="flex items-center w-full space-x-2"> // Hinzugefügt: space-x-2
+    <div className="flex items-center w-full space-x-2">
       <div className="relative flex-1">
         <input
           type="text"
