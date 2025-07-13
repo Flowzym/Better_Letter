@@ -224,7 +224,7 @@ export default function AutocompleteInput({
             onBlur={handleBlur}
             placeholder={placeholder}
             disabled={disabled}
-            className="flex-1 px-3 h-10 border rounded-md transition-all focus:outline-none focus:ring-1 pr-10"
+            className="w-full px-3 h-10 border rounded-md transition-all focus:outline-none focus:ring-1 pr-10"
             style={{
               borderColor: '#D1D5DB', // Standard grau
               '--tw-ring-color': '#F29400'
@@ -247,7 +247,7 @@ export default function AutocompleteInput({
         </div>
 
         {hasInput && (
-          <div className="flex-shrink-0 flex">
+          <div className="flex-shrink-0 flex space-x-2">
             {/* Add button */}
             {showAddButton && (
               <button

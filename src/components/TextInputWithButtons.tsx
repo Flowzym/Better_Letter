@@ -50,7 +50,7 @@ export default function TextInputWithButtons({
           onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className="flex-1 px-3 h-10 border rounded-md transition-all focus:outline-none focus:ring-1 focus:ring-[#F29400] pr-10"
+          className="w-full px-3 h-10 border rounded-md transition-all focus:outline-none focus:ring-1 focus:ring-[#F29400] pr-10"
         />
         {hasValue && (
           <button
@@ -64,7 +64,7 @@ export default function TextInputWithButtons({
         )}
       </div>
       {buttonsVisible && (
-        <div className="flex-shrink-0 flex">
+        <div className="flex-shrink-0 flex space-x-2">
           <button
             type="button"
             onClick={handleAdd}
