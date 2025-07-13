@@ -100,17 +100,17 @@ export default function TagButton({
   
   if (variant === TagContext.Selected) {
     // Ausgewählter Button: Orange, größer, fett
-    variantClasses = "bg-[#F29400] text-white border-[#F29400] px-4 py-2";
+    variantClasses = "bg-[#F29400] text-white border-[#F29400]";
     textClasses = "text-sm font-bold";
     containerClasses = "flex items-center justify-between w-full";
-    starSize = 20;
+    starSize = 22;
     xSize = "w-3.5 h-3.5";
     starStroke = isFavorite ? "#FDE047" : "#FFFFFF";
     starFill = isFavorite ? "#FDE047" : "none";
     starStrokeWidth = isFavorite ? 1 : 1;
   } else if (variant === TagContext.Favorite) {
     // Favoriten-Button: Grau mit dicker gelber Umrandung
-    variantClasses = "bg-[#f8f8f8] text-gray-600 px-3 py-1.5";
+    variantClasses = "bg-[#f8f8f8] text-gray-600";
     textClasses = "text-sm font-normal";
     containerClasses = "flex items-center justify-between w-full";
     starSize = 18; // Größerer Stern für Favoriten
@@ -120,7 +120,7 @@ export default function TagButton({
     starStrokeWidth = isFavorite ? 1 : 1;
   } else {
     // Suggestion/Standard Button
-    variantClasses = "bg-white text-gray-700 border-gray-300 px-3 py-1.5";
+    variantClasses = "bg-white text-gray-700 border-gray-300";
     textClasses = "text-sm font-normal";
     containerClasses = "flex items-center justify-between w-full";
     starSize = 16;
@@ -130,11 +130,26 @@ export default function TagButton({
     starStrokeWidth = isFavorite ? 1 : 1;
   }
 
+  // Inline-Styles für garantierte Anwendung
+  let buttonStyle: React.CSSProperties = {};
+  if (variant === TagContext.Selected) {
+    buttonStyle = { padding: '0.25rem 0.75rem' };
+  } else if (variant === TagContext.Favorite) {
+    buttonStyle = { 
+      padding: '0.25rem 0.5rem',
+      borderWidth: '3px',
+      borderColor: '#ffde59'
+    };
+  } else {
+    buttonStyle = { padding: '0.25rem 0.5rem' };
+  }
+
   return (
     <button 
       type="button"
       onClick={onClick}
-      className={`${baseClasses} ${variantClasses} ${variant === TagContext.Favorite ? 'border-[#ffde59] border-4' : ''}`}
+      className={`${baseClasses} ${variantClasses}`}
+      style={buttonStyle}
     >
       <div className={containerClasses}>
         {/* Text-Bereich */}
