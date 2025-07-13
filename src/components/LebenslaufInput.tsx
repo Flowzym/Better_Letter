@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Trash2, Eraser } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import ExperienceForm from './ExperienceForm';
 import ExperienceSection from './ExperienceSection';
 import CVSection from './CVSection';
@@ -125,11 +125,6 @@ export default function LebenslaufInput() {
     selectExperience(null);
   };
 
-  const handleClearForm = () => {
-    setForm(initialExperience);
-    setSelectedPositions([]);
-    selectExperience(null);
-  };
 
   const handleSubmit = async () => {
     if (isEditingExperience) {
@@ -163,14 +158,6 @@ export default function LebenslaufInput() {
               {isEditingExperience ? 'Aktualisieren' : 'Hinzufügen'}
             </button>
             <div className="absolute right-0 flex items-center space-x-2">
-              <button
-                type="button"
-                onClick={handleClearForm}
-                className="p-2 text-gray-600 hover:bg-gray-50 rounded-full transition-colors duration-200"
-                title="Formular zurücksetzen"
-              >
-                <Eraser className="h-4 w-4" />
-              </button>
               {isEditingExperience && selectedExperienceId && (
                 <button
                   type="button"
