@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Plus, Star } from 'lucide-react';
+import { Plus, Star, X } from 'lucide-react';
 
 interface AutocompleteInputProps {
   value: string;
@@ -211,28 +211,39 @@ export default function AutocompleteInput({
         </label>
       )}
       <div className="flex items-center w-full">
-        <input
-          ref={inputRef}
-          type="text"
-          id={inputId}
-          name={`autocomplete-${inputId}`}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          onKeyDown={handleKeyDown}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          placeholder={placeholder}
-          disabled={disabled}
-          className="flex-1 px-3 h-10 border rounded-md transition-all focus:outline-none focus:ring-1"
-          style={{
-            borderColor: '#D1D5DB', // Standard grau
-            '--tw-ring-color': '#F29400'
-          } as React.CSSProperties}
-          aria-expanded={isOpen}
-          aria-haspopup="listbox"
-          aria-autocomplete="list"
-          role="combobox"
-        />
+        <div className="relative flex-1">
+          <input
+            ref={inputRef}
+            type="text"
+            id={inputId}
+            name={`autocomplete-${inputId}`}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            onKeyDown={handleKeyDown}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            placeholder={placeholder}
+            disabled={disabled}
+            className="flex-1 px-3 h-10 border rounded-md transition-all focus:outline-none focus:ring-1 pr-10"
+            style={{
+              borderColor: '#D1D5DB', // Standard grau
+              '--tw-ring-color': '#F29400'
+            } as React.CSSProperties}
+            aria-expanded={isOpen}
+            aria-haspopup="listbox"
+            aria-autocomplete="list"
+            role="combobox"
+          />
+          {hasInput && (
+            <button
+              type="button"
+              onClick={() => onChange('')}
+              className="absolute top-1 right-1 text-gray-400 hover:text-gray-600"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
 
         {hasInput && (
           <div className="flex gap-2 ml-2">
