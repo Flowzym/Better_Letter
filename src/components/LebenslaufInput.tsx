@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
+import { Trash2 } from 'lucide-react';
 import ExperienceForm from './ExperienceForm';
 import ExperienceSection from './ExperienceSection';
 import CVSection from './CVSection';
@@ -52,6 +53,7 @@ export default function LebenslaufInput() {
     isEditingExperience,
     addExperience,
     updateExperience,
+    deleteExperience,
     selectExperience,
     addEducation,
     updateEducation,
@@ -142,17 +144,29 @@ export default function LebenslaufInput() {
           cvSuggestions={cvSuggestions}
         />
         {hasCurrentExperienceData && (
-          <button
-            type="button"
-            onClick={handleSubmit}
-            className={`block w-[30%] mx-auto text-white font-medium text-sm py-1.5 px-4 rounded-full transition-colors duration-200 ${
-              isEditingExperience
-                ? 'bg-[#207199] hover:bg-[#1A5C80]'
-                : 'bg-[#3E7B0F] hover:bg-[#356A0C]'
-            }`}
-          >
-            {isEditingExperience ? 'Aktualisieren' : 'Hinzufügen'}
-          </button>
+          <div className="flex items-center justify-center space-x-2">
+            <button
+              type="button"
+              onClick={handleSubmit}
+              className={`w-[30%] text-white font-medium text-sm py-1.5 px-4 rounded-full transition-colors duration-200 ${
+                isEditingExperience
+                  ? 'bg-[#207199] hover:bg-[#1A5C80]'
+                  : 'bg-[#3E7B0F] hover:bg-[#356A0C]'
+              }`}
+            >
+              {isEditingExperience ? 'Aktualisieren' : 'Hinzufügen'}
+            </button>
+            {isEditingExperience && selectedExperienceId && (
+              <button
+                type="button"
+                onClick={() => deleteExperience(selectedExperienceId)}
+                className="p-2 text-red-600 hover:bg-red-50 rounded-full transition-colors duration-200"
+                title="Eintrag löschen"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            )}
+          </div>
         )}
       </ExperienceSection>
 
