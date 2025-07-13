@@ -18,6 +18,8 @@ export default function CompanyTag({ label, onRemove, onEdit }: CompanyTagProps)
 
   // Setze den Wert nur beim ersten Laden
   useEffect(() => {
+  }
+  )
   return (
     <TagButtonSelected
       label={label}
