@@ -72,11 +72,11 @@ export default function TagButton({
     ? (variant === TagContext.Selected ? 1 : 0) // Gefüllte Sterne in ausgewählten Buttons bekommen Outline
     : 1;
   
-  const starIconSize = variant === TagContext.Selected ? 15 : 14; // Leicht kleiner für bessere Zentrierung
+  const starIconSize = variant === TagContext.Selected ? 16 : 16; // Größerer Stern für Favoriten
   const xIconSize = variant === TagContext.Selected ? "w-3.5 h-3.5" : "w-3 h-3";
 
-  // Gap zwischen Elementen - einheitlich für alle Buttons
-  const contentGapClass = variant === TagContext.Favorite ? "gap-0.5" : "gap-1"; // Kleinerer Gap für Favoriten-Buttons
+  // Gap zwischen Elementen - angepasst für bessere Zentrierung
+  const contentGapClass = variant === TagContext.Favorite ? "gap-1" : "gap-1.5"; // Gleichmäßiger Gap für Favoriten, größerer für Selected
   
   const startEditing = (e: React.MouseEvent) => {
     if (!editable) return;
@@ -126,7 +126,7 @@ export default function TagButton({
       onClick={onClick}
       className={`${baseClasses} ${variantClasses} flex items-center`}
     >
-      <div className={`${contentClasses} flex-shrink-0 flex items-center ${contentGapClass}`}>
+      <div className={`${contentClasses} flex-shrink-0 flex items-center justify-center ${contentGapClass}`}>
         {editing ? (
           <input
             ref={inputRef}
@@ -154,7 +154,7 @@ export default function TagButton({
             type="button"
             onClick={handleToggleFavorite} /* Use specific handler for favorite toggle */
             aria-label="Favorit"
-            className="flex items-center"
+            className="flex items-center justify-center"
           >
             <IconStar
               size={starIconSize}
@@ -169,7 +169,7 @@ export default function TagButton({
             type="button"
             onClick={handleRemove} /* Use specific handler for remove */
             aria-label="Entfernen"
-            className="flex items-center justify-center"
+            className="flex items-center justify-center flex-shrink-0"
           >
             <X
               className={`${xIconSize} ${
