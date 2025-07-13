@@ -43,7 +43,7 @@ export default function TextInputWithButtons({
 
   return (
     <div className="flex items-center w-full">
-      <div className="relative flex-1">
+      <div className="relative flex-grow">
         <input
           type="text"
           value={value}
@@ -56,14 +56,15 @@ export default function TextInputWithButtons({
           <button
             type="button"
             onClick={() => onChange('')}
-            className="absolute top-1 right-1 text-gray-400 hover:text-gray-600"
+            className="absolute right-2 h-full flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-300"
+            aria-label="Textfeld leeren"
           >
             <X className="w-4 h-4" />
           </button>
         )}
       </div>
       {buttonsVisible && (
-        <div className="flex gap-2 ml-2">
+        <div className="flex-shrink-0 flex gap-2 ml-2">
           <button
             type="button"
             onClick={handleAdd}
