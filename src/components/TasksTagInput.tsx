@@ -86,7 +86,7 @@ export default function TasksTagInput({ value, onChange }: TasksTagInputProps) {
                     onKeyDown={(e) => {
                       if (e.key === "Enter") confirmEdit();
                     }}
-                    className="w-fit text-black px-1 py-0.5 rounded"
+                    className="w-fit min-w-0 text-black px-2 py-1 rounded"
                     autoFocus
                   />
                   <button
