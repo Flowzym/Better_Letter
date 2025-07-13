@@ -28,12 +28,16 @@ export default function TagButton({
 }: TagButtonProps) {
   const [editing, setEditing] = useState(false);
   const [editValue, setEditValue] = useState(label);
+  const [originalLabel, setOriginalLabel] = useState(label);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Nur beim ersten Laden setzen, nicht während der Bearbeitung
+  // Nur setzen wenn sich das Label ändert UND wir nicht gerade bearbeiten
   useEffect(() => {
-    setEditValue(label);
-  }, [label]);
+    if (!editing && label !== originalLabel) {
+      setEditValue(label);
+      setOriginalLabel(label);
+    }
+  }, [label, editing, originalLabel]);
 
   const baseClasses =
     "rounded-full border flex items-center gap-1 text-sm px-2 py-1";
@@ -63,27 +67,27 @@ export default function TagButton({
   const startEditing = (e: React.MouseEvent) => {
     if (!editable) return;
     e.stopPropagation();
-    setEditValue(label); // Setze den aktuellen Wert beim Start der Bearbeitung
+    setEditValue(label);
+    setOriginalLabel(label);
     setEditing(true);
     setTimeout(() => inputRef.current?.select(), 0);
   };
 
   const finishEditing = () => {
     const trimmed = editValue.trim();
-    if (trimmed && trimmed !== label) {
+    if (trimmed && trimmed !== originalLabel && onEdit) {
       onEdit?.(trimmed);
     }
     setEditing(false);
   };
 
   const handleEditKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
+    setEditValue(originalLabel);
       e.preventDefault();
       finishEditing();
     } else if (e.key === "Escape") {
       e.preventDefault();
-      setEditValue(label);
-      setEditing(false);
+      cancelEditing();
     }
   };
 

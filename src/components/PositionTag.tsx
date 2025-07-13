@@ -5,7 +5,7 @@ import TagButtonSelected from './ui/TagButtonSelected';
 interface PositionTagProps {
   label: string;
   onRemove: () => void;
-  onEdit?: () => void;
+  onEdit?: (newLabel: string) => void;
 }
 
 export default function PositionTag({ label, onRemove, onEdit }: PositionTagProps) {

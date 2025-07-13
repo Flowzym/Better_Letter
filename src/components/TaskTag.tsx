@@ -5,7 +5,7 @@ import TagButtonSelected from './ui/TagButtonSelected';
 interface TaskTagProps {
   label: string;
   onRemove: () => void;
-  onEdit?: () => void;
+  onEdit?: (newLabel: string) => void;
 }
 
 export default function TaskTag({ label, onRemove, onEdit }: TaskTagProps) {

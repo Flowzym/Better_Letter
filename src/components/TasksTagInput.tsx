@@ -14,9 +14,6 @@ interface TasksTagInputProps {
 
 export default function TasksTagInput({ value, onChange }: TasksTagInputProps) {
   const [inputValue, setInputValue] = useState("");
-  const [editIndex, setEditIndex] = useState<number | null>(null);
-  const [editValue, setEditValue] = useState("");
-  const [originalValue, setOriginalValue] = useState("");
   const { favoriteTasks: favorites, toggleFavoriteTask } = useLebenslaufContext();
 
   // unified via useTagList - konsolidierte Tag-Verwaltung
@@ -37,38 +34,9 @@ export default function TasksTagInput({ value, onChange }: TasksTagInputProps) {
     onChange(value.filter((t) => t !== task));
   };
 
-  const startEdit = (index: number) => {
-    setEditIndex(index);
-    const currentValue = value[index];
-    setEditValue(currentValue);
-    setOriginalValue(currentValue);
-  };
-
-  const confirmEdit = () => {
-    if (editIndex === null) return;
-    const trimmed = editValue.trim();
-    if (!trimmed) {
-      // Wenn leer, Bearbeitung abbrechen
-      cancelEdit();
-      return;
-    }
-    
-    if (trimmed !== originalValue) {
-      const newTasks = value.map((t, i) => (i === editIndex ? trimmed : t));
-      onChange(newTasks);
-    }
-    
-    cancelEdit();
-  };
-
-  const cancelEdit = () => {
-    setEditIndex(null);
-    setEditValue("");
-    setOriginalValue("");
-  };
-
-  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditValue(e.target.value);
+  const updateTask = (oldTask: string, newTask: string) => {
+    const newTasks = value.map((t) => (t === oldTask ? newTask : t));
+    onChange(newTasks);
   };
 
   const toggleFavorite = (task: string) => {
@@ -97,42 +65,12 @@ export default function TasksTagInput({ value, onChange }: TasksTagInputProps) {
       {value.length > 0 && (
         <div className="flex flex-wrap gap-2">
             {value.map((task, index) => (
-              editIndex === index ? (
-                <div key={`${task}-${index}`} className="tag flex-shrink-0">
-                  <input
-                    value={editValue}
-                    onChange={handleEditChange}
-                    onBlur={confirmEdit}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") confirmEdit();
-                      if (e.key === "Escape") {
-                        cancelEdit();
-                      }
-                    }}
-                    className="text-black px-2 py-1 rounded bg-white"
-                    size={Math.max(editValue.length + 2, 5)}
-                    style={{ 
-                      width: `${Math.max(editValue.length + 3, 8)}ch`,
-                      minWidth: `${Math.max(editValue.length + 3, 8)}ch`
-                    }}
-                    autoFocus
-                  />
-                  <button
-                    onClick={() => removeTask(task)}
-                    className="tag-icon-button"
-                    aria-label="Entfernen"
-                  >
-                    <X className="tag-icon" />
-                  </button>
-                </div>
-              ) : (
-                <TaskTag
-                  key={`${task}-${index}`}
-                  label={task}
-                  onRemove={() => removeTask(task)}
-                  onEdit={() => startEdit(index)}
-                />
-              )
+              <TaskTag
+                key={`${task}-${index}`}
+                label={task}
+                onRemove={() => removeTask(task)}
+                onEdit={(newTask) => updateTask(task, newTask)}
+              />
             ))}
           </div>
       )}

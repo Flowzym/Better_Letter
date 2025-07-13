@@ -6,7 +6,7 @@ interface TagButtonSelectedProps {
   isFavorite?: boolean;
   onToggleFavorite?: () => void;
   onRemove?: () => void;
-  onEdit?: (val: string) => void;
+  onEdit?: (newLabel: string) => void;
 }
 
 export default function TagButtonSelected({
