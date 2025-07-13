@@ -53,13 +53,13 @@ export default function TagButton({
       "bg-[#F29400] text-white border-[#F29400] px-4 py-2 tag-button-override tag-selected-override";
   } else if (variant === TagContext.Suggestion) {
     // Vorschlags-Tag: 16px, normales Padding - mit CSS-Klasse für !important
-    variantClasses = "bg-white text-gray-700 border-gray-300 px-4 py-2 tag-button-override tag-other-override";
+    variantClasses = "bg-white text-gray-700 border-gray-300 tag-button-override tag-other-override";
   } else if (variant === TagContext.Favorite) {
     // Favoriten-Tag: 16px, normales Padding - mit CSS-Klasse für !important
-    variantClasses = "bg-[#f8f8f8] border-[#FDE047] text-black px-3 py-1.5 tag-button-override tag-other-override";
+    variantClasses = "bg-[#f8f8f8] border-[#FDE047] text-gray-600 tag-button-override tag-other-override";
   } else {
     // Fallback für andere Varianten
-    variantClasses = "bg-white text-gray-700 border-[#F29400] px-4 py-2 tag-button-override tag-other-override";
+    variantClasses = "bg-white text-gray-700 border-[#F29400] tag-button-override tag-other-override";
   }
 
   const starStroke = isFavorite
@@ -70,8 +70,12 @@ export default function TagButton({
   const starFill = isFavorite ? "#FDE047" : "none";
 
   // Icon-Größen basierend auf Button-Variant - Stern größer als X für bessere Klickbarkeit
-  const starIconSize = variant === TagContext.Selected ? 22 : 14; // Stern größer (22px)
+  const starIconSize = variant === TagContext.Selected ? 22 : 14; // Stern noch größer (22px)
   const xIconSize = variant === TagContext.Selected ? "w-4 h-4" : "w-3.5 h-3.5"; // X (16px)
+  
+  // Gap zwischen Elementen - größer für ausgewählte Buttons
+  const contentGapClass = variant === TagContext.Selected ? "gap-2" : "gap-1";
+  
   const startEditing = (e: React.MouseEvent) => {
     if (!editable) return;
     e.stopPropagation();
@@ -118,9 +122,9 @@ export default function TagButton({
     <button
       type="button" // Ensure it's a button type
       onClick={onClick}
-      className={`${baseClasses} ${variantClasses}`}
+      className={`${baseClasses} ${variantClasses} flex items-center`}
     >
-      <div className={`${contentClasses} flex-shrink-0`}>
+      <div className={`${contentClasses} flex-shrink-0 flex items-center ${contentGapClass}`}>
         {editing ? (
           <input
             ref={inputRef}
@@ -163,7 +167,7 @@ export default function TagButton({
             type="button"
             onClick={handleRemove} /* Use specific handler for remove */
             aria-label="Entfernen"
-            className="flex items-center justify-center ml-1"
+            className="flex items-center justify-center"
           >
             <X
               className={`${xIconSize} ${
