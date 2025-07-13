@@ -17,28 +17,23 @@ export default function CompanyTag({ label, onRemove, onEdit }: CompanyTagProps)
   const [editValue, setEditValue] = useState(label);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Nur beim Start der Bearbeitung setzen
+  // Setze den Wert nur beim ersten Laden
   useEffect(() => {
-    if (editing && editValue !== label) {
-      setEditValue(label);
-    }
-  }, [editing]); // label als Dependency entfernt
-
-  // Separater Effect für Focus
-  useEffect(() => {
-    if (editing) {
-      inputRef.current?.focus();
-    }
-  }, [editing]);
+    setEditValue(label);
+  }, [label]);
 
   const confirmEdit = () => {
-    setEditing(false);
     const trimmed = editValue.trim();
     if (trimmed && trimmed !== label) {
       onEdit(trimmed);
-    } else {
-      setEditValue(label);
     }
+    setEditing(false);
+  };
+
+  const startEdit = () => {
+    setEditValue(label); // Setze den aktuellen Wert beim Start
+    setEditing(true);
+    setTimeout(() => inputRef.current?.focus(), 0);
   };
 
   const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,7 +69,7 @@ export default function CompanyTag({ label, onRemove, onEdit }: CompanyTagProps)
           aria-label="Entfernen"
         >
           <X className="tag-icon" />
-        </button>
+        onEdit={startEdit}
       </div>
     );
   }

@@ -110,21 +110,22 @@ export default function JobFieldInput({ onContentChange, profileConfig }: JobFie
   const confirmEdit = () => {
     if (!editingField) return;
     const trimmed = editValue.trim();
-    if (!trimmed || trimmed === editingField) {
-      setEditingField(null);
-      setEditValue('');
+    if (!trimmed) {
+      cancelEdit();
       return;
     }
     
-    // Ersetze den alten Wert mit dem neuen
-    const newData = {
-      ...jobFieldData,
-      berufsfelder: jobFieldData.berufsfelder.map(f => f === editingField ? trimmed : f)
-    };
-    setJobFieldData(newData);
-    updateJobFieldContent(newData);
-    setEditingField(null);
-    setEditValue('');
+    if (trimmed !== editingField) {
+      // Ersetze den alten Wert mit dem neuen
+      const newData = {
+        ...jobFieldData,
+        berufsfelder: jobFieldData.berufsfelder.map(f => f === editingField ? trimmed : f)
+      };
+      setJobFieldData(newData);
+      updateJobFieldContent(newData);
+    }
+    
+    cancelEdit();
   };
 
   const cancelEdit = () => {

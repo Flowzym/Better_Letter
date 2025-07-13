@@ -39,8 +39,9 @@ export default function TasksTagInput({ value, onChange }: TasksTagInputProps) {
 
   const startEdit = (index: number) => {
     setEditIndex(index);
-    setEditValue(value[index]);
-    setOriginalValue(value[index]);
+    const currentValue = value[index];
+    setEditValue(currentValue);
+    setOriginalValue(currentValue);
   };
 
   const confirmEdit = () => {
@@ -48,16 +49,16 @@ export default function TasksTagInput({ value, onChange }: TasksTagInputProps) {
     const trimmed = editValue.trim();
     if (!trimmed) {
       // Wenn leer, Bearbeitung abbrechen
-      setEditIndex(null);
-      setEditValue("");
-      setOriginalValue("");
+      cancelEdit();
       return;
     }
-    const newTasks = value.map((t, i) => (i === editIndex ? trimmed : t));
-    onChange(newTasks);
-    setEditIndex(null);
-    setEditValue("");
-    setOriginalValue("");
+    
+    if (trimmed !== originalValue) {
+      const newTasks = value.map((t, i) => (i === editIndex ? trimmed : t));
+      onChange(newTasks);
+    }
+    
+    cancelEdit();
   };
 
   const cancelEdit = () => {

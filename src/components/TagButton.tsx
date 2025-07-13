@@ -30,12 +30,10 @@ export default function TagButton({
   const [editValue, setEditValue] = useState(label);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Nur beim ersten Laden oder wenn nicht editiert wird
+  // Nur beim ersten Laden setzen, nicht während der Bearbeitung
   useEffect(() => {
-    if (!editing) {
-      setEditValue(label);
-    }
-  }, [label, editing]);
+    setEditValue(label);
+  }, [label]);
 
   const baseClasses =
     "rounded-full border flex items-center gap-1 text-sm px-2 py-1";
@@ -65,18 +63,17 @@ export default function TagButton({
   const startEditing = (e: React.MouseEvent) => {
     if (!editable) return;
     e.stopPropagation();
+    setEditValue(label); // Setze den aktuellen Wert beim Start der Bearbeitung
     setEditing(true);
     setTimeout(() => inputRef.current?.select(), 0);
   };
 
   const finishEditing = () => {
-    setEditing(false);
     const trimmed = editValue.trim();
     if (trimmed && trimmed !== label) {
       onEdit?.(trimmed);
-    } else {
-      setEditValue(label);
     }
+    setEditing(false);
   };
 
   const handleEditKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
