@@ -100,6 +100,52 @@ export default function AufgabenbereichInput({
     <div className="space-y-4">
       <h3 className="text-sm font-medium text-gray-700">Aufgaben/Tätigkeiten</h3>
 
+      {value.length > 0 && (
+        <div>
+          <h4 className="text-sm font-medium text-gray-700 mb-2">Ausgewählt:</h4>
+          <div className="flex flex-wrap gap-2">
+            {value.map((task, index) => (
+              <div
+                key={`${task}-${index}`}
+                className="inline-flex items-center px-3 py-1 text-sm rounded-full text-white"
+                style={{ backgroundColor: '#F29400' }}
+              >
+              {editIndex === index ? (
+                <input
+                  value={editValue}
+                  onChange={(e) => setEditValue(e.target.value)}
+                  onBlur={confirmEdit}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') confirmEdit();
+                  }}
+                  className="text-black px-1 py-0.5 rounded"
+                  autoFocus
+                />
+              ) : (
+                <span className="mr-2">{task}</span>
+              )}
+              {editIndex !== index && (
+                <button
+                  onClick={() => startEdit(index)}
+                  className="mr-1 text-white hover:text-gray-200"
+                  aria-label="Bearbeiten"
+                >
+                  <Pencil className="h-3 w-3" />
+                </button>
+              )}
+              <button
+                onClick={() => removeTask(task)}
+                className="text-white hover:text-gray-200"
+                aria-label="Entfernen"
+              >
+                <X className="h-3 w-3" />
+              </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <AutocompleteInput
         value={inputValue}
         onChange={setInputValue}
@@ -147,52 +193,6 @@ export default function AufgabenbereichInput({
               </button>
             </div>
           ))}
-        </div>
-      )}
-
-      {value.length > 0 && (
-        <div>
-          <h4 className="text-sm font-medium text-gray-700 mb-2">Ausgewählt:</h4>
-          <div className="flex flex-wrap gap-2">
-            {value.map((task, index) => (
-              <div
-                key={`${task}-${index}`}
-                className="inline-flex items-center px-3 py-1 text-sm rounded-full text-white"
-                style={{ backgroundColor: '#F29400' }}
-              >
-              {editIndex === index ? (
-                <input
-                  value={editValue}
-                  onChange={(e) => setEditValue(e.target.value)}
-                  onBlur={confirmEdit}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') confirmEdit();
-                  }}
-                  className="text-black px-1 py-0.5 rounded"
-                  autoFocus
-                />
-              ) : (
-                <span className="mr-2">{task}</span>
-              )}
-              {editIndex !== index && (
-                <button
-                  onClick={() => startEdit(index)}
-                  className="mr-1 text-white hover:text-gray-200"
-                  aria-label="Bearbeiten"
-                >
-                  <Pencil className="h-3 w-3" />
-                </button>
-              )}
-              <button
-                onClick={() => removeTask(task)}
-                className="text-white hover:text-gray-200"
-                aria-label="Entfernen"
-              >
-                <X className="h-3 w-3" />
-              </button>
-              </div>
-            ))}
-          </div>
         </div>
       )}
 

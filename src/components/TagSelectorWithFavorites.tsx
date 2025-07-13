@@ -67,18 +67,6 @@ export default function TagSelectorWithFavorites({
 
   return (
     <div className="space-y-4">
-      <AutocompleteInput
-        value={inputValue}
-        onChange={setInputValue}
-        onAdd={handleAddInput}
-        onFavoriteClick={handleAddFavoriteInput}
-        suggestions={suggestions ?? options}
-        placeholder="Hinzufügen..."
-        showFavoritesButton
-        showAddButton
-        label={label}
-      />
-
       {value.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {value.map((tag, index) => (
@@ -91,6 +79,18 @@ export default function TagSelectorWithFavorites({
           ))}
         </div>
       )}
+
+      <AutocompleteInput
+        value={inputValue}
+        onChange={setInputValue}
+        onAdd={handleAddInput}
+        onFavoriteClick={handleAddFavoriteInput}
+        suggestions={suggestions ?? options}
+        placeholder="Hinzufügen..."
+        showFavoritesButton
+        showAddButton
+        label={label}
+      />
 
       {favorites.filter((f) => !value.includes(f)).length > 0 && (
         <div>

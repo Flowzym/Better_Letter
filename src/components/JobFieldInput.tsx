@@ -208,24 +208,6 @@ export default function JobFieldInput({ onContentChange, profileConfig }: JobFie
           {expandedSections.berufsfelder && (
             <div id="berufsfelder-content" className="p-4 space-y-4">
               {/* BOLT-UI-ANPASSUNG 2025-01-15: Custom Input mit Autocomplete - Platzhaltertext angepasst */}
-              <div>
-                <AutocompleteInput
-                  id="job-field-input"
-                  label="Berufsfeld eingeben:"
-                  value={customInput}
-                  onChange={setCustomInput}
-                  onAdd={addJobField}
-                  suggestions={profileConfig.berufe}
-                  className="text-black px-2 py-1 rounded bg-white"
-                  size={editValue.length || 1}
-                  style={{ 
-                    width: `${editValue.length * 0.8 + 1}ch`,
-                    minWidth: `${editValue.length * 0.8 + 1}ch`
-                  }}
-                  buttonColor="orange"
-                />
-              </div>
-
               {/* Selected Job Fields with Favorites Button */}
               {jobFieldData.berufsfelder.length > 0 && (
                 <div>
@@ -271,6 +253,24 @@ export default function JobFieldInput({ onContentChange, profileConfig }: JobFie
                   </div>
                 </div>
               )}
+
+              <div>
+                <AutocompleteInput
+                  id="job-field-input"
+                  label="Berufsfeld eingeben:"
+                  value={customInput}
+                  onChange={setCustomInput}
+                  onAdd={addJobField}
+                  suggestions={profileConfig.berufe}
+                  className="text-black px-2 py-1 rounded bg-white"
+                  size={editValue.length || 1}
+                  style={{
+                    width: `${editValue.length * 0.8 + 1}ch`,
+                    minWidth: `${editValue.length * 0.8 + 1}ch`
+                  }}
+                  buttonColor="orange"
+                />
+              </div>
 
               {/* Favorite Options - ORANGE UMRANDUNG + X INNERHALB */}
               {favoriteItems.length > 0 && (
