@@ -48,18 +48,18 @@ export default function TagButton({
 
   let variantClasses = "";
   if (variant === TagContext.Selected) {
-    // Ausgewählter Tag: text-base (16px), fett, größeres Padding
+    // Ausgewählter Tag: text-lg (18px), fett, viel Padding - wie im Bild
     variantClasses =
-      "bg-[#F29400] text-white border-[#F29400] font-bold px-4 py-2 text-base";
+      "bg-[#F29400] text-white border-[#F29400] font-bold px-6 py-3 text-lg";
   } else if (variant === TagContext.Suggestion) {
-    // Vorschlags-Tag: text-sm (14px), mittleres Padding
-    variantClasses = "bg-white text-gray-700 border-gray-300 px-3 py-1 text-sm";
+    // Vorschlags-Tag: text-base (16px), mehr Padding
+    variantClasses = "bg-white text-gray-700 border-gray-300 px-4 py-2 text-base";
   } else if (variant === TagContext.Favorite) {
-    // Favoriten-Tag: text-sm (14px), mittleres Padding
-    variantClasses = "bg-[#f8f8f8] border-[#FDE047] text-black px-3 py-1 text-sm";
+    // Favoriten-Tag: text-base (16px), mehr Padding - wie der gelbe Button im Bild
+    variantClasses = "bg-[#f8f8f8] border-[#FDE047] text-black px-4 py-2 text-base";
   } else {
-    // Fallback für andere Varianten: text-sm (14px), mittleres Padding
-    variantClasses = "bg-white text-gray-700 border-[#F29400] px-3 py-1 text-sm";
+    // Fallback für andere Varianten
+    variantClasses = "bg-white text-gray-700 border-[#F29400] px-4 py-2 text-base";
   }
 
   const starStroke = isFavorite
