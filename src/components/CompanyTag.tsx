@@ -69,7 +69,7 @@ export default function CompanyTag({ label, onRemove, onEdit }: CompanyTagProps)
           aria-label="Entfernen"
         >
           <X className="tag-icon" />
-        onEdit={startEdit}
+        </button>
       </div>
     );
   }
@@ -81,9 +81,3 @@ export default function CompanyTag({ label, onRemove, onEdit }: CompanyTagProps)
       onToggleFavorite={() => toggleFavoriteCompany(label)}
       onRemove={onRemove}
       onEdit={() => setEditing(true)}
-    )
-    />
-  );
-}
-  }
-}
