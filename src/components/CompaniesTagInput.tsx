@@ -41,7 +41,7 @@ export default function CompaniesTagInput({ value, onChange, suggestions = [] }:
   return (
     <div className="space-y-2">
       {value.length > 0 && (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 mb-4">
           {value.map((c) => (
             <CompanyTag
               key={c}
