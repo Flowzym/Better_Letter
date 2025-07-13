@@ -17,12 +17,19 @@ export default function CompanyTag({ label, onRemove, onEdit }: CompanyTagProps)
   const [editValue, setEditValue] = useState(label);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Nur beim Start der Bearbeitung setzen
+  useEffect(() => {
+    if (editing && editValue !== label) {
+      setEditValue(label);
+    }
+  }, [editing]); // label als Dependency entfernt
+
+  // Separater Effect für Focus
   useEffect(() => {
     if (editing) {
-      setEditValue(label);
       inputRef.current?.focus();
     }
-  }, [editing, label]);
+  }, [editing]);
 
   const confirmEdit = () => {
     setEditing(false);

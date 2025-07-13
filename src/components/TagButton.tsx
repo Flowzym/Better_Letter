@@ -30,9 +30,12 @@ export default function TagButton({
   const [editValue, setEditValue] = useState(label);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Nur beim ersten Laden oder wenn nicht editiert wird
   useEffect(() => {
-    setEditValue(label);
-  }, [label]);
+    if (!editing) {
+      setEditValue(label);
+    }
+  }, [label, editing]);
 
   const baseClasses =
     "rounded-full border flex items-center gap-1 text-sm px-2 py-1";

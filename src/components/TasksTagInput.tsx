@@ -16,6 +16,7 @@ export default function TasksTagInput({ value, onChange }: TasksTagInputProps) {
   const [inputValue, setInputValue] = useState("");
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [editValue, setEditValue] = useState("");
+  const [originalValue, setOriginalValue] = useState("");
   const { favoriteTasks: favorites, toggleFavoriteTask } = useLebenslaufContext();
 
   // unified via useTagList - konsolidierte Tag-Verwaltung
@@ -39,16 +40,30 @@ export default function TasksTagInput({ value, onChange }: TasksTagInputProps) {
   const startEdit = (index: number) => {
     setEditIndex(index);
     setEditValue(value[index]);
+    setOriginalValue(value[index]);
   };
 
   const confirmEdit = () => {
     if (editIndex === null) return;
     const trimmed = editValue.trim();
-    if (!trimmed) return;
+    if (!trimmed) {
+      // Wenn leer, Bearbeitung abbrechen
+      setEditIndex(null);
+      setEditValue("");
+      setOriginalValue("");
+      return;
+    }
     const newTasks = value.map((t, i) => (i === editIndex ? trimmed : t));
     onChange(newTasks);
     setEditIndex(null);
     setEditValue("");
+    setOriginalValue("");
+  };
+
+  const cancelEdit = () => {
+    setEditIndex(null);
+    setEditValue("");
+    setOriginalValue("");
   };
 
   const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,8 +105,7 @@ export default function TasksTagInput({ value, onChange }: TasksTagInputProps) {
                     onKeyDown={(e) => {
                       if (e.key === "Enter") confirmEdit();
                       if (e.key === "Escape") {
-                        setEditIndex(null);
-                        setEditValue("");
+                        cancelEdit();
                       }
                     }}
                     className="text-black px-2 py-1 rounded bg-white"

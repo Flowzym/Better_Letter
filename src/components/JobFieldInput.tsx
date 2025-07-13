@@ -35,6 +35,8 @@ export default function JobFieldInput({ onContentChange, profileConfig }: JobFie
   });
 
   const [customInput, setCustomInput] = useState('');
+  const [editingField, setEditingField] = useState<string | null>(null);
+  const [editValue, setEditValue] = useState('');
 
   // Favoriten-Konfiguration für Berufsfelder
   const [favoritesConfig, setFavoritesConfig] = useState<FavoritesConfig>(() => {
@@ -98,6 +100,36 @@ export default function JobFieldInput({ onContentChange, profileConfig }: JobFie
     };
     setJobFieldData(newData);
     updateJobFieldContent(newData);
+  };
+
+  const startEdit = (field: string) => {
+    setEditingField(field);
+    setEditValue(field);
+  };
+
+  const confirmEdit = () => {
+    if (!editingField) return;
+    const trimmed = editValue.trim();
+    if (!trimmed || trimmed === editingField) {
+      setEditingField(null);
+      setEditValue('');
+      return;
+    }
+    
+    // Ersetze den alten Wert mit dem neuen
+    const newData = {
+      ...jobFieldData,
+      berufsfelder: jobFieldData.berufsfelder.map(f => f === editingField ? trimmed : f)
+    };
+    setJobFieldData(newData);
+    updateJobFieldContent(newData);
+    setEditingField(null);
+    setEditValue('');
+  };
+
+  const cancelEdit = () => {
+    setEditingField(null);
+    setEditValue('');
   };
 
   const toggleSection = (section: keyof typeof expandedSections) => {
