@@ -78,7 +78,7 @@ export default function TasksTagInput({ value, onChange }: TasksTagInputProps) {
         <div className="flex flex-wrap gap-2">
             {value.map((task, index) => (
               editIndex === index ? (
-                <div key={`${task}-${index}`} className="tag">
+                <div key={`${task}-${index}`} className="tag flex-shrink-0">
                   <input
                     value={editValue}
                     onChange={(e) => setEditValue(e.target.value)}

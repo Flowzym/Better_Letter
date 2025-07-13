@@ -34,7 +34,7 @@ export default function CompanyTag({ label, onRemove, onEdit }: CompanyTagProps)
 
   if (editing) {
     return (
-      <div className="tag">
+      <div className="tag flex-shrink-0">
         <input
           ref={inputRef}
           value={editValue}
