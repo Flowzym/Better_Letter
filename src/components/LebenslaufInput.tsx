@@ -145,7 +145,7 @@ export default function LebenslaufInput() {
           <button
             type="button"
             onClick={handleSubmit}
-            className={`block w-1/5 mx-auto text-white font-medium py-2 px-4 rounded-full transition-colors duration-200 ${
+            className={`block w-[30%] mx-auto text-white font-medium text-sm py-1.5 px-4 rounded-full transition-colors duration-200 ${
               isEditingExperience
                 ? 'bg-[#207199] hover:bg-[#1A5C80]'
                 : 'bg-[#3E7B0F] hover:bg-[#356A0C]'
