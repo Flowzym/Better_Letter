@@ -196,7 +196,7 @@ export default function JobFieldInput({ onContentChange, profileConfig }: JobFie
                     {jobFieldData.berufsfelder.map((field) => (
                       <div
                         key={field}
-                        className="inline-flex items-center px-3 py-1 text-white text-sm rounded-full"
+                        className="inline-flex items-center px-3 py-1 text-white text-sm rounded-full flex-shrink-0"
                         style={{ backgroundColor: '#F29400' }}
                       >
                         <span>{field}</span>

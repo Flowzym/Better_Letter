@@ -103,7 +103,7 @@ export default function TagButton({
       onClick={onClick}
       className={`${baseClasses} ${variantClasses}`}
     >
-      <div className={contentClasses}>
+      <div className={`${contentClasses} flex-shrink-0`}>
         {editing ? (
           <input
             ref={inputRef}
