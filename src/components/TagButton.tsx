@@ -92,7 +92,7 @@ export default function TagButton({
   let variantClasses = "";
   let textClasses = "";
   let containerClasses = "";
-  let starSize = 16;
+  let starSize = 14;
   let xSize = "w-3 h-3";
   let starStroke = "#4B5563";
   let starFill = "none";
@@ -101,9 +101,9 @@ export default function TagButton({
   if (variant === TagContext.Selected) {
     // Ausgewählter Button: Orange, größer, fett
     variantClasses = "bg-[#F29400] text-white border-[#F29400]";
-    textClasses = "text-sm font-bold";
+    textClasses = "text-sm font-bold tracking-wide";
     containerClasses = "flex items-center justify-between w-full";
-    starSize = 22;
+    starSize = 21;
     xSize = "w-3.5 h-3.5";
     starStroke = isFavorite ? "#FDE047" : "#FFFFFF";
     starFill = isFavorite ? "#FDE047" : "none";
@@ -111,7 +111,7 @@ export default function TagButton({
   } else if (variant === TagContext.Favorite) {
     // Favoriten-Button: Grau mit dicker gelber Umrandung
     variantClasses = "bg-[#f8f8f8] text-gray-600";
-    textClasses = "text-sm font-normal";
+    textClasses = "text-sm font-normal tracking-wide";
     containerClasses = "flex items-center justify-between w-full";
     starSize = 18; // Größerer Stern für Favoriten
     xSize = "w-3 h-3";
@@ -121,9 +121,9 @@ export default function TagButton({
   } else {
     // Suggestion/Standard Button
     variantClasses = "bg-white text-gray-700 border-gray-300";
-    textClasses = "text-sm font-normal";
+    textClasses = "text-sm font-normal tracking-wide";
     containerClasses = "flex items-center justify-between w-full";
-    starSize = 16;
+    starSize = 14;
     xSize = "w-3 h-3";
     starStroke = isFavorite ? "#FDE047" : "#4B5563";
     starFill = isFavorite ? "#FDE047" : "none";
