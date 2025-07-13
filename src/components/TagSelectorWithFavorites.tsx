@@ -45,6 +45,13 @@ export default function TagSelectorWithFavorites({
     toggleFavoritePosition(tag);
   };
 
+  const updateTag = (oldTag: string, newTag: string) => {
+    const trimmed = newTag.trim();
+    if (!trimmed) return;
+    const updatedTags = value.map(tag => tag === oldTag ? trimmed : tag);
+    onChange(updatedTags);
+  };
+
   const handleAddInput = (val?: string) => {
     addTag(val ?? inputValue);
     setInputValue('');
