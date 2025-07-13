@@ -40,16 +40,6 @@ export default function CompaniesTagInput({ value, onChange, suggestions = [] }:
 
   return (
     <div className="space-y-2">
-      <AutocompleteInput
-        value={inputValue}
-        onChange={setInputValue}
-        onAdd={addCompany}
-        onFavoriteClick={handleAddFavoriteInput}
-        suggestions={suggestions}
-        placeholder="Hinzufügen..."
-        showFavoritesButton
-      />
-      
       {value.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {value.map((c) => (
@@ -62,6 +52,16 @@ export default function CompaniesTagInput({ value, onChange, suggestions = [] }:
           ))}
         </div>
       )}
+
+      <AutocompleteInput
+        value={inputValue}
+        onChange={setInputValue}
+        onAdd={addCompany}
+        onFavoriteClick={handleAddFavoriteInput}
+        suggestions={suggestions}
+        placeholder="Hinzufügen..."
+        showFavoritesButton
+      />
 
       {favorites.filter((f) => !value.includes(f)).length > 0 && (
         <div>

@@ -45,14 +45,6 @@ export default function TasksTagInput({ value, onChange }: TasksTagInputProps) {
   return (
     <div className="space-y-4">
 
-      <TextInputWithButtons
-        value={inputValue}
-        onChange={setInputValue}
-        onAdd={addTask}
-        onFavoriteClick={handleAddFavoriteInput}
-        placeholder="Hinzufügen..."
-      />
-
       {value.length > 0 && (
         <div className="flex flex-wrap gap-2">
             {value.map((task, index) => (
@@ -65,6 +57,14 @@ export default function TasksTagInput({ value, onChange }: TasksTagInputProps) {
             ))}
           </div>
       )}
+
+      <TextInputWithButtons
+        value={inputValue}
+        onChange={setInputValue}
+        onAdd={addTask}
+        onFavoriteClick={handleAddFavoriteInput}
+        placeholder="Hinzufügen..."
+      />
 
 
       {favorites.filter((f) => !value.includes(f)).length > 0 && (

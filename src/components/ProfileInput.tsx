@@ -252,20 +252,6 @@ export default function ProfileInput({ onContentChange, profileConfig, initialCo
 
         {isExpanded && (
           <div id={`${sectionId}-content`} className="p-4 space-y-4">
-            {/* BOLT-UI-ANPASSUNG 2025-01-15: Custom Input mit Autocomplete - Platzhaltertext angepasst */}
-            <div>
-              <AutocompleteInput
-                id={customInputId}
-                label={`${title} eingeben:`}
-                value={customInputs[category]}
-                onChange={(value) => setCustomInputs({ ...customInputs, [category]: value })}
-                onAdd={(valueToAdd) => addCustomItem(category, valueToAdd)}
-                suggestions={availableItems}
-                placeholder="Hinzufügen..." // BOLT-UI-ANPASSUNG 2025-01-15: Platzhaltertext angepasst
-                buttonColor="orange"
-              />
-            </div>
-
             {/* Selected Items with Favorites Button */}
             {selectedItems.length > 0 && (
               <div>
@@ -311,6 +297,19 @@ export default function ProfileInput({ onContentChange, profileConfig, initialCo
                 </div>
               </div>
             )}
+
+            <div>
+              <AutocompleteInput
+                id={customInputId}
+                label={`${title} eingeben:`}
+                value={customInputs[category]}
+                onChange={(value) => setCustomInputs({ ...customInputs, [category]: value })}
+                onAdd={(valueToAdd) => addCustomItem(category, valueToAdd)}
+                suggestions={availableItems}
+                placeholder="Hinzufügen..." // BOLT-UI-ANPASSUNG 2025-01-15: Platzhaltertext angepasst
+                buttonColor="orange"
+              />
+            </div>
 
             {/* Favorite Options - ORANGE UMRANDUNG + X INNERHALB */}
             {favoriteItems.length > 0 && (
