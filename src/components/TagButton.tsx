@@ -40,7 +40,7 @@ export default function TagButton({
   }, [label, editing, originalLabel]);
 
   const baseClasses =
-    "rounded-full border flex items-center gap-1 text-sm px-2 py-1";
+    "rounded-full border flex items-center gap-1 text-xs";
   const contentClasses =
     variant === TagContext.Favorite
       ? "flex items-center space-x-2"
@@ -49,13 +49,13 @@ export default function TagButton({
   let variantClasses = "";
   if (variant === TagContext.Selected) {
     variantClasses =
-      "bg-[#F29400] text-white border-[#F29400] text-xs font-bold px-3 py-1";
+      "bg-[#F29400] text-white border-[#F29400] font-bold px-3 py-1 text-sm";
   } else if (variant === TagContext.Suggestion) {
-    variantClasses = "bg-white text-gray-700 border-gray-300";
+    variantClasses = "bg-white text-gray-700 border-gray-300 px-2 py-0.5";
   } else if (variant === TagContext.Favorite) {
-    variantClasses = "bg-[#f8f8f8] border-[#FDE047] text-black";
+    variantClasses = "bg-[#f8f8f8] border-[#FDE047] text-black px-2 py-0.5";
   } else {
-    variantClasses = "bg-white text-gray-700 border-[#F29400]";
+    variantClasses = "bg-white text-gray-700 border-[#F29400] px-2 py-0.5";
   }
 
   const starStroke = isFavorite

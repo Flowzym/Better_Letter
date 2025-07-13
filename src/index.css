@@ -2,8 +2,8 @@
 @tailwind base;
 @tailwind components;
 @import "./styles/_tags.scss";
-@tailwind utilities;
 @import "./styles/tailwind.css";
+@tailwind utilities;
 @layer base {
   body {
     font-family: "Roboto", sans-serif;
