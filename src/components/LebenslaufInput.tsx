@@ -120,7 +120,7 @@ export default function LebenslaufInput() {
           cvSuggestions={cvSuggestions}
         />
         <button
-          className={`w-full border border-gray-300 bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-md hover:bg-gray-100 transition`}
+          className="w-1/2 mx-auto py-2 rounded-md bg-[#F29400] hover:bg-[#E8850C] text-white text-center"
           onClick={isEditingExperience ? handleUpdate : handleAdd}
         >
           {isEditingExperience ? 'Aktualisieren' : 'Hinzufügen'}
