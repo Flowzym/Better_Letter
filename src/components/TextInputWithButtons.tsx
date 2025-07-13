@@ -64,7 +64,7 @@ export default function TextInputWithButtons({
         )}
       </div>
       {buttonsVisible && (
-        <div className="flex-shrink-0 flex"> // Entfernt: gap-2 und ml-2
+        <div className="flex-shrink-0 flex">
           <button
             type="button"
             onClick={handleAdd}
