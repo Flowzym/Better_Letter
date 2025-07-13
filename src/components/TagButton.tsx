@@ -53,7 +53,7 @@ export default function TagButton({
   } else if (variant === TagContext.Suggestion) {
     variantClasses = "bg-white text-gray-700 border-gray-300";
   } else if (variant === TagContext.Favorite) {
-    variantClasses = "bg-transparent border-[#F29400] border text-black";
+    variantClasses = "bg-[#f8f8f8] border-[#FDE047] text-black";
   } else {
     variantClasses = "bg-white text-gray-700 border-[#F29400]";
   }
