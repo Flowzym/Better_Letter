@@ -43,7 +43,7 @@ export default function TextInputWithButtons({
 
   return (
     <div className="flex items-center w-full">
-      <div className="relative flex-grow">
+      <div className="relative flex-1">
         <input
           type="text"
           value={value}
