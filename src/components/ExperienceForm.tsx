@@ -2,6 +2,7 @@ import TagSelectorWithFavorites from './TagSelectorWithFavorites';
 import ZeitraumPicker from './ZeitraumPicker';
 import TasksTagInput from './TasksTagInput';
 import CompaniesTagInput from './CompaniesTagInput';
+import { Eraser } from 'lucide-react';
 import { Berufserfahrung } from '../context/LebenslaufContext';
 import { CVSuggestionConfig } from '../services/supabaseService';
 
@@ -20,10 +21,37 @@ export default function ExperienceForm({
   onPositionsChange,
   cvSuggestions,
 }: ExperienceFormProps) {
+  const hasZeitraumData =
+    form.startMonth !== null ||
+    form.startYear.trim() !== '' ||
+    form.endMonth !== null ||
+    form.endYear !== null ||
+    form.isCurrent === true;
+  const hasCompanyData = form.companies.length > 0;
+  const hasPositionData = selectedPositions.length > 0;
+  const hasTaskData = form.aufgabenbereiche.length > 0;
   return (
     <div className="space-y-4">
       <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
-        <h3 className="text-sm font-medium text-gray-700 mb-2">Zeitraum</h3>
+        <div className="flex justify-between mb-2">
+          <h3 className="text-sm font-medium text-gray-700">Zeitraum</h3>
+          {hasZeitraumData && (
+            <button
+              type="button"
+              onClick={() => {
+                onUpdateField('startMonth', null);
+                onUpdateField('startYear', '');
+                onUpdateField('endMonth', null);
+                onUpdateField('endYear', null);
+                onUpdateField('isCurrent', false);
+              }}
+              className="p-1 text-gray-600 hover:text-gray-900"
+              title="Zeitraum zurücksetzen"
+            >
+              <Eraser className="h-4 w-4" />
+            </button>
+          )}
+        </div>
         <ZeitraumPicker
           value={{
             startMonth: form.startMonth ?? undefined,
@@ -59,7 +87,19 @@ export default function ExperienceForm({
       </div>
 
       <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
-        <h3 className="text-sm font-medium text-gray-700 mb-2">Unternehmen &amp; Ort</h3>
+        <div className="flex justify-between mb-2">
+          <h3 className="text-sm font-medium text-gray-700">Unternehmen &amp; Ort</h3>
+          {hasCompanyData && (
+            <button
+              type="button"
+              onClick={() => onUpdateField('companies', [])}
+              className="p-1 text-gray-600 hover:text-gray-900"
+              title="Unternehmen &amp; Ort zurücksetzen"
+            >
+              <Eraser className="h-4 w-4" />
+            </button>
+          )}
+        </div>
         <div className="w-full">
           <CompaniesTagInput
             value={form.companies}
@@ -70,7 +110,22 @@ export default function ExperienceForm({
       </div>
 
       <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
-        <h3 className="text-sm font-medium text-gray-700 mb-2">Position</h3>
+        <div className="flex justify-between mb-2">
+          <h3 className="text-sm font-medium text-gray-700">Position</h3>
+          {hasPositionData && (
+            <button
+              type="button"
+              onClick={() => {
+                onPositionsChange([]);
+                onUpdateField('position', []);
+              }}
+              className="p-1 text-gray-600 hover:text-gray-900"
+              title="Position zurücksetzen"
+            >
+              <Eraser className="h-4 w-4" />
+            </button>
+          )}
+        </div>
         <TagSelectorWithFavorites
           value={selectedPositions}
           onChange={(val) => {
@@ -83,7 +138,19 @@ export default function ExperienceForm({
       </div>
 
       <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
-        <h3 className="text-sm font-medium text-gray-700 mb-2">Tätigkeiten</h3>
+        <div className="flex justify-between mb-2">
+          <h3 className="text-sm font-medium text-gray-700">Tätigkeiten</h3>
+          {hasTaskData && (
+            <button
+              type="button"
+              onClick={() => onUpdateField('aufgabenbereiche', [])}
+              className="p-1 text-gray-600 hover:text-gray-900"
+              title="Tätigkeiten zurücksetzen"
+            >
+              <Eraser className="h-4 w-4" />
+            </button>
+          )}
+        </div>
         <TasksTagInput
           value={form.aufgabenbereiche}
           onChange={(val) => onUpdateField('aufgabenbereiche', val)}

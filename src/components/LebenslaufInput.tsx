@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Eraser } from 'lucide-react';
 import ExperienceForm from './ExperienceForm';
 import ExperienceSection from './ExperienceSection';
 import CVSection from './CVSection';
@@ -125,6 +125,12 @@ export default function LebenslaufInput() {
     selectExperience(null);
   };
 
+  const handleClearForm = () => {
+    setForm(initialExperience);
+    setSelectedPositions([]);
+    selectExperience(null);
+  };
+
   const handleSubmit = async () => {
     if (isEditingExperience) {
       await handleUpdate();
@@ -144,7 +150,7 @@ export default function LebenslaufInput() {
           cvSuggestions={cvSuggestions}
         />
         {hasCurrentExperienceData && (
-          <div className="flex items-center justify-center space-x-2">
+          <div className="relative flex justify-center">
             <button
               type="button"
               onClick={handleSubmit}
@@ -156,16 +162,26 @@ export default function LebenslaufInput() {
             >
               {isEditingExperience ? 'Aktualisieren' : 'Hinzufügen'}
             </button>
-            {isEditingExperience && selectedExperienceId && (
+            <div className="absolute right-0 flex items-center space-x-2">
               <button
                 type="button"
-                onClick={() => deleteExperience(selectedExperienceId)}
-                className="p-2 text-red-600 hover:bg-red-50 rounded-full transition-colors duration-200"
-                title="Eintrag löschen"
+                onClick={handleClearForm}
+                className="p-2 text-gray-600 hover:bg-gray-50 rounded-full transition-colors duration-200"
+                title="Formular zurücksetzen"
               >
-                <Trash2 className="h-4 w-4" />
+                <Eraser className="h-4 w-4" />
               </button>
-            )}
+              {isEditingExperience && selectedExperienceId && (
+                <button
+                  type="button"
+                  onClick={() => deleteExperience(selectedExperienceId)}
+                  className="p-2 text-red-600 hover:bg-red-50 rounded-full transition-colors duration-200"
+                  title="Eintrag löschen"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              )}
+            </div>
           </div>
         )}
       </ExperienceSection>
