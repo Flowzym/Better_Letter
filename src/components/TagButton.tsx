@@ -111,7 +111,7 @@ export default function TagButton({
             onChange={(e) => setEditValue(e.target.value)}
             onBlur={finishEditing}
             onKeyDown={handleEditKey}
-            className="bg-transparent focus:outline-none flex-1 text-current px-1"
+            className="w-fit max-w-full px-1 bg-transparent outline-none text-current"
           />
         ) : (
           <span
