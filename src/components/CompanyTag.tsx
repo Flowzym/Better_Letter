@@ -44,10 +44,10 @@ export default function CompanyTag({ label, onRemove, onEdit }: CompanyTagProps)
             if (e.key === 'Enter') confirmEdit();
           }}
           className="text-black px-2 py-1 rounded bg-white"
-          size={Math.max(editValue.length + 1, 8)}
+          size={editValue.length || 1}
           style={{ 
-            width: `${Math.max(editValue.length + 1, 8)}ch`,
-            minWidth: `${editValue.length + 1}ch`
+            width: `${editValue.length * 0.8 + 1}ch`,
+            minWidth: `${editValue.length * 0.8 + 1}ch`
           }}
           autoFocus
         />
