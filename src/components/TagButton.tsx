@@ -103,7 +103,7 @@ export default function TagButton({
     variantClasses = "bg-[#F29400] text-white border-[#F29400] px-4 py-2";
     textClasses = "text-sm font-bold";
     containerClasses = "flex items-center justify-between w-full";
-    starSize = 16;
+    starSize = 20;
     xSize = "w-3.5 h-3.5";
     starStroke = isFavorite ? "#FDE047" : "#FFFFFF";
     starFill = isFavorite ? "#FDE047" : "none";
