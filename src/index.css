@@ -163,17 +163,21 @@
 /* Ausgewählte Tag-Buttons - 16px, fett, kleineres Padding */
 .tag-selected-override {
   font-size: 14px !important;
-  font-weight: bold !important; /* font-bold */
-  padding: 0.25rem 0.75rem 0.25rem 0.875rem !important; /* mehr linker Einzug */
-  line-height: 1 !important; /* bessere vertikale Zentrierung */
+  font-weight: bold !important;
+  padding: 0.375rem 0.75rem 0.375rem 0.875rem !important; /* höher + mehr linker Einzug */
+  line-height: 1.2 !important; /* bessere vertikale Zentrierung für Großbuchstaben */
+  display: flex !important;
+  align-items: center !important;
 }
 
 /* Andere Tag-Buttons - 14px, normal, Standard-Padding */
 .tag-other-override {
   font-size: 14px !important; /* text-sm */
   font-weight: normal !important; /* font-normal */
-  padding: 0.25rem 0.5rem 0.25rem 0.75rem !important; /* mehr linker Einzug */
-  line-height: 1 !important; /* bessere vertikale Zentrierung */
+  padding: 0.375rem 0.5rem 0.375rem 0.75rem !important; /* höher + mehr linker Einzug */
+  line-height: 1.2 !important; /* bessere vertikale Zentrierung für Großbuchstaben */
+  display: flex !important;
+  align-items: center !important;
 }
 .ql-editor h1 {
   font-size: 1.5em !important;
