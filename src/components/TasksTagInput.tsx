@@ -1,10 +1,8 @@
 import React, { useState } from "react";
-import { X } from "lucide-react";
 import TaskTag from "./TaskTag";
 import TagButtonFavorite from "./ui/TagButtonFavorite";
 import TextInputWithButtons from "./TextInputWithButtons";
 import { useLebenslaufContext } from "../context/LebenslaufContext";
-import { useTagList } from "../hooks/useTagList";
 import "../styles/_tags.scss";
 
 interface TasksTagInputProps {
@@ -16,16 +14,9 @@ export default function TasksTagInput({ value, onChange }: TasksTagInputProps) {
   const [inputValue, setInputValue] = useState("");
   const { favoriteTasks: favorites, toggleFavoriteTask } = useLebenslaufContext();
 
-  // unified via useTagList - konsolidierte Tag-Verwaltung
-  const { hasTag } = useTagList({
-    initialTags: value,
-    allowDuplicates: false
-  });
-
-
   const addTask = (task?: string) => {
     const t = (task ?? inputValue).trim();
-    if (!t || hasTag(t)) return;
+    if (!t || value.includes(t)) return;
     onChange([...value, t]);
     setInputValue("");
   };
