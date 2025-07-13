@@ -135,8 +135,8 @@ export default function TagButton({
   if (variant === TagContext.Selected) {
     buttonStyle = { padding: '0.25rem 0.75rem' };
   } else if (variant === TagContext.Favorite) {
-    buttonStyle = { 
-      padding: '0.25rem 0.5rem',
+    buttonStyle = {
+      padding: '0.125rem 0.375rem',
       borderWidth: '2px',
       borderColor: '#ffde59'
     };
