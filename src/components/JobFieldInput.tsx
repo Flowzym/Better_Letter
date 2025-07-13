@@ -183,7 +183,12 @@ export default function JobFieldInput({ onContentChange, profileConfig }: JobFie
                   onChange={setCustomInput}
                   onAdd={addJobField}
                   suggestions={profileConfig.berufe}
-                  placeholder="Hinzufügen..." // BOLT-UI-ANPASSUNG 2025-01-15: Platzhaltertext angepasst
+                  className="text-black px-2 py-1 rounded bg-white"
+                  size={editValue.length + 5}
+                  style={{ 
+                    width: `${Math.max(editValue.length + 3, 10)}ch`,
+                    minWidth: `${editValue.length + 3}ch`
+                  }}
                   buttonColor="orange"
                 />
               </div>

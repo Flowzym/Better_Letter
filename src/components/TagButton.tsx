@@ -112,8 +112,11 @@ export default function TagButton({
             onBlur={finishEditing}
             onKeyDown={handleEditKey}
             className="bg-transparent outline-none text-current px-2 py-1"
-            size={Math.max(editValue.length, 10)}
-            style={{ width: `${Math.max(editValue.length * 0.6 + 2, 8)}ch` }}
+            size={editValue.length + 5}
+            style={{ 
+              width: `${Math.max(editValue.length + 3, 10)}ch`,
+              minWidth: `${editValue.length + 3}ch`
+            }}
           />
         ) : (
           <span

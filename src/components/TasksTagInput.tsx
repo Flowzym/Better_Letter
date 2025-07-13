@@ -87,8 +87,11 @@ export default function TasksTagInput({ value, onChange }: TasksTagInputProps) {
                       if (e.key === "Enter") confirmEdit();
                     }}
                     className="text-black px-2 py-1 rounded bg-white"
-                    size={Math.max(editValue.length, 10)}
-                    style={{ width: `${Math.max(editValue.length * 0.6 + 2, 8)}ch` }}
+                    size={editValue.length + 5}
+                    style={{ 
+                      width: `${Math.max(editValue.length + 3, 10)}ch`,
+                      minWidth: `${editValue.length + 3}ch`
+                    }}
                     autoFocus
                   />
                   <button
