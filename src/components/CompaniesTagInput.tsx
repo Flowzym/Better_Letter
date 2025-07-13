@@ -61,6 +61,7 @@ export default function CompaniesTagInput({ value, onChange, suggestions = [] }:
         suggestions={suggestions}
         placeholder="Hinzufügen..."
         showFavoritesButton
+        className="w-full" // Hinzugefügt: Stellt sicher, dass die Komponente die volle Breite einnimmt
       />
 
       {favorites.filter((f) => !value.includes(f)).length > 0 && (

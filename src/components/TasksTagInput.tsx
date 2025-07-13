@@ -64,6 +64,7 @@ export default function TasksTagInput({ value, onChange }: TasksTagInputProps) {
         onAdd={addTask}
         onFavoriteClick={handleAddFavoriteInput}
         placeholder="Hinzufügen..."
+        className="w-full" // Hinzugefügt: Stellt sicher, dass die Komponente die volle Breite einnimmt
       />
 
 
