@@ -1,4 +1,4 @@
-import { Plus, Star } from 'lucide-react';
+import { Plus, Star, X } from 'lucide-react';
 import type { ChangeEvent, KeyboardEvent } from 'react';
 
 interface TextInputWithButtonsProps {
@@ -43,14 +43,25 @@ export default function TextInputWithButtons({
 
   return (
     <div className="flex items-center w-full">
-      <input
-        type="text"
-        value={value}
-        onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder={placeholder}
-        className="flex-1 px-3 h-10 border rounded-md transition-all focus:outline-none focus:ring-1 focus:ring-[#F29400]"
-      />
+      <div className="relative flex-1">
+        <input
+          type="text"
+          value={value}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={placeholder}
+          className="flex-1 px-3 h-10 border rounded-md transition-all focus:outline-none focus:ring-1 focus:ring-[#F29400] pr-10"
+        />
+        {hasValue && (
+          <button
+            type="button"
+            onClick={() => onChange('')}
+            className="absolute top-1 right-1 text-gray-400 hover:text-gray-600"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
+      </div>
       {buttonsVisible && (
         <div className="flex gap-2 ml-2">
           <button
