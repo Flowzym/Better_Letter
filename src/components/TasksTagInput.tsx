@@ -51,6 +51,10 @@ export default function TasksTagInput({ value, onChange }: TasksTagInputProps) {
     setEditValue("");
   };
 
+  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditValue(e.target.value);
+  };
+
   const toggleFavorite = (task: string) => {
     toggleFavoriteTask(task);
   };
@@ -81,16 +85,20 @@ export default function TasksTagInput({ value, onChange }: TasksTagInputProps) {
                 <div key={`${task}-${index}`} className="tag flex-shrink-0">
                   <input
                     value={editValue}
-                    onChange={(e) => setEditValue(e.target.value)}
+                    onChange={handleEditChange}
                     onBlur={confirmEdit}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") confirmEdit();
+                      if (e.key === "Escape") {
+                        setEditIndex(null);
+                        setEditValue("");
+                      }
                     }}
                     className="text-black px-2 py-1 rounded bg-white"
-                    size={editValue.length || 1}
+                    size={Math.max(editValue.length + 2, 5)}
                     style={{ 
-                      width: `${editValue.length * 0.8 + 1}ch`,
-                      minWidth: `${editValue.length * 0.8 + 1}ch`
+                      width: `${Math.max(editValue.length + 3, 8)}ch`,
+                      minWidth: `${Math.max(editValue.length + 3, 8)}ch`
                     }}
                     autoFocus
                   />

@@ -87,6 +87,10 @@ export default function TagButton({
     }
   };
 
+  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditValue(e.target.value);
+  };
+
   const handleToggleFavorite = (e: React.MouseEvent) => {
     e.stopPropagation();
     onToggleFavorite?.(label, type);
@@ -108,14 +112,14 @@ export default function TagButton({
           <input
             ref={inputRef}
             value={editValue}
-            onChange={(e) => setEditValue(e.target.value)}
+            onChange={handleEditChange}
             onBlur={finishEditing}
             onKeyDown={handleEditKey}
             className="bg-transparent outline-none text-current px-2 py-1"
-            size={editValue.length || 1}
+            size={Math.max(editValue.length + 2, 5)}
             style={{ 
-              width: `${editValue.length * 0.8 + 1}ch`,
-              minWidth: `${editValue.length * 0.8 + 1}ch`
+              width: `${Math.max(editValue.length + 3, 8)}ch`,
+              minWidth: `${Math.max(editValue.length + 3, 8)}ch`
             }}
           />
         ) : (
