@@ -82,7 +82,8 @@ export default function TagButton({
   };
 
   const handleEditKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    setEditValue(originalLabel);
+    if (e.key === "Enter") {
+      setEditValue(originalLabel);
       e.preventDefault();
       finishEditing();
     } else if (e.key === "Escape") {
