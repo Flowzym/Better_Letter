@@ -49,7 +49,7 @@ export default function TagButton({
   let variantClasses = "";
   if (variant === TagContext.Selected) {
     variantClasses =
-      "bg-[#F29400] text-white border-[#F29400] px-4 py-2 text-lg";
+      "bg-[#F29400] text-white border-[#F29400] text-xs font-bold px-3 py-1";
   } else if (variant === TagContext.Suggestion) {
     variantClasses = "bg-white text-gray-700 border-gray-300";
   } else if (variant === TagContext.Favorite) {
