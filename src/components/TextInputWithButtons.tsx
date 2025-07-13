@@ -56,7 +56,7 @@ export default function TextInputWithButtons({
           <button
             type="button"
             onClick={() => onChange('')}
-            className="absolute right-2 h-full flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-300"
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-300"
             aria-label="Textfeld leeren"
           >
             <X className="w-4 h-4" />
