@@ -210,7 +210,7 @@ export default function AutocompleteInput({
           {label}
         </label>
       )}
-      <div className="flex items-center w-full">
+      <div className="flex items-center w-full space-x-2"> // Hinzugefügt: space-x-2
         <div className="relative flex-1">
           <input
             ref={inputRef}
@@ -247,7 +247,7 @@ export default function AutocompleteInput({
         </div>
 
         {hasInput && (
-          <div className="flex gap-2 ml-2">
+          <div className="flex-shrink-0 flex"> // Entfernt: gap-2 und ml-2
             {/* Add button */}
             {showAddButton && (
               <button

@@ -42,7 +42,7 @@ export default function TextInputWithButtons({
   };
 
   return (
-    <div className="flex items-center w-full">
+    <div className="flex items-center w-full space-x-2"> // Hinzugefügt: space-x-2
       <div className="relative flex-1">
         <input
           type="text"
@@ -64,7 +64,7 @@ export default function TextInputWithButtons({
         )}
       </div>
       {buttonsVisible && (
-        <div className="flex-shrink-0 flex gap-2 ml-2">
+        <div className="flex-shrink-0 flex"> // Entfernt: gap-2 und ml-2
           <button
             type="button"
             onClick={handleAdd}
