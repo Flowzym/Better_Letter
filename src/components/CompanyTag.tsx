@@ -81,6 +81,9 @@ export default function CompanyTag({ label, onRemove, onEdit }: CompanyTagProps)
       onToggleFavorite={() => toggleFavoriteCompany(label)}
       onRemove={onRemove}
       onEdit={() => setEditing(true)}
+    )
     />
   );
+}
+  }
 }
