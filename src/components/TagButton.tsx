@@ -136,9 +136,9 @@ export default function TagButton({
     buttonStyle = { padding: '0.25rem 0.75rem' };
   } else if (variant === TagContext.Favorite) {
     buttonStyle = {
-      padding: '0.125rem 0.375rem',
+      padding: '0.125rem 0.375rem 0.125rem 0.625rem',
       borderWidth: '2px',
-      borderColor: '#ffde59'
+      borderColor: '#ffefb3'
     };
   } else {
     buttonStyle = { padding: '0.25rem 0.5rem' };
