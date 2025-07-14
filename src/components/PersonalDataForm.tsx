@@ -205,96 +205,78 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
 
       {/* Adresse Card */}
       <Card title="Adresse">
-        <div className="space-y-4">
-          {/* Straße & Hausnummer, PLZ, Ort */}
-          <div className="grid grid-cols-12 gap-4">
-            <div className="col-span-12 lg:col-span-6">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Straße & Hausnummer</label>
-              <input
-                type="text"
-                value={data.adresse}
-                onChange={(e) => updateData('adresse', e.target.value)}
-                placeholder="Straße & Hausnummer"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1"
-                style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
-              />
-            </div>
+        <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-12 lg:col-span-5">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Straße & Hausnummer</label>
+            <input
+              type="text"
+              value={data.adresse}
+              onChange={(e) => updateData('adresse', e.target.value)}
+              placeholder="Straße & Hausnummer"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1"
+              style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
+            />
+          </div>
 
-            <div className="col-span-12 sm:col-span-3 lg:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">PLZ</label>
-              <input
-                type="text"
-                value={data.plz}
-                onChange={(e) => updateData('plz', e.target.value)}
-                placeholder="PLZ"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1"
-                style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
-              />
-            </div>
+          <div className="col-span-12 sm:col-span-4 lg:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-1">PLZ</label>
+            <input
+              type="text"
+              value={data.plz}
+              onChange={(e) => updateData('plz', e.target.value)}
+              placeholder="PLZ"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1"
+              style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
+            />
+          </div>
 
-            <div className="col-span-12 sm:col-span-6 lg:col-span-3">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Ort</label>
-              <AutocompleteInput
-                value={data.ort}
-                onChange={(value) => updateData('ort', value)}
-                suggestions={citySuggestions}
-                placeholder="Ort"
-                onFavoriteClick={(value) => {
-                  updateData('ort', value);
-                  toggleFavorite('ort', value);
-                }}
-              />
-              <div className="mt-2 flex flex-wrap gap-1">
-                {favorites.ort.filter(fav => fav !== data.ort).map((fav) => (
-                  <TagButtonFavorite
-                    key={fav}
-                    label={fav}
-                    onClick={() => updateData('ort', fav)}
-                    onRemove={() => toggleFavorite('ort', fav)}
-                  />
-                ))}
-              </div>
-            </div>
-
-            <div className="col-span-12 sm:col-span-3 lg:col-span-1 flex justify-end items-end">
-              <label className="flex items-center text-sm font-medium text-gray-700">
-                <input
-                  type="checkbox"
-                  checked={data.ausland}
-                  onChange={(e) => updateData('ausland', e.target.checked)}
-                  className="mr-2"
+          <div className="col-span-12 sm:col-span-4 lg:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Ort</label>
+            <AutocompleteInput
+              value={data.ort}
+              onChange={(value) => updateData('ort', value)}
+              suggestions={citySuggestions}
+              placeholder="Ort"
+              onFavoriteClick={(value) => {
+                updateData('ort', value);
+                toggleFavorite('ort', value);
+              }}
+            />
+            <div className="mt-2 flex flex-wrap gap-1">
+              {favorites.ort.filter(fav => fav !== data.ort).map((fav) => (
+                <TagButtonFavorite
+                  key={fav}
+                  label={fav}
+                  onClick={() => updateData('ort', fav)}
+                  onRemove={() => toggleFavorite('ort', fav)}
                 />
-                Ausland
-              </label>
+              ))}
             </div>
           </div>
 
-          {/* Land (nur wenn Ausland aktiviert) */}
-          {data.ausland && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Land</label>
-              <AutocompleteInput
-                value={data.land}
-                onChange={(value) => updateData('land', value)}
-                suggestions={countrySuggestions}
-                placeholder="Land"
-                onFavoriteClick={(value) => {
-                  updateData('land', value);
-                  toggleFavorite('land', value);
-                }}
-              />
-              <div className="mt-2 flex flex-wrap gap-1">
-                {favorites.land.filter(fav => fav !== data.land).map((fav) => (
-                  <TagButtonFavorite
-                    key={fav}
-                    label={fav}
-                    onClick={() => updateData('land', fav)}
-                    onRemove={() => toggleFavorite('land', fav)}
-                  />
-                ))}
-              </div>
+          <div className="col-span-12 sm:col-span-4 lg:col-span-3">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Land</label>
+            <AutocompleteInput
+              value={data.land}
+              onChange={(value) => updateData('land', value)}
+              suggestions={countrySuggestions}
+              placeholder="Land"
+              onFavoriteClick={(value) => {
+                updateData('land', value);
+                toggleFavorite('land', value);
+              }}
+            />
+            <div className="mt-2 flex flex-wrap gap-1">
+              {favorites.land.filter(fav => fav !== data.land).map((fav) => (
+                <TagButtonFavorite
+                  key={fav}
+                  label={fav}
+                  onClick={() => updateData('land', fav)}
+                  onRemove={() => toggleFavorite('land', fav)}
+                />
+              ))}
             </div>
-          )}
+          </div>
         </div>
       </Card>
 
@@ -360,8 +342,149 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
             </div>
           </div>
 
-          {/* Staatsbürgerschaft Checkbox */}
-          <div className="col-span-12 lg:col-span-5 flex justify-end items-end">
+          {/* Staatsbürgerschaft */}
+          <div className="col-span-12 sm:col-span-4 lg:col-span-3">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Staatsbürgerschaft</label>
+            <AutocompleteInput
+              value={data.staatsbuergerschaft}
+              onChange={(value) => updateData('staatsbuergerschaft', value)}
+              suggestions={countrySuggestions}
+              placeholder="Staatsbürgerschaft"
+              onFavoriteClick={(value) => {
+                updateData('staatsbuergerschaft', value);
+                toggleFavorite('staatsbuergerschaft', value);
+              }}
+            />
+            <div className="mt-2 flex flex-wrap gap-1">
+              {favorites.staatsbuergerschaft.filter(fav => fav !== data.staatsbuergerschaft).map((fav) => (
+                <TagButtonFavorite
+                  key={fav}
+                  label={fav}
+                  onClick={() => updateData('staatsbuergerschaft', fav)}
+                  onRemove={() => toggleFavorite('staatsbuergerschaft', fav)}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Arbeitsmarktzugang */}
+          <div className="col-span-12 sm:col-span-4 lg:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Arbeitsmarktzugang</label>
+            <AutocompleteInput
+              value={data.arbeitsmarktzugang}
+              onChange={(value) => updateData('arbeitsmarktzugang', value)}
+              suggestions={arbeitsmarktzugangOptions}
+              placeholder="Arbeitsmarktzugang"
+              onFavoriteClick={(value) => {
+                updateData('arbeitsmarktzugang', value);
+                toggleFavorite('arbeitsmarktzugang', value);
+              }}
+            />
+            <div className="mt-2 flex flex-wrap gap-1">
+              {favorites.arbeitsmarktzugang.filter(fav => fav !== data.arbeitsmarktzugang).map((fav) => (
+                <TagButtonFavorite
+                  key={fav}
+                  label={fav}
+                  onClick={() => updateData('arbeitsmarktzugang', fav)}
+                  onRemove={() => toggleFavorite('arbeitsmarktzugang', fav)}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      {/* Personenstand Card */}
+      <Card title="Personenstand">
+        <div className="grid grid-cols-12 gap-4">
+          {/* Familienstand */}
+          <div className="col-span-12 lg:col-span-6">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Familienstand</label>
+            <select
+              value={data.familienstand}
+              onChange={(e) => updateData('familienstand', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1"
+              style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
+            >
+              <option value="">Bitte wählen</option>
+              {familienstandOptions.map((option) => (
+                <option key={option} value={option}>{option}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Geburtsjahr der Kinder */}
+          <div className="col-span-12 lg:col-span-6">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Geburtsjahr der Kinder</label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={newChild}
+                onChange={(e) => setNewChild(e.target.value)}
+                placeholder="Jahr eingeben"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1"
+                style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                onKeyPress={(e) => e.key === 'Enter' && addChild()}
+              />
+              <button
+                onClick={addChild}
+                className="px-4 py-2 text-white rounded-md hover:opacity-90"
+                style={{ backgroundColor: '#F29400' }}
+              >
+                +
+              </button>
+            </div>
+            <div className="mt-2 flex flex-wrap gap-1">
+              {data.kinder.map((child, index) => (
+                <TagButtonSelected
+                  key={index}
+                  label={child}
+                  onRemove={() => removeChild(index)}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      {/* Social Media Card */}
+      <Card title="Social Media">
+        <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-12">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Social Media Profile</label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={newSocialMedia}
+                onChange={(e) => setNewSocialMedia(e.target.value)}
+                placeholder="Social Media Profil"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1"
+                style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                onKeyPress={(e) => e.key === 'Enter' && addSocialMedia()}
+              />
+              <button
+                onClick={addSocialMedia}
+                className="px-4 py-2 text-white rounded-md hover:opacity-90"
+                style={{ backgroundColor: '#F29400' }}
+              >
+                +
+              </button>
+            </div>
+            <div className="mt-2 flex flex-wrap gap-1">
+              {data.socialMedia.map((social, index) => (
+                <TagButtonSelected
+                  key={index}
+                  label={social}
+                  onRemove={() => removeSocialMedia(index)}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </Card>
+    </div>
+  );
+}
             <label className="flex items-center text-sm font-medium text-gray-700">
               <input
                 type="checkbox"
