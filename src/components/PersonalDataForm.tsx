@@ -101,6 +101,92 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
   return (
     <div className="space-y-6">
       {/* Rest of the component code... */}
+          {/* Geburtsdaten mit Checkbox */}
+          <div className="grid grid-cols-12 gap-4 items-center">
+            <div className="col-span-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Geburtsdatum
+              </label>
+              <DatePicker
+                value={data.geburtsdatum}
+                onChange={(value) => updateData('geburtsdatum', value)}
+              />
+            </div>
+            
+            <div className="col-span-4">
+              <AutocompleteInput
+                label="Geburtsort"
+                value={data.geburtsort}
+                onChange={(value) => updateData('geburtsort', value)}
+                onAdd={(value) => updateData('geburtsort', value || '')}
+                onFavoriteClick={(value) => toggleFavorite('geburtsort', value || '')}
+                suggestions={[...favorites.geburtsort, ...citySuggestions]}
+                placeholder="Geburtsort eingeben"
+                showFavoritesButton
+              />
+            </div>
+            
+            <div className="col-span-4">
+              <AutocompleteInput
+                label="Geburtsland"
+                value={data.geburtsland}
+                onChange={(value) => updateData('geburtsland', value)}
+                onAdd={(value) => updateData('geburtsland', value || '')}
+                onFavoriteClick={(value) => toggleFavorite('geburtsland', value || '')}
+                suggestions={[...favorites.geburtsland, ...countrySuggestions]}
+                placeholder="Geburtsland eingeben"
+                showFavoritesButton
+              />
+            </div>
+          </div>
+
+          {/* Staatsbürgerschaft Checkbox */}
+          <div className="flex items-center justify-end">
+            <label className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={data.staatsbuergerschaftCheckbox}
+                onChange={(e) => updateData('staatsbuergerschaftCheckbox', e.target.checked)}
+                className="focus:ring-1"
+                style={{ accentColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+              />
+              <span className="text-sm font-medium text-gray-700">Staatsbürgerschaft & Arbeitsmarktzugang</span>
+            </label>
+          </div>
+
+          {/* Bedingte Felder für Staatsbürgerschaft und Arbeitsmarktzugang */}
+          {data.staatsbuergerschaftCheckbox && (
+            <div className="grid grid-cols-12 gap-4">
+              <div className="col-span-6">
+                <AutocompleteInput
+                  label="Staatsbürgerschaft"
+                  value={data.staatsbuergerschaft}
+                  onChange={(value) => updateData('staatsbuergerschaft', value)}
+                  onAdd={(value) => updateData('staatsbuergerschaft', value || '')}
+                  onFavoriteClick={(value) => toggleFavorite('staatsbuergerschaft', value || '')}
+                  suggestions={[...favorites.staatsbuergerschaft, ...countrySuggestions]}
+                  placeholder="Staatsbürgerschaft eingeben"
+                  showFavoritesButton
+                />
+              </div>
+              
+              <div className="col-span-6">
+                <AutocompleteInput
+                  label="Arbeitsmarktzugang"
+                  value={data.arbeitsmarktzugang}
+                  onChange={(value) => updateData('arbeitsmarktzugang', value)}
+                  onAdd={(value) => updateData('arbeitsmarktzugang', value || '')}
+                  onFavoriteClick={(value) => toggleFavorite('arbeitsmarktzugang', value || '')}
+                  suggestions={[...favorites.arbeitsmarktzugang, ...arbeitsmarktzugangOptions]}
+                  placeholder="Arbeitsmarktzugang eingeben"
+                  showFavoritesButton
+                />
+              </div>
+            </div>
+          )}
+        </Card>
+
+        {/* Familienstand */}
     </div>
   );
 }
