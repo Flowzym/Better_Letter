@@ -97,7 +97,7 @@ export default function LebenslaufPreview() {
       )}
     </div>
 
-    <h3 className="font-bold text-xl mb-4 mt-8">Ausbildung</h3>
+      <h3 className="font-bold text-xl mb-4 mt-8">Ausbildung</h3>
     <div className="space-y-4">
       {sortedAusbildungen.map((edu) => (
         <div

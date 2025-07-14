@@ -299,11 +299,6 @@ export default function LebenslaufInput() {
               )}
           </div>
         </div>
-        {/* <div className="text-center text-gray-500 p-10 border border-dashed border-gray-300 rounded-xl bg-gray-50">
-            <h3 className="text-xl font-semibold text-gray-700 mb-2">🎓 Ausbildung & Qualifikationen</h3>
-            <p>Hier entsteht der neue Ausbildungs-Editor, angelehnt an die Berufserfahrung.</p>
-            <p className="text-sm mt-2">Struktur wird ähnlich der Berufserfahrung-Karten aufgebaut.</p>
-          </div>
         </div>
       )}
 
@@ -334,7 +329,7 @@ export default function LebenslaufInput() {
             <p>Hier entsteht der Editor für zusätzliche Informationen.</p>
             <p className="text-sm mt-2">Hobbys, Sprachen, Zertifikate, etc.</p>
           </div>
-        </div> */}
+        </div>
       )}
     </div>
   );
