@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Star } from 'lucide-react';
-import { AutocompleteInput } from './AutocompleteInput';
+import AutocompleteInput from './AutocompleteInput';
 import { TagButtonFavorite } from './ui/TagButtonFavorite';
 
 interface PersonalDataFormProps {
