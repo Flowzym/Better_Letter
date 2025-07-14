@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronDown, ChevronUp, Plus, User, Briefcase, GraduationCap, Zap, Heart } from 'lucide-react';
-import PersonalDataForm from './PersonalDataForm';
+import { PersonalDataForm } from './PersonalDataForm';
 import ExperienceForm from './ExperienceForm';
 import ExperienceSection from './ExperienceSection';
 import AusbildungForm from './AusbildungForm';
