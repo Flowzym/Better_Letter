@@ -14,6 +14,10 @@ export default function LebenslaufEditor({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Linke Spalte: Eingabe */}
         <div className="bg-white p-6 rounded-lg shadow border border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+            <span className="mr-2">👤</span>
+            Lebenslauf
+          </h2>
           <LebenslaufInput />
         </div>
 

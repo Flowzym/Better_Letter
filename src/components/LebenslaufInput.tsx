@@ -2,10 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Trash2 } from 'lucide-react';
 import ExperienceForm from './ExperienceForm';
 import ExperienceSection from './ExperienceSection';
-import CVSection from './CVSection';
-import AusbildungCard from './cards/AusbildungCard';
-import FachkompetenzCard from './cards/FachkompetenzCard';
-import SoftskillCard from './cards/SoftskillCard';
+import TabNavigation from './layout/TabNavigation';
 import {
   Berufserfahrung,
   useLebenslaufContext,
@@ -24,51 +21,29 @@ const initialExperience: BerufserfahrungForm = {
   aufgabenbereiche: [],
 };
 
-const initialEducation = {
-  institution: "",
-  abschluss: "",
-  start: "",
-  ende: "",
-  beschreibung: "",
-};
-
-const initialSkill = {
-  kategorie: "",
-  kompetenzen: [] as string[],
-  level: "",
-};
-
-const initialSoftskill = {
-  text: "",
-  bisTags: [] as string[],
-};
-
 export default function LebenslaufInput() {
   const {
     berufserfahrungen,
-    ausbildungen,
-    fachkompetenzen,
-    softskills,
     selectedExperienceId,
     isEditingExperience,
     addExperience,
     updateExperience,
     deleteExperience,
     selectExperience,
-    addEducation,
-    updateEducation,
-    deleteEducation,
-    addSkill,
-    updateSkill,
-    deleteSkill,
-    addSoftskill,
-    updateSoftskill,
-    deleteSoftskill,
     cvSuggestions,
   } = useLebenslaufContext();
 
   const [form, setForm] = useState<BerufserfahrungForm>(initialExperience);
   const [selectedPositions, setSelectedPositions] = useState<string[]>([]);
+  const [activeTab, setActiveTab] = useState<'experience' | 'education' | 'skills' | 'personal' | 'additional'>('experience');
+
+  const tabs = [
+    { id: 'experience', label: 'Berufserfahrung' },
+    { id: 'education', label: 'Ausbildung' },
+    { id: 'skills', label: 'Kompetenzen' },
+    { id: 'personal', label: 'Persönliche Daten' },
+    { id: 'additional', label: 'Weitere Informationen' }
+  ];
 
   const hasCurrentExperienceData = useMemo(() => {
     return (
@@ -125,7 +100,6 @@ export default function LebenslaufInput() {
     selectExperience(null);
   };
 
-
   const handleSubmit = async () => {
     if (isEditingExperience) {
       await handleUpdate();
@@ -135,112 +109,89 @@ export default function LebenslaufInput() {
   };
 
   return (
-    <div className="space-y-8">
-      <ExperienceSection>
-        <ExperienceForm
-          form={form}
-          selectedPositions={selectedPositions}
-          onUpdateField={updateField}
-          onPositionsChange={setSelectedPositions}
-          cvSuggestions={cvSuggestions}
-        />
-        {hasCurrentExperienceData && (
-          <div className="relative flex justify-center">
-            <button
-              type="button"
-              onClick={handleSubmit}
-              className={`w-[30%] text-white font-medium text-sm py-1.5 px-4 rounded-full transition-colors duration-200 ${
-                isEditingExperience
-                  ? 'bg-[#207199] hover:bg-[#1A5C80]'
-                  : 'bg-[#3E7B0F] hover:bg-[#356A0C]'
-              }`}
-            >
-              {isEditingExperience ? 'Aktualisieren' : 'Hinzufügen'}
-            </button>
-            <div className="absolute right-0 flex items-center space-x-2">
-              {isEditingExperience && selectedExperienceId && (
+    <div className="space-y-6">
+      <TabNavigation tabs={tabs} active={activeTab} onChange={setActiveTab} />
+
+      {activeTab === 'experience' && (
+        <div className="space-y-8">
+          <ExperienceSection>
+            <ExperienceForm
+              form={form}
+              selectedPositions={selectedPositions}
+              onUpdateField={updateField}
+              onPositionsChange={setSelectedPositions}
+              cvSuggestions={cvSuggestions}
+            />
+            {hasCurrentExperienceData && (
+              <div className="relative flex justify-center">
                 <button
                   type="button"
-                  onClick={() => deleteExperience(selectedExperienceId)}
-                  className="p-2 text-red-600 hover:bg-red-50 rounded-full transition-colors duration-200"
-                  title="Eintrag löschen"
+                  onClick={handleSubmit}
+                  className={`w-[30%] text-white font-medium text-sm py-1.5 px-4 rounded-full transition-colors duration-200 ${
+                    isEditingExperience
+                      ? 'bg-[#207199] hover:bg-[#1A5C80]'
+                      : 'bg-[#3E7B0F] hover:bg-[#356A0C]'
+                  }`}
                 >
-                  <Trash2 className="h-4 w-4" />
+                  {isEditingExperience ? 'Aktualisieren' : 'Hinzufügen'}
                 </button>
-              )}
-            </div>
-          </div>
-        )}
-      </ExperienceSection>
+                <div className="absolute right-0 flex items-center space-x-2">
+                  {isEditingExperience && selectedExperienceId && (
+                    <button
+                      type="button"
+                      onClick={() => deleteExperience(selectedExperienceId)}
+                      className="p-2 text-red-600 hover:bg-red-50 rounded-full transition-colors duration-200"
+                      title="Eintrag löschen"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+          </ExperienceSection>
+        </div>
+      )}
 
-      <CVSection title="Ausbildung" icon="🎓">
-        {ausbildungen.map((entry) => (
-          <div key={entry.id} className="space-y-2">
-            <AusbildungCard
-              data={entry}
-              onChange={(data) => updateEducation(entry.id, data)}
-            />
-            <button
-              className="text-red-600 text-sm"
-              onClick={() => deleteEducation(entry.id)}
-            >
-              Entfernen
-            </button>
+      {activeTab === 'education' && (
+        <div className="p-6">
+          <div className="text-center text-gray-500 p-10 border border-dashed border-gray-300 rounded-xl bg-gray-50">
+            <h3 className="text-xl font-semibold text-gray-700 mb-2">🎓 Ausbildung</h3>
+            <p>Hier entsteht der neue Ausbildungs-Editor, angelehnt an die Berufserfahrung.</p>
+            <p className="text-sm mt-2">Struktur wird ähnlich der Berufserfahrung-Karten aufgebaut.</p>
           </div>
-        ))}
-        <button
-          className="w-full border border-gray-300 bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-md hover:bg-gray-100 transition"
-          onClick={() => addEducation(initialEducation)}
-        >
-          Neue Ausbildung hinzufügen
-        </button>
-      </CVSection>
+        </div>
+      )}
 
-      <CVSection title="Fachkompetenz" icon="🛠️">
-        {fachkompetenzen.map((entry) => (
-          <div key={entry.id} className="space-y-2">
-            <FachkompetenzCard
-              data={entry}
-              onChange={(data) => updateSkill(entry.id, data)}
-            />
-            <button
-              className="text-red-600 text-sm"
-              onClick={() => deleteSkill(entry.id)}
-            >
-              Entfernen
-            </button>
+      {activeTab === 'skills' && (
+        <div className="p-6">
+          <div className="text-center text-gray-500 p-10 border border-dashed border-gray-300 rounded-xl bg-gray-50">
+            <h3 className="text-xl font-semibold text-gray-700 mb-2">🛠️ Kompetenzen</h3>
+            <p>Hier entsteht der neue Kompetenzen-Editor, angelehnt an die Berufserfahrung.</p>
+            <p className="text-sm mt-2">Fachliche und persönliche Kompetenzen werden hier verwaltet.</p>
           </div>
-        ))}
-        <button
-          className="w-full border border-gray-300 bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-md hover:bg-gray-100 transition"
-          onClick={() => addSkill(initialSkill)}
-        >
-          Neue Fachkompetenz hinzufügen
-        </button>
-      </CVSection>
+        </div>
+      )}
 
-      <CVSection title="Softskills" icon="🌟">
-        {softskills.map((entry) => (
-          <div key={entry.id} className="space-y-2">
-            <SoftskillCard
-              data={entry}
-              onChange={(data) => updateSoftskill(entry.id, data)}
-            />
-            <button
-              className="text-red-600 text-sm"
-              onClick={() => deleteSoftskill(entry.id)}
-            >
-              Entfernen
-            </button>
+      {activeTab === 'personal' && (
+        <div className="p-6">
+          <div className="text-center text-gray-500 p-10 border border-dashed border-gray-300 rounded-xl bg-gray-50">
+            <h3 className="text-xl font-semibold text-gray-700 mb-2">👤 Persönliche Daten</h3>
+            <p>Hier entsteht der Editor für persönliche Daten.</p>
+            <p className="text-sm mt-2">Name, Kontaktdaten, Geburtsdatum, etc.</p>
           </div>
-        ))}
-        <button
-          className="w-full border border-gray-300 bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-md hover:bg-gray-100 transition"
-          onClick={() => addSoftskill(initialSoftskill)}
-        >
-          Neue Softskill hinzufügen
-        </button>
-      </CVSection>
+        </div>
+      )}
+
+      {activeTab === 'additional' && (
+        <div className="p-6">
+          <div className="text-center text-gray-500 p-10 border border-dashed border-gray-300 rounded-xl bg-gray-50">
+            <h3 className="text-xl font-semibold text-gray-700 mb-2">📋 Weitere Informationen</h3>
+            <p>Hier entsteht der Editor für zusätzliche Informationen.</p>
+            <p className="text-sm mt-2">Hobbys, Sprachen, Zertifikate, etc.</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
