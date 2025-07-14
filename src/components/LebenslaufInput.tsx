@@ -314,10 +314,11 @@ export default function LebenslaufInput() {
                   <div className="flex justify-between items-start">
                     <div>
                       <div className="font-medium text-gray-900">
-                        {edu.ausbildungsart.join(' / ')} {edu.abschluss.length > 0 && `- ${edu.abschluss.join(', ')}`}
+                        {Array.isArray(edu.ausbildungsart) ? edu.ausbildungsart.join(' / ') : ''} 
+                        {Array.isArray(edu.abschluss) && edu.abschluss.length > 0 && `- ${edu.abschluss.join(', ')}`}
                       </div>
                       <div className="text-sm text-gray-600">
-                        {edu.institution.join(', ')}
+                        {Array.isArray(edu.institution) ? edu.institution.join(', ') : ''}
                       </div>
                       <div className="text-xs text-gray-500 mt-1">
                         {edu.startMonth && edu.startYear
@@ -330,7 +331,7 @@ export default function LebenslaufInput() {
                           ? `${edu.endMonth}/${edu.endYear}`
                           : edu.endYear || ''}
                       </div>
-                      {edu.zusatzangaben && (
+                      {edu.zusatzangaben && edu.zusatzangaben.trim() && (
                         <div className="text-sm text-gray-700 mt-2">
                           {edu.zusatzangaben}
                         </div>
