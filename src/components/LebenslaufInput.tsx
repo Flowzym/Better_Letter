@@ -104,6 +104,18 @@ export default function LebenslaufInput() {
       {/* Custom Tab Navigation with Profile Input Style */}
       <div className="flex space-x-1 mb-6 bg-gray-100 p-1 rounded-lg">
         <button
+          onClick={() => setActiveTab('personal')}
+          className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+            activeTab === 'personal'
+              ? 'bg-white shadow-sm text-[#F29400]'
+              : 'text-gray-600 hover:text-gray-900'
+          }`}
+          style={activeTab === 'personal' ? { fontSize: '1rem' } : { fontSize: '0.875rem' }}
+        >
+          <span>Persönliche Daten</span>
+        </button>
+        
+        <button
           onClick={() => setActiveTab('experience')}
           className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
             activeTab === 'experience'
@@ -137,18 +149,6 @@ export default function LebenslaufInput() {
           style={activeTab === 'skills' ? { fontSize: '1rem' } : { fontSize: '0.875rem' }}
         >
           <span>Kompetenzen</span>
-        </button>
-        
-        <button
-          onClick={() => setActiveTab('personal')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
-            activeTab === 'personal'
-              ? 'bg-white shadow-sm text-[#F29400]'
-              : 'text-gray-600 hover:text-gray-900'
-          }`}
-          style={activeTab === 'personal' ? { fontSize: '1rem' } : { fontSize: '0.875rem' }}
-        >
-          <span>Persönliche Daten</span>
         </button>
         
         <button

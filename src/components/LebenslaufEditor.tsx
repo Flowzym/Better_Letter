@@ -3,6 +3,7 @@ import { LebenslaufProvider } from "../context/LebenslaufContext";
 import { ProfileSourceMapping } from "../services/supabaseService";
 import LebenslaufInput from "./LebenslaufInput";
 import LebenslaufPreview from "./LebenslaufPreview";
+import { User } from 'lucide-react';
 
 export default function LebenslaufEditor({
   profileSourceMappings = [],
@@ -15,8 +16,8 @@ export default function LebenslaufEditor({
         {/* Linke Spalte: Eingabe */}
         <div className="bg-white p-6 rounded-lg shadow border border-gray-200">
           <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-            <span className="mr-2">👤</span>
-            Lebenslauf
+            <User className="h-6 w-6 mr-2" style={{ color: '#F29400' }} />
+            <span>Lebenslauf</span>
           </h2>
           <LebenslaufInput />
         </div>
