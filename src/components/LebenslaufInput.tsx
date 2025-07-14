@@ -1,10 +1,12 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Trash2, User, GraduationCap, Wrench, FileText, Plus } from 'lucide-react';
 import ExperienceForm from './ExperienceForm';
-import ExperienceSection from './ExperienceSection';
+import AusbildungForm from './AusbildungForm';
 import {
   Berufserfahrung,
+  AusbildungEntry,
   useLebenslaufContext,
+  AusbildungEntryForm,
 } from "../context/LebenslaufContext";
 
 type BerufserfahrungForm = Omit<Berufserfahrung, "id">;
@@ -21,6 +23,7 @@ const initialExperience: BerufserfahrungForm = {
 };
 
 export default function LebenslaufInput() {
+  // Berufserfahrung State
   const {
     berufserfahrungen,
     selectedExperienceId,
@@ -29,12 +32,34 @@ export default function LebenslaufInput() {
     updateExperience,
     deleteExperience,
     selectExperience,
+    // Ausbildung State
+    ausbildungen,
+    selectedEducationId,
+    isEditingEducation,
+    addEducation,
+    updateEducation,
+    deleteEducation,
+    selectEducation,
     cvSuggestions,
   } = useLebenslaufContext();
 
   const [form, setForm] = useState<BerufserfahrungForm>(initialExperience);
   const [selectedPositions, setSelectedPositions] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<'experience' | 'education' | 'skills' | 'personal' | 'additional'>('experience');
+
+  // Ausbildung State
+  const initialEducation: AusbildungEntryForm = {
+    institution: [],
+    ausbildungsart: [],
+    abschluss: [],
+    startMonth: null,
+    startYear: "",
+    endMonth: null,
+    endYear: null,
+    isCurrent: false,
+    zusatzangaben: "",
+  };
+  const [educationForm, setEducationForm] = useState<AusbildungEntryForm>(initialEducation);
 
   const hasCurrentExperienceData = useMemo(() => {
     return (
@@ -68,11 +93,30 @@ export default function LebenslaufInput() {
     }
   }, [selectedExperienceId, berufserfahrungen]);
 
+  useEffect(() => {
+    if (selectedEducationId !== null) {
+      const data = ausbildungen.find((edu) => edu.id === selectedEducationId);
+      if (data) {
+        const { id, ...rest } = data;
+        setEducationForm(rest);
+      }
+    } else {
+      setEducationForm(initialEducation);
+    }
+  }, [selectedEducationId, ausbildungen]);
+
   const updateField = <K extends keyof BerufserfahrungForm>(
     field: K,
     value: BerufserfahrungForm[K],
   ) => {
     setForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const updateEducationField = <K extends keyof AusbildungEntryForm>(
+    field: K,
+    value: AusbildungEntryForm[K],
+  ) => {
+    setEducationForm((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleAdd = async () => {
@@ -91,11 +135,33 @@ export default function LebenslaufInput() {
     selectExperience(null);
   };
 
+  const handleAddEducation = async () => {
+    await addEducation(educationForm);
+    setEducationForm(initialEducation);
+    selectEducation(null);
+  };
+
+  const handleUpdateEducation = async () => {
+    if (selectedEducationId !== null) {
+      await updateEducation(selectedEducationId, educationForm);
+    }
+    setEducationForm(initialEducation);
+    selectEducation(null);
+  };
+
   const handleSubmit = async () => {
     if (isEditingExperience) {
       await handleUpdate();
     } else {
       await handleAdd();
+    }
+  };
+
+  const handleSubmitEducation = async () => {
+    if (isEditingEducation) {
+      await handleUpdateEducation();
+    } else {
+      await handleAddEducation();
     }
   };
 
@@ -105,60 +171,55 @@ export default function LebenslaufInput() {
       <div className="flex space-x-1 mb-6 bg-gray-100 p-1 rounded-lg">
         <button
           onClick={() => setActiveTab('personal')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+          className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 border-b-2 ${
             activeTab === 'personal'
-              ? 'bg-white shadow-sm text-[#F29400]'
-              : 'text-gray-600 hover:text-gray-900'
+              ? 'bg-white shadow-sm text-[#F29400] border-[#F29400]'
+              : 'text-gray-600 hover:text-gray-900 border-transparent'
           }`}
-          style={activeTab === 'personal' ? { fontSize: '1rem' } : { fontSize: '0.875rem' }}
         >
           <span>Persönliche Daten</span>
         </button>
         
         <button
           onClick={() => setActiveTab('experience')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+          className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 border-b-2 ${
             activeTab === 'experience'
-              ? 'bg-white shadow-sm text-[#F29400]'
-              : 'text-gray-600 hover:text-gray-900'
+              ? 'bg-white shadow-sm text-[#F29400] border-[#F29400]'
+              : 'text-gray-600 hover:text-gray-900 border-transparent'
           }`}
-          style={activeTab === 'experience' ? { fontSize: '1rem' } : { fontSize: '0.875rem' }}
         >
           <span>Berufserfahrung</span>
         </button>
         
         <button
           onClick={() => setActiveTab('education')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+          className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 border-b-2 ${
             activeTab === 'education'
-              ? 'bg-white shadow-sm text-[#F29400]'
-              : 'text-gray-600 hover:text-gray-900'
+              ? 'bg-white shadow-sm text-[#F29400] border-[#F29400]'
+              : 'text-gray-600 hover:text-gray-900 border-transparent'
           }`}
-          style={activeTab === 'education' ? { fontSize: '1rem' } : { fontSize: '0.875rem' }}
         >
           <span>Ausbildung</span>
         </button>
         
         <button
           onClick={() => setActiveTab('skills')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+          className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 border-b-2 ${
             activeTab === 'skills'
-              ? 'bg-white shadow-sm text-[#F29400]'
-              : 'text-gray-600 hover:text-gray-900'
+              ? 'bg-white shadow-sm text-[#F29400] border-[#F29400]'
+              : 'text-gray-600 hover:text-gray-900 border-transparent'
           }`}
-          style={activeTab === 'skills' ? { fontSize: '1rem' } : { fontSize: '0.875rem' }}
         >
           <span>Kompetenzen</span>
         </button>
         
         <button
           onClick={() => setActiveTab('additional')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+          className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 border-b-2 ${
             activeTab === 'additional'
-              ? 'bg-white shadow-sm text-[#F29400]'
-              : 'text-gray-600 hover:text-gray-900'
+              ? 'bg-white shadow-sm text-[#F29400] border-[#F29400]'
+              : 'text-gray-600 hover:text-gray-900 border-transparent'
           }`}
-          style={activeTab === 'additional' ? { fontSize: '1rem' } : { fontSize: '0.875rem' }}
         >
           <span>Weitere Informationen</span>
         </button>
@@ -166,7 +227,7 @@ export default function LebenslaufInput() {
 
       {activeTab === 'experience' && (
         <div className="space-y-8">
-          <ExperienceSection>
+          <div className="p-4 space-y-4 bg-gray-50">
             <ExperienceForm
               form={form}
               selectedPositions={selectedPositions}
@@ -201,13 +262,44 @@ export default function LebenslaufInput() {
                 </div>
               </div>
             )}
-          </ExperienceSection>
+          </div>
         </div>
       )}
 
       {activeTab === 'education' && (
-        <div className="p-6">
-          <div className="text-center text-gray-500 p-10 border border-dashed border-gray-300 rounded-xl bg-gray-50">
+        <div className="space-y-8">
+          <div className="p-4 space-y-4 bg-gray-50">
+            <AusbildungForm
+              form={educationForm}
+              onUpdateField={updateEducationField}
+              cvSuggestions={cvSuggestions}
+            />
+            {(educationForm.institution.length > 0 ||
+              educationForm.ausbildungsart.length > 0 ||
+              educationForm.abschluss.length > 0 ||
+              educationForm.startMonth !== null ||
+              educationForm.startYear.trim() !== '' ||
+              educationForm.endMonth !== null ||
+              educationForm.endYear !== null ||
+              educationForm.isCurrent === true ||
+              isEditingEducation) && (
+                <div className="relative flex justify-center">
+                  <button
+                    type="button"
+                    onClick={handleSubmitEducation}
+                    className={`w-[30%] text-white font-medium text-sm py-1.5 px-4 rounded-full transition-colors duration-200 ${
+                      isEditingEducation
+                        ? 'bg-[#207199] hover:bg-[#1A5C80]'
+                        : 'bg-[#3E7B0F] hover:bg-[#356A0C]'
+                    }`}
+                  >
+                    {isEditingEducation ? 'Aktualisieren' : 'Hinzufügen'}
+                  </button>
+                </div>
+              )}
+          </div>
+        </div>
+        {/* <div className="text-center text-gray-500 p-10 border border-dashed border-gray-300 rounded-xl bg-gray-50">
             <h3 className="text-xl font-semibold text-gray-700 mb-2">🎓 Ausbildung & Qualifikationen</h3>
             <p>Hier entsteht der neue Ausbildungs-Editor, angelehnt an die Berufserfahrung.</p>
             <p className="text-sm mt-2">Struktur wird ähnlich der Berufserfahrung-Karten aufgebaut.</p>
@@ -242,7 +334,7 @@ export default function LebenslaufInput() {
             <p>Hier entsteht der Editor für zusätzliche Informationen.</p>
             <p className="text-sm mt-2">Hobbys, Sprachen, Zertifikate, etc.</p>
           </div>
-        </div>
+        </div> */}
       )}
     </div>
   );

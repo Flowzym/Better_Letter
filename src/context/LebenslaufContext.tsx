@@ -26,12 +26,18 @@ export interface Berufserfahrung {
 
 export interface AusbildungEntry {
   id: string;
-  institution: string;
-  abschluss: string;
-  start: string;
-  ende: string;
-  beschreibung: string;
+  institution: string[];
+  ausbildungsart: string[];
+  abschluss: string[];
+  startMonth: string | null;
+  startYear: string;
+  endMonth: string | null;
+  endYear: string | null;
+  isCurrent: boolean;
+  zusatzangaben: string;
 }
+
+export type AusbildungEntryForm = Omit<AusbildungEntry, 'id'>;
 
 export interface FachkompetenzEntry {
   id: string;
@@ -57,9 +63,12 @@ interface LebenslaufContextType {
   updateExperience: (id: string, data: Omit<Berufserfahrung, 'id'>) => Promise<void>;
   deleteExperience: (id: string) => Promise<void>;
   selectExperience: (id: string | null) => void;
-  addEducation: (data: Omit<AusbildungEntry, 'id'>) => Promise<void>;
-  updateEducation: (id: string, data: Omit<AusbildungEntry, 'id'>) => Promise<void>;
+  selectedEducationId: string | null;
+  isEditingEducation: boolean;
+  addEducation: (data: AusbildungEntryForm) => Promise<void>;
+  updateEducation: (id: string, data: AusbildungEntryForm) => Promise<void>;
   deleteEducation: (id: string) => Promise<void>;
+  selectEducation: (id: string | null) => void;
   addSkill: (data: Omit<FachkompetenzEntry, 'id'>) => Promise<void>;
   updateSkill: (id: string, data: Omit<FachkompetenzEntry, 'id'>) => Promise<void>;
   deleteSkill: (id: string) => Promise<void>;
@@ -72,6 +81,12 @@ interface LebenslaufContextType {
   toggleFavoritePosition: (pos: string) => void;
   toggleFavoriteTask: (task: string) => void;
   toggleFavoriteCompany: (company: string) => void;
+  favoriteInstitutions: string[];
+  favoriteAusbildungsarten: string[];
+  favoriteAbschluesse: string[];
+  toggleFavoriteInstitution: (institution: string) => void;
+  toggleFavoriteAusbildungsart: (art: string) => void;
+  toggleFavoriteAbschluss: (abschluss: string) => void;
   cvSuggestions: CVSuggestionConfig;
 }
 
@@ -130,7 +145,12 @@ export function LebenslaufProvider({
   });
   const [selectedExperienceId, setSelectedExperienceId] = useState<string | null>(null);
   const [isEditingExperience, setIsEditingExperience] = useState(false);
+  const [selectedEducationId, setSelectedEducationId] = useState<string | null>(null);
+  const [isEditingEducation, setIsEditingEducation] = useState(false);
   const [favoritePositions, setFavoritePositions] = useState<string[]>([]);
+  const [favoriteInstitutions, setFavoriteInstitutions] = useState<string[]>([]);
+  const [favoriteAusbildungsarten, setFavoriteAusbildungsarten] = useState<string[]>([]);
+  const [favoriteAbschluesse, setFavoriteAbschluesse] = useState<string[]>([]);
   const [favoriteTasks, setFavoriteTasks] = useState<string[]>([]);
   const [favoriteCompanies, setFavoriteCompanies] = useState<string[]>([]);
   const [cvSuggestions, setCvSuggestions] = useState<CVSuggestionConfig>({
@@ -178,22 +198,24 @@ export function LebenslaufProvider({
     setIsEditingExperience(false);
   };
 
-  const addEducation = async (data: Omit<AusbildungEntry, 'id'>) => {
-    const newEntry = { ...data, id: uuidv4() };
+  const addEducation = async (data: AusbildungEntryForm) => {
+    const newEntry: AusbildungEntry = { ...data, id: uuidv4() };
     setAusbildungen(prev => {
       const updated = [...prev, newEntry];
       localStorage.setItem(LOCAL_EDU_KEY, JSON.stringify(updated));
       return updated;
     });
+    setIsEditingEducation(false);
   };
 
-  const updateEducation = async (id: string, data: Omit<AusbildungEntry, 'id'>) => {
-    const updatedEntry = { ...data, id };
+  const updateEducation = async (id: string, data: AusbildungEntryForm) => {
+    const updatedEntry: AusbildungEntry = { ...data, id };
     setAusbildungen(prev => {
       const updated = prev.map(e => (e.id === id ? updatedEntry : e));
       localStorage.setItem(LOCAL_EDU_KEY, JSON.stringify(updated));
       return updated;
     });
+    setIsEditingEducation(false);
   };
 
   const deleteEducation = async (id: string) => {
@@ -202,6 +224,8 @@ export function LebenslaufProvider({
       localStorage.setItem(LOCAL_EDU_KEY, JSON.stringify(updated));
       return updated;
     });
+    setSelectedEducationId(null);
+    setIsEditingEducation(false);
   };
 
   const addSkill = async (data: Omit<FachkompetenzEntry, 'id'>) => {
@@ -261,6 +285,11 @@ export function LebenslaufProvider({
     setIsEditingExperience(id !== null);
   };
 
+  const selectEducation = (id: string | null) => {
+    setSelectedEducationId(id);
+    setIsEditingEducation(id !== null);
+  };
+
   const toggleFavoritePosition = (pos: string) => {
     setFavoritePositions(prev =>
       prev.includes(pos) ? prev.filter(p => p !== pos) : [...prev, pos]
@@ -279,6 +308,24 @@ export function LebenslaufProvider({
     );
   };
 
+  const toggleFavoriteInstitution = (institution: string) => {
+    setFavoriteInstitutions(prev =>
+      prev.includes(institution) ? prev.filter(i => i !== institution) : [...prev, institution]
+    );
+  };
+
+  const toggleFavoriteAusbildungsart = (art: string) => {
+    setFavoriteAusbildungsarten(prev =>
+      prev.includes(art) ? prev.filter(a => a !== art) : [...prev, art]
+    );
+  };
+
+  const toggleFavoriteAbschluss = (abschluss: string) => {
+    setFavoriteAbschluesse(prev =>
+      prev.includes(abschluss) ? prev.filter(a => a !== abschluss) : [...prev, abschluss]
+    );
+  };
+
   return (
     <LebenslaufContext.Provider
       value={{
@@ -288,10 +335,16 @@ export function LebenslaufProvider({
         softskills,
         selectedExperienceId,
         isEditingExperience,
+        selectedEducationId,
+        isEditingEducation,
         addExperience,
         updateExperience,
         deleteExperience,
         selectExperience,
+        addEducation,
+        updateEducation,
+        deleteEducation,
+        selectEducation,
         addEducation,
         updateEducation,
         deleteEducation,
@@ -304,6 +357,12 @@ export function LebenslaufProvider({
         favoritePositions,
         favoriteTasks,
         favoriteCompanies,
+        favoriteInstitutions,
+        favoriteAusbildungsarten,
+        favoriteAbschluesse,
+        toggleFavoriteInstitution,
+        toggleFavoriteAusbildungsart,
+        toggleFavoriteAbschluss,
         toggleFavoritePosition,
         toggleFavoriteTask,
         toggleFavoriteCompany,

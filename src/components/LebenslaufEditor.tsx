@@ -16,7 +16,7 @@ export default function LebenslaufEditor({
         {/* Linke Spalte: Eingabe */}
         <div className="bg-white p-6 rounded-lg shadow border border-gray-200">
           <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-            <User className="h-6 w-6 mr-2" style={{ color: '#F29400' }} />
+            <User className="h-6 w-6 mr-2" style={{ color: '#F29400' }} stroke="#F29400" fill="none" />
             <span>Lebenslauf</span>
           </h2>
           <LebenslaufInput />
@@ -24,7 +24,7 @@ export default function LebenslaufEditor({
 
         {/* Rechte Spalte: Vorschau */}
         <div className="bg-white p-6 rounded-lg shadow border border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">📄 Vorschau</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">📄 <span className="ml-2">Vorschau</span></h2>
           <LebenslaufPreview />
         </div>
       </div>
