@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Trash2, User, GraduationCap, Wrench, FileText, Plus } from 'lucide-react';
 import ExperienceForm from './ExperienceForm';
 import AusbildungForm from './AusbildungForm';
+import PersonalDataForm from './PersonalDataForm';
 import {
   Berufserfahrung,
   AusbildungEntry,
@@ -60,6 +61,26 @@ export default function LebenslaufInput() {
     zusatzangaben: "",
   };
   const [educationForm, setEducationForm] = useState<AusbildungEntryForm>(initialEducation);
+
+  // Personal Data State
+  const [personalData, setPersonalData] = useState({
+    vorname: '',
+    nachname: '',
+    vorangestellterTitel: '',
+    nachgestellterTitel: '',
+    geburtsdatum: '',
+    geburtsort: '',
+    staatsbuegerschaft: '',
+    adresse: '',
+    ort: '',
+    telefon: '',
+    laendervorwahl: '+43',
+    email: '',
+    homepage: '',
+    socialMediaLinks: [],
+    personenstand: '',
+    kinderGeburtsjahre: [],
+  });
 
   const hasCurrentExperienceData = useMemo(() => {
     return (
@@ -313,11 +334,10 @@ export default function LebenslaufInput() {
 
       {activeTab === 'personal' && (
         <div className="p-6">
-          <div className="text-center text-gray-500 p-10 border border-dashed border-gray-300 rounded-xl bg-gray-50">
-            <h3 className="text-xl font-semibold text-gray-700 mb-2">👤 Persönliche Daten</h3>
-            <p>Hier entsteht der Editor für persönliche Daten.</p>
-            <p className="text-sm mt-2">Name, Kontaktdaten, Geburtsdatum, etc.</p>
-          </div>
+          <PersonalDataForm
+            data={personalData}
+            onChange={setPersonalData}
+          />
         </div>
       )}
 
