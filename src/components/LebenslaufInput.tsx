@@ -107,11 +107,10 @@ export default function LebenslaufInput() {
           onClick={() => setActiveTab('experience')}
           className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
             activeTab === 'experience'
-              ? 'bg-white shadow-sm text-[#F29400]'
-              : 'text-gray-600 hover:text-gray-900'
+              ? 'bg-white shadow-sm text-[#F29400] text-base'
+              : 'text-gray-600 hover:text-gray-900 text-sm'
           }`}
         >
-          <User className="h-4 w-4" />
           <span>Berufserfahrung</span>
         </button>
         
@@ -119,11 +118,10 @@ export default function LebenslaufInput() {
           onClick={() => setActiveTab('education')}
           className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
             activeTab === 'education'
-              ? 'bg-white shadow-sm text-[#F29400]'
-              : 'text-gray-600 hover:text-gray-900'
+              ? 'bg-white shadow-sm text-[#F29400] text-base'
+              : 'text-gray-600 hover:text-gray-900 text-sm'
           }`}
         >
-          <GraduationCap className="h-4 w-4" />
           <span>Ausbildung</span>
         </button>
         
@@ -131,11 +129,10 @@ export default function LebenslaufInput() {
           onClick={() => setActiveTab('skills')}
           className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
             activeTab === 'skills'
-              ? 'bg-white shadow-sm text-[#F29400]'
-              : 'text-gray-600 hover:text-gray-900'
+              ? 'bg-white shadow-sm text-[#F29400] text-base'
+              : 'text-gray-600 hover:text-gray-900 text-sm'
           }`}
         >
-          <Wrench className="h-4 w-4" />
           <span>Kompetenzen</span>
         </button>
         
@@ -143,11 +140,10 @@ export default function LebenslaufInput() {
           onClick={() => setActiveTab('personal')}
           className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
             activeTab === 'personal'
-              ? 'bg-white shadow-sm text-[#F29400]'
-              : 'text-gray-600 hover:text-gray-900'
+              ? 'bg-white shadow-sm text-[#F29400] text-base'
+              : 'text-gray-600 hover:text-gray-900 text-sm'
           }`}
         >
-          <FileText className="h-4 w-4" />
           <span>Persönliche Daten</span>
         </button>
         
@@ -155,11 +151,10 @@ export default function LebenslaufInput() {
           onClick={() => setActiveTab('additional')}
           className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
             activeTab === 'additional'
-              ? 'bg-white shadow-sm text-[#F29400]'
-              : 'text-gray-600 hover:text-gray-900'
+              ? 'bg-white shadow-sm text-[#F29400] text-base'
+              : 'text-gray-600 hover:text-gray-900 text-sm'
           }`}
         >
-          <Plus className="h-4 w-4" />
           <span>Weitere Informationen</span>
         </button>
       </div>
