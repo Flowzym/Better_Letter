@@ -78,13 +78,13 @@ export default function LebenslaufPreview() {
             )}
           </p>
           <p className="font-bold text-lg text-gray-900">
-            {(exp.position || []).join(" / ")}
+            {Array.isArray(exp.position) ? exp.position.join(" / ") : (exp.position || "")}
           </p>
-          <p className="italic text-gray-500">{(exp.companies || []).join(', ')}</p>
+          <p className="italic text-gray-500">{Array.isArray(exp.companies) ? exp.companies.join(', ') : (exp.companies || "")}</p>
           <ul className="list-disc list-inside mt-2 space-y-1 text-black">
-            {(exp.aufgabenbereiche || []).map((aufgabe, i) => (
+            {Array.isArray(exp.aufgabenbereiche) ? exp.aufgabenbereiche.map((aufgabe, i) => (
               <li key={i}>{aufgabe}</li>
-            ))}
+            )) : null}
           </ul>
         </div>
       ))}
@@ -117,9 +117,9 @@ export default function LebenslaufPreview() {
             )}
           </p>
           <p className="font-bold text-lg text-gray-900">
-            {(edu.ausbildungsart || []).join(" / ")} - {(edu.abschluss || []).join(" / ")}
+            {Array.isArray(edu.ausbildungsart) ? edu.ausbildungsart.join(" / ") : (edu.ausbildungsart || "")} - {Array.isArray(edu.abschluss) ? edu.abschluss.join(" / ") : (edu.abschluss || "")}
           </p>
-          <p className="italic text-gray-500">{(edu.institution || []).join(', ')}</p>
+          <p className="italic text-gray-500">{Array.isArray(edu.institution) ? edu.institution.join(', ') : (edu.institution || "")}</p>
           {edu.zusatzangaben && <p className="text-black mt-2">{edu.zusatzangaben}</p>}
         </div>
       ))}
