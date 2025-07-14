@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Trash2 } from 'lucide-react';
+import { Trash2, User, GraduationCap, Wrench, FileText, Plus } from 'lucide-react';
 import ExperienceForm from './ExperienceForm';
 import ExperienceSection from './ExperienceSection';
-import TabNavigation from './layout/TabNavigation';
 import {
   Berufserfahrung,
   useLebenslaufContext,
@@ -36,14 +35,6 @@ export default function LebenslaufInput() {
   const [form, setForm] = useState<BerufserfahrungForm>(initialExperience);
   const [selectedPositions, setSelectedPositions] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<'experience' | 'education' | 'skills' | 'personal' | 'additional'>('experience');
-
-  const tabs = [
-    { id: 'experience', label: 'Berufserfahrung' },
-    { id: 'education', label: 'Ausbildung' },
-    { id: 'skills', label: 'Kompetenzen' },
-    { id: 'personal', label: 'Persönliche Daten' },
-    { id: 'additional', label: 'Weitere Informationen' }
-  ];
 
   const hasCurrentExperienceData = useMemo(() => {
     return (
@@ -110,7 +101,68 @@ export default function LebenslaufInput() {
 
   return (
     <div className="space-y-6">
-      <TabNavigation tabs={tabs} active={activeTab} onChange={setActiveTab} />
+      {/* Custom Tab Navigation with Profile Input Style */}
+      <div className="flex space-x-1 mb-6 bg-gray-100 p-1 rounded-lg">
+        <button
+          onClick={() => setActiveTab('experience')}
+          className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+            activeTab === 'experience'
+              ? 'bg-white shadow-sm text-[#F29400]'
+              : 'text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          <User className="h-4 w-4" />
+          <span>Berufserfahrung</span>
+        </button>
+        
+        <button
+          onClick={() => setActiveTab('education')}
+          className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+            activeTab === 'education'
+              ? 'bg-white shadow-sm text-[#F29400]'
+              : 'text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          <GraduationCap className="h-4 w-4" />
+          <span>Ausbildung</span>
+        </button>
+        
+        <button
+          onClick={() => setActiveTab('skills')}
+          className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+            activeTab === 'skills'
+              ? 'bg-white shadow-sm text-[#F29400]'
+              : 'text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          <Wrench className="h-4 w-4" />
+          <span>Kompetenzen</span>
+        </button>
+        
+        <button
+          onClick={() => setActiveTab('personal')}
+          className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+            activeTab === 'personal'
+              ? 'bg-white shadow-sm text-[#F29400]'
+              : 'text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          <FileText className="h-4 w-4" />
+          <span>Persönliche Daten</span>
+        </button>
+        
+        <button
+          onClick={() => setActiveTab('additional')}
+          className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+            activeTab === 'additional'
+              ? 'bg-white shadow-sm text-[#F29400]'
+              : 'text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          <Plus className="h-4 w-4" />
+          <span>Weitere Informationen</span>
+        </button>
+      </div>
 
       {activeTab === 'experience' && (
         <div className="space-y-8">
@@ -156,7 +208,7 @@ export default function LebenslaufInput() {
       {activeTab === 'education' && (
         <div className="p-6">
           <div className="text-center text-gray-500 p-10 border border-dashed border-gray-300 rounded-xl bg-gray-50">
-            <h3 className="text-xl font-semibold text-gray-700 mb-2">🎓 Ausbildung</h3>
+            <h3 className="text-xl font-semibold text-gray-700 mb-2">🎓 Ausbildung & Qualifikationen</h3>
             <p>Hier entsteht der neue Ausbildungs-Editor, angelehnt an die Berufserfahrung.</p>
             <p className="text-sm mt-2">Struktur wird ähnlich der Berufserfahrung-Karten aufgebaut.</p>
           </div>
@@ -166,8 +218,8 @@ export default function LebenslaufInput() {
       {activeTab === 'skills' && (
         <div className="p-6">
           <div className="text-center text-gray-500 p-10 border border-dashed border-gray-300 rounded-xl bg-gray-50">
-            <h3 className="text-xl font-semibold text-gray-700 mb-2">🛠️ Kompetenzen</h3>
-            <p>Hier entsteht der neue Kompetenzen-Editor, angelehnt an die Berufserfahrung.</p>
+            <h3 className="text-xl font-semibold text-gray-700 mb-2">🛠️ Fachliche & Persönliche Kompetenzen</h3>
+            <p>Hier entsteht der neue Kompetenzen-Editor für fachliche und persönliche Fähigkeiten.</p>
             <p className="text-sm mt-2">Fachliche und persönliche Kompetenzen werden hier verwaltet.</p>
           </div>
         </div>
