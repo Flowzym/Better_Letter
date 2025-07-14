@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, X, Star } from 'lucide-react';
 import DatePicker from './DatePicker';
-import TagButtonSelected from './ui/TagButtonSelected';
+import TagButtonFavorite from './ui/TagButtonFavorite';
 import AutocompleteInput from './AutocompleteInput';
 
 interface PersonalData {
@@ -117,7 +117,7 @@ const COUNTRIES = [
   'Marshallinseln', 'Mauretanien', 'Mauritius', 'Mexiko', 'Mikronesien', 'Moldau',
   'Monaco', 'Mongolei', 'Montenegro', 'Marokko', 'Mosambik', 'Myanmar', 'Namibia',
   'Nauru', 'Nepal', 'Niederlande', 'Neuseeland', 'Nicaragua', 'Niger', 'Nigeria',
-  'Nordmazedonien', 'Norwegen', 'Oman', 'Pakistan', 'Palau', 'Panama', 'Papua-Neuguina',
+  'Nordmazedonien', 'Norwegen', 'Oman', 'Pakistan', 'Palau', 'Panama', 'Papua-Neuguinea',
   'Paraguay', 'Peru', 'Philippinen', 'Polen', 'Portugal', 'Katar', 'Rumänien',
   'Russland', 'Ruanda', 'Saint Kitts und Nevis', 'Saint Lucia', 'Saint Vincent und die Grenadinen',
   'Samoa', 'San Marino', 'São Tomé und Príncipe', 'Saudi-Arabien', 'Senegal', 'Serbien',
@@ -215,6 +215,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
   const [arbeitsmarktzugangInput, setArbeitsmarktzugangInput] = useState('');
   const [ortInput, setOrtInput] = useState('');
   const [auslandLandInput, setAuslandLandInput] = useState('');
+  const [vorwahlInput, setVorwahlInput] = useState('');
 
   // Favoriten speichern
   useEffect(() => {
@@ -241,7 +242,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
   };
 
   const addToFavoriteOrte = () => {
-    const ort = data.ort.trim();
+    const ort = ortInput.trim();
     if (ort && !favoriteOrte.includes(ort)) {
       setFavoriteOrte([...favoriteOrte, ort]);
     }
@@ -252,7 +253,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
   };
 
   const addToFavoriteGeburtsOrte = () => {
-    const ort = data.geburtsort.trim();
+    const ort = geburtsortInput.trim();
     if (ort && !favoriteGeburtsOrte.includes(ort)) {
       setFavoriteGeburtsOrte([...favoriteGeburtsOrte, ort]);
     }
@@ -263,7 +264,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
   };
 
   const addToFavoriteStaatsbuergerschaften = () => {
-    const staat = data.staatsbuegerschaft.trim();
+    const staat = staatsbuegerschaftInput.trim();
     if (staat && !favoriteStaatsbuergerschaften.includes(staat)) {
       setFavoriteStaatsbuergerschaften([...favoriteStaatsbuergerschaften, staat]);
     }
@@ -298,6 +299,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
   };
 
   const handleOrtChange = (value: string) => {
+    setOrtInput(value);
     // PLZ zu Ort Konvertierung
     const plzMatch = value.match(/^\d{4}$/);
     if (plzMatch && PLZ_TO_ORT[value]) {
@@ -307,8 +309,20 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
     }
   };
 
+  const handleVorwahlChange = (value: string) => {
+    setVorwahlInput(value);
+    // Automatisch "+" hinzufügen wenn nicht vorhanden
+    const cleanValue = value.replace(/^\+/, '');
+    const formattedValue = '+' + cleanValue;
+    updateField('laendervorwahl', formattedValue);
+  };
+
   const getSelectedCountryCode = () => {
     return COUNTRY_CODES.find(item => item.code === data.laendervorwahl);
+  };
+
+  const getCountryCodeSuggestions = () => {
+    return COUNTRY_CODES.map(item => `${item.flag} ${item.code} ${item.country}`);
   };
 
   return (
@@ -357,11 +371,11 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               }}
               suggestions={TITEL_OPTIONEN}
               placeholder="Titel eingeben..."
-              showAddButton={titelInput.trim().length > 0}
+              showAddButton={false}
             />
             {data.titel && (
               <div className="mt-2">
-                <TagButtonSelected
+                <TagButtonFavorite
                   label={data.titel}
                   onRemove={() => updateField('titel', '')}
                 />
@@ -378,19 +392,23 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Telefonnummer</label>
             <div className="flex space-x-2">
-              {/* Ländervorwahl - mit Flaggen */}
-              <select
-                value={data.laendervorwahl}
-                onChange={(e) => updateField('laendervorwahl', e.target.value)}
-                className="px-2 py-2 border rounded-md focus:outline-none focus:ring-2 w-24"
-                style={{ borderColor: getBorderColor(data.laendervorwahl), '--tw-ring-color': '#F29400' } as React.CSSProperties}
-              >
-                {COUNTRY_CODES.map(item => (
-                  <option key={item.code} value={item.code}>
-                    {item.flag} {item.code}
-                  </option>
-                ))}
-              </select>
+              {/* Ländervorwahl - mit Flaggen und Autocomplete */}
+              <div className="w-32">
+                <AutocompleteInput
+                  value={vorwahlInput}
+                  onChange={setVorwahlInput}
+                  onAdd={(value) => {
+                    const vorwahl = value || vorwahlInput;
+                    if (vorwahl.trim()) {
+                      handleVorwahlChange(vorwahl.trim());
+                      setVorwahlInput('');
+                    }
+                  }}
+                  suggestions={getCountryCodeSuggestions()}
+                  placeholder={getSelectedCountryCode() ? `${getSelectedCountryCode()?.flag} ${data.laendervorwahl}` : '+43'}
+                  showAddButton={false}
+                />
+              </div>
               
               {/* Telefonnummer */}
               <input
@@ -444,10 +462,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 <input
                   type="text"
                   value={ortInput}
-                  onChange={(e) => {
-                    setOrtInput(e.target.value);
-                    handleOrtChange(e.target.value);
-                  }}
+                  onChange={(e) => handleOrtChange(e.target.value)}
                   className="flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
                   style={{ borderColor: getBorderColor(data.ort), '--tw-ring-color': '#F29400' } as React.CSSProperties}
                   placeholder="Ort oder PLZ eingeben"
@@ -475,7 +490,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               </div>
               <div className="flex flex-wrap gap-2">
                 {favoriteOrte.map(ort => (
-                  <TagButtonSelected
+                  <TagButtonFavorite
                     key={ort}
                     label={ort}
                     onClick={() => {
@@ -520,11 +535,11 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 }}
                 suggestions={COUNTRIES}
                 placeholder="Land eingeben..."
-                showAddButton={auslandLandInput.trim().length > 0}
+                showAddButton={false}
               />
               {data.auslandLand && (
                 <div className="mt-2">
-                  <TagButtonSelected
+                  <TagButtonFavorite
                     label={data.auslandLand}
                     onRemove={() => updateField('auslandLand', '')}
                   />
@@ -564,7 +579,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                   }}
                   suggestions={COUNTRIES}
                   placeholder="Geburtsort eingeben..."
-                  showAddButton={geburtsortInput.trim().length > 0}
+                  showAddButton={false}
                 />
                 {geburtsortInput.trim() && !favoriteGeburtsOrte.includes(geburtsortInput.trim()) && (
                   <button
@@ -579,7 +594,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               </div>
               {data.geburtsort && (
                 <div className="mt-2">
-                  <TagButtonSelected
+                  <TagButtonFavorite
                     label={data.geburtsort}
                     onRemove={() => updateField('geburtsort', '')}
                   />
@@ -594,7 +609,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {favoriteGeburtsOrte.map(ort => (
-                      <TagButtonSelected
+                      <TagButtonFavorite
                         key={ort}
                         label={ort}
                         onClick={() => {
@@ -624,11 +639,11 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 }}
                 suggestions={COUNTRIES}
                 placeholder="Geburtsland eingeben..."
-                showAddButton={geburtslandInput.trim().length > 0}
+                showAddButton={false}
               />
               {data.geburtsland && (
                 <div className="mt-2">
-                  <TagButtonSelected
+                  <TagButtonFavorite
                     label={data.geburtsland}
                     onRemove={() => updateField('geburtsland', '')}
                   />
@@ -671,7 +686,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                     }}
                     suggestions={COUNTRIES}
                     placeholder="Staatsbürgerschaft eingeben..."
-                    showAddButton={staatsbuegerschaftInput.trim().length > 0}
+                    showAddButton={false}
                   />
                   {staatsbuegerschaftInput.trim() && !favoriteStaatsbuergerschaften.includes(staatsbuegerschaftInput.trim()) && (
                     <button
@@ -686,7 +701,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 </div>
                 {data.staatsbuegerschaft && (
                   <div className="mt-2">
-                    <TagButtonSelected
+                    <TagButtonFavorite
                       label={data.staatsbuegerschaft}
                       onRemove={() => updateField('staatsbuegerschaft', '')}
                     />
@@ -701,7 +716,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {favoriteStaatsbuergerschaften.map(staat => (
-                        <TagButtonSelected
+                        <TagButtonFavorite
                           key={staat}
                           label={staat}
                           onClick={() => {
@@ -731,11 +746,11 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                   }}
                   suggestions={ARBEITSMARKTZUGANG_OPTIONEN}
                   placeholder="Arbeitsmarktzugang eingeben..."
-                  showAddButton={arbeitsmarktzugangInput.trim().length > 0}
+                  showAddButton={false}
                 />
                 {data.arbeitsmarktzugang && (
                   <div className="mt-2">
-                    <TagButtonSelected
+                    <TagButtonFavorite
                       label={data.arbeitsmarktzugang}
                       onRemove={() => updateField('arbeitsmarktzugang', '')}
                     />
@@ -765,11 +780,11 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               }}
               suggestions={PERSONENSTAND_OPTIONEN}
               placeholder="Familienstand eingeben..."
-              showAddButton={personenstandInput.trim().length > 0}
+              showAddButton={false}
             />
             {data.personenstand && (
               <div className="mt-2">
-                <TagButtonSelected
+                <TagButtonFavorite
                   label={data.personenstand}
                   onRemove={() => updateField('personenstand', '')}
                 />
@@ -785,7 +800,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
             {data.kinderGeburtsjahre.length > 0 && (
               <div className="mb-3 flex flex-wrap gap-2">
                 {data.kinderGeburtsjahre.map((jahr, index) => (
-                  <TagButtonSelected
+                  <TagButtonFavorite
                     key={index}
                     label={jahr}
                     onRemove={() => removeKinderjahr(jahr)}
@@ -850,7 +865,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
             {data.socialMediaLinks.length > 0 && (
               <div className="mb-3 flex flex-wrap gap-2">
                 {data.socialMediaLinks.map((link, index) => (
-                  <TagButtonSelected
+                  <TagButtonFavorite
                     key={index}
                     label={link}
                     onRemove={() => removeSocialMediaLink(link)}
