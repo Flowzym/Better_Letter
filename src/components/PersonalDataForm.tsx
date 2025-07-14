@@ -17,6 +17,7 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
   const [favoriteOrte] = useState(['Wien', 'Graz', 'Salzburg', 'Innsbruck', 'Linz']);
   const [favoriteGeburtsOrte] = useState(['Wien', 'Graz', 'Salzburg', 'Berlin', 'München']);
   const [favoriteStaatsbuergerschaft] = useState(['Österreich', 'Deutschland', 'Schweiz', 'Italien']);
+  const [favoriteArbeitsmarktzugang] = useState(['Unbeschränkt', 'Beschränkt', 'Arbeitserlaubnis erforderlich']);
   
   // Input States für Hinzufügen-Buttons
   const [kinderGeburtsjahr, setKinderGeburtsjahr] = useState('');
@@ -65,14 +66,6 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
     { code: '+1', country: 'US', flag: '🇺🇸', name: 'USA' },
   ];
 
-  const formatPhoneCodeSuggestion = (item: any) => (
-    <div className="flex items-center gap-2">
-      <span className="text-lg">{item.flag}</span>
-      <span className="font-mono">{item.code}</span>
-      <span className="text-gray-600">{item.name}</span>
-    </div>
-  );
-
   return (
     <div className="space-y-6">
       {/* Namenscard */}
@@ -83,25 +76,28 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
             <AutocompleteInput
               value={data.titel || ''}
               onChange={(value) => handleInputChange('titel', value)}
+              onFavoriteClick={(value) => handleInputChange('titel', value)}
               suggestions={favoriteTitles}
               placeholder="z.B. Dr., Mag."
               showAddButton={false}
+              showFavoritesButton={true}
             />
-            {favoriteTitles.length > 0 && (
+            {favoriteTitles.filter(title => title !== (data.titel || '')).length > 0 && (
               <div className="mt-2">
                 <div className="flex items-center gap-1 mb-2">
                   <Star className="w-4 h-4 fill-current" style={{ color: '#F29400' }} />
                   <span className="text-sm text-gray-600">Favoriten:</span>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {favoriteTitles.map((title, index) => (
-                    <TagButtonFavorite
-                      key={index}
-                      onClick={() => handleInputChange('titel', title)}
-                    >
-                      {title}
-                    </TagButtonFavorite>
-                  ))}
+                  {favoriteTitles
+                    .filter(title => title !== (data.titel || ''))
+                    .map((title, index) => (
+                      <TagButtonFavorite
+                        key={index}
+                        label={title}
+                        onClick={() => handleInputChange('titel', title)}
+                      />
+                    ))}
                 </div>
               </div>
             )}
@@ -141,17 +137,12 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Telefon</label>
             <div className="flex gap-2">
-              <div className="w-32">
+              <div className="w-40">
                 <AutocompleteInput
                   value={data.telefonVorwahl || '+43'}
                   onChange={(value) => {
                     const formattedValue = value.startsWith('+') ? value : `+${value}`;
                     handleInputChange('telefonVorwahl', formattedValue);
-                  }}
-                  onAdd={(selectedItem) => {
-                    if (typeof selectedItem === 'object' && selectedItem && 'code' in selectedItem) {
-                      handleInputChange('telefonVorwahl', selectedItem.code);
-                    }
                   }}
                   suggestions={phoneCountryCodes}
                   placeholder="+43"
@@ -165,6 +156,7 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
                   getSearchableString={(item) => `${item.code} ${item.name}`}
                   getKey={(item) => item.code}
                   showAddButton={false}
+                  showFavoritesButton={false}
                 />
               </div>
               <input
@@ -199,6 +191,19 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
       <div className="bg-white rounded-lg border border-gray-200 p-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Straße & Hausnummer</label>
+            <input
+              type="text"
+              value={data.adresse || ''}
+              onChange={(e) => handleInputChange('adresse', e.target.value)}
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                data.adresse ? 'border-orange-500 border-2' : 'border-gray-300'
+              }`}
+              placeholder="Straße & Hausnummer"
+            />
+          </div>
+          
+          <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">PLZ</label>
             <input
               type="text"
@@ -227,47 +232,54 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
             />
           </div>
           
-          <div className="md:col-span-2">
+          <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Ort</label>
             <AutocompleteInput
               value={data.ort || ''}
               onChange={(value) => handleInputChange('ort', value)}
+              onFavoriteClick={(value) => handleInputChange('ort', value)}
               suggestions={favoriteOrte}
               placeholder="Ort"
               showAddButton={false}
+              showFavoritesButton={true}
             />
           </div>
         </div>
 
-        {favoriteOrte.length > 0 && (
-          <div className="mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+          <div></div>
+          <div></div>
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="ausland"
+              checked={showAuslandField}
+              onChange={(e) => setShowAuslandField(e.target.checked)}
+              className="rounded"
+            />
+            <label htmlFor="ausland" className="text-sm text-gray-700">Ausland</label>
+          </div>
+        </div>
+
+        {favoriteOrte.filter(ort => ort !== (data.ort || '')).length > 0 && (
+          <div className="mt-4">
             <div className="flex items-center gap-1 mb-2">
               <Star className="w-4 h-4 fill-current" style={{ color: '#F29400' }} />
               <span className="text-sm text-gray-600">Favoriten:</span>
             </div>
             <div className="flex flex-wrap gap-2">
-              {favoriteOrte.map((ort, index) => (
-                <TagButtonFavorite
-                  key={index}
-                  onClick={() => handleInputChange('ort', ort)}
-                >
-                  {ort}
-                </TagButtonFavorite>
-              ))}
+              {favoriteOrte
+                .filter(ort => ort !== (data.ort || ''))
+                .map((ort, index) => (
+                  <TagButtonFavorite
+                    key={index}
+                    label={ort}
+                    onClick={() => handleInputChange('ort', ort)}
+                  />
+                ))}
             </div>
           </div>
         )}
-
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            id="ausland"
-            checked={showAuslandField}
-            onChange={(e) => setShowAuslandField(e.target.checked)}
-            className="rounded"
-          />
-          <label htmlFor="ausland" className="text-sm text-gray-700">Ausland</label>
-        </div>
 
         {showAuslandField && (
           <div className="mt-4">
@@ -287,7 +299,7 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
 
       {/* Geburtsdatencard */}
       <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Geburtsdatum</label>
             <input
@@ -305,28 +317,12 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
             <AutocompleteInput
               value={data.geburtsort || ''}
               onChange={(value) => handleInputChange('geburtsort', value)}
+              onFavoriteClick={(value) => handleInputChange('geburtsort', value)}
               suggestions={favoriteGeburtsOrte}
               placeholder="Geburtsort"
               showAddButton={false}
+              showFavoritesButton={true}
             />
-            {favoriteGeburtsOrte.length > 0 && (
-              <div className="mt-2">
-                <div className="flex items-center gap-1 mb-2">
-                  <Star className="w-4 h-4 fill-current" style={{ color: '#F29400' }} />
-                  <span className="text-sm text-gray-600">Favoriten:</span>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {favoriteGeburtsOrte.map((ort, index) => (
-                    <TagButtonFavorite
-                      key={index}
-                      onClick={() => handleInputChange('geburtsort', ort)}
-                    >
-                      {ort}
-                    </TagButtonFavorite>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
           
           <div>
@@ -334,41 +330,69 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
             <AutocompleteInput
               value={data.geburtsland || ''}
               onChange={(value) => handleInputChange('geburtsland', value)}
+              onFavoriteClick={(value) => handleInputChange('geburtsland', value)}
               suggestions={favoriteStaatsbuergerschaft}
               placeholder="Geburtsland"
               showAddButton={false}
+              showFavoritesButton={true}
             />
-            {favoriteStaatsbuergerschaft.length > 0 && (
-              <div className="mt-2">
-                <div className="flex items-center gap-1 mb-2">
-                  <Star className="w-4 h-4 fill-current" style={{ color: '#F29400' }} />
-                  <span className="text-sm text-gray-600">Favoriten:</span>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {favoriteStaatsbuergerschaft.map((land, index) => (
-                    <TagButtonFavorite
-                      key={index}
-                      onClick={() => handleInputChange('geburtsland', land)}
-                    >
-                      {land}
-                    </TagButtonFavorite>
-                  ))}
-                </div>
-              </div>
-            )}
+          </div>
+
+          <div className="flex items-end">
+            <div className="flex items-center gap-2 pb-2">
+              <input
+                type="checkbox"
+                id="staatsbuergerschaft"
+                checked={showStatesbuergerschaft}
+                onChange={(e) => setShowStatesbuergerschaft(e.target.checked)}
+                className="rounded"
+              />
+              <label htmlFor="staatsbuergerschaft" className="text-sm text-gray-700">Staatsbürgerschaft</label>
+            </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            id="staatsbuergerschaft"
-            checked={showStatesbuergerschaft}
-            onChange={(e) => setShowStatesbuergerschaft(e.target.checked)}
-            className="rounded"
-          />
-          <label htmlFor="staatsbuergerschaft" className="text-sm text-gray-700">Staatsbürgerschaft</label>
-        </div>
+        {/* Favoriten für Geburtsort */}
+        {favoriteGeburtsOrte.filter(ort => ort !== (data.geburtsort || '')).length > 0 && (
+          <div className="mb-4">
+            <div className="flex items-center gap-1 mb-2">
+              <Star className="w-4 h-4 fill-current" style={{ color: '#F29400' }} />
+              <span className="text-sm text-gray-600">Favoriten Geburtsort:</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {favoriteGeburtsOrte
+                .filter(ort => ort !== (data.geburtsort || ''))
+                .map((ort, index) => (
+                  <TagButtonFavorite
+                    key={index}
+                    label={ort}
+                    onClick={() => handleInputChange('geburtsort', ort)}
+                  />
+                ))}
+            </div>
+          </div>
+        )}
+
+        {/* Favoriten für Geburtsland */}
+        {favoriteStaatsbuergerschaft.filter(land => land !== (data.geburtsland || '')).length > 0 && (
+          <div className="mb-4">
+            <div className="flex items-center gap-1 mb-2">
+              <Star className="w-4 h-4 fill-current" style={{ color: '#F29400' }} />
+              <span className="text-sm text-gray-600">Favoriten Geburtsland:</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {favoriteStaatsbuergerschaft
+                .filter(land => land !== (data.geburtsland || ''))
+                .map((land, index) => (
+                  <TagButtonFavorite
+                    key={index}
+                    label={land}
+                    onClick={() => handleInputChange('geburtsland', land)}
+                  />
+                ))}
+            </div>
+          </div>
+        )}
 
         {showStatesbuergerschaft && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
@@ -377,25 +401,28 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
               <AutocompleteInput
                 value={data.staatsbuergerschaft || ''}
                 onChange={(value) => handleInputChange('staatsbuergerschaft', value)}
+                onFavoriteClick={(value) => handleInputChange('staatsbuergerschaft', value)}
                 suggestions={favoriteStaatsbuergerschaft}
                 placeholder="Staatsbürgerschaft"
                 showAddButton={false}
+                showFavoritesButton={true}
               />
-              {favoriteStaatsbuergerschaft.length > 0 && (
+              {favoriteStaatsbuergerschaft.filter(staat => staat !== (data.staatsbuergerschaft || '')).length > 0 && (
                 <div className="mt-2">
                   <div className="flex items-center gap-1 mb-2">
                     <Star className="w-4 h-4 fill-current" style={{ color: '#F29400' }} />
                     <span className="text-sm text-gray-600">Favoriten:</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {favoriteStaatsbuergerschaft.map((staat, index) => (
-                      <TagButtonFavorite
-                        key={index}
-                        onClick={() => handleInputChange('staatsbuergerschaft', staat)}
-                      >
-                        {staat}
-                      </TagButtonFavorite>
-                    ))}
+                    {favoriteStaatsbuergerschaft
+                      .filter(staat => staat !== (data.staatsbuergerschaft || ''))
+                      .map((staat, index) => (
+                        <TagButtonFavorite
+                          key={index}
+                          label={staat}
+                          onClick={() => handleInputChange('staatsbuergerschaft', staat)}
+                        />
+                      ))}
                   </div>
                 </div>
               )}
@@ -406,10 +433,31 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
               <AutocompleteInput
                 value={data.arbeitsmarktzugang || ''}
                 onChange={(value) => handleInputChange('arbeitsmarktzugang', value)}
-                suggestions={['Unbeschränkt', 'Beschränkt', 'Arbeitserlaubnis erforderlich']}
+                onFavoriteClick={(value) => handleInputChange('arbeitsmarktzugang', value)}
+                suggestions={favoriteArbeitsmarktzugang}
                 placeholder="Arbeitsmarktzugang"
                 showAddButton={false}
+                showFavoritesButton={true}
               />
+              {favoriteArbeitsmarktzugang.filter(zugang => zugang !== (data.arbeitsmarktzugang || '')).length > 0 && (
+                <div className="mt-2">
+                  <div className="flex items-center gap-1 mb-2">
+                    <Star className="w-4 h-4 fill-current" style={{ color: '#F29400' }} />
+                    <span className="text-sm text-gray-600">Favoriten:</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {favoriteArbeitsmarktzugang
+                      .filter(zugang => zugang !== (data.arbeitsmarktzugang || ''))
+                      .map((zugang, index) => (
+                        <TagButtonFavorite
+                          key={index}
+                          label={zugang}
+                          onClick={() => handleInputChange('arbeitsmarktzugang', zugang)}
+                        />
+                      ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -426,20 +474,7 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
               suggestions={['Ledig', 'Verheiratet', 'Geschieden', 'Verwitwet', 'Lebensgemeinschaft']}
               placeholder="Familienstand"
               showAddButton={false}
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Anzahl Kinder</label>
-            <input
-              type="number"
-              value={data.anzahlKinder || ''}
-              onChange={(e) => handleInputChange('anzahlKinder', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                data.anzahlKinder ? 'border-orange-500 border-2' : 'border-gray-300'
-              }`}
-              placeholder="0"
-              min="0"
+              showFavoritesButton={false}
             />
           </div>
         </div>
