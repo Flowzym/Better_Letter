@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, X, Star } from 'lucide-react';
 import DatePicker from './DatePicker';
 import TagButtonSelected from './ui/TagButtonSelected';
