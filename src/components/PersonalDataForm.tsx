@@ -3,6 +3,8 @@ import AutocompleteInput from './AutocompleteInput';
 import TagButtonFavorite from './ui/TagButtonFavorite';
 import TagButtonSelected from './ui/TagButtonSelected';
 import DatePicker from './DatePicker';
+import PhoneInput from './PhoneInput';
+import CountryAutocomplete from './CountryAutocomplete';
 import Card from './cards/Card';
 
 interface PersonalData {
@@ -100,9 +102,183 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
 
   return (
     <div className="space-y-6">
-      {/* Rest of the component code... */}
-        <Card title="Geburtsdaten & Staatsbürgerschaft">
-          <>
+      {/* Name & Titel */}
+      <Card title="Name & Titel">
+        <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-3">
+            <AutocompleteInput
+              label="Titel"
+              value={data.titel}
+              onChange={(value) => updateData('titel', value)}
+              onAdd={(value) => updateData('titel', value || '')}
+              onFavoriteClick={(value) => toggleFavorite('titel', value || '')}
+              suggestions={[...favorites.titel, ...titleSuggestions]}
+              placeholder="Titel eingeben"
+              showFavoritesButton
+            />
+          </div>
+          
+          <div className="col-span-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Vorname
+            </label>
+            <input
+              type="text"
+              value={data.vorname}
+              onChange={(e) => updateData('vorname', e.target.value)}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1"
+              style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+              placeholder="Vorname eingeben"
+            />
+          </div>
+          
+          <div className="col-span-5">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Nachname
+            </label>
+            <input
+              type="text"
+              value={data.nachname}
+              onChange={(e) => updateData('nachname', e.target.value)}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1"
+              style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+              placeholder="Nachname eingeben"
+            />
+          </div>
+        </div>
+      </Card>
+
+      {/* Kontaktdaten */}
+      <Card title="Kontaktdaten">
+        <div className="space-y-4">
+          <div className="grid grid-cols-12 gap-4">
+            <div className="col-span-6">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Telefon
+              </label>
+              <PhoneInput
+                countryCode={data.telefonVorwahl}
+                phoneNumber={data.telefon}
+                onCountryChange={(code) => updateData('telefonVorwahl', code)}
+                onPhoneChange={(phone) => updateData('telefon', phone)}
+              />
+            </div>
+            
+            <div className="col-span-6">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                E-Mail
+              </label>
+              <input
+                type="email"
+                value={data.email}
+                onChange={(e) => updateData('email', e.target.value)}
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1"
+                style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                placeholder="email@beispiel.com"
+              />
+            </div>
+          </div>
+
+          {/* Social Media */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Social Media / Homepage
+            </label>
+            
+            {data.socialMedia.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-3">
+                {data.socialMedia.map((link, index) => (
+                  <TagButtonSelected
+                    key={index}
+                    label={link}
+                    onRemove={() => removeSocialMedia(index)}
+                  />
+                ))}
+              </div>
+            )}
+            
+            <div className="flex space-x-2">
+              <input
+                type="text"
+                value={newSocialMedia}
+                onChange={(e) => setNewSocialMedia(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && addSocialMedia()}
+                className="flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-1"
+                style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                placeholder="https://linkedin.com/in/..."
+              />
+              <button
+                onClick={addSocialMedia}
+                className="px-4 py-2 text-white rounded-md"
+                style={{ backgroundColor: '#F29400' }}
+              >
+                Hinzufügen
+              </button>
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      {/* Adresse */}
+      <Card title="Adresse">
+        <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-6">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Straße & Hausnummer
+            </label>
+            <input
+              type="text"
+              value={data.adresse}
+              onChange={(e) => updateData('adresse', e.target.value)}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1"
+              style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+              placeholder="Musterstraße 123"
+            />
+          </div>
+          
+          <div className="col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              PLZ
+            </label>
+            <input
+              type="text"
+              value={data.plz}
+              onChange={(e) => updateData('plz', e.target.value)}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1"
+              style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+              placeholder="1010"
+            />
+          </div>
+          
+          <div className="col-span-2">
+            <AutocompleteInput
+              label="Ort"
+              value={data.ort}
+              onChange={(value) => updateData('ort', value)}
+              onAdd={(value) => updateData('ort', value || '')}
+              onFavoriteClick={(value) => toggleFavorite('ort', value || '')}
+              suggestions={[...favorites.ort, ...citySuggestions]}
+              placeholder="Wien"
+              showFavoritesButton
+            />
+          </div>
+          
+          <div className="col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Land
+            </label>
+            <CountryAutocomplete
+              value={data.land}
+              onChange={(value) => updateData('land', value)}
+              placeholder="Österreich"
+            />
+          </div>
+        </div>
+      </Card>
+
+      {/* Geburtsdaten & Staatsbürgerschaft */}
+      <Card title="Geburtsdaten & Staatsbürgerschaft">
+        <>
           {/* Geburtsdaten mit Checkbox */}
           <div className="grid grid-cols-12 gap-4 items-center">
             <div className="col-span-4">
@@ -186,10 +362,70 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               </div>
             </div>
           )}
-          </>
-        </Card>
+        </>
+      </Card>
 
-        {/* Familienstand */}
+      {/* Familienstand */}
+      <Card title="Familienstand & Kinder">
+        <div className="space-y-4">
+          <div className="grid grid-cols-12 gap-4">
+            <div className="col-span-6">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Familienstand
+              </label>
+              <select
+                value={data.familienstand}
+                onChange={(e) => updateData('familienstand', e.target.value)}
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1"
+                style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+              >
+                <option value="">Familienstand auswählen</option>
+                {familienstandOptions.map(option => (
+                  <option key={option} value={option}>{option}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Kinder */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Kinder (Geburtsjahre)
+            </label>
+            
+            {data.kinder.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-3">
+                {data.kinder.map((child, index) => (
+                  <TagButtonSelected
+                    key={index}
+                    label={child}
+                    onRemove={() => removeChild(index)}
+                  />
+                ))}
+              </div>
+            )}
+            
+            <div className="flex space-x-2">
+              <input
+                type="text"
+                value={newChild}
+                onChange={(e) => setNewChild(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && addChild()}
+                className="flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-1"
+                style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                placeholder="z.B. 2010"
+              />
+              <button
+                onClick={addChild}
+                className="px-4 py-2 text-white rounded-md"
+                style={{ backgroundColor: '#F29400' }}
+              >
+                Hinzufügen
+              </button>
+            </div>
+          </div>
+        </div>
+      </Card>
     </div>
   );
 }
