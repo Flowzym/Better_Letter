@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, X, Star } from 'lucide-react';
 import DatePicker from './DatePicker';
 import TagButtonSelected from './ui/TagButtonSelected';
+import AutocompleteInput from './AutocompleteInput';
 
 interface PersonalData {
   // Name und Titel
@@ -12,7 +13,10 @@ interface PersonalData {
   // Geburt
   geburtsdatum: string; // DD.MM.YYYY
   geburtsort: string;
+  geburtsland: string;
+  showStaatsbuegerschaft: boolean;
   staatsbuegerschaft: string;
+  arbeitsmarktzugang: string;
   
   // Personenstand
   personenstand: string;
@@ -44,7 +48,21 @@ const TITEL_OPTIONEN = [
   'MSc',
   'BSc',
   'MBA',
-  'PhD'
+  'PhD',
+  'Dr. med.',
+  'Dr. phil.',
+  'Dr. rer. nat.',
+  'Dr. jur.',
+  'Dr. techn.',
+  'Univ.-Prof.',
+  'Ass.-Prof.',
+  'Priv.-Doz.',
+  'Hon.-Prof.',
+  'em. Prof.',
+  'Jr.',
+  'Sr.',
+  'II',
+  'III'
 ];
 
 const PERSONENSTAND_OPTIONEN = [
@@ -57,16 +75,26 @@ const PERSONENSTAND_OPTIONEN = [
 ];
 
 const COUNTRY_CODES = [
-  { code: '+43', country: 'Österreich' },
-  { code: '+49', country: 'Deutschland' },
-  { code: '+41', country: 'Schweiz' },
-  { code: '+1', country: 'USA/Kanada' },
-  { code: '+44', country: 'Vereinigtes Königreich' },
-  { code: '+33', country: 'Frankreich' },
-  { code: '+39', country: 'Italien' },
-  { code: '+34', country: 'Spanien' },
-  { code: '+31', country: 'Niederlande' },
-  { code: '+32', country: 'Belgien' },
+  { code: '+43', country: 'Österreich', flag: '🇦🇹' },
+  { code: '+49', country: 'Deutschland', flag: '🇩🇪' },
+  { code: '+41', country: 'Schweiz', flag: '🇨🇭' },
+  { code: '+1', country: 'USA/Kanada', flag: '🇺🇸' },
+  { code: '+44', country: 'Vereinigtes Königreich', flag: '🇬🇧' },
+  { code: '+33', country: 'Frankreich', flag: '🇫🇷' },
+  { code: '+39', country: 'Italien', flag: '🇮🇹' },
+  { code: '+34', country: 'Spanien', flag: '🇪🇸' },
+  { code: '+31', country: 'Niederlande', flag: '🇳🇱' },
+  { code: '+32', country: 'Belgien', flag: '🇧🇪' },
+  { code: '+45', country: 'Dänemark', flag: '🇩🇰' },
+  { code: '+46', country: 'Schweden', flag: '🇸🇪' },
+  { code: '+47', country: 'Norwegen', flag: '🇳🇴' },
+  { code: '+358', country: 'Finnland', flag: '🇫🇮' },
+  { code: '+48', country: 'Polen', flag: '🇵🇱' },
+  { code: '+420', country: 'Tschechien', flag: '🇨🇿' },
+  { code: '+421', country: 'Slowakei', flag: '🇸🇰' },
+  { code: '+36', country: 'Ungarn', flag: '🇭🇺' },
+  { code: '+385', country: 'Kroatien', flag: '🇭🇷' },
+  { code: '+386', country: 'Slowenien', flag: '🇸🇮' },
 ];
 
 const COUNTRIES = [
@@ -89,7 +117,7 @@ const COUNTRIES = [
   'Marshallinseln', 'Mauretanien', 'Mauritius', 'Mexiko', 'Mikronesien', 'Moldau',
   'Monaco', 'Mongolei', 'Montenegro', 'Marokko', 'Mosambik', 'Myanmar', 'Namibia',
   'Nauru', 'Nepal', 'Niederlande', 'Neuseeland', 'Nicaragua', 'Niger', 'Nigeria',
-  'Nordmazedonien', 'Norwegen', 'Oman', 'Pakistan', 'Palau', 'Panama', 'Papua-Neuguinea',
+  'Nordmazedonien', 'Norwegen', 'Oman', 'Pakistan', 'Palau', 'Panama', 'Papua-Neuguina',
   'Paraguay', 'Peru', 'Philippinen', 'Polen', 'Portugal', 'Katar', 'Rumänien',
   'Russland', 'Ruanda', 'Saint Kitts und Nevis', 'Saint Lucia', 'Saint Vincent und die Grenadinen',
   'Samoa', 'San Marino', 'São Tomé und Príncipe', 'Saudi-Arabien', 'Senegal', 'Serbien',
@@ -100,6 +128,16 @@ const COUNTRIES = [
   'Turkmenistan', 'Tuvalu', 'Uganda', 'Ukraine', 'Vereinigte Arabische Emirate',
   'Vereinigtes Königreich', 'Vereinigte Staaten', 'Uruguay', 'Usbekistan', 'Vanuatu',
   'Vatikanstadt', 'Venezuela', 'Vietnam', 'Jemen', 'Sambia', 'Simbabwe'
+];
+
+const ARBEITSMARKTZUGANG_OPTIONEN = [
+  'EU-Bürger (unbeschränkt)',
+  'Rot-Weiß-Rot-Karte',
+  'Blaue Karte EU',
+  'Aufenthaltstitel',
+  'Asylberechtigt',
+  'Subsidiär Schutzberechtigter',
+  'Sonstige Berechtigung'
 ];
 
 // PLZ zu Ort Mapping (Beispiel für österreichische PLZ)
@@ -149,14 +187,47 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
     }
   });
 
+  const [favoriteGeburtsOrte, setFavoriteGeburtsOrte] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('favoriteGeburtsOrte');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const [favoriteStaatsbuergerschaften, setFavoriteStaatsbuergerschaften] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('favoriteStaatsbuergerschaften');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
   const [socialMediaInput, setSocialMediaInput] = useState('');
   const [kinderjahrInput, setKinderjahrInput] = useState('');
-  const [showAddOrtButton, setShowAddOrtButton] = useState(false);
+  const [titelInput, setTitelInput] = useState('');
+  const [personenstandInput, setPersonenstandInput] = useState('');
+  const [geburtsortInput, setGeburtsortInput] = useState('');
+  const [geburtslandInput, setGeburtslandInput] = useState('');
+  const [staatsbuegerschaftInput, setStaatsbuegerschaftInput] = useState('');
+  const [arbeitsmarktzugangInput, setArbeitsmarktzugangInput] = useState('');
+  const [ortInput, setOrtInput] = useState('');
+  const [auslandLandInput, setAuslandLandInput] = useState('');
 
   // Favoriten speichern
   useEffect(() => {
     localStorage.setItem('favoriteOrte', JSON.stringify(favoriteOrte));
   }, [favoriteOrte]);
+
+  useEffect(() => {
+    localStorage.setItem('favoriteGeburtsOrte', JSON.stringify(favoriteGeburtsOrte));
+  }, [favoriteGeburtsOrte]);
+
+  useEffect(() => {
+    localStorage.setItem('favoriteStaatsbuergerschaften', JSON.stringify(favoriteStaatsbuergerschaften));
+  }, [favoriteStaatsbuergerschaften]);
 
   const updateField = <K extends keyof PersonalData>(field: K, value: PersonalData[K]) => {
     onChange({ ...data, [field]: value });
@@ -178,6 +249,28 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
 
   const removeFavoriteOrt = (ort: string) => {
     setFavoriteOrte(favoriteOrte.filter(f => f !== ort));
+  };
+
+  const addToFavoriteGeburtsOrte = () => {
+    const ort = data.geburtsort.trim();
+    if (ort && !favoriteGeburtsOrte.includes(ort)) {
+      setFavoriteGeburtsOrte([...favoriteGeburtsOrte, ort]);
+    }
+  };
+
+  const removeFavoriteGeburtsOrt = (ort: string) => {
+    setFavoriteGeburtsOrte(favoriteGeburtsOrte.filter(f => f !== ort));
+  };
+
+  const addToFavoriteStaatsbuergerschaften = () => {
+    const staat = data.staatsbuegerschaft.trim();
+    if (staat && !favoriteStaatsbuergerschaften.includes(staat)) {
+      setFavoriteStaatsbuergerschaften([...favoriteStaatsbuergerschaften, staat]);
+    }
+  };
+
+  const removeFavoriteStaatsbuegerschaft = (staat: string) => {
+    setFavoriteStaatsbuergerschaften(favoriteStaatsbuergerschaften.filter(f => f !== staat));
   };
 
   const addSocialMediaLink = () => {
@@ -214,27 +307,15 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
     }
   };
 
+  const getSelectedCountryCode = () => {
+    return COUNTRY_CODES.find(item => item.code === data.laendervorwahl);
+  };
+
   return (
     <div className="space-y-6">
       {/* Name und Titel */}
       <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Titel */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Titel</label>
-            <select
-              value={data.titel}
-              onChange={(e) => updateField('titel', e.target.value)}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-              style={{ borderColor: getBorderColor(data.titel), '--tw-ring-color': '#F29400' } as React.CSSProperties}
-            >
-              <option value="">Titel auswählen</option>
-              {TITEL_OPTIONEN.map(titel => (
-                <option key={titel} value={titel}>{titel}</option>
-              ))}
-            </select>
-          </div>
-
           {/* Vorname */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Vorname *</label>
@@ -260,49 +341,409 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               placeholder="Nachname"
             />
           </div>
+
+          {/* Titel */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Titel</label>
+            <AutocompleteInput
+              value={titelInput}
+              onChange={setTitelInput}
+              onAdd={(value) => {
+                const titel = value || titelInput;
+                if (titel.trim()) {
+                  updateField('titel', titel.trim());
+                  setTitelInput('');
+                }
+              }}
+              suggestions={TITEL_OPTIONEN}
+              placeholder="Titel eingeben..."
+              showAddButton={titelInput.trim().length > 0}
+            />
+            {data.titel && (
+              <div className="mt-2">
+                <TagButtonSelected
+                  label={data.titel}
+                  onRemove={() => updateField('titel', '')}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Kontakt */}
+      <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Telefon */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Telefonnummer</label>
+            <div className="flex space-x-2">
+              {/* Ländervorwahl - mit Flaggen */}
+              <select
+                value={data.laendervorwahl}
+                onChange={(e) => updateField('laendervorwahl', e.target.value)}
+                className="px-2 py-2 border rounded-md focus:outline-none focus:ring-2 w-24"
+                style={{ borderColor: getBorderColor(data.laendervorwahl), '--tw-ring-color': '#F29400' } as React.CSSProperties}
+              >
+                {COUNTRY_CODES.map(item => (
+                  <option key={item.code} value={item.code}>
+                    {item.flag} {item.code}
+                  </option>
+                ))}
+              </select>
+              
+              {/* Telefonnummer */}
+              <input
+                type="tel"
+                value={data.telefon}
+                onChange={(e) => updateField('telefon', e.target.value)}
+                className="flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                style={{ borderColor: getBorderColor(data.telefon), '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                placeholder="123 456 7890"
+                maxLength={20}
+              />
+            </div>
+          </div>
+
+          {/* E-Mail */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">E-Mail-Adresse</label>
+            <input
+              type="email"
+              value={data.email}
+              onChange={(e) => updateField('email', e.target.value)}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+              style={{ borderColor: getBorderColor(data.email), '--tw-ring-color': '#F29400' } as React.CSSProperties}
+              placeholder="name@beispiel.com"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Adresse */}
+      <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Adresse */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Straße und Hausnummer</label>
+              <input
+                type="text"
+                value={data.adresse}
+                onChange={(e) => updateField('adresse', e.target.value)}
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                style={{ borderColor: getBorderColor(data.adresse), '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                placeholder="Musterstraße 123"
+              />
+            </div>
+
+            {/* Ort */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Ort</label>
+              <div className="flex space-x-2">
+                <input
+                  type="text"
+                  value={ortInput}
+                  onChange={(e) => {
+                    setOrtInput(e.target.value);
+                    handleOrtChange(e.target.value);
+                  }}
+                  className="flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                  style={{ borderColor: getBorderColor(data.ort), '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                  placeholder="Ort oder PLZ eingeben"
+                />
+                {ortInput.trim() && !favoriteOrte.includes(ortInput.trim()) && (
+                  <button
+                    onClick={addToFavoriteOrte}
+                    className="px-3 py-2 text-white rounded-md transition-colors duration-200"
+                    style={{ backgroundColor: '#F29400' }}
+                    title="Zu Favoriten hinzufügen"
+                  >
+                    <Star className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Favoriten-Orte über gesamte Breite */}
+          {favoriteOrte.length > 0 && (
+            <div className="col-span-full">
+              <div className="flex items-center space-x-2 mb-2">
+                <Star className="h-4 w-4 fill-current" style={{ color: '#F29400' }} />
+                <span className="text-sm font-medium text-gray-700">Favoriten:</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {favoriteOrte.map(ort => (
+                  <TagButtonSelected
+                    key={ort}
+                    label={ort}
+                    onClick={() => {
+                      updateField('ort', ort);
+                      setOrtInput(ort);
+                    }}
+                    onRemove={() => removeFavoriteOrt(ort)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Ausland Checkbox */}
+          <div className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              id="ausland"
+              checked={data.ausland}
+              onChange={(e) => updateField('ausland', e.target.checked)}
+              className="focus:ring-2"
+              style={{ accentColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+            />
+            <label htmlFor="ausland" className="text-sm text-gray-700">
+              Ausland
+            </label>
+          </div>
+
+          {/* Ausland Land */}
+          {data.ausland && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Land</label>
+              <AutocompleteInput
+                value={auslandLandInput}
+                onChange={setAuslandLandInput}
+                onAdd={(value) => {
+                  const land = value || auslandLandInput;
+                  if (land.trim()) {
+                    updateField('auslandLand', land.trim());
+                    setAuslandLandInput('');
+                  }
+                }}
+                suggestions={COUNTRIES}
+                placeholder="Land eingeben..."
+                showAddButton={auslandLandInput.trim().length > 0}
+              />
+              {data.auslandLand && (
+                <div className="mt-2">
+                  <TagButtonSelected
+                    label={data.auslandLand}
+                    onRemove={() => updateField('auslandLand', '')}
+                  />
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
       {/* Geburtsdaten */}
       <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Geburtsdatum */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Geburtsdatum</label>
-            <DatePicker
-              value={data.geburtsdatum}
-              onChange={(date) => updateField('geburtsdatum', date)}
-            />
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Geburtsdatum */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Geburtsdatum</label>
+              <DatePicker
+                value={data.geburtsdatum}
+                onChange={(date) => updateField('geburtsdatum', date)}
+              />
+            </div>
+
+            {/* Geburtsort */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Geburtsort</label>
+              <div className="flex space-x-2">
+                <AutocompleteInput
+                  value={geburtsortInput}
+                  onChange={setGeburtsortInput}
+                  onAdd={(value) => {
+                    const ort = value || geburtsortInput;
+                    if (ort.trim()) {
+                      updateField('geburtsort', ort.trim());
+                      setGeburtsortInput('');
+                    }
+                  }}
+                  suggestions={COUNTRIES}
+                  placeholder="Geburtsort eingeben..."
+                  showAddButton={geburtsortInput.trim().length > 0}
+                />
+                {geburtsortInput.trim() && !favoriteGeburtsOrte.includes(geburtsortInput.trim()) && (
+                  <button
+                    onClick={addToFavoriteGeburtsOrte}
+                    className="px-3 py-2 text-white rounded-md transition-colors duration-200"
+                    style={{ backgroundColor: '#F29400' }}
+                    title="Zu Favoriten hinzufügen"
+                  >
+                    <Star className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+              {data.geburtsort && (
+                <div className="mt-2">
+                  <TagButtonSelected
+                    label={data.geburtsort}
+                    onRemove={() => updateField('geburtsort', '')}
+                  />
+                </div>
+              )}
+              {/* Favoriten für Geburtsort */}
+              {favoriteGeburtsOrte.length > 0 && (
+                <div className="mt-2">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Star className="h-4 w-4 fill-current" style={{ color: '#F29400' }} />
+                    <span className="text-sm font-medium text-gray-700">Favoriten:</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {favoriteGeburtsOrte.map(ort => (
+                      <TagButtonSelected
+                        key={ort}
+                        label={ort}
+                        onClick={() => {
+                          updateField('geburtsort', ort);
+                          setGeburtsortInput('');
+                        }}
+                        onRemove={() => removeFavoriteGeburtsOrt(ort)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Geburtsland */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Geburtsland</label>
+              <AutocompleteInput
+                value={geburtslandInput}
+                onChange={setGeburtslandInput}
+                onAdd={(value) => {
+                  const land = value || geburtslandInput;
+                  if (land.trim()) {
+                    updateField('geburtsland', land.trim());
+                    setGeburtslandInput('');
+                  }
+                }}
+                suggestions={COUNTRIES}
+                placeholder="Geburtsland eingeben..."
+                showAddButton={geburtslandInput.trim().length > 0}
+              />
+              {data.geburtsland && (
+                <div className="mt-2">
+                  <TagButtonSelected
+                    label={data.geburtsland}
+                    onRemove={() => updateField('geburtsland', '')}
+                  />
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Geburtsort */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Geburtsort</label>
+          {/* Staatsbürgerschaft Checkbox */}
+          <div className="flex items-center space-x-2">
             <input
-              type="text"
-              value={data.geburtsort}
-              onChange={(e) => updateField('geburtsort', e.target.value)}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-              style={{ borderColor: getBorderColor(data.geburtsort), '--tw-ring-color': '#F29400' } as React.CSSProperties}
-              placeholder="Stadt, Land"
+              type="checkbox"
+              id="staatsbuegerschaft"
+              checked={data.showStaatsbuegerschaft}
+              onChange={(e) => updateField('showStaatsbuegerschaft', e.target.checked)}
+              className="focus:ring-2"
+              style={{ accentColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
             />
+            <label htmlFor="staatsbuegerschaft" className="text-sm text-gray-700">
+              Staatsbürgerschaft
+            </label>
           </div>
 
-          {/* Staatsbürgerschaft */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Staatsbürgerschaft</label>
-            <select
-              value={data.staatsbuegerschaft}
-              onChange={(e) => updateField('staatsbuegerschaft', e.target.value)}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-              style={{ borderColor: getBorderColor(data.staatsbuegerschaft), '--tw-ring-color': '#F29400' } as React.CSSProperties}
-            >
-              <option value="">Land auswählen</option>
-              {COUNTRIES.map(country => (
-                <option key={country} value={country}>{country}</option>
-              ))}
-            </select>
-          </div>
+          {/* Staatsbürgerschaft und Arbeitsmarktzugang */}
+          {data.showStaatsbuegerschaft && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Staatsbürgerschaft */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Staatsbürgerschaft</label>
+                <div className="flex space-x-2">
+                  <AutocompleteInput
+                    value={staatsbuegerschaftInput}
+                    onChange={setStaatsbuegerschaftInput}
+                    onAdd={(value) => {
+                      const staat = value || staatsbuegerschaftInput;
+                      if (staat.trim()) {
+                        updateField('staatsbuegerschaft', staat.trim());
+                        setStaatsbuegerschaftInput('');
+                      }
+                    }}
+                    suggestions={COUNTRIES}
+                    placeholder="Staatsbürgerschaft eingeben..."
+                    showAddButton={staatsbuegerschaftInput.trim().length > 0}
+                  />
+                  {staatsbuegerschaftInput.trim() && !favoriteStaatsbuergerschaften.includes(staatsbuegerschaftInput.trim()) && (
+                    <button
+                      onClick={addToFavoriteStaatsbuergerschaften}
+                      className="px-3 py-2 text-white rounded-md transition-colors duration-200"
+                      style={{ backgroundColor: '#F29400' }}
+                      title="Zu Favoriten hinzufügen"
+                    >
+                      <Star className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+                {data.staatsbuegerschaft && (
+                  <div className="mt-2">
+                    <TagButtonSelected
+                      label={data.staatsbuegerschaft}
+                      onRemove={() => updateField('staatsbuegerschaft', '')}
+                    />
+                  </div>
+                )}
+                {/* Favoriten für Staatsbürgerschaft */}
+                {favoriteStaatsbuergerschaften.length > 0 && (
+                  <div className="mt-2">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <Star className="h-4 w-4 fill-current" style={{ color: '#F29400' }} />
+                      <span className="text-sm font-medium text-gray-700">Favoriten:</span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {favoriteStaatsbuergerschaften.map(staat => (
+                        <TagButtonSelected
+                          key={staat}
+                          label={staat}
+                          onClick={() => {
+                            updateField('staatsbuegerschaft', staat);
+                            setStaatsbuegerschaftInput('');
+                          }}
+                          onRemove={() => removeFavoriteStaatsbuegerschaft(staat)}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Arbeitsmarktzugang */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Arbeitsmarktzugang</label>
+                <AutocompleteInput
+                  value={arbeitsmarktzugangInput}
+                  onChange={setArbeitsmarktzugangInput}
+                  onAdd={(value) => {
+                    const zugang = value || arbeitsmarktzugangInput;
+                    if (zugang.trim()) {
+                      updateField('arbeitsmarktzugang', zugang.trim());
+                      setArbeitsmarktzugangInput('');
+                    }
+                  }}
+                  suggestions={ARBEITSMARKTZUGANG_OPTIONEN}
+                  placeholder="Arbeitsmarktzugang eingeben..."
+                  showAddButton={arbeitsmarktzugangInput.trim().length > 0}
+                />
+                {data.arbeitsmarktzugang && (
+                  <div className="mt-2">
+                    <TagButtonSelected
+                      label={data.arbeitsmarktzugang}
+                      onRemove={() => updateField('arbeitsmarktzugang', '')}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -312,17 +753,28 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
           {/* Familienstand */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Familienstand</label>
-            <select
-              value={data.personenstand}
-              onChange={(e) => updateField('personenstand', e.target.value)}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-              style={{ borderColor: getBorderColor(data.personenstand), '--tw-ring-color': '#F29400' } as React.CSSProperties}
-            >
-              <option value="">Familienstand auswählen</option>
-              {PERSONENSTAND_OPTIONEN.map(stand => (
-                <option key={stand} value={stand}>{stand}</option>
-              ))}
-            </select>
+            <AutocompleteInput
+              value={personenstandInput}
+              onChange={setPersonenstandInput}
+              onAdd={(value) => {
+                const stand = value || personenstandInput;
+                if (stand.trim()) {
+                  updateField('personenstand', stand.trim());
+                  setPersonenstandInput('');
+                }
+              }}
+              suggestions={PERSONENSTAND_OPTIONEN}
+              placeholder="Familienstand eingeben..."
+              showAddButton={personenstandInput.trim().length > 0}
+            />
+            {data.personenstand && (
+              <div className="mt-2">
+                <TagButtonSelected
+                  label={data.personenstand}
+                  onRemove={() => updateField('personenstand', '')}
+                />
+              </div>
+            )}
           </div>
 
           {/* Kinder Geburtsjahre */}
@@ -360,175 +812,16 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 style={{ borderColor: getBorderColor(kinderjahrInput), '--tw-ring-color': '#F29400' } as React.CSSProperties}
                 placeholder="z.B. 2010"
               />
-              <button
-                onClick={addKinderjahr}
-                disabled={!kinderjahrInput.trim()}
-                className="px-4 py-2 text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-                style={{ backgroundColor: '#F29400' }}
-              >
-                <Plus className="h-4 w-4" />
-              </button>
+              {kinderjahrInput.trim() && (
+                <button
+                  onClick={addKinderjahr}
+                  className="px-4 py-2 text-white rounded-md transition-colors duration-200"
+                  style={{ backgroundColor: '#F29400' }}
+                >
+                  <Plus className="h-4 w-4" />
+                </button>
+              )}
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Adresse */}
-      <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Adresse */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Straße und Hausnummer</label>
-              <input
-                type="text"
-                value={data.adresse}
-                onChange={(e) => updateField('adresse', e.target.value)}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-                style={{ borderColor: getBorderColor(data.adresse), '--tw-ring-color': '#F29400' } as React.CSSProperties}
-                placeholder="Musterstraße 123"
-              />
-            </div>
-
-            {/* Ort */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Ort</label>
-              <div className="relative">
-                <input
-                  type="text"
-                  value={data.ort}
-                  onChange={(e) => handleOrtChange(e.target.value)}
-                  onFocus={() => setShowAddOrtButton(true)}
-                  onBlur={() => setTimeout(() => setShowAddOrtButton(false), 200)}
-                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-                  style={{ borderColor: getBorderColor(data.ort), '--tw-ring-color': '#F29400' } as React.CSSProperties}
-                  placeholder="Ort oder PLZ eingeben"
-                />
-                {showAddOrtButton && data.ort.trim() && !favoriteOrte.includes(data.ort.trim()) && (
-                  <button
-                    onClick={addToFavoriteOrte}
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 px-2 py-1 text-xs text-white rounded"
-                    style={{ backgroundColor: '#F29400' }}
-                  >
-                    <Star className="h-3 w-3" />
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Ausland Checkbox */}
-          <div className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              id="ausland"
-              checked={data.ausland}
-              onChange={(e) => updateField('ausland', e.target.checked)}
-              className="focus:ring-2"
-              style={{ accentColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-            />
-            <label htmlFor="ausland" className="text-sm text-gray-700">
-              Ausland
-            </label>
-          </div>
-
-          {/* Ausland Land */}
-          {data.ausland && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Land</label>
-              <select
-                value={data.auslandLand}
-                onChange={(e) => updateField('auslandLand', e.target.value)}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-                style={{ borderColor: getBorderColor(data.auslandLand), '--tw-ring-color': '#F29400' } as React.CSSProperties}
-              >
-                <option value="">Land auswählen</option>
-                {COUNTRIES.map(country => (
-                  <option key={country} value={country}>{country}</option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          {/* Favoriten-Orte über gesamte Breite */}
-          {favoriteOrte.length > 0 && (
-            <div className="col-span-full">
-              <div className="flex items-center space-x-2 mb-2">
-                <Star className="h-4 w-4" style={{ color: '#F29400' }} />
-                <span className="text-sm font-medium text-gray-700">Favoriten:</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {favoriteOrte.map(ort => (
-                  <button
-                    key={ort}
-                    onClick={() => updateField('ort', ort)}
-                    className="inline-flex items-center justify-between px-3 py-1 text-gray-700 text-sm rounded-full border hover:bg-gray-200 transition-colors duration-200"
-                    style={{ backgroundColor: '#F3F4F6', borderColor: '#F29400' }}
-                  >
-                    <span className="mr-2">{ort}</span>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        removeFavoriteOrt(ort);
-                      }}
-                      className="text-gray-600 hover:text-gray-800"
-                      title="Aus Favoriten entfernen"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Kontakt */}
-      <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Telefon */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Telefonnummer</label>
-            <div className="flex space-x-2">
-              {/* Ländervorwahl - schmaler */}
-              <select
-                value={data.laendervorwahl}
-                onChange={(e) => updateField('laendervorwahl', e.target.value)}
-                className="px-2 py-2 border rounded-md focus:outline-none focus:ring-2 w-16"
-                style={{ borderColor: getBorderColor(data.laendervorwahl), '--tw-ring-color': '#F29400' } as React.CSSProperties}
-              >
-                {COUNTRY_CODES.map(item => (
-                  <option key={item.code} value={item.code}>
-                    {item.code}
-                  </option>
-                ))}
-              </select>
-              
-              {/* Telefonnummer - längeres Feld */}
-              <input
-                type="tel"
-                value={data.telefon}
-                onChange={(e) => updateField('telefon', e.target.value)}
-                className="flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-                style={{ borderColor: getBorderColor(data.telefon), '--tw-ring-color': '#F29400' } as React.CSSProperties}
-                placeholder="123 456 7890"
-                maxLength={20}
-              />
-            </div>
-          </div>
-
-          {/* E-Mail */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">E-Mail-Adresse</label>
-            <input
-              type="email"
-              value={data.email}
-              onChange={(e) => updateField('email', e.target.value)}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-              style={{ borderColor: getBorderColor(data.email), '--tw-ring-color': '#F29400' } as React.CSSProperties}
-              placeholder="name@beispiel.com"
-            />
           </div>
         </div>
       </div>
@@ -582,14 +875,15 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 style={{ borderColor: getBorderColor(socialMediaInput), '--tw-ring-color': '#F29400' } as React.CSSProperties}
                 placeholder="https://linkedin.com/in/..."
               />
-              <button
-                onClick={addSocialMediaLink}
-                disabled={!socialMediaInput.trim()}
-                className="px-4 py-2 text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-                style={{ backgroundColor: '#F29400' }}
-              >
-                <Plus className="h-4 w-4" />
-              </button>
+              {socialMediaInput.trim() && (
+                <button
+                  onClick={addSocialMediaLink}
+                  className="px-4 py-2 text-white rounded-md transition-colors duration-200"
+                  style={{ backgroundColor: '#F29400' }}
+                >
+                  <Plus className="h-4 w-4" />
+                </button>
+              )}
             </div>
           </div>
         </div>
