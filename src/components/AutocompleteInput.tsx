@@ -156,7 +156,7 @@ export default function AutocompleteInput<T = string>({
     if (!isOpen || filteredSuggestions.length === 0) {
       if (e.key === 'Enter') {
         e.preventDefault();
-        onAdd();
+        onAdd?.();
       }
       return;
     }
