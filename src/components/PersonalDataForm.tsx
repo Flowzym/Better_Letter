@@ -3,7 +3,7 @@ import AutocompleteInput from './AutocompleteInput';
 import { TagButtonFavorite } from './ui/TagButtonFavorite';
 import { TagButtonSelected } from './ui/TagButtonSelected';
 import { DatePicker } from './DatePicker';
-import { Card } from './cards/Card';
+import Card from './cards/Card';
 
 interface PersonalData {
   titel: string;
