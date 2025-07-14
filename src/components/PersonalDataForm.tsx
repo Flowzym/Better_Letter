@@ -64,6 +64,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
 
   const [newChild, setNewChild] = useState('');
   const [newSocialMedia, setNewSocialMedia] = useState('');
+  const [showSocialMedia, setShowSocialMedia] = useState(false);
 
   const updateData = (field: keyof PersonalData, value: any) => {
     onChange({ ...data, [field]: value });
@@ -126,8 +127,8 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               type="text"
               value={data.vorname}
               onChange={(e) => updateData('vorname', e.target.value)}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1"
-              style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:border-orange-500"
+              style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
               placeholder="Vorname eingeben"
             />
           </div>
@@ -140,8 +141,8 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               type="text"
               value={data.nachname}
               onChange={(e) => updateData('nachname', e.target.value)}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1"
-              style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:border-orange-500"
+              style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
               placeholder="Nachname eingeben"
             />
           </div>
@@ -172,50 +173,66 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 type="email"
                 value={data.email}
                 onChange={(e) => updateData('email', e.target.value)}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1"
-                style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:border-orange-500"
+                style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
                 placeholder="email@beispiel.com"
               />
             </div>
           </div>
 
-          {/* Social Media */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Social Media / Homepage
-            </label>
-            
-            {data.socialMedia.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-3">
-                {data.socialMedia.map((link, index) => (
-                  <TagButtonSelected
-                    key={index}
-                    label={link}
-                    onRemove={() => removeSocialMedia(index)}
-                  />
-                ))}
-              </div>
-            )}
-            
-            <div className="flex space-x-2">
+          {/* Social Media Checkbox */}
+          <div className="flex items-center justify-end">
+            <label className="flex items-center space-x-2">
               <input
-                type="text"
-                value={newSocialMedia}
-                onChange={(e) => setNewSocialMedia(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && addSocialMedia()}
-                className="flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-1"
-                style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-                placeholder="https://linkedin.com/in/..."
+                type="checkbox"
+                checked={showSocialMedia}
+                onChange={(e) => setShowSocialMedia(e.target.checked)}
+                className="focus:ring-1"
+                style={{ accentColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
               />
-              <button
-                onClick={addSocialMedia}
-                className="px-4 py-2 text-white rounded-md"
-                style={{ backgroundColor: '#F29400' }}
-              >
-                Hinzufügen
-              </button>
-            </div>
+              <span className="text-sm font-medium text-gray-700">Social Media / Homepage</span>
+            </label>
           </div>
+
+          {/* Social Media Fields */}
+          {showSocialMedia && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Social Media / Homepage
+              </label>
+              
+              {data.socialMedia.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {data.socialMedia.map((link, index) => (
+                    <TagButtonSelected
+                      key={index}
+                      label={link}
+                      onRemove={() => removeSocialMedia(index)}
+                    />
+                  ))}
+                </div>
+              )}
+              
+              <div className="flex space-x-2">
+                <input
+                  type="text"
+                  value={newSocialMedia}
+                  onChange={(e) => setNewSocialMedia(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && addSocialMedia()}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:border-orange-500"
+                  style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                  placeholder="https://linkedin.com/in/..."
+                />
+                <button
+                  onClick={addSocialMedia}
+                  className="px-4 py-2 text-white rounded-md"
+                  style={{ backgroundColor: '#F29400' }}
+                >
+                  Hinzufügen
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </Card>
 
@@ -230,8 +247,8 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               type="text"
               value={data.adresse}
               onChange={(e) => updateData('adresse', e.target.value)}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1"
-              style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:border-orange-500"
+              style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
               placeholder="Musterstraße 123"
             />
           </div>
@@ -244,8 +261,8 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               type="text"
               value={data.plz}
               onChange={(e) => updateData('plz', e.target.value)}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1"
-              style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:border-orange-500"
+              style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
               placeholder="1010"
             />
           </div>
@@ -368,16 +385,16 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
       {/* Familienstand */}
       <Card title="Familienstand & Kinder">
         <div className="space-y-4">
-          <div className="grid grid-cols-12 gap-4">
-            <div className="col-span-6">
+          <div className="grid grid-cols-12 gap-4 items-start">
+            <div className="col-span-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Familienstand
               </label>
               <select
                 value={data.familienstand}
                 onChange={(e) => updateData('familienstand', e.target.value)}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1"
-                style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:border-orange-500"
+                style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
               >
                 <option value="">Familienstand auswählen</option>
                 {familienstandOptions.map(option => (
@@ -385,43 +402,43 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 ))}
               </select>
             </div>
-          </div>
 
-          {/* Kinder */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Kinder (Geburtsjahre)
-            </label>
-            
-            {data.kinder.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-3">
-                {data.kinder.map((child, index) => (
-                  <TagButtonSelected
-                    key={index}
-                    label={child}
-                    onRemove={() => removeChild(index)}
-                  />
-                ))}
+            {/* Kinder */}
+            <div className="col-span-8">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Kinder (Geburtsjahre)
+              </label>
+              
+              {data.kinder.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {data.kinder.map((child, index) => (
+                    <TagButtonSelected
+                      key={index}
+                      label={child}
+                      onRemove={() => removeChild(index)}
+                    />
+                  ))}
+                </div>
+              )}
+              
+              <div className="flex space-x-2">
+                <input
+                  type="text"
+                  value={newChild}
+                  onChange={(e) => setNewChild(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && addChild()}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:border-orange-500"
+                  style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                  placeholder="z.B. 2010"
+                />
+                <button
+                  onClick={addChild}
+                  className="px-4 py-2 text-white rounded-md"
+                  style={{ backgroundColor: '#F29400' }}
+                >
+                  Hinzufügen
+                </button>
               </div>
-            )}
-            
-            <div className="flex space-x-2">
-              <input
-                type="text"
-                value={newChild}
-                onChange={(e) => setNewChild(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && addChild()}
-                className="flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-1"
-                style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-                placeholder="z.B. 2010"
-              />
-              <button
-                onClick={addChild}
-                className="px-4 py-2 text-white rounded-md"
-                style={{ backgroundColor: '#F29400' }}
-              >
-                Hinzufügen
-              </button>
             </div>
           </div>
         </div>
