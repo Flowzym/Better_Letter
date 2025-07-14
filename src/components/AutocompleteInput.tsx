@@ -223,7 +223,6 @@ export default function AutocompleteInput<T = string>({
   const handleAdd = () => {
     if (!hasInput) return;
     onAdd?.();
-    onChange('');
   };
 
   return (
@@ -279,7 +278,7 @@ export default function AutocompleteInput<T = string>({
           )}
         </div>
 
-        {hasInput && (
+        {(hasInput || isOpen) && (
           <div className="flex-shrink-0 flex space-x-2">
             {/* Add button */}
             {showAddButton && (
