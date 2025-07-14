@@ -102,28 +102,26 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
     <div className="space-y-6">
       {/* Persönliche Daten Card */}
       <Card title="Persönliche Daten">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+        <div className="grid grid-cols-12 gap-4">
           {/* Titel */}
-          <div className="md:col-span-2">
+          <div className="col-span-12 sm:col-span-3 lg:col-span-2">
             <label className="block text-sm font-medium text-gray-700 mb-1">Titel</label>
             <AutocompleteInput
               value={data.titel}
               onChange={(value) => updateData('titel', value)}
               suggestions={titleSuggestions}
               placeholder="z.B. Dr., Mag."
-              className="min-w-[120px] w-auto"
               onFavoriteClick={(value) => {
                 updateData('titel', value);
                 toggleFavorite('titel', value);
               }}
             />
-            {/* Titel Favoriten über volle Breite */}
-            <div className="mt-2 w-full">
+            <div className="mt-2">
               <div className="flex flex-wrap gap-1">
                 {favorites.titel.filter(fav => fav !== data.titel).map((fav) => (
                   <TagButtonFavorite
                     key={fav}
-                    text={fav}
+                    label={fav}
                     onClick={() => updateData('titel', fav)}
                     onRemove={() => toggleFavorite('titel', fav)}
                   />
@@ -133,27 +131,27 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
           </div>
 
           {/* Vorname */}
-          <div className="md:col-span-5">
+          <div className="col-span-12 sm:col-span-4 lg:col-span-5">
             <label className="block text-sm font-medium text-gray-700 mb-1">Vorname</label>
             <input
               type="text"
               value={data.vorname}
               onChange={(e) => updateData('vorname', e.target.value)}
               placeholder="Vorname"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1"
               style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
             />
           </div>
 
           {/* Nachname */}
-          <div className="md:col-span-5">
+          <div className="col-span-12 sm:col-span-5 lg:col-span-5">
             <label className="block text-sm font-medium text-gray-700 mb-1">Nachname</label>
             <input
               type="text"
               value={data.nachname}
               onChange={(e) => updateData('nachname', e.target.value)}
               placeholder="Nachname"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1"
               style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
             />
           </div>
@@ -162,7 +160,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
 
       {/* Kontakt Card */}
       <Card title="Kontakt">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Telefon */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Telefon</label>
@@ -170,7 +168,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               <select
                 value={data.telefonVorwahl}
                 onChange={(e) => updateData('telefonVorwahl', e.target.value)}
-                className="min-w-[80px] w-auto px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+                className="w-24 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1"
                 style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
               >
                 {phoneCountryCodes.map((country) => (
@@ -184,7 +182,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 value={data.telefon}
                 onChange={(e) => updateData('telefon', e.target.value)}
                 placeholder="Telefonnummer"
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1"
                 style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
               />
             </div>
@@ -198,7 +196,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               value={data.email}
               onChange={(e) => updateData('email', e.target.value)}
               placeholder="E-Mail-Adresse"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1"
               style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
             />
           </div>
@@ -208,33 +206,33 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
       {/* Adresse Card */}
       <Card title="Adresse">
         <div className="space-y-4">
-          {/* Straße & Hausnummer, PLZ, Ort, Ausland */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-            <div className="md:col-span-6">
+          {/* Straße & Hausnummer, PLZ, Ort */}
+          <div className="grid grid-cols-12 gap-4">
+            <div className="col-span-12 lg:col-span-6">
               <label className="block text-sm font-medium text-gray-700 mb-1">Straße & Hausnummer</label>
               <input
                 type="text"
                 value={data.adresse}
                 onChange={(e) => updateData('adresse', e.target.value)}
                 placeholder="Straße & Hausnummer"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1"
                 style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
               />
             </div>
 
-            <div className="md:col-span-2">
+            <div className="col-span-12 sm:col-span-3 lg:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-1">PLZ</label>
               <input
                 type="text"
                 value={data.plz}
                 onChange={(e) => updateData('plz', e.target.value)}
                 placeholder="PLZ"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1"
                 style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
               />
             </div>
 
-            <div className="md:col-span-3">
+            <div className="col-span-12 sm:col-span-6 lg:col-span-3">
               <label className="block text-sm font-medium text-gray-700 mb-1">Ort</label>
               <AutocompleteInput
                 value={data.ort}
@@ -250,7 +248,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 {favorites.ort.filter(fav => fav !== data.ort).map((fav) => (
                   <TagButtonFavorite
                     key={fav}
-                    text={fav}
+                    label={fav}
                     onClick={() => updateData('ort', fav)}
                     onRemove={() => toggleFavorite('ort', fav)}
                   />
@@ -258,8 +256,8 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               </div>
             </div>
 
-            <div className="md:col-span-1 flex justify-end items-end">
-              <label className="flex items-center">
+            <div className="col-span-12 sm:col-span-3 lg:col-span-1 flex justify-end items-end">
+              <label className="flex items-center text-sm font-medium text-gray-700">
                 <input
                   type="checkbox"
                   checked={data.ausland}
@@ -289,7 +287,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 {favorites.land.filter(fav => fav !== data.land).map((fav) => (
                   <TagButtonFavorite
                     key={fav}
-                    text={fav}
+                    label={fav}
                     onClick={() => updateData('land', fav)}
                     onRemove={() => toggleFavorite('land', fav)}
                   />
@@ -302,20 +300,18 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
 
       {/* Geburtsdaten Card */}
       <Card title="Geburtsdaten">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-12 gap-4">
           {/* Geburtsdatum */}
-          <div className="md:col-span-1">
+          <div className="col-span-12 sm:col-span-4 lg:col-span-2">
             <label className="block text-sm font-medium text-gray-700 mb-1">Geburtsdatum</label>
             <DatePicker
               value={data.geburtsdatum}
               onChange={(value) => updateData('geburtsdatum', value)}
-              placeholder="tt.mm.jjjj"
-              className="placeholder:text-gray-400"
             />
           </div>
 
           {/* Geburtsort */}
-          <div className="md:col-span-1">
+          <div className="col-span-12 sm:col-span-4 lg:col-span-2">
             <label className="block text-sm font-medium text-gray-700 mb-1">Geburtsort</label>
             <AutocompleteInput
               value={data.geburtsort}
@@ -331,7 +327,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               {favorites.geburtsort.filter(fav => fav !== data.geburtsort).map((fav) => (
                 <TagButtonFavorite
                   key={fav}
-                  text={fav}
+                  label={fav}
                   onClick={() => updateData('geburtsort', fav)}
                   onRemove={() => toggleFavorite('geburtsort', fav)}
                 />
@@ -340,7 +336,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
           </div>
 
           {/* Geburtsland */}
-          <div className="md:col-span-2">
+          <div className="col-span-12 sm:col-span-4 lg:col-span-3">
             <label className="block text-sm font-medium text-gray-700 mb-1">Geburtsland</label>
             <AutocompleteInput
               value={data.geburtsland}
@@ -356,7 +352,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               {favorites.geburtsland.filter(fav => fav !== data.geburtsland).map((fav) => (
                 <TagButtonFavorite
                   key={fav}
-                  text={fav}
+                  label={fav}
                   onClick={() => updateData('geburtsland', fav)}
                   onRemove={() => toggleFavorite('geburtsland', fav)}
                 />
@@ -365,8 +361,8 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
           </div>
 
           {/* Staatsbürgerschaft Checkbox */}
-          <div className="md:col-span-1 flex justify-end items-end">
-            <label className="flex items-center">
+          <div className="col-span-12 lg:col-span-5 flex justify-end items-end">
+            <label className="flex items-center text-sm font-medium text-gray-700">
               <input
                 type="checkbox"
                 checked={data.staatsbuergerschaftCheckbox}
@@ -396,7 +392,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               {favorites.staatsbuergerschaft.filter(fav => fav !== data.staatsbuergerschaft).map((fav) => (
                 <TagButtonFavorite
                   key={fav}
-                  text={fav}
+                  label={fav}
                   onClick={() => updateData('staatsbuergerschaft', fav)}
                   onRemove={() => toggleFavorite('staatsbuergerschaft', fav)}
                 />
@@ -408,14 +404,14 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
 
       {/* Personenstand Card */}
       <Card title="Personenstand">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Familienstand */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Familienstand</label>
             <select
               value={data.familienstand}
               onChange={(e) => updateData('familienstand', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1"
               style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
             >
               <option value="">Bitte wählen</option>
@@ -434,13 +430,14 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 value={newChild}
                 onChange={(e) => setNewChild(e.target.value)}
                 placeholder="Jahr eingeben"
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1"
                 style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
                 onKeyPress={(e) => e.key === 'Enter' && addChild()}
               />
               <button
                 onClick={addChild}
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                className="px-4 py-2 text-white rounded-md hover:opacity-90"
+                style={{ backgroundColor: '#F29400' }}
               >
                 +
               </button>
@@ -449,8 +446,8 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               {data.kinder.map((child, index) => (
                 <TagButtonSelected
                   key={index}
-                  text={child}
-                  onClick={() => removeChild(index)}
+                  label={child}
+                  onRemove={() => removeChild(index)}
                 />
               ))}
             </div>
@@ -476,7 +473,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
             {favorites.arbeitsmarktzugang.filter(fav => fav !== data.arbeitsmarktzugang).map((fav) => (
               <TagButtonFavorite
                 key={fav}
-                text={fav}
+                label={fav}
                 onClick={() => updateData('arbeitsmarktzugang', fav)}
                 onRemove={() => toggleFavorite('arbeitsmarktzugang', fav)}
               />
@@ -495,13 +492,14 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               value={newSocialMedia}
               onChange={(e) => setNewSocialMedia(e.target.value)}
               placeholder="Social Media Profil"
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1"
               style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
               onKeyPress={(e) => e.key === 'Enter' && addSocialMedia()}
             />
             <button
               onClick={addSocialMedia}
-              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+              className="px-4 py-2 text-white rounded-md hover:opacity-90"
+              style={{ backgroundColor: '#F29400' }}
             >
               +
             </button>
@@ -510,8 +508,8 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
             {data.socialMedia.map((social, index) => (
               <TagButtonSelected
                 key={index}
-                text={social}
-                onClick={() => removeSocialMedia(index)}
+                label={social}
+                onRemove={() => removeSocialMedia(index)}
               />
             ))}
           </div>
