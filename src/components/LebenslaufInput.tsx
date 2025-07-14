@@ -1,148 +1,416 @@
-import React, { useState, useRef, useEffect } from 'react';
-import TagButtonSelected from './ui/TagButtonSelected';
+import React, { useState } from 'react';
+import { ChevronDown, ChevronUp, Plus, User, Briefcase, GraduationCap, Zap, Heart } from 'lucide-react';
+import PersonalDataForm from './PersonalDataForm';
+import ExperienceForm from './ExperienceForm';
+import ExperienceSection from './ExperienceSection';
+import AusbildungForm from './AusbildungForm';
+import { useLebenslaufContext } from '../context/LebenslaufContext';
+import CVSection from './CVSection';
 
-// Initial data structure for personal data
-interface PersonalData {
-  // Name und Titel
-  vorname: string;
-  titel: string;
-  
-  // Geburt
-  geburtsdatum: string; // DD.MM.YYYY
-  geburtsort: string;
-  staatsbuegerschaft: string;
-  
-  // Personenstand
-  personenstand: string;
-  kinderGeburtsjahre: string[];
-  
-  // Adresse
-  adresse: string;
-  ort: string;
-  ausland: boolean;
-  auslandLand: string;
-  ausland: boolean;
-  auslandLand: string;
-  
-  // Kontakt
-  telefon: string;
-  laendervorwahl: string;
-  email: string;
-  
-  // Online
-  homepage: string;
-  socialMediaLinks: string[];
-}
+type TabType = 'personal' | 'experience' | 'education' | 'skills' | 'softskills';
 
-const TITEL_OPTIONEN = [
-  'Dr.',
-  'Prof.',
-  'Prof. Dr.',
-// Options for titles (vorangestellt and nachgestellt combined)
-  'Mag.',
-  'Dipl.-Ing.',
-  'Ing.',
-  'MSc',
-  'BSc',
-  'MBA',
-  'PhD'
-];
+export default function LebenslaufInput() {
+  const [activeTab, setActiveTab] = useState<TabType>('personal');
+  const {
+    berufserfahrungen,
+    addExperience,
+    updateExperience,
+    deleteExperience,
+    selectedExperienceId,
+    isEditingExperience,
+    selectExperience,
+    ausbildungen,
+    addEducation,
+    updateEducation,
+    deleteEducation,
+    selectedEducationId,
+    isEditingEducation,
+    selectEducation,
+    cvSuggestions
+  } = useLebenslaufContext();
 
-// Options for marital status
-const PERSONENSTAND_OPTIONEN = [
-  'ledig',
-  'verheiratet',
-  'geschieden',
-  'verwitwet',
-  'in Partnerschaft',
-  'getrennt lebend'
-];
+  // Personal Data State
+  const [personalData, setPersonalData] = useState({
+    vorname: '',
+    nachname: '',
+    titel: '',
+    geburtsdatum: '',
+    geburtsort: '',
+    staatsbuegerschaft: '',
+    personenstand: '',
+    kinderGeburtsjahre: [],
+    adresse: '',
+    ort: '',
+    ausland: false,
+    auslandLand: '',
+    telefon: '',
+    laendervorwahl: '+43',
+    email: '',
+    homepage: '',
+    socialMediaLinks: [],
+  });
 
-// Country codes for phone numbers (simplified for dropdown)
-const COUNTRY_CODES = [
-  { code: '+43', country: 'Österreich', flag: '🇦🇹' },
-  { code: '+49', country: 'Deutschland', flag: '🇩🇪' },
-  { code: '+41', country: 'Schweiz', flag: '🇨🇭' },
-  { code: '+1', country: 'USA/Kanada', flag: '🇺🇸' },
-  { code: '+44', country: 'Vereinigtes Königreich', flag: '🇬🇧' },
-  { code: '+33', country: 'Frankreich', flag: '🇫🇷' },
-  { code: '+39', country: 'Italien', flag: '🇮🇹' },
-  { code: '+34', country: 'Spanien', flag: '🇪🇸' },
-  { code: '+31', country: 'Niederlande', flag: '🇳🇱' },
-  { code: '+32', country: 'Belgien', flag: '🇧🇪' }
-];
+  // Experience Form State
+  const [experienceForm, setExperienceForm] = useState({
+    companies: [],
+    position: [],
+    startMonth: null,
+    startYear: '',
+    endMonth: null,
+    endYear: null,
+    isCurrent: false,
+    aufgabenbereiche: []
+  });
 
-// Full list of countries for dropdown selection
-const COUNTRIES = [
-  'Afghanistan', 'Albanien', 'Algerien', 'Andorra', 'Angola', 'Antigua und Barbuda',
-  'Argentinien', 'Armenien', 'Australien', 'Österreich', 'Aserbaidschan', 'Bahamas',
-  'Bahrain', 'Bangladesch', 'Barbados', 'Belarus', 'Belgien', 'Belize', 'Benin',
-  'Bhutan', 'Bolivien', 'Bosnien und Herzegowina', 'Botswana', 'Brasilien', 'Brunei',
-  'Bulgarien', 'Burkina Faso', 'Burundi', 'Kambodscha', 'Kamerun', 'Kanada',
-  'Kap Verde', 'Zentralafrikanische Republik', 'Tschad', 'Chile', 'China', 'Kolumbien',
-  'Komoren', 'Kongo', 'Costa Rica', 'Kroatien', 'Kuba', 'Zypern', 'Tschechien',
-  'Dänemark', 'Dschibuti', 'Dominica', 'Dominikanische Republik', 'Ecuador', 'Ägypten',
-  'El Salvador', 'Äquatorialguinea', 'Eritrea', 'Estland', 'Eswatini', 'Äthiopien',
-  'Fidschi', 'Finnland', 'Frankreich', 'Gabun', 'Gambia', 'Georgien', 'Deutschland',
-  'Ghana', 'Griechenland', 'Grenada', 'Guatemala', 'Guinea', 'Guinea-Bissau', 'Guyana',
-  'Haiti', 'Honduras', 'Ungarn', 'Island', 'Indien', 'Indonesien', 'Iran', 'Irak',
-  'Irland', 'Israel', 'Italien', 'Jamaika', 'Japan', 'Jordanien', 'Kasachstan',
-  'Kenia', 'Kiribati', 'Nordkorea', 'Südkorea', 'Kuwait', 'Kirgisistan', 'Laos',
-  'Lettland', 'Libanon', 'Lesotho', 'Liberia', 'Libyen', 'Liechtenstein', 'Litauen',
-  'Luxemburg', 'Madagaskar', 'Malawi', 'Malaysia', 'Malediven', 'Mali', 'Malta',
-  'Marshallinseln', 'Mauretanien', 'Mauritius', 'Mexiko', 'Mikronesien', 'Moldau',
-  'Monaco', 'Mongolei', 'Montenegro', 'Marokko', 'Mosambik', 'Myanmar', 'Namibia',
-  'Nauru', 'Nepal', 'Niederlande', 'Neuseeland', 'Nicaragua', 'Niger', 'Nigeria',
-  'Nordmazedonien', 'Norwegen', 'Oman', 'Pakistan', 'Palau', 'Panama', 'Papua-Neuguinea',
-  'Paraguay', 'Peru', 'Philippinen', 'Polen', 'Portugal', 'Katar', 'Rumänien',
-  'Russland', 'Ruanda', 'Saint Kitts und Nevis', 'Saint Lucia', 'Saint Vincent und die Grenadinen',
-  'Samoa', 'San Marino', 'São Tomé und Príncipe', 'Saudi-Arabien', 'Senegal', 'Serbien',
-  'Seychellen', 'Sierra Leone', 'Singapur', 'Slowakei', 'Slowenien', 'Salomonen',
-  'Somalia', 'Südafrika', 'Südsudan', 'Spanien', 'Sri Lanka', 'Sudan', 'Suriname',
-  'Schweden', 'Schweiz', 'Syrien', 'Taiwan', 'Tadschikistan', 'Tansania', 'Thailand',
-  'Timor-Leste', 'Togo', 'Tonga', 'Trinidad und Tobago', 'Tunesien', 'Türkei',
-  'Turkmenistan', 'Tuvalu', 'Uganda', 'Ukraine', 'Vereinigte Arabische Emirate',
-  'Vereinigtes Königreich', 'Vereinigte Staaten', 'Uruguay', 'Usbekistan', 'Vanuatu',
-  'Vatikanstadt', 'Venezuela', 'Vietnam', 'Jemen', 'Sambia', 'Simbabwe'
-];
+  // Education Form State
+  const [educationForm, setEducationForm] = useState({
+    institution: [],
+    ausbildungsart: [],
+    abschluss: [],
+    startMonth: null,
+    startYear: '',
+    endMonth: null,
+    endYear: null,
+    isCurrent: false,
+    zusatzangaben: ''
+  });
 
-// PLZ zu Ort Mapping (Beispiel für österreichische PLZ)
-const PLZ_TO_ORT: Record<string, string> = {
-  '1010': 'Wien',
-  '1020': 'Wien',
-  '1030': 'Wien',
-  '1040': 'Wien',
-  '1050': 'Wien',
-  '1060': 'Wien',
-  '1070': 'Wien',
-  '1080': 'Wien',
-  '1090': 'Wien',
-  '1100': 'Wien',
-  '1110': 'Wien',
-  '1120': 'Wien',
-  '1130': 'Wien',
-  '1140': 'Wien',
-  '1150': 'Wien',
-  '1160': 'Wien',
-  '1170': 'Wien',
-  '1180': 'Wien',
-  '1190': 'Wien',
-  '1200': 'Wien',
-  '1210': 'Wien',
-  '1220': 'Wien',
-  '1230': 'Wien',
-  '4020': 'Linz',
-  '5020': 'Salzburg',
-  '6020': 'Innsbruck',
-  '8010': 'Graz',
-  '9020': 'Klagenfurt'
-};
+  const handleExperienceFormChange = <K extends keyof typeof experienceForm>(
+    field: K,
+    value: typeof experienceForm[K]
+  ) => {
+    setExperienceForm(prev => ({ ...prev, [field]: value }));
+  };
 
-interface PersonalDataFormProps {
-  data: PersonalData;
-  onChange: (data: PersonalData) => void;
-}
+  const handleEducationFormChange = <K extends keyof typeof educationForm>(
+    field: K,
+    value: typeof educationForm[K]
+  ) => {
+    setEducationForm(prev => ({ ...prev, [field]: value }));
+  };
 
-export default function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
-  // Rest of the component implementation...
+  const handleAddExperience = async () => {
+    await addExperience(experienceForm);
+    setExperienceForm({
+      companies: [],
+      position: [],
+      startMonth: null,
+      startYear: '',
+      endMonth: null,
+      endYear: null,
+      isCurrent: false,
+      aufgabenbereiche: []
+    });
+  };
+
+  const handleUpdateExperience = async () => {
+    if (!selectedExperienceId) return;
+    await updateExperience(selectedExperienceId, experienceForm);
+  };
+
+  const handleAddEducation = async () => {
+    await addEducation(educationForm);
+    setEducationForm({
+      institution: [],
+      ausbildungsart: [],
+      abschluss: [],
+      startMonth: null,
+      startYear: '',
+      endMonth: null,
+      endYear: null,
+      isCurrent: false,
+      zusatzangaben: ''
+    });
+  };
+
+  const handleUpdateEducation = async () => {
+    if (!selectedEducationId) return;
+    await updateEducation(selectedEducationId, educationForm);
+  };
+
+  const tabs = [
+    { id: 'personal', label: 'Persönliche Daten', icon: <User className="h-4 w-4" /> },
+    { id: 'experience', label: 'Berufserfahrung', icon: <Briefcase className="h-4 w-4" /> },
+    { id: 'education', label: 'Ausbildung', icon: <GraduationCap className="h-4 w-4" /> },
+    { id: 'skills', label: 'Fachkompetenzen', icon: <Zap className="h-4 w-4" /> },
+    { id: 'softskills', label: 'Softskills', icon: <Heart className="h-4 w-4" /> }
+  ];
+
+  return (
+    <div className="space-y-6">
+      {/* Tabs */}
+      <div className="flex space-x-1 mb-6 bg-gray-100 p-1 rounded-lg">
+        {tabs.map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id as TabType)}
+            className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+              activeTab === tab.id
+                ? 'bg-white shadow-sm'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+            style={activeTab === tab.id ? { color: '#F29400' } : {}}
+          >
+            {tab.icon}
+            <span>{tab.label}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Tab Content */}
+      {activeTab === 'personal' && (
+        <PersonalDataForm
+          data={personalData}
+          onChange={setPersonalData}
+        />
+      )}
+
+      {activeTab === 'experience' && (
+        <div className="space-y-6">
+          {/* Existing Experience Entries */}
+          {berufserfahrungen.length > 0 && (
+            <ExperienceSection>
+              {berufserfahrungen.map(exp => (
+                <div
+                  key={exp.id}
+                  className={`border rounded-lg p-4 cursor-pointer ${
+                    selectedExperienceId === exp.id ? 'border-orange-500 bg-orange-50' : 'border-gray-200'
+                  }`}
+                  onClick={() => {
+                    selectExperience(exp.id);
+                    setExperienceForm({
+                      companies: exp.companies,
+                      position: exp.position,
+                      startMonth: exp.startMonth,
+                      startYear: exp.startYear,
+                      endMonth: exp.endMonth,
+                      endYear: exp.endYear,
+                      isCurrent: exp.isCurrent,
+                      aufgabenbereiche: exp.aufgabenbereiche
+                    });
+                  }}
+                >
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <div className="font-medium text-gray-900">
+                        {exp.position.join(' / ')}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {exp.companies.join(', ')}
+                      </div>
+                      <div className="text-xs text-gray-500 mt-1">
+                        {exp.startMonth && exp.startYear
+                          ? `${exp.startMonth}/${exp.startYear}`
+                          : exp.startYear}{' '}
+                        -{' '}
+                        {exp.isCurrent
+                          ? 'heute'
+                          : exp.endMonth && exp.endYear
+                          ? `${exp.endMonth}/${exp.endYear}`
+                          : exp.endYear || ''}
+                      </div>
+                    </div>
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={e => {
+                          e.stopPropagation();
+                          if (selectedExperienceId === exp.id) {
+                            selectExperience(null);
+                          } else {
+                            deleteExperience(exp.id);
+                          }
+                        }}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  </div>
+                  {exp.aufgabenbereiche.length > 0 && (
+                    <div className="mt-2">
+                      <div className="text-xs text-gray-500">Aufgabenbereiche:</div>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {exp.aufgabenbereiche.map((task, i) => (
+                          <span
+                            key={i}
+                            className="inline-block px-2 py-1 text-xs bg-gray-100 rounded"
+                          >
+                            {task}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </ExperienceSection>
+          )}
+
+          {/* Experience Form */}
+          <div className="border border-gray-200 rounded-lg overflow-hidden">
+            <div className="px-4 py-3 bg-gray-50 flex items-center justify-between">
+              <h3 className="font-medium text-gray-900">
+                {isEditingExperience && selectedExperienceId
+                  ? 'Berufserfahrung bearbeiten'
+                  : 'Neue Berufserfahrung hinzufügen'}
+              </h3>
+              {isEditingExperience && selectedExperienceId && (
+                <button
+                  onClick={() => selectExperience(null)}
+                  className="text-sm text-gray-600 hover:text-gray-900"
+                >
+                  Abbrechen
+                </button>
+              )}
+            </div>
+            <div className="p-4">
+              <ExperienceForm
+                form={experienceForm}
+                selectedPositions={experienceForm.position}
+                onUpdateField={handleExperienceFormChange}
+                onPositionsChange={positions => handleExperienceFormChange('position', positions)}
+                cvSuggestions={cvSuggestions}
+              />
+              <div className="mt-4 flex justify-end">
+                <button
+                  onClick={isEditingExperience ? handleUpdateExperience : handleAddExperience}
+                  className="px-4 py-2 text-white rounded-md"
+                  style={{ backgroundColor: '#F29400' }}
+                >
+                  {isEditingExperience ? 'Aktualisieren' : 'Hinzufügen'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'education' && (
+        <div className="space-y-6">
+          {/* Existing Education Entries */}
+          {ausbildungen.length > 0 && (
+            <div className="space-y-4">
+              {ausbildungen.map(edu => (
+                <div
+                  key={edu.id}
+                  className={`border rounded-lg p-4 cursor-pointer ${
+                    selectedEducationId === edu.id ? 'border-orange-500 bg-orange-50' : 'border-gray-200'
+                  }`}
+                  onClick={() => {
+                    selectEducation(edu.id);
+                    setEducationForm({
+                      institution: edu.institution,
+                      ausbildungsart: edu.ausbildungsart,
+                      abschluss: edu.abschluss,
+                      startMonth: edu.startMonth,
+                      startYear: edu.startYear,
+                      endMonth: edu.endMonth,
+                      endYear: edu.endYear,
+                      isCurrent: edu.isCurrent,
+                      zusatzangaben: edu.zusatzangaben
+                    });
+                  }}
+                >
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <div className="font-medium text-gray-900">
+                        {edu.ausbildungsart.join(' / ')} {edu.abschluss.length > 0 && `- ${edu.abschluss.join(', ')}`}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {edu.institution.join(', ')}
+                      </div>
+                      <div className="text-xs text-gray-500 mt-1">
+                        {edu.startMonth && edu.startYear
+                          ? `${edu.startMonth}/${edu.startYear}`
+                          : edu.startYear}{' '}
+                        -{' '}
+                        {edu.isCurrent
+                          ? 'heute'
+                          : edu.endMonth && edu.endYear
+                          ? `${edu.endMonth}/${edu.endYear}`
+                          : edu.endYear || ''}
+                      </div>
+                      {edu.zusatzangaben && (
+                        <div className="text-sm text-gray-700 mt-2">
+                          {edu.zusatzangaben}
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={e => {
+                          e.stopPropagation();
+                          if (selectedEducationId === edu.id) {
+                            selectEducation(null);
+                          } else {
+                            deleteEducation(edu.id);
+                          }
+                        }}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Education Form */}
+          <div className="border border-gray-200 rounded-lg overflow-hidden">
+            <div className="px-4 py-3 bg-gray-50 flex items-center justify-between">
+              <h3 className="font-medium text-gray-900">
+                {isEditingEducation && selectedEducationId
+                  ? 'Ausbildung bearbeiten'
+                  : 'Neue Ausbildung hinzufügen'}
+              </h3>
+              {isEditingEducation && selectedEducationId && (
+                <button
+                  onClick={() => selectEducation(null)}
+                  className="text-sm text-gray-600 hover:text-gray-900"
+                >
+                  Abbrechen
+                </button>
+              )}
+            </div>
+            <div className="p-4">
+              <AusbildungForm
+                form={educationForm}
+                onUpdateField={handleEducationFormChange}
+                cvSuggestions={cvSuggestions}
+              />
+              <div className="mt-4 flex justify-end">
+                <button
+                  onClick={isEditingEducation ? handleUpdateEducation : handleAddEducation}
+                  className="px-4 py-2 text-white rounded-md"
+                  style={{ backgroundColor: '#F29400' }}
+                >
+                  {isEditingEducation ? 'Aktualisieren' : 'Hinzufügen'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'skills' && (
+        <div className="p-6 bg-gray-50 rounded-lg border border-gray-200">
+          <h3 className="text-lg font-medium text-gray-900 mb-4">Fachkompetenzen</h3>
+          <p className="text-gray-600">
+            Dieser Bereich wird in einer zukünftigen Version implementiert.
+          </p>
+        </div>
+      )}
+
+      {activeTab === 'softskills' && (
+        <div className="p-6 bg-gray-50 rounded-lg border border-gray-200">
+          <h3 className="text-lg font-medium text-gray-900 mb-4">Softskills</h3>
+          <p className="text-gray-600">
+            Dieser Bereich wird in einer zukünftigen Version implementiert.
+          </p>
+        </div>
+      )}
+    </div>
+  );
 }
