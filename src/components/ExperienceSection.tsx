@@ -16,8 +16,7 @@ export default function ExperienceSection({ children }: ExperienceSectionProps) 
         aria-expanded={isOpen}
       >
         <div className="flex items-center space-x-2">
-          <span className="text-base">💼</span>
-          <h2 className="font-medium text-gray-900 text-lg">Berufserfahrung</h2>
+          {/* Titel entfernt - wird jetzt über Tab-Navigation angezeigt */}
         </div>
         {isOpen ? (
           <ChevronUp className="h-5 w-5" style={{ color: '#F29400' }} />
