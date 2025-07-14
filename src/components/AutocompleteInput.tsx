@@ -43,6 +43,7 @@ export default function AutocompleteInput<T = string>({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const hasInput = value.trim().length > 0;
+  const [isFocused, setIsFocused] = useState(false);
 
   // Helper functions with defaults for string suggestions
   const getSuggestionText = (item: T): string => {
@@ -137,6 +138,7 @@ export default function AutocompleteInput<T = string>({
 
   // Focus event handler - prevents editor focus
   const handleFocus = (e: React.FocusEvent) => {
+    setIsFocused(true);
     // Mark the input as active for focus management
     if (e.currentTarget) {
       e.currentTarget.setAttribute('data-profile-input-active', 'true');
@@ -144,6 +146,7 @@ export default function AutocompleteInput<T = string>({
   };
 
   const handleBlur = (e: React.FocusEvent) => {
+    setIsFocused(false);
     // Remove the marking after short delay
     setTimeout(() => {
       if (e.currentTarget) {
@@ -278,7 +281,7 @@ export default function AutocompleteInput<T = string>({
           )}
         </div>
 
-        {(hasInput || isOpen) && (
+        {(hasInput && (isFocused || isOpen)) && (
           <div className="flex-shrink-0 flex space-x-2">
             {/* Add button */}
             {showAddButton && (

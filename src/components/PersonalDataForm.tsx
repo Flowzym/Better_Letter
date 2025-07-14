@@ -121,8 +121,8 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
     <div className="space-y-6">
       {/* Namenscard */}
       <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="w-40">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+          <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700 mb-2">Titel</label>
             <AutocompleteInput
               value={data.titel || ''}
@@ -135,10 +135,13 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
               placeholder="z.B. Dr., Mag."
               showAddButton={false}
               showFavoritesButton={true}
+              formatSuggestion={(item) => item}
+              getSearchableString={(item) => item}
+              getKey={(item) => item}
             />
           </div>
           
-          <div>
+          <div className="md:col-span-5">
             <label className="block text-sm font-medium text-gray-700 mb-2">Vorname</label>
             <input
               type="text"
@@ -150,7 +153,7 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
             />
           </div>
           
-          <div>
+          <div className="md:col-span-5">
             <label className="block text-sm font-medium text-gray-700 mb-2">Nachname</label>
             <input
               type="text"
@@ -165,7 +168,7 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
 
         {/* Titel Favoriten - volle Breite */}
         {favoriteTitles.filter(title => title !== (data.titel || '')).length > 0 && (
-          <div className="mt-4 col-span-3">
+          <div className="mt-4">
             <div className="flex items-center gap-1 mb-2">
               <Star className="w-4 h-4 fill-current" style={{ color: '#F29400' }} />
               <span className="text-sm text-gray-600">Favoriten:</span>
@@ -192,7 +195,7 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Telefon</label>
             <div className="flex gap-2">
-              <div className="w-48">
+              <div className="w-32">
                 <AutocompleteInput
                   value={data.telefonVorwahl || '+43'}
                   onChange={(value) => {
@@ -242,8 +245,8 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
 
       {/* Adresscard */}
       <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-4">
-          <div className="md:col-span-3">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-4">
+          <div className="md:col-span-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">Straße & Hausnummer</label>
             <input
               type="text"
@@ -255,7 +258,7 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
             />
           </div>
           
-          <div className="w-32">
+          <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700 mb-2">PLZ</label>
             <input
               type="text"
@@ -283,7 +286,7 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
             />
           </div>
           
-          <div className="w-40">
+          <div className="md:col-span-3">
             <label className="block text-sm font-medium text-gray-700 mb-2">Ort</label>
             <AutocompleteInput
               value={data.ort || ''}
@@ -296,10 +299,13 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
               placeholder="Ort"
               showAddButton={false}
               showFavoritesButton={true}
+              formatSuggestion={(item) => item}
+              getSearchableString={(item) => item}
+              getKey={(item) => item}
             />
           </div>
 
-          <div className="flex items-end">
+          <div className="md:col-span-1 flex items-end">
             <div className="flex items-center gap-2 pb-2">
               <input
                 type="checkbox"
@@ -309,7 +315,7 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
                 className="rounded"
                 style={{ accentColor: '#F29400' }}
               />
-              <label htmlFor="ausland" className="text-sm text-gray-700">Ausland</label>
+              <label htmlFor="ausland" className="text-sm text-gray-700 whitespace-nowrap">Ausland</label>
             </div>
           </div>
         </div>
@@ -349,6 +355,9 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
               placeholder="Land"
               showAddButton={false}
               showFavoritesButton={true}
+              formatSuggestion={(item) => item}
+              getSearchableString={(item) => item}
+              getKey={(item) => item}
             />
             
             {favoriteLaender.filter(land => land !== (data.land || '')).length > 0 && (
@@ -377,8 +386,8 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
 
       {/* Geburtsdatencard */}
       <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
-          <div className="w-40">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-4">
+          <div className="md:col-span-3">
             <label className="block text-sm font-medium text-gray-700 mb-2">Geburtsdatum</label>
             <input
               type="date"
@@ -389,7 +398,7 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
             />
           </div>
           
-          <div>
+          <div className="md:col-span-3">
             <label className="block text-sm font-medium text-gray-700 mb-2">Geburtsort</label>
             <AutocompleteInput
               value={data.geburtsort || ''}
@@ -402,10 +411,13 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
               placeholder="Geburtsort"
               showAddButton={false}
               showFavoritesButton={true}
+              formatSuggestion={(item) => item}
+              getSearchableString={(item) => item}
+              getKey={(item) => item}
             />
           </div>
           
-          <div>
+          <div className="md:col-span-3">
             <label className="block text-sm font-medium text-gray-700 mb-2">Geburtsland</label>
             <AutocompleteInput
               value={data.geburtsland || ''}
@@ -418,10 +430,13 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
               placeholder="Geburtsland"
               showAddButton={false}
               showFavoritesButton={true}
+              formatSuggestion={(item) => item}
+              getSearchableString={(item) => item}
+              getKey={(item) => item}
             />
           </div>
 
-          <div className="flex items-end">
+          <div className="md:col-span-3 flex items-end">
             <div className="flex items-center gap-2 pb-2">
               <input
                 type="checkbox"
@@ -431,7 +446,7 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
                 className="rounded"
                 style={{ accentColor: '#F29400' }}
               />
-              <label htmlFor="staatsbuergerschaft" className="text-sm text-gray-700">Staatsbürgerschaft</label>
+              <label htmlFor="staatsbuergerschaft" className="text-sm text-gray-700 whitespace-nowrap">Staatsbürgerschaft</label>
             </div>
           </div>
         </div>
@@ -495,6 +510,9 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
                 placeholder="Staatsbürgerschaft"
                 showAddButton={false}
                 showFavoritesButton={true}
+                formatSuggestion={(item) => item}
+                getSearchableString={(item) => item}
+                getKey={(item) => item}
               />
               {favoriteStaatsbuergerschaft.filter(staat => staat !== (data.staatsbuergerschaft || '')).length > 0 && (
                 <div className="mt-2">
@@ -531,6 +549,9 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
                 placeholder="Arbeitsmarktzugang"
                 showAddButton={false}
                 showFavoritesButton={true}
+                formatSuggestion={(item) => item}
+                getSearchableString={(item) => item}
+                getKey={(item) => item}
               />
               {favoriteArbeitsmarktzugang.filter(zugang => zugang !== (data.arbeitsmarktzugang || '')).length > 0 && (
                 <div className="mt-2">
@@ -569,6 +590,9 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
               placeholder="Familienstand"
               showAddButton={false}
               showFavoritesButton={false}
+              formatSuggestion={(item) => item}
+              getSearchableString={(item) => item}
+              getKey={(item) => item}
             />
           </div>
 
