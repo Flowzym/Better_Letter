@@ -78,9 +78,9 @@ export default function LebenslaufPreview() {
             )}
           </p>
           <p className="font-bold text-lg text-gray-900">
-            {exp.position.join(" / ")}
+            {(exp.position || []).join(" / ")}
           </p>
-          <p className="italic text-gray-500">{exp.companies.join(', ')}</p>
+          <p className="italic text-gray-500">{(exp.companies || []).join(', ')}</p>
           <ul className="list-disc list-inside mt-2 space-y-1 text-black">
             {(exp.aufgabenbereiche || []).map((aufgabe, i) => (
               <li key={i}>{aufgabe}</li>
@@ -117,9 +117,9 @@ export default function LebenslaufPreview() {
             )}
           </p>
           <p className="font-bold text-lg text-gray-900">
-            {edu.ausbildungsart.join(" / ")} - {edu.abschluss.join(" / ")}
+            {(edu.ausbildungsart || []).join(" / ")} - {(edu.abschluss || []).join(" / ")}
           </p>
-          <p className="italic text-gray-500">{edu.institution.join(', ')}</p>
+          <p className="italic text-gray-500">{(edu.institution || []).join(', ')}</p>
           {edu.zusatzangaben && <p className="text-black mt-2">{edu.zusatzangaben}</p>}
         </div>
       ))}
