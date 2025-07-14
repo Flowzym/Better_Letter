@@ -4,7 +4,7 @@ import { Plus, Star, X } from 'lucide-react';
 interface AutocompleteInputProps<T = string> {
   value: string;
   onChange: (value: string) => void;
-  onAdd: (valueToAdd?: string | T) => void;
+  onAdd?: (valueToAdd?: string | T) => void;
   onFavoriteClick?: (valueToAdd?: string) => void;
   suggestions: T[];
   placeholder: string;
@@ -177,7 +177,7 @@ export default function AutocompleteInput<T = string>({
         if (highlightedIndex >= 0 && highlightedIndex < filteredSuggestions.length) {
           handleSuggestionSelect(filteredSuggestions[highlightedIndex]);
         } else {
-          onAdd();
+          onAdd?.();
         }
         break;
       case 'Escape':
@@ -204,7 +204,7 @@ export default function AutocompleteInput<T = string>({
   };
 
   const handleSuggestionClick = (suggestion: T) => {
-    onAdd(suggestion);
+    onAdd?.(suggestion);
     onChange('');
     setIsOpen(false);
     setHighlightedIndex(-1);
@@ -222,7 +222,7 @@ export default function AutocompleteInput<T = string>({
 
   const handleAdd = () => {
     if (!hasInput) return;
-    onAdd();
+    onAdd?.();
     onChange('');
   };
 
