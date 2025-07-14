@@ -1,25 +1,28 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Plus, X, Star, Calendar, Globe, Phone, Mail, Link as LinkIcon, Users } from 'lucide-react';
+import { Plus, X, Star } from 'lucide-react';
 import DatePicker from './DatePicker';
-import CountryAutocomplete from './CountryAutocomplete';
-import PhoneInput from './PhoneInput';
 import TagButtonSelected from './ui/TagButtonSelected';
 
 interface PersonalData {
   // Name und Titel
   vorname: string;
   nachname: string;
-  vorangestellterTitel: string;
-  nachgestellterTitel: string;
+  titel: string;
   
   // Geburt
   geburtsdatum: string; // DD.MM.YYYY
   geburtsort: string;
   staatsbuegerschaft: string;
   
+  // Personenstand
+  personenstand: string;
+  kinderGeburtsjahre: string[];
+  
   // Adresse
   adresse: string;
   ort: string;
+  ausland: boolean;
+  auslandLand: string;
   
   // Kontakt
   telefon: string;
@@ -29,10 +32,6 @@ interface PersonalData {
   // Online
   homepage: string;
   socialMediaLinks: string[];
-  
-  // Personenstand
-  personenstand: string;
-  kinderGeburtsjahre: string[];
 }
 
 const TITEL_OPTIONEN = [
@@ -57,6 +56,84 @@ const PERSONENSTAND_OPTIONEN = [
   'getrennt lebend'
 ];
 
+const COUNTRY_CODES = [
+  { code: '+43', country: 'Österreich' },
+  { code: '+49', country: 'Deutschland' },
+  { code: '+41', country: 'Schweiz' },
+  { code: '+1', country: 'USA/Kanada' },
+  { code: '+44', country: 'Vereinigtes Königreich' },
+  { code: '+33', country: 'Frankreich' },
+  { code: '+39', country: 'Italien' },
+  { code: '+34', country: 'Spanien' },
+  { code: '+31', country: 'Niederlande' },
+  { code: '+32', country: 'Belgien' },
+];
+
+const COUNTRIES = [
+  'Afghanistan', 'Albanien', 'Algerien', 'Andorra', 'Angola', 'Antigua und Barbuda',
+  'Argentinien', 'Armenien', 'Australien', 'Österreich', 'Aserbaidschan', 'Bahamas',
+  'Bahrain', 'Bangladesch', 'Barbados', 'Belarus', 'Belgien', 'Belize', 'Benin',
+  'Bhutan', 'Bolivien', 'Bosnien und Herzegowina', 'Botswana', 'Brasilien', 'Brunei',
+  'Bulgarien', 'Burkina Faso', 'Burundi', 'Kambodscha', 'Kamerun', 'Kanada',
+  'Kap Verde', 'Zentralafrikanische Republik', 'Tschad', 'Chile', 'China', 'Kolumbien',
+  'Komoren', 'Kongo', 'Costa Rica', 'Kroatien', 'Kuba', 'Zypern', 'Tschechien',
+  'Dänemark', 'Dschibuti', 'Dominica', 'Dominikanische Republik', 'Ecuador', 'Ägypten',
+  'El Salvador', 'Äquatorialguinea', 'Eritrea', 'Estland', 'Eswatini', 'Äthiopien',
+  'Fidschi', 'Finnland', 'Frankreich', 'Gabun', 'Gambia', 'Georgien', 'Deutschland',
+  'Ghana', 'Griechenland', 'Grenada', 'Guatemala', 'Guinea', 'Guinea-Bissau', 'Guyana',
+  'Haiti', 'Honduras', 'Ungarn', 'Island', 'Indien', 'Indonesien', 'Iran', 'Irak',
+  'Irland', 'Israel', 'Italien', 'Jamaika', 'Japan', 'Jordanien', 'Kasachstan',
+  'Kenia', 'Kiribati', 'Nordkorea', 'Südkorea', 'Kuwait', 'Kirgisistan', 'Laos',
+  'Lettland', 'Libanon', 'Lesotho', 'Liberia', 'Libyen', 'Liechtenstein', 'Litauen',
+  'Luxemburg', 'Madagaskar', 'Malawi', 'Malaysia', 'Malediven', 'Mali', 'Malta',
+  'Marshallinseln', 'Mauretanien', 'Mauritius', 'Mexiko', 'Mikronesien', 'Moldau',
+  'Monaco', 'Mongolei', 'Montenegro', 'Marokko', 'Mosambik', 'Myanmar', 'Namibia',
+  'Nauru', 'Nepal', 'Niederlande', 'Neuseeland', 'Nicaragua', 'Niger', 'Nigeria',
+  'Nordmazedonien', 'Norwegen', 'Oman', 'Pakistan', 'Palau', 'Panama', 'Papua-Neuguinea',
+  'Paraguay', 'Peru', 'Philippinen', 'Polen', 'Portugal', 'Katar', 'Rumänien',
+  'Russland', 'Ruanda', 'Saint Kitts und Nevis', 'Saint Lucia', 'Saint Vincent und die Grenadinen',
+  'Samoa', 'San Marino', 'São Tomé und Príncipe', 'Saudi-Arabien', 'Senegal', 'Serbien',
+  'Seychellen', 'Sierra Leone', 'Singapur', 'Slowakei', 'Slowenien', 'Salomonen',
+  'Somalia', 'Südafrika', 'Südsudan', 'Spanien', 'Sri Lanka', 'Sudan', 'Suriname',
+  'Schweden', 'Schweiz', 'Syrien', 'Taiwan', 'Tadschikistan', 'Tansania', 'Thailand',
+  'Timor-Leste', 'Togo', 'Tonga', 'Trinidad und Tobago', 'Tunesien', 'Türkei',
+  'Turkmenistan', 'Tuvalu', 'Uganda', 'Ukraine', 'Vereinigte Arabische Emirate',
+  'Vereinigtes Königreich', 'Vereinigte Staaten', 'Uruguay', 'Usbekistan', 'Vanuatu',
+  'Vatikanstadt', 'Venezuela', 'Vietnam', 'Jemen', 'Sambia', 'Simbabwe'
+];
+
+// PLZ zu Ort Mapping (Beispiel für österreichische PLZ)
+const PLZ_TO_ORT: Record<string, string> = {
+  '1010': 'Wien',
+  '1020': 'Wien',
+  '1030': 'Wien',
+  '1040': 'Wien',
+  '1050': 'Wien',
+  '1060': 'Wien',
+  '1070': 'Wien',
+  '1080': 'Wien',
+  '1090': 'Wien',
+  '1100': 'Wien',
+  '1110': 'Wien',
+  '1120': 'Wien',
+  '1130': 'Wien',
+  '1140': 'Wien',
+  '1150': 'Wien',
+  '1160': 'Wien',
+  '1170': 'Wien',
+  '1180': 'Wien',
+  '1190': 'Wien',
+  '1200': 'Wien',
+  '1210': 'Wien',
+  '1220': 'Wien',
+  '1230': 'Wien',
+  '4020': 'Linz',
+  '5020': 'Salzburg',
+  '6020': 'Innsbruck',
+  '8010': 'Graz',
+  '9020': 'Klagenfurt',
+};
+
 interface PersonalDataFormProps {
   data: PersonalData;
   onChange: (data: PersonalData) => void;
@@ -74,6 +151,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
 
   const [socialMediaInput, setSocialMediaInput] = useState('');
   const [kinderjahrInput, setKinderjahrInput] = useState('');
+  const [showAddOrtButton, setShowAddOrtButton] = useState(false);
 
   // Favoriten speichern
   useEffect(() => {
@@ -84,9 +162,17 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
     onChange({ ...data, [field]: value });
   };
 
-  const addToFavoriteOrte = (ort: string) => {
-    if (ort.trim() && !favoriteOrte.includes(ort.trim())) {
-      setFavoriteOrte([...favoriteOrte, ort.trim()]);
+  const getBorderColor = (value: string | boolean | string[]) => {
+    if (Array.isArray(value)) {
+      return value.length > 0 ? '#F29400' : '#D1D5DB';
+    }
+    return value ? '#F29400' : '#D1D5DB';
+  };
+
+  const addToFavoriteOrte = () => {
+    const ort = data.ort.trim();
+    if (ort && !favoriteOrte.includes(ort)) {
+      setFavoriteOrte([...favoriteOrte, ort]);
     }
   };
 
@@ -118,34 +204,35 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
     updateField('kinderGeburtsjahre', data.kinderGeburtsjahre.filter(j => j !== jahr));
   };
 
+  const handleOrtChange = (value: string) => {
+    // PLZ zu Ort Konvertierung
+    const plzMatch = value.match(/^\d{4}$/);
+    if (plzMatch && PLZ_TO_ORT[value]) {
+      updateField('ort', PLZ_TO_ORT[value]);
+    } else {
+      updateField('ort', value);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Name und Titel */}
       <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
-        <h3 className="text-sm font-medium text-gray-700 mb-4 flex items-center">
-          <Users className="h-4 w-4 mr-2" style={{ color: '#F29400' }} />
-          Name und Titel
-        </h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Vorangestellter Titel */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Titel */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Vorangestellter Titel</label>
-            <div className="relative">
-              <input
-                list="vorangestellte-titel"
-                value={data.vorangestellterTitel}
-                onChange={(e) => updateField('vorangestellterTitel', e.target.value)}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-                style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-                placeholder="z.B. Dr., Prof."
-              />
-              <datalist id="vorangestellte-titel">
-                {TITEL_OPTIONEN.map(titel => (
-                  <option key={titel} value={titel} />
-                ))}
-              </datalist>
-            </div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Titel</label>
+            <select
+              value={data.titel}
+              onChange={(e) => updateField('titel', e.target.value)}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+              style={{ borderColor: getBorderColor(data.titel), '--tw-ring-color': '#F29400' } as React.CSSProperties}
+            >
+              <option value="">Titel auswählen</option>
+              {TITEL_OPTIONEN.map(titel => (
+                <option key={titel} value={titel}>{titel}</option>
+              ))}
+            </select>
           </div>
 
           {/* Vorname */}
@@ -156,7 +243,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               value={data.vorname}
               onChange={(e) => updateField('vorname', e.target.value)}
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-              style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+              style={{ borderColor: getBorderColor(data.vorname), '--tw-ring-color': '#F29400' } as React.CSSProperties}
               placeholder="Vorname"
             />
           </div>
@@ -169,44 +256,15 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               value={data.nachname}
               onChange={(e) => updateField('nachname', e.target.value)}
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-              style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+              style={{ borderColor: getBorderColor(data.nachname), '--tw-ring-color': '#F29400' } as React.CSSProperties}
               placeholder="Nachname"
             />
-          </div>
-
-          {/* Nachgestellter Titel */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nachgestellter Titel</label>
-            <div className="relative">
-              <input
-                list="nachgestellte-titel"
-                value={data.nachgestellterTitel}
-                onChange={(e) => updateField('nachgestellterTitel', e.target.value)}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-                style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-                placeholder="z.B. MSc, MBA"
-              />
-              <datalist id="nachgestellte-titel">
-                {TITEL_OPTIONEN.filter(t => !t.includes('.')).map(titel => (
-                  <option key={titel} value={titel} />
-                ))}
-                <option value="MSc" />
-                <option value="BSc" />
-                <option value="MBA" />
-                <option value="PhD" />
-              </datalist>
-            </div>
           </div>
         </div>
       </div>
 
-      {/* Geburt */}
+      {/* Geburtsdaten */}
       <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
-        <h3 className="text-sm font-medium text-gray-700 mb-4 flex items-center">
-          <Calendar className="h-4 w-4 mr-2" style={{ color: '#F29400' }} />
-          Geburtsdaten
-        </h3>
-        
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Geburtsdatum */}
           <div>
@@ -225,7 +283,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               value={data.geburtsort}
               onChange={(e) => updateField('geburtsort', e.target.value)}
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-              style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+              style={{ borderColor: getBorderColor(data.geburtsort), '--tw-ring-color': '#F29400' } as React.CSSProperties}
               placeholder="Stadt, Land"
             />
           </div>
@@ -233,229 +291,38 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
           {/* Staatsbürgerschaft */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Staatsbürgerschaft</label>
-            <CountryAutocomplete
+            <select
               value={data.staatsbuegerschaft}
-              onChange={(country) => updateField('staatsbuegerschaft', country)}
-              placeholder="Land auswählen"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Adresse */}
-      <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
-        <h3 className="text-sm font-medium text-gray-700 mb-4 flex items-center">
-          <Globe className="h-4 w-4 mr-2" style={{ color: '#F29400' }} />
-          Adresse
-        </h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Adresse */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Straße und Hausnummer</label>
-            <input
-              type="text"
-              value={data.adresse}
-              onChange={(e) => updateField('adresse', e.target.value)}
+              onChange={(e) => updateField('staatsbuegerschaft', e.target.value)}
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-              style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-              placeholder="Musterstraße 123"
-            />
-          </div>
-
-          {/* Ort mit Favoriten */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">PLZ und Ort</label>
-            <div className="relative">
-              <input
-                list="favorite-orte"
-                value={data.ort}
-                onChange={(e) => updateField('ort', e.target.value)}
-                onBlur={() => {
-                  if (data.ort.trim()) {
-                    addToFavoriteOrte(data.ort);
-                  }
-                }}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-                style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-                placeholder="1010 Wien"
-              />
-              <datalist id="favorite-orte">
-                {favoriteOrte.map(ort => (
-                  <option key={ort} value={ort} />
-                ))}
-              </datalist>
-            </div>
-            
-            {/* Favoriten-Orte anzeigen */}
-            {favoriteOrte.length > 0 && (
-              <div className="mt-2">
-                <div className="flex items-center space-x-2 mb-1">
-                  <Star className="h-3 w-3" style={{ color: '#F29400' }} />
-                  <span className="text-xs text-gray-600">Favoriten:</span>
-                </div>
-                <div className="flex flex-wrap gap-1">
-                  {favoriteOrte.map(ort => (
-                    <button
-                      key={ort}
-                      onClick={() => updateField('ort', ort)}
-                      className="inline-flex items-center px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full hover:bg-gray-200 transition-colors duration-200"
-                    >
-                      <span className="mr-1">{ort}</span>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          removeFavoriteOrt(ort);
-                        }}
-                        className="text-gray-500 hover:text-gray-700"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Kontakt */}
-      <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
-        <h3 className="text-sm font-medium text-gray-700 mb-4 flex items-center">
-          <Phone className="h-4 w-4 mr-2" style={{ color: '#F29400' }} />
-          Kontaktdaten
-        </h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Telefon */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Telefonnummer</label>
-            <PhoneInput
-              countryCode={data.laendervorwahl}
-              phoneNumber={data.telefon}
-              onCountryChange={(code) => updateField('laendervorwahl', code)}
-              onPhoneChange={(phone) => updateField('telefon', phone)}
-            />
-          </div>
-
-          {/* E-Mail */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">E-Mail-Adresse</label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="email"
-                value={data.email}
-                onChange={(e) => updateField('email', e.target.value)}
-                className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-                style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-                placeholder="name@beispiel.com"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Online-Präsenz */}
-      <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
-        <h3 className="text-sm font-medium text-gray-700 mb-4 flex items-center">
-          <LinkIcon className="h-4 w-4 mr-2" style={{ color: '#F29400' }} />
-          Online-Präsenz
-        </h3>
-        
-        <div className="space-y-4">
-          {/* Homepage */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Homepage/Portfolio</label>
-            <div className="relative">
-              <LinkIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="url"
-                value={data.homepage}
-                onChange={(e) => updateField('homepage', e.target.value)}
-                className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-                style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-                placeholder="https://www.beispiel.com"
-              />
-            </div>
-          </div>
-
-          {/* Social Media Links */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Social Media Links</label>
-            
-            {/* Ausgewählte Links */}
-            {data.socialMediaLinks.length > 0 && (
-              <div className="mb-3 flex flex-wrap gap-2">
-                {data.socialMediaLinks.map((link, index) => (
-                  <TagButtonSelected
-                    key={index}
-                    label={link}
-                    onRemove={() => removeSocialMediaLink(link)}
-                  />
-                ))}
-              </div>
-            )}
-
-            {/* Eingabefeld */}
-            <div className="flex space-x-2">
-              <div className="relative flex-1">
-                <LinkIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <input
-                  type="url"
-                  value={socialMediaInput}
-                  onChange={(e) => setSocialMediaInput(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      addSocialMediaLink();
-                    }
-                  }}
-                  className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-                  style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-                  placeholder="https://linkedin.com/in/..."
-                />
-              </div>
-              <button
-                onClick={addSocialMediaLink}
-                disabled={!socialMediaInput.trim()}
-                className="px-4 py-2 text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-                style={{ backgroundColor: '#F29400' }}
-              >
-                <Plus className="h-4 w-4" />
-              </button>
-            </div>
+              style={{ borderColor: getBorderColor(data.staatsbuegerschaft), '--tw-ring-color': '#F29400' } as React.CSSProperties}
+            >
+              <option value="">Land auswählen</option>
+              {COUNTRIES.map(country => (
+                <option key={country} value={country}>{country}</option>
+              ))}
+            </select>
           </div>
         </div>
       </div>
 
       {/* Personenstand */}
       <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
-        <h3 className="text-sm font-medium text-gray-700 mb-4 flex items-center">
-          <Users className="h-4 w-4 mr-2" style={{ color: '#F29400' }} />
-          Personenstandsdaten
-        </h3>
-        
         <div className="space-y-4">
-          {/* Personenstand */}
+          {/* Familienstand */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Familienstand</label>
-            <div className="relative">
-              <input
-                list="personenstand-optionen"
-                value={data.personenstand}
-                onChange={(e) => updateField('personenstand', e.target.value)}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-                style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-                placeholder="Familienstand auswählen"
-              />
-              <datalist id="personenstand-optionen">
-                {PERSONENSTAND_OPTIONEN.map(stand => (
-                  <option key={stand} value={stand} />
-                ))}
-              </datalist>
-            </div>
+            <select
+              value={data.personenstand}
+              onChange={(e) => updateField('personenstand', e.target.value)}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+              style={{ borderColor: getBorderColor(data.personenstand), '--tw-ring-color': '#F29400' } as React.CSSProperties}
+            >
+              <option value="">Familienstand auswählen</option>
+              {PERSONENSTAND_OPTIONEN.map(stand => (
+                <option key={stand} value={stand}>{stand}</option>
+              ))}
+            </select>
           </div>
 
           {/* Kinder Geburtsjahre */}
@@ -490,12 +357,234 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                   }
                 }}
                 className="flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-                style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                style={{ borderColor: getBorderColor(kinderjahrInput), '--tw-ring-color': '#F29400' } as React.CSSProperties}
                 placeholder="z.B. 2010"
               />
               <button
                 onClick={addKinderjahr}
                 disabled={!kinderjahrInput.trim()}
+                className="px-4 py-2 text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                style={{ backgroundColor: '#F29400' }}
+              >
+                <Plus className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Adresse */}
+      <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Adresse */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Straße und Hausnummer</label>
+              <input
+                type="text"
+                value={data.adresse}
+                onChange={(e) => updateField('adresse', e.target.value)}
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                style={{ borderColor: getBorderColor(data.adresse), '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                placeholder="Musterstraße 123"
+              />
+            </div>
+
+            {/* Ort */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Ort</label>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={data.ort}
+                  onChange={(e) => handleOrtChange(e.target.value)}
+                  onFocus={() => setShowAddOrtButton(true)}
+                  onBlur={() => setTimeout(() => setShowAddOrtButton(false), 200)}
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                  style={{ borderColor: getBorderColor(data.ort), '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                  placeholder="Ort oder PLZ eingeben"
+                />
+                {showAddOrtButton && data.ort.trim() && !favoriteOrte.includes(data.ort.trim()) && (
+                  <button
+                    onClick={addToFavoriteOrte}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 px-2 py-1 text-xs text-white rounded"
+                    style={{ backgroundColor: '#F29400' }}
+                  >
+                    <Star className="h-3 w-3" />
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Ausland Checkbox */}
+          <div className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              id="ausland"
+              checked={data.ausland}
+              onChange={(e) => updateField('ausland', e.target.checked)}
+              className="focus:ring-2"
+              style={{ accentColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+            />
+            <label htmlFor="ausland" className="text-sm text-gray-700">
+              Ausland
+            </label>
+          </div>
+
+          {/* Ausland Land */}
+          {data.ausland && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Land</label>
+              <select
+                value={data.auslandLand}
+                onChange={(e) => updateField('auslandLand', e.target.value)}
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                style={{ borderColor: getBorderColor(data.auslandLand), '--tw-ring-color': '#F29400' } as React.CSSProperties}
+              >
+                <option value="">Land auswählen</option>
+                {COUNTRIES.map(country => (
+                  <option key={country} value={country}>{country}</option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {/* Favoriten-Orte über gesamte Breite */}
+          {favoriteOrte.length > 0 && (
+            <div className="col-span-full">
+              <div className="flex items-center space-x-2 mb-2">
+                <Star className="h-4 w-4" style={{ color: '#F29400' }} />
+                <span className="text-sm font-medium text-gray-700">Favoriten:</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {favoriteOrte.map(ort => (
+                  <button
+                    key={ort}
+                    onClick={() => updateField('ort', ort)}
+                    className="inline-flex items-center justify-between px-3 py-1 text-gray-700 text-sm rounded-full border hover:bg-gray-200 transition-colors duration-200"
+                    style={{ backgroundColor: '#F3F4F6', borderColor: '#F29400' }}
+                  >
+                    <span className="mr-2">{ort}</span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeFavoriteOrt(ort);
+                      }}
+                      className="text-gray-600 hover:text-gray-800"
+                      title="Aus Favoriten entfernen"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Kontakt */}
+      <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Telefon */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Telefonnummer</label>
+            <div className="flex space-x-2">
+              {/* Ländervorwahl - schmaler */}
+              <select
+                value={data.laendervorwahl}
+                onChange={(e) => updateField('laendervorwahl', e.target.value)}
+                className="px-2 py-2 border rounded-md focus:outline-none focus:ring-2 w-16"
+                style={{ borderColor: getBorderColor(data.laendervorwahl), '--tw-ring-color': '#F29400' } as React.CSSProperties}
+              >
+                {COUNTRY_CODES.map(item => (
+                  <option key={item.code} value={item.code}>
+                    {item.code}
+                  </option>
+                ))}
+              </select>
+              
+              {/* Telefonnummer - längeres Feld */}
+              <input
+                type="tel"
+                value={data.telefon}
+                onChange={(e) => updateField('telefon', e.target.value)}
+                className="flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                style={{ borderColor: getBorderColor(data.telefon), '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                placeholder="123 456 7890"
+                maxLength={20}
+              />
+            </div>
+          </div>
+
+          {/* E-Mail */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">E-Mail-Adresse</label>
+            <input
+              type="email"
+              value={data.email}
+              onChange={(e) => updateField('email', e.target.value)}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+              style={{ borderColor: getBorderColor(data.email), '--tw-ring-color': '#F29400' } as React.CSSProperties}
+              placeholder="name@beispiel.com"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Online-Präsenz */}
+      <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
+        <div className="space-y-4">
+          {/* Homepage */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Homepage/Portfolio</label>
+            <input
+              type="url"
+              value={data.homepage}
+              onChange={(e) => updateField('homepage', e.target.value)}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+              style={{ borderColor: getBorderColor(data.homepage), '--tw-ring-color': '#F29400' } as React.CSSProperties}
+              placeholder="https://www.beispiel.com"
+            />
+          </div>
+
+          {/* Social Media Links */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Social Media Links</label>
+            
+            {/* Ausgewählte Links */}
+            {data.socialMediaLinks.length > 0 && (
+              <div className="mb-3 flex flex-wrap gap-2">
+                {data.socialMediaLinks.map((link, index) => (
+                  <TagButtonSelected
+                    key={index}
+                    label={link}
+                    onRemove={() => removeSocialMediaLink(link)}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Eingabefeld */}
+            <div className="flex space-x-2">
+              <input
+                type="url"
+                value={socialMediaInput}
+                onChange={(e) => setSocialMediaInput(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addSocialMediaLink();
+                  }
+                }}
+                className="flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                style={{ borderColor: getBorderColor(socialMediaInput), '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                placeholder="https://linkedin.com/in/..."
+              />
+              <button
+                onClick={addSocialMediaLink}
+                disabled={!socialMediaInput.trim()}
                 className="px-4 py-2 text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                 style={{ backgroundColor: '#F29400' }}
               >
