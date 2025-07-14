@@ -101,6 +101,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
   return (
     <div className="space-y-6">
       {/* Rest of the component code... */}
+        <Card title="Geburtsdaten & Staatsbürgerschaft">
           <>
           {/* Geburtsdaten mit Checkbox */}
           <div className="grid grid-cols-12 gap-4 items-center">
