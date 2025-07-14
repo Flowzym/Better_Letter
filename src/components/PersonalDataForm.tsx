@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AutocompleteInput from './AutocompleteInput';
-import { TagButtonFavorite } from './ui/TagButtonFavorite';
+import TagButtonFavorite from './ui/TagButtonFavorite';
 import { TagButtonSelected } from './ui/TagButtonSelected';
 import DatePicker from './DatePicker';
 import Card from './cards/Card';
