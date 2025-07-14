@@ -148,9 +148,22 @@ export function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
                     const formattedValue = value.startsWith('+') ? value : `+${value}`;
                     handleInputChange('telefonVorwahl', formattedValue);
                   }}
+                  onAdd={(selectedItem) => {
+                    if (typeof selectedItem === 'object' && selectedItem && 'code' in selectedItem) {
+                      handleInputChange('telefonVorwahl', selectedItem.code);
+                    }
+                  }}
                   suggestions={phoneCountryCodes}
                   placeholder="+43"
-                  formatSuggestion={formatPhoneCodeSuggestion}
+                  formatSuggestion={(item) => (
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">{item.flag}</span>
+                      <span className="font-mono">{item.code}</span>
+                      <span className="text-gray-600">{item.name}</span>
+                    </div>
+                  )}
+                  getSearchableString={(item) => `${item.code} ${item.name}`}
+                  getKey={(item) => item.code}
                   showAddButton={false}
                 />
               </div>

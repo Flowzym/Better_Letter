@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Plus, Star, X } from 'lucide-react';
 
-interface AutocompleteInputProps {
+interface AutocompleteInputProps<T = string> {
   value: string;
   onChange: (value: string) => void;
-  onAdd: (valueToAdd?: string) => void;
+  onAdd: (valueToAdd?: string | T) => void;
   onFavoriteClick?: (valueToAdd?: string) => void;
-  suggestions: string[];
+  suggestions: T[];
   placeholder: string;
   disabled?: boolean;
   className?: string;
@@ -14,9 +14,12 @@ interface AutocompleteInputProps {
   showAddButton?: boolean;
   id?: string;
   label?: string;
+  formatSuggestion?: (item: T) => React.ReactNode;
+  getSearchableString?: (item: T) => string;
+  getKey?: (item: T) => string;
 }
 
-export default function AutocompleteInput({
+export default function AutocompleteInput<T = string>({
   value,
   onChange,
   onAdd,
@@ -28,15 +31,40 @@ export default function AutocompleteInput({
   showFavoritesButton = false,
   showAddButton = true,
   id,
-  label
-}: AutocompleteInputProps) {
+  label,
+  formatSuggestion,
+  getSearchableString,
+  getKey
+}: AutocompleteInputProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
-  const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
+  const [filteredSuggestions, setFilteredSuggestions] = useState<T[]>([]);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const hasInput = value.trim().length > 0;
+
+  // Helper functions with defaults for string suggestions
+  const getSuggestionText = (item: T): string => {
+    if (getSearchableString) {
+      return getSearchableString(item);
+    }
+    return typeof item === 'string' ? item : String(item);
+  };
+
+  const getSuggestionKey = (item: T): string => {
+    if (getKey) {
+      return getKey(item);
+    }
+    return typeof item === 'string' ? item : String(item);
+  };
+
+  const formatSuggestionDisplay = (item: T): React.ReactNode => {
+    if (formatSuggestion) {
+      return formatSuggestion(item);
+    }
+    return getSuggestionText(item);
+  };
 
   // Generate unique IDs if not provided
   const inputId = id || `autocomplete-input-${Math.random().toString(36).substr(2, 9)}`;
@@ -57,11 +85,12 @@ export default function AutocompleteInput({
     if (value.trim() && value.length > 0) {
       const searchTerm = value.toLowerCase();
       
-      const startsWithMatches: string[] = [];
-      const containsMatches: string[] = [];
+      const startsWithMatches: T[] = [];
+      const containsMatches: T[] = [];
       
       suggestions.forEach(suggestion => {
-        const suggestionLower = suggestion.toLowerCase();
+        const suggestionText = getSuggestionText(suggestion);
+        const suggestionLower = suggestionText.toLowerCase();
         
         if (suggestionLower === searchTerm) {
           return;
@@ -74,8 +103,8 @@ export default function AutocompleteInput({
         }
       });
       
-      startsWithMatches.sort((a, b) => a.localeCompare(b, 'de', { sensitivity: 'base' }));
-      containsMatches.sort((a, b) => a.localeCompare(b, 'de', { sensitivity: 'base' }));
+      startsWithMatches.sort((a, b) => getSuggestionText(a).localeCompare(getSuggestionText(b), 'de', { sensitivity: 'base' }));
+      containsMatches.sort((a, b) => getSuggestionText(a).localeCompare(getSuggestionText(b), 'de', { sensitivity: 'base' }));
       
       const combinedResults = [...startsWithMatches, ...containsMatches];
       const limitedResults = combinedResults.slice(0, 8);
@@ -165,8 +194,8 @@ export default function AutocompleteInput({
     }
   };
 
-  const handleSuggestionSelect = (suggestion: string) => {
-    onChange(suggestion);
+  const handleSuggestionSelect = (suggestion: T) => {
+    onChange(getSuggestionText(suggestion));
     setIsOpen(false);
     setHighlightedIndex(-1);
     if (inputRef.current) {
@@ -174,7 +203,7 @@ export default function AutocompleteInput({
     }
   };
 
-  const handleSuggestionClick = (suggestion: string) => {
+  const handleSuggestionClick = (suggestion: T) => {
     onAdd(suggestion);
     onChange('');
     setIsOpen(false);
@@ -294,12 +323,13 @@ export default function AutocompleteInput({
         >
           {filteredSuggestions.map((suggestion, index) => {
             const searchTerm = value.toLowerCase();
-            const suggestionLower = suggestion.toLowerCase();
+            const suggestionText = getSuggestionText(suggestion);
+            const suggestionLower = suggestionText.toLowerCase();
             const startsWithSearch = suggestionLower.startsWith(searchTerm);
                 
             return (
               <button
-                key={suggestion}
+                key={getSuggestionKey(suggestion)}
                 onClick={() => handleSuggestionClick(suggestion)}
                 className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-100 focus:bg-gray-100 focus:outline-none ${
                   index === highlightedIndex ? 'text-white' : 'text-gray-900'
@@ -310,7 +340,7 @@ export default function AutocompleteInput({
                 aria-selected={index === highlightedIndex}
               >
                 <span className={startsWithSearch ? 'font-medium' : 'font-normal'}>
-                  {suggestion}
+                  {formatSuggestionDisplay(suggestion)}
                 </span>
                 {startsWithSearch && (
                   <span className="ml-2 text-xs opacity-60">
