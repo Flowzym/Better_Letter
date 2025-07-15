@@ -151,7 +151,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
           onChange={handleInputChange}
           onFocus={handleInputFocus}
           onKeyDown={handleInputKeyDown}
-          className="pr-16" {/* Mehr Padding für Icons */}
+          className="pr-16" // Mehr Padding für Icons
         />
         
         {/* Icon Container mit beiden Icons */}
