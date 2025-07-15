@@ -151,32 +151,37 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
           onChange={handleInputChange}
           onFocus={handleInputFocus}
           onKeyDown={handleInputKeyDown}
-          className="pr-20"
+          className="pr-[60px]"
         />
-        {/* Clear Button */}
-        {internalValue && (
-          <button
-            type="button"
-            onClick={clearValue}
-            className="absolute right-10 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-300"
-            aria-label="Datum löschen"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        )}
-        {/* Calendar Icon */}
-        <Calendar 
-          className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 cursor-pointer"
-          onClick={() => setActiveField(activeField ? null : "day")}
-        />
+        
+        {/* Icon Container mit beiden Icons */}
+        <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center space-x-2">
+          {/* Clear Button */}
+          {internalValue && (
+            <button
+              type="button"
+              onClick={clearValue}
+              className="text-gray-400 hover:text-gray-600 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-300"
+              aria-label="Datum löschen"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+          
+          {/* Calendar Icon */}
+          <Calendar 
+            className="h-4 w-4 text-gray-400 cursor-pointer"
+            onClick={() => setActiveField(activeField ? null : "day")}
+          />
+        </div>
       </div>
 
       {activeField && (
         <div
           ref={popupRef}
-          className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 z-50 min-w-[500px]"
+          className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 z-50 min-w-[550px]"
         >
-          <div className="grid grid-cols-3 gap-x-4 items-start">
+          <div className="grid grid-cols-[200px_210px_70px] gap-x-4 items-start">
             {/* Tage - links */}
             <div className="flex flex-col space-y-2">
               <div className="grid grid-cols-7 gap-2">
@@ -207,7 +212,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
                       <button
                         key={m.label}
                         onMouseDown={() => handleMonthSelect(m.value)}
-                        className={`px-2 py-1 h-8 border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-xs ${
+                        className={`px-2 py-1 h-8 w-24 border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-xs ${
                           selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
                         }`}
                       >
@@ -223,7 +228,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
                       <button
                         key={m.label}
                         onMouseDown={() => handleMonthSelect(m.value)}
-                        className={`px-2 py-1 h-8 border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-xs ${
+                        className={`px-2 py-1 h-8 w-24 border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-xs ${
                           selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
                         }`}
                       >
