@@ -1,42 +1,3 @@
-import { useState, useRef, useEffect } from "react";
-import { Calendar } from "lucide-react";
-import DateInputBase from './DateInputBase';
-
-interface DatePickerProps {
-  value: string; // TT.MM.JJJJ format
-  onChange: (date: string) => void;
-}
-
-const months = [
-  { label: "Januar", value: "01" },
-  { label: "Februar", value: "02" },
-  { label: "März", value: "03" },
-  { label: "April", value: "04" },
-  { label: "Mai", value: "05" },
-  { label: "Juni", value: "06" },
-  { label: "Juli", value: "07" },
-  { label: "August", value: "08" },
-  { label: "September", value: "09" },
-  { label: "Oktober", value: "10" },
-  { label: "November", value: "11" },
-  { label: "Dezember", value: "12" },
-];
-
-const years = Array.from({ length: 2025 - 1950 + 1 }, (_, i) =>
-  String(2025 - i),
-);
-
-const days = Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, '0'));
-
-function parseDate(dateStr: string) {
-  const parts = dateStr.split('.');
-  return {
-    day: parts[0] || '',
-    month: parts[1] || '',
-    year: parts[2] || ''
-  };
-}
-
 export default function DatePicker({ value, onChange }: DatePickerProps) {
   const [activeField, setActiveField] = useState<"day" | "month" | "year" | null>(null);
   const [internalValue, setInternalValue] = useState(value);
@@ -148,19 +109,19 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
       {activeField && (
         <div
           ref={popupRef}
-          className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 z-50 min-w-[650px]"
+          className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 z-50 min-w-[520px]"
         >
-          <div className="grid grid-cols-[250px_280px_120px] gap-x-6 items-start">
-            {/* Tage - links (7x5 Grid) */}
-            <div className="flex flex-col space-y-2">
-              <div className="grid grid-cols-7 gap-2">
+          <div className="grid grid-cols-[210px_200px_80px] gap-x-4 items-start">
+            {/* Tage - links (7x5 Grid) - QUADRATISCHE BUTTONS */}
+            <div className="flex flex-col">
+              <div className="grid grid-cols-7 gap-1">
                 {days.map((d) => {
                   const selected = day === d;
                   return (
                     <button
                       key={d}
                       onMouseDown={() => handleDaySelect(d)}
-                      className={`px-2 py-1 h-8 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-sm ${
+                      className={`w-7 h-7 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-sm ${
                         selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
                       }`}
                     >
@@ -171,17 +132,17 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
               </div>
             </div>
 
-            {/* Monate - mitte (2 Spalten: Januar-Juni | Juli-Dezember) */}
-            <div className="flex flex-col space-y-2">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col space-y-2">
+            {/* Monate - mitte (2 Spalten) - KOMPAKTE BUTTONS */}
+            <div className="flex flex-col">
+              <div className="grid grid-cols-2 gap-2">
+                <div className="flex flex-col space-y-1">
                   {months.slice(0, 6).map((m) => {
                     const selected = month === m.value;
                     return (
                       <button
                         key={m.label}
                         onMouseDown={() => handleMonthSelect(m.value)}
-                        className={`px-3 py-1 h-8 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-sm w-32 ${
+                        className={`w-24 h-8 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-sm ${
                           selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
                         }`}
                       >
@@ -190,14 +151,14 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
                     );
                   })}
                 </div>
-                <div className="flex flex-col space-y-2">
+                <div className="flex flex-col space-y-1">
                   {months.slice(6).map((m) => {
                     const selected = month === m.value;
                     return (
                       <button
                         key={m.label}
                         onMouseDown={() => handleMonthSelect(m.value)}
-                        className={`px-3 py-1 h-8 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-sm w-32 ${
+                        className={`w-24 h-8 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-sm ${
                           selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
                         }`}
                       >
@@ -209,15 +170,15 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
               </div>
             </div>
 
-            {/* Jahre - rechts */}
-            <div className="overflow-y-auto flex flex-col space-y-2 pr-1" style={{ maxHeight: "15rem" }}>
+            {/* Jahre - rechts - KOMPAKTE BUTTONS MIT WENIGER ABSTAND ZUR SCROLLBAR */}
+            <div className="overflow-y-auto flex flex-col space-y-1 pr-1" style={{ maxHeight: "15rem" }}>
               {years.map((y) => {
                 const selected = year === y;
                 return (
                   <button
                     key={y}
                     onMouseDown={() => handleYearSelect(y)}
-                    className={`px-3 py-1 h-8 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-sm w-20 ${
+                    className={`w-16 h-8 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-sm ${
                       selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
                     }`}
                   >
