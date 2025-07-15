@@ -183,7 +183,7 @@ export default function DatePicker({ value, onChange, className = "" }: DatePick
       {activeField && (
         <div
           ref={popupRef}
-          className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 z-50 w-[640px] h-[264px]"
+          className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 z-50 w-[680px] h-[264px]"
         >
           <div className="grid grid-cols-[328px_200px_80px] gap-x-4 items-start">
             {/* Tage - links */}
@@ -261,9 +261,6 @@ export default function DatePicker({ value, onChange, className = "" }: DatePick
                 );
               })}
             </div>
-            
-            {/* Info-Text */}
-            <div className="col-span-3 text-xs text-gray-400 mt-2 text-center">Tag und Monat optional</div>
           </div>
         </div>
       )}
