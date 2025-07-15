@@ -187,7 +187,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 className="focus:ring-1"
                 style={{ accentColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
               />
-              <span className="text-sm font-medium text-gray-600">Social Media / Homepage</span>
+              <span className="text-sm font-medium text-gray-500">Social Media / Homepage</span>
             </label>
           </div>
 
@@ -286,7 +286,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 className="focus:ring-1"
                 style={{ accentColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
               />
-              <span className="text-sm font-medium text-gray-600">Ausland</span>
+              <span className="text-sm font-medium text-gray-500">Ausland</span>
             </label>
           </div>
 
@@ -360,7 +360,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 className="focus:ring-1"
                 style={{ accentColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
               />
-              <span className="text-sm font-medium text-gray-600">Staatsbürgerschaft & Arbeitsmarktzugang</span>
+              <span className="text-sm font-medium text-gray-500">Staatsbürgerschaft & Arbeitsmarktzugang</span>
             </label>
           </div>
 
