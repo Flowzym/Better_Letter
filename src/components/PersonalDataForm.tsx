@@ -106,7 +106,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
       {/* Name & Titel */}
       <Card title="">
         <div className="grid grid-cols-12 gap-4">
-          <div className="col-span-2">
+          <div className="col-span-3">
             <AutocompleteInput
               label="Titel"
               value={data.titel}
@@ -187,7 +187,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 className="focus:ring-1"
                 style={{ accentColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
               />
-              <span className="text-sm font-medium text-gray-700">Social Media / Homepage</span>
+              <span className="text-sm font-medium text-gray-600">Social Media / Homepage</span>
             </label>
           </div>
 
@@ -262,7 +262,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               />
             </div>
             
-            <div className={data.ausland ? "col-span-3" : "col-span-5"}>
+            <div className="col-span-5">
               <AutocompleteInput
                 label="Ort"
                 value={data.ort}
@@ -274,21 +274,6 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 showFavoritesButton
               />
             </div>
-            
-            {data.ausland && (
-              <div className="col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Land
-                </label>
-                <input
-                  type="text"
-                  value={data.land}
-                  onChange={(e) => updateData('land', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
-                  placeholder="Deutschland"
-                />
-              </div>
-            )}
           </div>
 
           {/* Ausland Checkbox */}
@@ -301,9 +286,25 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 className="focus:ring-1"
                 style={{ accentColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
               />
-              <span className="text-sm font-medium text-gray-700">Ausland</span>
+              <span className="text-sm font-medium text-gray-600">Ausland</span>
             </label>
           </div>
+
+          {/* Land Field - shown in new row when Ausland is checked */}
+          {data.ausland && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Land
+              </label>
+              <input
+                type="text"
+                value={data.land}
+                onChange={(e) => updateData('land', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
+                placeholder="Deutschland"
+              />
+            </div>
+          )}
         </div>
       </Card>
 
@@ -359,7 +360,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 className="focus:ring-1"
                 style={{ accentColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
               />
-              <span className="text-sm font-medium text-gray-700">Staatsbürgerschaft & Arbeitsmarktzugang</span>
+              <span className="text-sm font-medium text-gray-600">Staatsbürgerschaft & Arbeitsmarktzugang</span>
             </label>
           </div>
 
