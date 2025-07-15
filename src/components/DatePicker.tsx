@@ -96,33 +96,44 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
         if (newYear < 1950) newYear = 1950;
         if (newYear > 2025) newYear = 2025;
         
+        // Intelligente Punkt-Setzung: Nur wenn Tag oder Monat vorhanden
         const newValue = currentDay && currentMonth ? 
           `${currentDay}.${currentMonth}.${newYear}` : 
-          currentDay ? `${currentDay}..${newYear}` : `..${newYear}`;
+          currentDay ? `${currentDay}..${newYear}` : 
+          currentMonth ? `.${currentMonth}.${newYear}` :
+          `${newYear}`; // Nur Jahr ohne Punkte
         handleInputChange(newValue);
       }
     }
   };
 
   const handleDaySelect = (selectedDay: string) => {
+    // Intelligente Punkt-Setzung basierend auf vorhandenen Werten
     const newValue = month && year ? 
       `${selectedDay}.${month}.${year}` : 
-      month ? `${selectedDay}.${month}.` : `${selectedDay}..`;
+      month ? `${selectedDay}.${month}` : 
+      year ? `${selectedDay}..${year}` : 
+      selectedDay;
     handleInputChange(newValue);
   };
 
   const handleMonthSelect = (selectedMonth: string) => {
+    // Intelligente Punkt-Setzung basierend auf vorhandenen Werten
     const newValue = day && year ? 
       `${day}.${selectedMonth}.${year}` : 
-      day ? `${day}.${selectedMonth}.` : `.${selectedMonth}.`;
+      day ? `${day}.${selectedMonth}` : 
+      year ? `.${selectedMonth}.${year}` : 
+      selectedMonth;
     handleInputChange(newValue);
   };
 
   const handleYearSelect = (selectedYear: string) => {
+    // Intelligente Punkt-Setzung: Nur wenn Tag oder Monat vorhanden
     const newValue = day && month ? 
       `${day}.${month}.${selectedYear}` : 
-      day ? `${day}.${month || ''}.${selectedYear}` : 
-      month ? `${day || ''}.${month}.${selectedYear}` : `..${selectedYear}`;
+      day ? `${day}..${selectedYear}` : 
+      month ? `.${month}.${selectedYear}` : 
+      selectedYear; // Nur Jahr ohne Punkte
     handleInputChange(newValue);
     setActiveField(null);
   };
@@ -146,19 +157,19 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
       {activeField && (
         <div
           ref={popupRef}
-          className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 z-50 min-w-[480px]"
+          className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 z-50"
         >
-          <div className="grid grid-cols-[200px_180px_70px] gap-x-3 items-start">
-            {/* Tage - links (7x5 Grid) - PERFEKT QUADRATISCH */}
-            <div className="flex flex-col">
-              <div className="grid grid-cols-7 gap-1">
+          <div className="grid grid-cols-3 gap-x-4 items-start">
+            {/* Tage - links (7x5 Grid) */}
+            <div className="flex flex-col space-y-2">
+              <div className="grid grid-cols-7 gap-2">
                 {days.map((d) => {
                   const selected = day === d;
                   return (
                     <button
                       key={d}
                       onMouseDown={() => handleDaySelect(d)}
-                      className={`w-6 h-6 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-xs ${
+                      className={`px-2 py-1 h-8 border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 ${
                         selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
                       }`}
                     >
@@ -169,17 +180,17 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
               </div>
             </div>
 
-            {/* Monate - mitte (2 Spalten) - KOMPAKTE BUTTONS */}
-            <div className="flex flex-col">
-              <div className="grid grid-cols-2 gap-1">
-                <div className="flex flex-col space-y-1">
+            {/* Monate - mitte (2 Spalten) */}
+            <div className="flex flex-col space-y-2">
+              <div className="grid grid-cols-2 gap-2">
+                <div className="flex flex-col space-y-2">
                   {months.slice(0, 6).map((m) => {
                     const selected = month === m.value;
                     return (
                       <button
                         key={m.label}
                         onMouseDown={() => handleMonthSelect(m.value)}
-                        className={`w-20 h-6 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-xs ${
+                        className={`px-2 py-1 h-8 border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 ${
                           selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
                         }`}
                       >
@@ -188,14 +199,14 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
                     );
                   })}
                 </div>
-                <div className="flex flex-col space-y-1">
+                <div className="flex flex-col space-y-2">
                   {months.slice(6).map((m) => {
                     const selected = month === m.value;
                     return (
                       <button
                         key={m.label}
                         onMouseDown={() => handleMonthSelect(m.value)}
-                        className={`w-20 h-6 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-xs ${
+                        className={`px-2 py-1 h-8 border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 ${
                           selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
                         }`}
                       >
@@ -207,15 +218,15 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
               </div>
             </div>
 
-            {/* Jahre - rechts - KOMPAKTE BUTTONS OHNE ABSTAND ZUR SCROLLBAR */}
-            <div className="overflow-y-auto flex flex-col space-y-1 pr-0" style={{ maxHeight: "15rem" }}>
+            {/* Jahre - rechts */}
+            <div className="row-span-2 overflow-y-auto flex flex-col space-y-2 pr-1" style={{ maxHeight: "15rem" }}>
               {years.map((y) => {
                 const selected = year === y;
                 return (
                   <button
                     key={y}
                     onMouseDown={() => handleYearSelect(y)}
-                    className={`w-14 h-6 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-xs ${
+                    className={`px-2 py-1 h-8 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 ${
                       selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
                     }`}
                   >
@@ -224,6 +235,9 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
                 );
               })}
             </div>
+            
+            {/* Info-Text wie beim ZeitraumPicker */}
+            <div className="col-span-2 text-xs text-gray-400 mt-2">Tag und Monat optional</div>
           </div>
         </div>
       )}
