@@ -464,7 +464,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                   {data.kinder.map((child, index) => (
                     <TagButtonSelected
                       key={index}
-                  label="Arbeitsmarktzugang"
+                      label={child}
                       onRemove={() => removeChild(index)}
                     />
                   ))}
@@ -489,10 +489,9 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 </button>
               </div>
             </div>
-          )}
-        </>
+          </div>
+        </div>
       </Card>
-
     </div>
   );
 }
