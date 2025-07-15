@@ -306,15 +306,10 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
           {/* Land Field - shown in new row when Ausland is checked */}
           {data.ausland && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Land
-              </label>
-              <input
-                type="text"
+              <CountryDropdown
+                label="Land"
                 value={data.land}
-                onChange={(e) => updateData('land', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
-                placeholder="Deutschland"
+                onChange={(value) => updateData('land', value)}
               />
             </div>
           )}
