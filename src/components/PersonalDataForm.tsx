@@ -114,7 +114,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               onAdd={(value) => updateData('titel', value || '')}
               onFavoriteClick={(value) => toggleFavorite('titel', value || '')}
               suggestions={[...favorites.titel, ...titleSuggestions]}
-              placeholder="Titel eingeben"
+              placeholder="Titel"
               showFavoritesButton
             />
           </div>
@@ -128,7 +128,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               value={data.vorname}
               onChange={(e) => updateData('vorname', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
-              placeholder="Vorname eingeben"
+              placeholder="Vorname"
             />
           </div>
           
@@ -141,7 +141,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               value={data.nachname}
               onChange={(e) => updateData('nachname', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
-              placeholder="Nachname eingeben"
+              placeholder="Nachname"
             />
           </div>
         </div>
@@ -331,7 +331,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 onAdd={(value) => updateData('geburtsort', value || '')}
                 onFavoriteClick={(value) => toggleFavorite('geburtsort', value || '')}
                 suggestions={[...favorites.geburtsort, ...citySuggestions]}
-                placeholder="Geburtsort eingeben"
+               placeholder="Geburtsort"
                 showFavoritesButton
               />
             </div>
@@ -344,7 +344,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 onAdd={(value) => updateData('geburtsland', value || '')}
                 onFavoriteClick={(value) => toggleFavorite('geburtsland', value || '')}
                 suggestions={[...favorites.geburtsland, ...countrySuggestions]}
-                placeholder="Geburtsland eingeben"
+               placeholder="Geburtsland"
                 showFavoritesButton
               />
             </div>
@@ -360,7 +360,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 className="focus:ring-1"
                 style={{ accentColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
               />
-              <span className="text-sm font-medium text-gray-500">Staatsbürgerschaft & Arbeitsmarktzugang</span>
+              <span className="text-sm font-medium text-gray-500">Staatsbürgerschaft</span>
             </label>
           </div>
 
@@ -375,7 +375,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                   onAdd={(value) => updateData('staatsbuergerschaft', value || '')}
                   onFavoriteClick={(value) => toggleFavorite('staatsbuergerschaft', value || '')}
                   suggestions={[...favorites.staatsbuergerschaft, ...countrySuggestions]}
-                  placeholder="Staatsbürgerschaft eingeben"
+                 placeholder="Staatsbürgerschaft"
                   showFavoritesButton
                 />
               </div>
@@ -388,7 +388,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                   onAdd={(value) => updateData('arbeitsmarktzugang', value || '')}
                   onFavoriteClick={(value) => toggleFavorite('arbeitsmarktzugang', value || '')}
                   suggestions={[...favorites.arbeitsmarktzugang, ...arbeitsmarktzugangOptions]}
-                  placeholder="Arbeitsmarktzugang eingeben"
+                 placeholder="Arbeitsmarktzugang"
                   showFavoritesButton
                 />
               </div>
