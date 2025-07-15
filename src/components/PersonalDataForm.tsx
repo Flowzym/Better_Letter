@@ -234,57 +234,75 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
 
       {/* Adresse */}
       <Card title="">
-        <div className="grid grid-cols-12 gap-4">
-          <div className="col-span-5">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Straße & Hausnummer
-            </label>
-            <input
-              type="text"
-              value={data.adresse}
-              onChange={(e) => updateData('adresse', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
-              placeholder="Musterstraße 123"
-            />
+        <div className="space-y-4">
+          <div className="grid grid-cols-12 gap-4">
+            <div className="col-span-5">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Straße & Hausnummer
+              </label>
+              <input
+                type="text"
+                value={data.adresse}
+                onChange={(e) => updateData('adresse', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
+                placeholder="Musterstraße 123"
+              />
+            </div>
+            
+            <div className="col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                PLZ
+              </label>
+              <input
+                type="text"
+                value={data.plz}
+                onChange={(e) => updateData('plz', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
+                placeholder="1010"
+              />
+            </div>
+            
+            <div className={data.ausland ? "col-span-3" : "col-span-5"}>
+              <AutocompleteInput
+                label="Ort"
+                value={data.ort}
+                onChange={(value) => updateData('ort', value)}
+                onAdd={(value) => updateData('ort', value || '')}
+                onFavoriteClick={(value) => toggleFavorite('ort', value || '')}
+                suggestions={[...favorites.ort, ...citySuggestions]}
+                placeholder="Wien"
+                showFavoritesButton
+              />
+            </div>
+            
+            {data.ausland && (
+              <div className="col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Land
+                </label>
+                <input
+                  type="text"
+                  value={data.land}
+                  onChange={(e) => updateData('land', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
+                  placeholder="Deutschland"
+                />
+              </div>
+            )}
           </div>
-          
-          <div className="col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              PLZ
+
+          {/* Ausland Checkbox */}
+          <div className="flex items-center justify-end">
+            <label className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={data.ausland}
+                onChange={(e) => updateData('ausland', e.target.checked)}
+                className="focus:ring-1"
+                style={{ accentColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+              />
+              <span className="text-sm font-medium text-gray-700">Ausland</span>
             </label>
-            <input
-              type="text"
-              value={data.plz}
-              onChange={(e) => updateData('plz', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
-              placeholder="1010"
-            />
-          </div>
-          
-          <div className="col-span-3">
-            <AutocompleteInput
-              label="Ort"
-              value={data.ort}
-              onChange={(value) => updateData('ort', value)}
-              onAdd={(value) => updateData('ort', value || '')}
-              onFavoriteClick={(value) => toggleFavorite('ort', value || '')}
-              suggestions={[...favorites.ort, ...citySuggestions]}
-              placeholder="Wien"
-              showFavoritesButton
-            />
-          </div>
-          
-          <div className="col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Land
-            </label>
-            <input
-              type="text"
-              value={data.land}
-              onChange={(e) => updateData('land', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
-              placeholder="Österreich"
-            />
           </div>
         </div>
       </Card>
