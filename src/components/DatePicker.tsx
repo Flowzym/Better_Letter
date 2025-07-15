@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Calendar } from 'lucide-react';
+import { Calendar, X } from 'lucide-react';
 import DateInputBase from './DateInputBase';
 
 interface DatePickerProps {
@@ -138,6 +138,11 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
     setActiveField(null);
   };
 
+  const clearValue = () => {
+    handleInputChange('');
+    setActiveField(null);
+  };
+
   return (
     <div className="relative">
       <div className="relative">
@@ -146,8 +151,20 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
           onChange={handleInputChange}
           onFocus={handleInputFocus}
           onKeyDown={handleInputKeyDown}
-          className="pr-10"
+          className="pr-20"
         />
+        {/* Clear Button */}
+        {internalValue && (
+          <button
+            type="button"
+            onClick={clearValue}
+            className="absolute right-10 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-300"
+            aria-label="Datum löschen"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
+        {/* Calendar Icon */}
         <Calendar 
           className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 cursor-pointer"
           onClick={() => setActiveField(activeField ? null : "day")}
@@ -157,10 +174,10 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
       {activeField && (
         <div
           ref={popupRef}
-          className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 z-50"
+          className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 z-50 min-w-[500px]"
         >
           <div className="grid grid-cols-3 gap-x-4 items-start">
-            {/* Tage - links (7x5 Grid) */}
+            {/* Tage - links */}
             <div className="flex flex-col space-y-2">
               <div className="grid grid-cols-7 gap-2">
                 {days.map((d) => {
@@ -169,7 +186,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
                     <button
                       key={d}
                       onMouseDown={() => handleDaySelect(d)}
-                      className={`px-2 py-1 h-8 border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 ${
+                      className={`px-2 py-1 h-8 border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-xs ${
                         selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
                       }`}
                     >
@@ -180,7 +197,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
               </div>
             </div>
 
-            {/* Monate - mitte (2 Spalten) */}
+            {/* Monate - mitte */}
             <div className="flex flex-col space-y-2">
               <div className="grid grid-cols-2 gap-2">
                 <div className="flex flex-col space-y-2">
@@ -190,7 +207,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
                       <button
                         key={m.label}
                         onMouseDown={() => handleMonthSelect(m.value)}
-                        className={`px-2 py-1 h-8 border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 ${
+                        className={`px-2 py-1 h-8 border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-xs ${
                           selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
                         }`}
                       >
@@ -206,7 +223,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
                       <button
                         key={m.label}
                         onMouseDown={() => handleMonthSelect(m.value)}
-                        className={`px-2 py-1 h-8 border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 ${
+                        className={`px-2 py-1 h-8 border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-xs ${
                           selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
                         }`}
                       >
@@ -226,7 +243,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
                   <button
                     key={y}
                     onMouseDown={() => handleYearSelect(y)}
-                    className={`px-2 py-1 h-8 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 ${
+                    className={`px-2 py-1 h-8 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-xs ${
                       selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
                     }`}
                   >
@@ -236,7 +253,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
               })}
             </div>
             
-            {/* Info-Text wie beim ZeitraumPicker */}
+            {/* Info-Text */}
             <div className="col-span-2 text-xs text-gray-400 mt-2">Tag und Monat optional</div>
           </div>
         </div>
