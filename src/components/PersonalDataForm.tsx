@@ -331,7 +331,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               />
             </div>
             
-            <div className="col-span-4.5">
+            <div className="col-span-4">
               <AutocompleteInput
                 label="Geburtsort"
                 value={data.geburtsort}
@@ -344,7 +344,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               />
             </div>
             
-            <div className="col-span-4.5">
+            <div className="col-span-5">
               <CountryDropdown
                 label="Geburtsland"
                 value={data.geburtsland}
