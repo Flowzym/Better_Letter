@@ -30,6 +30,7 @@ export default function DateInputBase({
 
   // Synchronisiere mit externem value
   useEffect(() => {
+    console.log('DateInputBase: External value changed from', internalValue, 'to', value);
     setInternalValue(value);
   }, [value]);
 
@@ -59,12 +60,16 @@ export default function DateInputBase({
     const input = inputRef.current;
     if (!input) return;
 
+    console.log('DateInputBase: handleChange called with:', newValue);
+
     // Aktuelle Cursor-Position merken
     const cursorPos = input.selectionStart ?? 0;
     const oldValue = internalValue;
     
     // Formatierung anwenden
     const formatted = applyFormatting(newValue);
+    
+    console.log('DateInputBase: Formatted value:', formatted);
     
     // Neue Cursor-Position berechnen
     let newCursorPos = cursorPos;
@@ -119,31 +124,41 @@ export default function DateInputBase({
   };
 
   const handleBlur = () => {
-    // Validierung beim Verlassen des Feldes - NUR bei vollständigen Daten
-    if (internalValue.trim() && internalValue.length > 0) {
-      const parts = internalValue.split('.');
-      let isValid = true;
+    console.log('DateInputBase: handleBlur called with value:', internalValue);
+    
+    // WICHTIG: Keine automatische Löschung bei unvollständigen Eingaben!
+    // Das Feld wird nur geleert, wenn es komplett leer ist oder bei eindeutig ungültigen VOLLSTÄNDIGEN Daten
+    
+    if (!internalValue || internalValue.trim() === '') {
+      console.log('DateInputBase: Empty value, keeping as is');
+      onBlur?.();
+      return;
+    }
+    
+    const parts = internalValue.split('.');
+    
+    // Nur bei vollständigen Eingaben (alle 3 Teile mit korrekter Länge) validieren
+    if (parts.length === 3 && parts[0].length === 2 && parts[1].length === 2 && parts[2].length === 4) {
+      const day = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10);
+      const year = parseInt(parts[2], 10);
       
-      // Nur validieren wenn alle 3 Teile vorhanden sind
-      if (parts.length === 3 && parts[0] && parts[1] && parts[2]) {
-        const day = parseInt(parts[0], 10);
-        const month = parseInt(parts[1], 10);
-        const year = parseInt(parts[2], 10);
-        
-        // Strenge Validierung nur bei vollständigen Eingaben
-        if (parts[0].length === 2 && parts[1].length === 2 && parts[2].length === 4) {
-          if (day < 1 || day > 31) isValid = false;
-          if (month < 1 || month > 12) isValid = false;
-          if (year < 1900 || year > 2099) isValid = false;
-        }
-        
-        // Bei ungültigen VOLLSTÄNDIGEN Daten löschen
-        if (!isValid) {
-          setInternalValue('');
-          onChange('');
-        }
+      // Strenge Validierung nur bei vollständigen Eingaben
+      let isValid = true;
+      if (day < 1 || day > 31) isValid = false;
+      if (month < 1 || month > 12) isValid = false;
+      if (year < 1900 || year > 2099) isValid = false;
+      
+      if (!isValid) {
+        console.log('DateInputBase: Invalid complete date, clearing field');
+        setInternalValue('');
+        onChange('');
+      } else {
+        console.log('DateInputBase: Valid complete date, keeping value');
       }
-      // Unvollständige Eingaben (z.B. nur "03" oder "03.12") bleiben erhalten!
+    } else {
+      // Unvollständige Eingaben bleiben IMMER erhalten
+      console.log('DateInputBase: Incomplete date, keeping value:', internalValue);
     }
     
     onBlur?.();

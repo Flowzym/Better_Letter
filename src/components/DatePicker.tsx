@@ -37,19 +37,6 @@ function parseDate(dateStr: string) {
   };
 }
 
-function formatDate(day: string, month: string, year: string) {
-  if (day && month && year) {
-    return `${day}.${month}.${year}`;
-  }
-  if (day && month) {
-    return `${day}.${month}.`;
-  }
-  if (day) {
-    return `${day}.`;
-  }
-  return '';
-}
-
 export default function DatePicker({ value, onChange }: DatePickerProps) {
   const [activeField, setActiveField] = useState<"day" | "month" | "year" | null>(null);
   const [internalValue, setInternalValue] = useState(value);
@@ -57,6 +44,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
 
   // Synchronisiere mit externem Wert
   useEffect(() => {
+    console.log('DatePicker: External value changed:', value);
     setInternalValue(value);
   }, [value]);
 
@@ -87,6 +75,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
   }, []);
 
   const handleInputChange = (newValue: string) => {
+    console.log('DatePicker: Input changed from', internalValue, 'to', newValue);
     setInternalValue(newValue);
     onChange(newValue);
   };
@@ -109,24 +98,33 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
         if (newYear < 1950) newYear = 1950;
         if (newYear > 2025) newYear = 2025;
         
-        const newValue = formatDate(currentDay, currentMonth, String(newYear));
+        const newValue = currentDay && currentMonth ? 
+          `${currentDay}.${currentMonth}.${newYear}` : 
+          currentDay ? `${currentDay}..${newYear}` : `..${newYear}`;
         handleInputChange(newValue);
       }
     }
   };
 
   const handleDaySelect = (selectedDay: string) => {
-    const newValue = formatDate(selectedDay, month, year);
+    const newValue = month && year ? 
+      `${selectedDay}.${month}.${year}` : 
+      month ? `${selectedDay}.${month}.` : `${selectedDay}..`;
     handleInputChange(newValue);
   };
 
   const handleMonthSelect = (selectedMonth: string) => {
-    const newValue = formatDate(day, selectedMonth, year);
+    const newValue = day && year ? 
+      `${day}.${selectedMonth}.${year}` : 
+      day ? `${day}.${selectedMonth}.` : `.${selectedMonth}.`;
     handleInputChange(newValue);
   };
 
   const handleYearSelect = (selectedYear: string) => {
-    const newValue = formatDate(day, month, selectedYear);
+    const newValue = day && month ? 
+      `${day}.${month}.${selectedYear}` : 
+      day ? `${day}.${month || ''}.${selectedYear}` : 
+      month ? `${day || ''}.${month}.${selectedYear}` : `..${selectedYear}`;
     handleInputChange(newValue);
     setActiveField(null);
   };
@@ -150,9 +148,9 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
       {activeField && (
         <div
           ref={popupRef}
-          className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 z-50 min-w-[600px]"
+          className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 z-50 min-w-[650px]"
         >
-          <div className="grid grid-cols-3 gap-x-8 items-start">
+          <div className="grid grid-cols-[250px_280px_120px] gap-x-6 items-start">
             {/* Tage - links (7x5 Grid) */}
             <div className="flex flex-col space-y-2">
               <div className="grid grid-cols-7 gap-2">
@@ -183,7 +181,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
                       <button
                         key={m.label}
                         onMouseDown={() => handleMonthSelect(m.value)}
-                        className={`px-3 py-1 h-8 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-sm w-24 ${
+                        className={`px-3 py-1 h-8 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-sm w-32 ${
                           selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
                         }`}
                       >
@@ -199,7 +197,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
                       <button
                         key={m.label}
                         onMouseDown={() => handleMonthSelect(m.value)}
-                        className={`px-3 py-1 h-8 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-sm w-24 ${
+                        className={`px-3 py-1 h-8 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-sm w-32 ${
                           selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
                         }`}
                       >
@@ -219,7 +217,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
                   <button
                     key={y}
                     onMouseDown={() => handleYearSelect(y)}
-                    className={`px-3 py-1 h-8 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-sm w-16 ${
+                    className={`px-3 py-1 h-8 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-sm w-20 ${
                       selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
                     }`}
                   >
