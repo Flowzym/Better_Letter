@@ -406,7 +406,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               <select
                 value={data.familienstand}
                 onChange={(e) => updateData('familienstand', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 bg-white"
               >
                 <option value="">Familienstand auswählen</option>
                 {familienstandOptions.map(option => (
