@@ -50,7 +50,7 @@ const titleSuggestions = ['Dr.', 'Mag.', 'DI', 'Prof.', 'MSc', 'BSc', 'MBA'];
 const citySuggestions = ['Wien', 'Graz', 'Salzburg', 'Innsbruck', 'Linz', 'Klagenfurt'];
 const countrySuggestions = ['Österreich', 'Deutschland', 'Schweiz', 'Italien', 'Frankreich'];
 const familienstandOptions = ['Keine Angabe', 'ledig', 'verheiratet', 'geschieden', 'verwitwet'];
-const arbeitsmarktzugangOptions = ['EU-Bürger', 'Arbeitserlaubnis', 'Rot-Weiß-Rot Karte'];
+const arbeitsmarktzugangOptions = ['Keine Angabe', 'Freier Zugang', 'Beschränkt', 'In Prüfung', 'Asylverfahren', 'Kein Zugang'];
 
 export default function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
   const [favorites, setFavorites] = useState({
@@ -63,6 +63,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
 
   const [newChild, setNewChild] = useState('');
   const [newSocialMedia, setNewSocialMedia] = useState('');
+  const [newHomepage, setNewHomepage] = useState('');
   const [showSocialMedia, setShowSocialMedia] = useState(false);
 
   // Set default values for country fields
@@ -107,6 +108,13 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
     if (newSocialMedia.trim()) {
       updateData('socialMedia', [...data.socialMedia, newSocialMedia.trim()]);
       setNewSocialMedia('');
+    }
+  };
+
+  const addHomepage = () => {
+    if (newHomepage.trim()) {
+      updateData('socialMedia', [...data.socialMedia, newHomepage.trim()]);
+      setNewHomepage('');
     }
   };
 
@@ -207,9 +215,6 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
           {/* Social Media Fields */}
           {showSocialMedia && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Social Media / Homepage
-              </label>
               
               {data.socialMedia.length > 0 && (
                 <div className="flex flex-wrap gap-2 mb-3">
@@ -223,22 +228,54 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 </div>
               )}
               
-              <div className="flex space-x-2">
-                <input
-                  type="text"
-                  value={newSocialMedia}
-                  onChange={(e) => setNewSocialMedia(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && addSocialMedia()}
-                  className="flex-1 h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
-                  placeholder="https://linkedin.com/in/..."
-                />
-                <button
-                  onClick={addSocialMedia}
-                  className="px-4 py-2 text-white rounded-md"
-                  style={{ backgroundColor: '#F29400' }}
-                >
-                  Hinzufügen
-                </button>
+              <div className="grid grid-cols-2 gap-4">
+                {/* Social Media */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Social Media
+                  </label>
+                  <div className="flex space-x-2">
+                    <input
+                      type="text"
+                      value={newSocialMedia}
+                      onChange={(e) => setNewSocialMedia(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && addSocialMedia()}
+                      className="flex-1 h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
+                      placeholder="https://linkedin.com/in/..."
+                    />
+                    <button
+                      onClick={addSocialMedia}
+                      className="px-4 py-2 text-white rounded-md"
+                      style={{ backgroundColor: '#F29400' }}
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+
+                {/* Homepage */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Homepage
+                  </label>
+                  <div className="flex space-x-2">
+                    <input
+                      type="text"
+                      value={newHomepage}
+                      onChange={(e) => setNewHomepage(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && addHomepage()}
+                      className="flex-1 h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
+                      placeholder="https://meine-website.com"
+                    />
+                    <button
+                      onClick={addHomepage}
+                      className="px-4 py-2 text-white rounded-md"
+                      style={{ backgroundColor: '#F29400' }}
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -379,16 +416,18 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               </div>
               
               <div className="col-span-6">
-                <AutocompleteInput
-                  label="Arbeitsmarktzugang"
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Arbeitsmarktzugang
+                </label>
+                <select
                   value={data.arbeitsmarktzugang}
-                  onChange={(value) => updateData('arbeitsmarktzugang', value)}
-                  onAdd={(value) => updateData('arbeitsmarktzugang', value || '')}
-                  onFavoriteClick={(value) => toggleFavorite('arbeitsmarktzugang', value || '')}
-                  suggestions={[...favorites.arbeitsmarktzugang, ...arbeitsmarktzugangOptions]}
-                 placeholder="Arbeitsmarktzugang"
-                  showFavoritesButton
-                />
+                  onChange={(e) => updateData('arbeitsmarktzugang', e.target.value)}
+                  className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 bg-white"
+                >
+                  {arbeitsmarktzugangOptions.map(option => (
+                    <option key={option} value={option}>{option}</option>
+                  ))}
+                </select>
               </div>
             </div>
           )}
@@ -408,7 +447,6 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 onChange={(e) => updateData('familienstand', e.target.value)}
                 className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 bg-white"
               >
-                <option value="">Keine Angabe</option>
                 {familienstandOptions.map(option => (
                   <option key={option} value={option}>{option}</option>
                 ))}
@@ -426,7 +464,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                   {data.kinder.map((child, index) => (
                     <TagButtonSelected
                       key={index}
-                      label={child}
+                  label="Arbeitsmarktzugang"
                       onRemove={() => removeChild(index)}
                     />
                   ))}
@@ -451,9 +489,10 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 </button>
               </div>
             </div>
-          </div>
-        </div>
+          )}
+        </>
       </Card>
+
     </div>
   );
 }
