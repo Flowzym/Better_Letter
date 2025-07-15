@@ -489,10 +489,10 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 {newChild.trim() && (
                   <button
                     onClick={addChild}
-                    className="px-4 py-2 text-white rounded-md"
+                    className="px-3 py-2 text-white rounded-md"
                     style={{ backgroundColor: '#F29400' }}
                   >
-                    Hinzufügen
+                    +
                   </button>
                 )}
               </div>

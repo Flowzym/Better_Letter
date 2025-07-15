@@ -75,14 +75,14 @@ export default function TextInputWithButtons({
           <button
             type="button"
             onClick={handleAdd}
-            className="w-10 h-10 bg-[#F6A800] text-white rounded-md flex items-center justify-center"
+            className="w-10 h-10 bg-[#F29400] text-white rounded-md flex items-center justify-center"
           >
             <Plus className="text-xl" />
           </button>
           <button
             type="button"
             onClick={handleFavoriteClick}
-            className="w-10 h-10 bg-[#F6A800] text-white rounded-md flex items-center justify-center"
+            className="w-10 h-10 bg-[#F29400] text-white rounded-md flex items-center justify-center"
           >
             <Star className="w-5 h-5" />
           </button>
