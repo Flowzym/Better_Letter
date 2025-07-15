@@ -123,10 +123,16 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
     updateData('socialMedia', data.socialMedia.filter((_, i) => i !== index));
   };
 
+  const handleNumericInput = (value: string, setter: (val: string) => void) => {
+    // Nur Ziffern zulassen
+    const numericValue = value.replace(/[^\d]/g, '');
+    setter(numericValue);
+  };
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Name & Titel */}
-      <Card title="">
+      <div className="bg-white border border-gray-200 rounded shadow-sm p-4 space-y-4">
         <div className="grid grid-cols-12 gap-4">
           <div className="col-span-3">
             <AutocompleteInput
@@ -192,10 +198,10 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
             </div>
           </div>
         </div>
-      </Card>
+      </div>
 
       {/* Kontaktdaten */}
-      <Card title="">
+      <div className="bg-white border border-gray-200 rounded shadow-sm p-4 space-y-4">
         <div className="space-y-4">
           <div className="grid grid-cols-12 gap-4">
             <div className="col-span-6">
@@ -326,10 +332,10 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
             </div>
           )}
         </div>
-      </Card>
+      </div>
 
       {/* Adresse */}
-      <Card title="">
+      <div className="bg-white border border-gray-200 rounded shadow-sm p-4 space-y-4">
         <div className="space-y-4">
           <div className="grid grid-cols-12 gap-4">
             <div className="col-span-5">
@@ -364,8 +370,10 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               <div className="relative">
                 <input
                   type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   value={data.plz}
-                  onChange={(e) => updateData('plz', e.target.value)}
+                  onChange={(e) => handleNumericInput(e.target.value, (val) => updateData('plz', val))}
                   className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 pr-10"
                   placeholder="1010"
                 />
@@ -422,11 +430,10 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
             </div>
           )}
         </div>
-      </Card>
+      </div>
 
       {/* Geburtsdaten & Staatsbürgerschaft */}
-      <Card title="">
-        <>
+      <div className="bg-white border border-gray-200 rounded shadow-sm p-4 space-y-4">
           {/* Geburtsdaten mit Checkbox */}
           <div className="grid grid-cols-12 gap-4 items-center">
             <div className="col-span-3">
@@ -503,11 +510,10 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               </div>
             </div>
           )}
-        </>
-      </Card>
+      </div>
 
       {/* Familienstand */}
-      <Card title="">
+      <div className="bg-white border border-gray-200 rounded shadow-sm p-4 space-y-4">
         <div className="space-y-4">
           <div className="grid grid-cols-12 gap-4 items-start">
             <div className="col-span-4">
@@ -534,8 +540,10 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               <div className="flex space-x-2">
                 <input
                   type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   value={newChild}
-                  onChange={(e) => setNewChild(e.target.value)}
+                  onChange={(e) => handleNumericInput(e.target.value, setNewChild)}
                   onKeyPress={(e) => e.key === 'Enter' && addChild()}
                   className="flex-1 h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
                   placeholder="z.B. 2010"
@@ -568,7 +576,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
             </div>
           </div>
         </div>
-      </Card>
+      </div>
     </div>
   );
 }

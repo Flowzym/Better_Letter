@@ -102,7 +102,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
   };
 
   const getBorderColor = () => {
-    return value ? '#F29400' : '#D1D5DB';
+    return '#D1D5DB';
   };
 
   return (
