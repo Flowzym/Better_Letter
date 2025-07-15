@@ -247,8 +247,10 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                     {newSocialMedia.trim() && (
                       <button
                         onClick={addSocialMedia}
-                        className="px-4 py-2 text-white rounded-md"
-                        style={{ backgroundColor: '#F29400' }}
+                        className="px-3 py-2 text-white rounded-md transition-colors duration-200"
+                        style={{ backgroundColor: '#F6A800' }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#F29400'}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#F6A800'}
                       >
                         +
                       </button>
@@ -273,8 +275,10 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                     {newHomepage.trim() && (
                       <button
                         onClick={addHomepage}
-                        className="px-4 py-2 text-white rounded-md"
-                        style={{ backgroundColor: '#F29400' }}
+                        className="px-3 py-2 text-white rounded-md transition-colors duration-200"
+                        style={{ backgroundColor: '#F6A800' }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#F29400'}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#F6A800'}
                       >
                         +
                       </button>
@@ -489,8 +493,10 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 {newChild.trim() && (
                   <button
                     onClick={addChild}
-                    className="px-3 py-2 text-white rounded-md"
-                    style={{ backgroundColor: '#F29400' }}
+                    className="px-3 py-2 text-white rounded-md transition-colors duration-200"
+                    style={{ backgroundColor: '#F6A800' }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#F29400'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#F6A800'}
                   >
                     +
                   </button>
