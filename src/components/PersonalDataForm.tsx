@@ -140,7 +140,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               type="text"
               value={data.vorname}
               onChange={(e) => updateData('vorname', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
+              className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
               placeholder="Vorname"
             />
           </div>
@@ -153,7 +153,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               type="text"
               value={data.nachname}
               onChange={(e) => updateData('nachname', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
+              className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
               placeholder="Nachname"
             />
           </div>
@@ -184,7 +184,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 type="email"
                 value={data.email}
                 onChange={(e) => updateData('email', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
+                className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
                 placeholder="email@beispiel.com"
               />
             </div>
@@ -229,7 +229,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                   value={newSocialMedia}
                   onChange={(e) => setNewSocialMedia(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && addSocialMedia()}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
+                  className="flex-1 h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
                   placeholder="https://linkedin.com/in/..."
                 />
                 <button
@@ -257,7 +257,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 type="text"
                 value={data.adresse}
                 onChange={(e) => updateData('adresse', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
+                className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
                 placeholder="Musterstraße 123"
               />
             </div>
@@ -270,7 +270,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 type="text"
                 value={data.plz}
                 onChange={(e) => updateData('plz', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
+                className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
                 placeholder="1010"
               />
             </div>
@@ -406,7 +406,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               <select
                 value={data.familienstand}
                 onChange={(e) => updateData('familienstand', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 bg-white"
+                className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 bg-white"
               >
                 <option value="">Keine Angabe</option>
                 {familienstandOptions.map(option => (
@@ -439,7 +439,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                   value={newChild}
                   onChange={(e) => setNewChild(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && addChild()}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
+                  className="flex-1 h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
                   placeholder="z.B. 2010"
                 />
                 <button

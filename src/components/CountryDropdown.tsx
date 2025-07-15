@@ -118,7 +118,7 @@ export default function CountryDropdown({ value, onChange, label, placeholder = 
       <div ref={dropdownRef} className="relative">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="w-full flex items-center justify-between px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-orange-500 text-left"
+          className="w-full h-10 flex items-center justify-between px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-orange-500 text-left"
         >
           <div className="flex items-center space-x-3">
             <span className="text-lg">{selectedCountry?.flag || '🌍'}</span>

@@ -114,7 +114,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onClick={() => setIsOpen(true)}
-          className="w-full px-3 py-2 pr-10 border rounded-md focus:outline-none focus:ring-2"
+          className="w-full h-10 px-3 py-2 pr-10 border rounded-md focus:outline-none focus:ring-2"
           style={{ borderColor: getBorderColor(), '--tw-ring-color': '#F29400' } as React.CSSProperties}
           placeholder="TT.MM.JJJJ"
           maxLength={10}

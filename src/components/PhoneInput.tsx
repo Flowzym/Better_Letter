@@ -99,7 +99,7 @@ export default function PhoneInput({ countryCode, phoneNumber, onCountryChange, 
       <div ref={dropdownRef} className="relative">
         <button
           onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-orange-500 min-w-[120px]"
+        className="flex items-center space-x-2 h-10 px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-orange-500 min-w-[120px]"
         >
           <span className="text-lg">{selectedCountry?.flag || '🌍'}</span>
           <span className="text-sm font-medium">{countryCode || '+43'}</span>
@@ -152,7 +152,7 @@ export default function PhoneInput({ countryCode, phoneNumber, onCountryChange, 
           type="tel"
           value={phoneNumber}
           onChange={handlePhoneChange}
-        className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
+        className="w-full h-10 pl-3 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
           placeholder="123 456 7890"
         />
       </div>
