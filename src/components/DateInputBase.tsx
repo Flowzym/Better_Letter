@@ -119,27 +119,31 @@ export default function DateInputBase({
   };
 
   const handleBlur = () => {
-    // Validierung beim Verlassen des Feldes
+    // Validierung beim Verlassen des Feldes - NUR bei vollständigen Daten
     if (internalValue.trim() && internalValue.length > 0) {
       const parts = internalValue.split('.');
       let isValid = true;
       
-      if (parts.length === 3) {
+      // Nur validieren wenn alle 3 Teile vorhanden sind
+      if (parts.length === 3 && parts[0] && parts[1] && parts[2]) {
         const day = parseInt(parts[0], 10);
         const month = parseInt(parts[1], 10);
         const year = parseInt(parts[2], 10);
         
-        if (parts[0].length !== 2 || day < 1 || day > 31) isValid = false;
-        if (parts[1].length !== 2 || month < 1 || month > 12) isValid = false;
-        if (parts[2].length !== 4 || year < 1900 || year > 2099) isValid = false;
-      } else {
-        isValid = false;
+        // Strenge Validierung nur bei vollständigen Eingaben
+        if (parts[0].length === 2 && parts[1].length === 2 && parts[2].length === 4) {
+          if (day < 1 || day > 31) isValid = false;
+          if (month < 1 || month > 12) isValid = false;
+          if (year < 1900 || year > 2099) isValid = false;
+        }
+        
+        // Bei ungültigen VOLLSTÄNDIGEN Daten löschen
+        if (!isValid) {
+          setInternalValue('');
+          onChange('');
+        }
       }
-      
-      if (!isValid) {
-        setInternalValue('');
-        onChange('');
-      }
+      // Unvollständige Eingaben (z.B. nur "03" oder "03.12") bleiben erhalten!
     }
     
     onBlur?.();
@@ -261,6 +265,7 @@ export default function DateInputBase({
           else if (monthPart.length === 2 && yearPart.length === 0) {
             inputRef.current.setSelectionRange(secondDot + 1, currentVal.length);
           }
+          // WICHTIG: Jahr wird NICHT nach 2 Ziffern markiert - 4 Ziffern möglich!
         }
       }
     }, 10);
