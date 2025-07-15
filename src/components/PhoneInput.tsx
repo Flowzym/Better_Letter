@@ -99,8 +99,7 @@ export default function PhoneInput({ countryCode, phoneNumber, onCountryChange, 
       <div ref={dropdownRef} className="relative">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center space-x-2 px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-1 focus:border-orange-500 min-w-[120px]"
-          style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
+        className="flex items-center space-x-2 px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-orange-500 min-w-[120px]"
         >
           <span className="text-lg">{selectedCountry?.flag || '🌍'}</span>
           <span className="text-sm font-medium">{countryCode || '+43'}</span>
@@ -116,8 +115,7 @@ export default function PhoneInput({ countryCode, phoneNumber, onCountryChange, 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Land suchen..."
-                className="w-full px-2 py-1 text-sm border rounded focus:outline-none focus:ring-1"
-                style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
+              className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-orange-500"
                 autoFocus
               />
             </div>
@@ -155,8 +153,7 @@ export default function PhoneInput({ countryCode, phoneNumber, onCountryChange, 
           type="tel"
           value={phoneNumber}
           onChange={handlePhoneChange}
-          className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:border-orange-500"
-          style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
+        className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
           placeholder="123 456 7890"
         />
       </div>

@@ -106,7 +106,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
       {/* Name & Titel */}
       <Card title="">
         <div className="grid grid-cols-12 gap-4">
-          <div className="col-span-3">
+          <div className="col-span-2">
             <AutocompleteInput
               label="Titel"
               value={data.titel}
@@ -127,8 +127,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               type="text"
               value={data.vorname}
               onChange={(e) => updateData('vorname', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:border-orange-500"
-              style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
               placeholder="Vorname eingeben"
             />
           </div>
@@ -141,8 +140,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               type="text"
               value={data.nachname}
               onChange={(e) => updateData('nachname', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:border-orange-500"
-              style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
               placeholder="Nachname eingeben"
             />
           </div>
@@ -173,8 +171,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 type="email"
                 value={data.email}
                 onChange={(e) => updateData('email', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:border-orange-500"
-                style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
                 placeholder="email@beispiel.com"
               />
             </div>
@@ -219,8 +216,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                   value={newSocialMedia}
                   onChange={(e) => setNewSocialMedia(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && addSocialMedia()}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:border-orange-500"
-                  style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
                   placeholder="https://linkedin.com/in/..."
                 />
                 <button
@@ -239,7 +235,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
       {/* Adresse */}
       <Card title="">
         <div className="grid grid-cols-12 gap-4">
-          <div className="col-span-6">
+          <div className="col-span-5">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Straße & Hausnummer
             </label>
@@ -247,8 +243,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               type="text"
               value={data.adresse}
               onChange={(e) => updateData('adresse', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:border-orange-500"
-              style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
               placeholder="Musterstraße 123"
             />
           </div>
@@ -261,13 +256,12 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               type="text"
               value={data.plz}
               onChange={(e) => updateData('plz', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:border-orange-500"
-              style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
               placeholder="1010"
             />
           </div>
           
-          <div className="col-span-2">
+          <div className="col-span-3">
             <AutocompleteInput
               label="Ort"
               value={data.ort}
@@ -288,8 +282,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               type="text"
               value={data.land}
               onChange={(e) => updateData('land', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:border-orange-500"
-              style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
               placeholder="Österreich"
             />
           </div>
@@ -396,8 +389,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               <select
                 value={data.familienstand}
                 onChange={(e) => updateData('familienstand', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:border-orange-500"
-                style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
               >
                 <option value="">Familienstand auswählen</option>
                 {familienstandOptions.map(option => (
@@ -430,8 +422,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                   value={newChild}
                   onChange={(e) => setNewChild(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && addChild()}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:border-orange-500"
-                  style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
                   placeholder="z.B. 2010"
                 />
                 <button
