@@ -13,7 +13,7 @@ interface DateInputBaseProps {
 
 /**
  * Basis-Komponente für Datumseingabe (TT.MM.JJJJ)
- * Basiert auf der bewährten MonthYearInputBase-Logik
+ * Basiert auf der bewährten MonthYearInputBase-Logik mit Verbesserungen
  */
 export default function DateInputBase({
   value,
@@ -154,7 +154,7 @@ export default function DateInputBase({
     const hasSelection = start !== end;
     const currentValue = internalValue;
     
-    // Spezialbehandlung für Ziffern-Eingabe bei Selektion (wie in MonthYearInputBase)
+    // Spezialbehandlung für Ziffern-Eingabe bei Selektion
     if (/^\d$/.test(e.key) && hasSelection) {
       const digit = e.key;
       
@@ -218,7 +218,7 @@ export default function DateInputBase({
       }
     }
     
-    // Jahr-Navigation mit Pfeiltasten (wie in MonthYearInputBase)
+    // Jahr-Navigation mit Pfeiltasten
     if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
       e.preventDefault();
       const parts = currentValue.split('.');
@@ -242,7 +242,7 @@ export default function DateInputBase({
       }
     }
     
-    // Automatisches Weiterschalten zwischen Segmenten
+    // Automatisches Weiterschalten zwischen Segmenten nach Eingabe
     setTimeout(() => {
       if (inputRef.current) {
         const currentVal = inputRef.current.value;
@@ -254,11 +254,11 @@ export default function DateInputBase({
           const yearPart = currentVal.substring(secondDot + 1);
           
           // Nach 2-stelligem Tag -> Monat markieren
-          if (dayPart.length === 2 && monthPart.length < 2) {
+          if (dayPart.length === 2 && monthPart.length === 0) {
             inputRef.current.setSelectionRange(firstDot + 1, secondDot);
           }
           // Nach 2-stelligem Monat -> Jahr markieren
-          else if (monthPart.length === 2 && yearPart.length < 4) {
+          else if (monthPart.length === 2 && yearPart.length === 0) {
             inputRef.current.setSelectionRange(secondDot + 1, currentVal.length);
           }
         }
