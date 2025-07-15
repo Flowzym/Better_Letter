@@ -49,7 +49,7 @@ const phoneCountryCodes = [
 const titleSuggestions = ['Dr.', 'Mag.', 'DI', 'Prof.', 'MSc', 'BSc', 'MBA'];
 const citySuggestions = ['Wien', 'Graz', 'Salzburg', 'Innsbruck', 'Linz', 'Klagenfurt'];
 const countrySuggestions = ['Österreich', 'Deutschland', 'Schweiz', 'Italien', 'Frankreich'];
-const familienstandOptions = ['ledig', 'verheiratet', 'geschieden', 'verwitwet'];
+const familienstandOptions = ['Keine Angabe', 'ledig', 'verheiratet', 'geschieden', 'verwitwet'];
 const arbeitsmarktzugangOptions = ['EU-Bürger', 'Arbeitserlaubnis', 'Rot-Weiß-Rot Karte'];
 
 export default function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
@@ -321,7 +321,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
         <>
           {/* Geburtsdaten mit Checkbox */}
           <div className="grid grid-cols-12 gap-4 items-center">
-            <div className="col-span-4">
+            <div className="col-span-3">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Geburtsdatum
               </label>
@@ -331,7 +331,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               />
             </div>
             
-            <div className="col-span-4">
+            <div className="col-span-4.5">
               <AutocompleteInput
                 label="Geburtsort"
                 value={data.geburtsort}
@@ -344,7 +344,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               />
             </div>
             
-            <div className="col-span-4">
+            <div className="col-span-4.5">
               <CountryDropdown
                 label="Geburtsland"
                 value={data.geburtsland}
@@ -408,7 +408,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 onChange={(e) => updateData('familienstand', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 bg-white"
               >
-                <option value="">Familienstand auswählen</option>
+                <option value="">Keine Angabe</option>
                 {familienstandOptions.map(option => (
                   <option key={option} value={option}>{option}</option>
                 ))}
@@ -418,7 +418,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
             {/* Kinder */}
             <div className="col-span-8">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Kinder (Geburtsjahre)
+                Geburtsjahre Kinder
               </label>
               
               {data.kinder.length > 0 && (
