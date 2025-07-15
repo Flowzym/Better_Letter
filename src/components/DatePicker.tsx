@@ -35,7 +35,7 @@ const months = [
   { label: "Dezember", value: "12" },
 ];
 
-export default function DatePicker({ value, onChange }: DatePickerProps) {
+export default function DatePicker({ value, onChange, className = "" }: DatePickerProps & { className?: string }) {
   const [activeField, setActiveField] = useState<"day" | "month" | "year" | null>(null);
   const [internalValue, setInternalValue] = useState(value);
   const popupRef = useRef<HTMLDivElement>(null);
@@ -144,14 +144,14 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
   };
 
   return (
-    <div className="relative w-40"> {/* Erweiterte Breite für vollständiges Datum */}
+    <div className={`relative w-40 ${className}`}>
       <div className="relative">
         <DateInputBase
           value={internalValue}
           onChange={handleInputChange}
           onFocus={handleInputFocus}
           onKeyDown={handleInputKeyDown}
-          className="pr-16" // Mehr Padding für Icons
+          placeholder="TT.MM.JJ"
         />
         
         {/* Icon Container mit beiden Icons */}
@@ -183,9 +183,9 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
       {activeField && (
         <div
           ref={popupRef}
-          className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 z-50 w-[600px]"
+          className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 z-50 w-[620px]"
         >
-          <div className="grid grid-cols-[240px_240px_100px] gap-x-4 items-start"> {/* Optimierte Spaltenbreiten */}
+          <div className="grid grid-cols-[220px_240px_120px] gap-x-4 items-start">
             {/* Tage - links */}
             <div className="flex flex-col space-y-2">
               <div className="grid grid-cols-7 gap-1"> {/* Reduzierter Gap für bessere Raumnutzung */}
@@ -195,7 +195,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
                     <button
                       key={d}
                       onMouseDown={() => handleDaySelect(d)}
-                      className={`px-2 py-2 h-9 border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-sm font-medium ${
+                      className={`aspect-square flex items-center justify-center p-0 h-9 border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-sm font-medium ${
                         selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
                       }`}
                     >
@@ -245,7 +245,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
             </div>
 
             {/* Jahre - rechts */}
-            <div className="row-span-2 overflow-y-auto flex flex-col space-y-2 pr-1" style={{ maxHeight: "15rem" }}>
+            <div className="row-span-2 overflow-y-auto flex flex-col space-y-2 pr-1" style={{ maxHeight: "17rem" }}>
               {years.map((y) => {
                 const selected = year === y;
                 return (

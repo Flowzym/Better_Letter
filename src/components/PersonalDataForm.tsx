@@ -435,12 +435,13 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
       {/* Geburtsdaten & Staatsbürgerschaft */}
       <div className="bg-white border border-gray-200 rounded shadow-sm p-4 space-y-4">
           {/* Geburtsdaten mit Checkbox */}
-          <div className="grid grid-cols-12 gap-4 items-center">
-            <div className="col-span-3">
+          <div className="grid grid-cols-12 gap-4 items-start">
+            <div className="col-span-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Geburtsdatum
               </label>
               <DatePicker
+                className="w-full max-w-[160px]"
                 value={data.geburtsdatum}
                 onChange={(value) => updateData('geburtsdatum', value)}
               />
@@ -448,6 +449,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
             
             <div className="col-span-4">
               <AutocompleteInput
+                className="w-full max-w-[160px]"
                 label="Geburtsort"
                 value={data.geburtsort}
                 onChange={(value) => updateData('geburtsort', value)}
@@ -460,8 +462,9 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               />
             </div>
             
-            <div className="col-span-5">
+            <div className="col-span-4">
               <CountryDropdown
+                className="w-full max-w-[160px]"
                 label="Geburtsland"
                 value={data.geburtsland}
                 onChange={(value) => updateData('geburtsland', value)}

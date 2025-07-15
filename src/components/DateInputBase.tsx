@@ -125,9 +125,9 @@ export default function DateInputBase({
 
   const handleBlur = () => {
     console.log('DateInputBase: handleBlur called with value:', internalValue);
+    console.log('DateInputBase: internalValue length:', internalValue.length);
     
-    // WICHTIG: Keine automatische Löschung bei unvollständigen Eingaben!
-    // Das Feld wird nur geleert, wenn es komplett leer ist oder bei eindeutig ungültigen VOLLSTÄNDIGEN Daten
+    // Nur bei komplett leeren Feldern oder eindeutig ungültigen VOLLSTÄNDIGEN Daten löschen
     
     if (!internalValue || internalValue.trim() === '') {
       console.log('DateInputBase: Empty value, keeping as is');
@@ -136,18 +136,24 @@ export default function DateInputBase({
     }
     
     const parts = internalValue.split('.');
+    console.log('DateInputBase: parts:', parts);
     
-    // Nur bei vollständigen Eingaben (alle 3 Teile mit korrekter Länge) validieren
-    if (parts.length === 3 && parts[0].length === 2 && parts[1].length === 2 && parts[2].length === 4) {
+    // Nur bei vollständigen Eingaben validieren (alle 3 Teile vorhanden und korrekte Länge)
+    if (parts.length === 3 && parts[0] && parts[1] && parts[2] && 
+        parts[0].length === 2 && parts[1].length === 2 && parts[2].length === 4) {
       const day = parseInt(parts[0], 10);
       const month = parseInt(parts[1], 10);
       const year = parseInt(parts[2], 10);
+      
+      console.log('DateInputBase: Parsed date:', { day, month, year });
       
       // Strenge Validierung nur bei vollständigen Eingaben
       let isValid = true;
       if (day < 1 || day > 31) isValid = false;
       if (month < 1 || month > 12) isValid = false;
       if (year < 1900 || year > 2099) isValid = false;
+      
+      console.log('DateInputBase: isValid:', isValid);
       
       if (!isValid) {
         console.log('DateInputBase: Invalid complete date, clearing field');

@@ -231,7 +231,7 @@ export default function AutocompleteInput<T = string>({
   return (
     <div
       ref={containerRef}
-      className={`relative ${className} profile-input autocomplete-input`}
+      className={`relative profile-input autocomplete-input ${className}`}
     >
       {label && (
         <label
