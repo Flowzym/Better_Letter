@@ -183,7 +183,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
       {activeField && (
         <div
           ref={popupRef}
-          className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 z-50 w-[600px]" {/* Erweiterte Popup-Breite */}
+          className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 z-50 w-[600px]"
         >
           <div className="grid grid-cols-[240px_240px_100px] gap-x-4 items-start"> {/* Optimierte Spaltenbreiten */}
             {/* Tage - links */}
