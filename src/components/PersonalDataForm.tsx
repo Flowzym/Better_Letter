@@ -5,6 +5,7 @@ import TagButtonSelected from './ui/TagButtonSelected';
 import DatePicker from './DatePicker';
 import PhoneInput from './PhoneInput';
 import CountryAutocomplete from './CountryAutocomplete';
+import CountryDropdown from './CountryDropdown';
 import Card from './cards/Card';
 
 interface PersonalData {
@@ -56,8 +57,6 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
     titel: titleSuggestions.slice(0, 4),
     ort: citySuggestions.slice(0, 5),
     geburtsort: citySuggestions.slice(0, 5),
-    geburtsland: countrySuggestions.slice(0, 4),
-    staatsbuergerschaft: countrySuggestions.slice(0, 4),
     arbeitsmarktzugang: arbeitsmarktzugangOptions.slice(0, 2),
     land: countrySuggestions.slice(0, 4),
   });
@@ -65,6 +64,20 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
   const [newChild, setNewChild] = useState('');
   const [newSocialMedia, setNewSocialMedia] = useState('');
   const [showSocialMedia, setShowSocialMedia] = useState(false);
+
+  // Set default values for country fields
+  useEffect(() => {
+    if (!data.geburtsland) {
+      updateData('geburtsland', 'Österreich');
+    }
+  }, []);
+
+  // Sync Staatsbürgerschaft with Geburtsland when Geburtsland changes
+  useEffect(() => {
+    if (data.geburtsland && data.staatsbuergerschaftCheckbox && !data.staatsbuergerschaft) {
+      updateData('staatsbuergerschaft', data.geburtsland);
+    }
+  }, [data.geburtsland, data.staatsbuergerschaftCheckbox]);
 
   const updateData = (field: keyof PersonalData, value: any) => {
     onChange({ ...data, [field]: value });
@@ -337,15 +350,10 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
             </div>
             
             <div className="col-span-4">
-              <AutocompleteInput
+              <CountryDropdown
                 label="Geburtsland"
                 value={data.geburtsland}
                 onChange={(value) => updateData('geburtsland', value)}
-                onAdd={(value) => updateData('geburtsland', value || '')}
-                onFavoriteClick={(value) => toggleFavorite('geburtsland', value || '')}
-                suggestions={[...favorites.geburtsland, ...countrySuggestions]}
-               placeholder="Geburtsland"
-                showFavoritesButton
               />
             </div>
           </div>
@@ -368,15 +376,10 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
           {data.staatsbuergerschaftCheckbox && (
             <div className="grid grid-cols-12 gap-4">
               <div className="col-span-6">
-                <AutocompleteInput
+                <CountryDropdown
                   label="Staatsbürgerschaft"
                   value={data.staatsbuergerschaft}
                   onChange={(value) => updateData('staatsbuergerschaft', value)}
-                  onAdd={(value) => updateData('staatsbuergerschaft', value || '')}
-                  onFavoriteClick={(value) => toggleFavorite('staatsbuergerschaft', value || '')}
-                  suggestions={[...favorites.staatsbuergerschaft, ...countrySuggestions]}
-                 placeholder="Staatsbürgerschaft"
-                  showFavoritesButton
                 />
               </div>
               
