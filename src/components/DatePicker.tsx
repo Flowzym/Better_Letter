@@ -183,9 +183,9 @@ export default function DatePicker({ value, onChange, className = "" }: DatePick
       {activeField && (
         <div
           ref={popupRef}
-          className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 z-50 w-[680px] h-[264px]"
+          className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 z-50 w-[720px] h-[264px]"
         >
-          <div className="grid grid-cols-[328px_200px_80px] gap-x-4 items-start">
+          <div className="grid grid-cols-[328px_200px_120px] gap-x-4 items-start">
             {/* Tage - links */}
             <div className="flex flex-col space-y-2">
               <div className="grid grid-cols-7 gap-2 h-[232px] content-start">
@@ -245,7 +245,7 @@ export default function DatePicker({ value, onChange, className = "" }: DatePick
             </div>
 
             {/* Jahre - rechts */}
-            <div className="overflow-y-auto flex flex-col space-y-2 pr-2 h-[232px]">
+            <div className="overflow-y-auto flex flex-col space-y-2 h-[232px] pr-3">
               {years.map((y) => {
                 const selected = year === y;
                 return (
