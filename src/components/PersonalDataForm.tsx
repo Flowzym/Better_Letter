@@ -145,26 +145,50 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Vorname
             </label>
-            <input
-              type="text"
-              value={data.vorname}
-              onChange={(e) => updateData('vorname', e.target.value)}
-              className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
-              placeholder="Vorname"
-            />
+            <div className="relative">
+              <input
+                type="text"
+                value={data.vorname}
+                onChange={(e) => updateData('vorname', e.target.value)}
+                className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 pr-10"
+                placeholder="Vorname"
+              />
+              {data.vorname && (
+                <button
+                  type="button"
+                  onClick={() => updateData('vorname', '')}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-300"
+                  aria-label="Vorname löschen"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
           </div>
           
           <div className="col-span-5">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Nachname
             </label>
-            <input
-              type="text"
-              value={data.nachname}
-              onChange={(e) => updateData('nachname', e.target.value)}
-              className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
-              placeholder="Nachname"
-            />
+            <div className="relative">
+              <input
+                type="text"
+                value={data.nachname}
+                onChange={(e) => updateData('nachname', e.target.value)}
+                className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 pr-10"
+                placeholder="Nachname"
+              />
+              {data.nachname && (
+                <button
+                  type="button"
+                  onClick={() => updateData('nachname', '')}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-300"
+                  aria-label="Nachname löschen"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </Card>
@@ -189,13 +213,25 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 E-Mail
               </label>
-              <input
-                type="email"
-                value={data.email}
-                onChange={(e) => updateData('email', e.target.value)}
-                className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
-                placeholder="email@beispiel.com"
-              />
+              <div className="relative">
+                <input
+                  type="email"
+                  value={data.email}
+                  onChange={(e) => updateData('email', e.target.value)}
+                  className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 pr-10"
+                  placeholder="email@beispiel.com"
+                />
+                {data.email && (
+                  <button
+                    type="button"
+                    onClick={() => updateData('email', '')}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-300"
+                    aria-label="E-Mail löschen"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
             </div>
           </div>
 
@@ -216,19 +252,6 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
           {/* Social Media Fields */}
           {showSocialMedia && (
             <div>
-              
-              {data.socialMedia.length > 0 && (
-                <div className="flex flex-wrap gap-2 mb-3">
-                  {data.socialMedia.map((link, index) => (
-                    <TagButtonSelected
-                      key={index}
-                      label={link}
-                      onRemove={() => removeSocialMedia(index)}
-                    />
-                  ))}
-                </div>
-              )}
-              
               <div className="grid grid-cols-2 gap-4">
                 {/* Social Media */}
                 <div>
@@ -286,6 +309,19 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                   </div>
                 </div>
               </div>
+              
+              {/* Social Media Tags below fields */}
+              {data.socialMedia.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {data.socialMedia.map((link, index) => (
+                    <TagButtonSelected
+                      key={index}
+                      label={link}
+                      onRemove={() => removeSocialMedia(index)}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -299,26 +335,50 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Straße & Hausnummer
               </label>
-              <input
-                type="text"
-                value={data.adresse}
-                onChange={(e) => updateData('adresse', e.target.value)}
-                className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
-                placeholder="Musterstraße 123"
-              />
+              <div className="relative">
+                <input
+                  type="text"
+                  value={data.adresse}
+                  onChange={(e) => updateData('adresse', e.target.value)}
+                  className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 pr-10"
+                  placeholder="Musterstraße 123"
+                />
+                {data.adresse && (
+                  <button
+                    type="button"
+                    onClick={() => updateData('adresse', '')}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-300"
+                    aria-label="Adresse löschen"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
             </div>
             
             <div className="col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 PLZ
               </label>
-              <input
-                type="text"
-                value={data.plz}
-                onChange={(e) => updateData('plz', e.target.value)}
-                className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
-                placeholder="1010"
-              />
+              <div className="relative">
+                <input
+                  type="text"
+                  value={data.plz}
+                  onChange={(e) => updateData('plz', e.target.value)}
+                  className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 pr-10"
+                  placeholder="1010"
+                />
+                {data.plz && (
+                  <button
+                    type="button"
+                    onClick={() => updateData('plz', '')}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-300"
+                    aria-label="PLZ löschen"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
             </div>
             
             <div className="col-span-5">
@@ -388,6 +448,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 suggestions={[...favorites.geburtsort, ...citySuggestions]}
                placeholder="Geburtsort"
                 showFavoritesButton
+                showAddButton={false}
               />
             </div>
             
@@ -469,18 +530,6 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 Geburtsjahre Kinder
               </label>
               
-              {data.kinder.length > 0 && (
-                <div className="flex flex-wrap gap-2 mb-2">
-                  {data.kinder.map((child, index) => (
-                    <TagButtonSelected
-                      key={index}
-                      label={child}
-                      onRemove={() => removeChild(index)}
-                    />
-                  ))}
-                </div>
-              )}
-              
               <div className="flex space-x-2">
                 <input
                   type="text"
@@ -502,6 +551,19 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                   </button>
                 )}
               </div>
+              
+              {/* Kinder Tags below field */}
+              {data.kinder.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {data.kinder.map((child, index) => (
+                    <TagButtonSelected
+                      key={index}
+                      label={child}
+                      onRemove={() => removeChild(index)}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
