@@ -1,52 +1,67 @@
 import { useState, useRef, useEffect } from "react";
 import { Calendar } from "lucide-react";
+import DateInputBase from './DateInputBase';
 
 interface DatePickerProps {
-  value: string; // DD.MM.YYYY format
+  value: string; // TT.MM.JJJJ format
   onChange: (date: string) => void;
 }
 
 const months = [
-  "Januar", "Februar", "März", "April", "Mai", "Juni",
-  "Juli", "August", "September", "Oktober", "November", "Dezember"
+  { label: "Januar", value: "01" },
+  { label: "Februar", value: "02" },
+  { label: "März", value: "03" },
+  { label: "April", value: "04" },
+  { label: "Mai", value: "05" },
+  { label: "Juni", value: "06" },
+  { label: "Juli", value: "07" },
+  { label: "August", value: "08" },
+  { label: "September", value: "09" },
+  { label: "Oktober", value: "10" },
+  { label: "November", value: "11" },
+  { label: "Dezember", value: "12" },
 ];
 
-const years = Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i);
+const years = Array.from({ length: 2025 - 1950 + 1 }, (_, i) =>
+  String(2025 - i),
+);
+
+const days = Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, '0'));
+
+function parseDate(dateStr: string) {
+  const parts = dateStr.split('.');
+  return {
+    day: parts[0] || '',
+    month: parts[1] || '',
+    year: parts[2] || ''
+  };
+}
+
+function formatDate(day: string, month: string, year: string) {
+  const dayPart = day || 'TT';
+  const monthPart = month || 'MM';
+  const yearPart = year || 'JJJJ';
+  return `${dayPart}.${monthPart}.${yearPart}`;
+}
 
 export default function DatePicker({ value, onChange }: DatePickerProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedDay, setSelectedDay] = useState<number | null>(null);
-  const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
-  const [selectedYear, setSelectedYear] = useState<number | null>(null);
+  const [activeField, setActiveField] = useState<"day" | "month" | "year" | null>(null);
+  const [internalValue, setInternalValue] = useState(value);
   const popupRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
 
-  // Parse existing value
+  // Synchronisiere mit externem Wert
   useEffect(() => {
-    if (value) {
-      const parts = value.split('.');
-      if (parts.length === 3) {
-        const day = parseInt(parts[0], 10);
-        const month = parseInt(parts[1], 10);
-        const year = parseInt(parts[2], 10);
-        
-        if (!isNaN(day) && day >= 1 && day <= 31) setSelectedDay(day);
-        if (!isNaN(month) && month >= 1 && month <= 12) setSelectedMonth(month);
-        if (!isNaN(year) && year >= 1900 && year <= 2100) setSelectedYear(year);
-      }
-    } else {
-      setSelectedDay(null);
-      setSelectedMonth(null);
-      setSelectedYear(null);
-    }
+    setInternalValue(value);
   }, [value]);
+
+  // Parse current date
+  const { day, month, year } = parseDate(internalValue);
 
   // Close popup when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (popupRef.current && !popupRef.current.contains(event.target as Node) &&
-          inputRef.current && !inputRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
+      if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
+        setActiveField(null);
       }
     };
 
@@ -54,264 +69,158 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const formatInput = (input: string) => {
-    // Remove all non-digits
-    const digits = input.replace(/\D/g, '');
-    
-    // Auto-format with dots
-    if (digits.length <= 2) {
-      return digits;
-    } else if (digits.length <= 4) {
-      return `${digits.slice(0, 2)}.${digits.slice(2)}`;
-    } else {
-      return `${digits.slice(0, 2)}.${digits.slice(2, 4)}.${digits.slice(4, 8)}`;
-    }
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const input = inputRef.current;
-    if (!input) return;
-
-    const cursorPos = input.selectionStart ?? 0;
-    const oldValue = value;
-    const newValue = e.target.value;
-    
-    // Check if user is typing in a selected field
-    const isFieldSelected = input.selectionStart !== input.selectionEnd;
-    
-    if (isFieldSelected) {
-      // User is typing in a selected field - handle digit input
-      const digit = newValue.replace(/\D/g, '').slice(-1);
-      if (digit) {
-        // Determine which field was selected and update accordingly
-        if (cursorPos <= 2) {
-          // Day field
-          const parts = oldValue.split('.');
-          const newDay = digit.length === 1 ? `0${digit}` : digit.slice(-2);
-          const formatted = `${newDay}.${parts[1] || 'MM'}.${parts[2] || 'YYYY'}`;
-          onChange(formatted);
-          // Move cursor to end
-          setTimeout(() => {
-            if (inputRef.current) {
-              inputRef.current.setSelectionRange(formatted.length, formatted.length);
-            }
-          }, 0);
-          return;
-        } else if (cursorPos <= 5) {
-          // Month field
-          const parts = oldValue.split('.');
-          const newMonth = digit.length === 1 ? `0${digit}` : digit.slice(-2);
-          const formatted = `${parts[0] || 'DD'}.${newMonth}.${parts[2] || 'YYYY'}`;
-          onChange(formatted);
-          // Move cursor to end
-          setTimeout(() => {
-            if (inputRef.current) {
-              inputRef.current.setSelectionRange(formatted.length, formatted.length);
-            }
-          }, 0);
-          return;
-        } else {
-          // Year field
-          const parts = oldValue.split('.');
-          const newYear = digit.padStart(4, '0');
-          const formatted = `${parts[0] || 'DD'}.${parts[1] || 'MM'}.${newYear}`;
-          onChange(formatted);
-          // Move cursor to end
-          setTimeout(() => {
-            if (inputRef.current) {
-              inputRef.current.setSelectionRange(formatted.length, formatted.length);
-            }
-          }, 0);
-          return;
-        }
+  // Close popup on Escape
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setActiveField(null);
       }
-    }
-    
-    // Normal formatting
-    const formatted = formatInput(newValue);
-    onChange(formatted);
+    };
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
+  }, []);
+
+  const handleInputChange = (newValue: string) => {
+    setInternalValue(newValue);
+    onChange(newValue);
   };
 
-  const handleInputClick = () => {
-    const input = inputRef.current;
-    if (!input) return;
-    
-    const pos = input.selectionStart ?? 0;
-    const currentValue = value;
-    
-    // Select appropriate section based on cursor position
-    if (currentValue.includes('.')) {
-      const firstDot = currentValue.indexOf('.');
-      const secondDot = currentValue.lastIndexOf('.');
+  const handleInputFocus = () => {
+    setActiveField("day");
+  };
+
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Jahr-Navigation mit Pfeiltasten
+    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      const { day: currentDay, month: currentMonth, year: currentYear } = parseDate(internalValue);
       
-      if (pos <= firstDot) {
-        // Day section
-        setTimeout(() => input.setSelectionRange(0, firstDot), 0);
-      } else if (pos <= secondDot) {
-        // Month section
-        setTimeout(() => input.setSelectionRange(firstDot + 1, secondDot), 0);
-      } else {
-        // Year section
-        setTimeout(() => input.setSelectionRange(secondDot + 1, currentValue.length), 0);
+      if (currentYear && currentYear.length === 4) {
+        const increment = e.key === 'ArrowUp' ? 1 : -1;
+        let newYear = parseInt(currentYear, 10) + increment;
+        
+        // Jahr-Grenzen einhalten
+        if (newYear < 1950) newYear = 1950;
+        if (newYear > 2025) newYear = 2025;
+        
+        const newValue = formatDate(currentDay, currentMonth, String(newYear));
+        handleInputChange(newValue);
       }
-    } else {
-      // Select all if no dots
-      setTimeout(() => input.setSelectionRange(0, currentValue.length), 0);
     }
-    
-    setIsOpen(true);
   };
 
-  const updateDateFromSelection = (day?: number, month?: number, year?: number) => {
-    const newDay = day ?? selectedDay;
-    const newMonth = month ?? selectedMonth;
-    const newYear = year ?? selectedYear;
-    
-    // Update state
-    if (day !== undefined) setSelectedDay(day);
-    if (month !== undefined) setSelectedMonth(month);
-    if (year !== undefined) setSelectedYear(year);
-    
-    // Build formatted date string
-    const dayStr = newDay ? newDay.toString().padStart(2, '0') : 'DD';
-    const monthStr = newMonth ? newMonth.toString().padStart(2, '0') : 'MM';
-    const yearStr = newYear ? newYear.toString() : 'YYYY';
-    
-    const formattedDate = `${dayStr}.${monthStr}.${yearStr}`;
-    onChange(formattedDate);
+  const handleDaySelect = (selectedDay: string) => {
+    const newValue = formatDate(selectedDay, month, year);
+    handleInputChange(newValue);
   };
 
-  const handleDaySelect = (day: number) => {
-    updateDateFromSelection(day);
+  const handleMonthSelect = (selectedMonth: string) => {
+    const newValue = formatDate(day, selectedMonth, year);
+    handleInputChange(newValue);
   };
 
-  const handleMonthSelect = (monthIndex: number) => {
-    const month = monthIndex + 1;
-    updateDateFromSelection(undefined, month);
-  };
-
-  const handleYearSelect = (year: number) => {
-    updateDateFromSelection(undefined, undefined, year);
-  };
-
-  const renderDays = () => {
-    const days = Array.from({ length: 31 }, (_, i) => i + 1);
-    
-    return (
-      <div className="grid grid-cols-7 gap-2">
-        {days.map(day => (
-          <button
-            key={day}
-            onClick={() => handleDaySelect(day)}
-            className={`w-8 h-8 text-sm rounded hover:bg-gray-200 transition-colors ${
-              selectedDay === day ? 'text-white' : 'text-gray-700 bg-gray-100'
-            }`}
-            style={selectedDay === day ? { backgroundColor: '#F29400' } : {}}
-          >
-            {day.toString().padStart(2, '0')}
-          </button>
-        ))}
-      </div>
-    );
-  };
-
-  const renderMonths = () => {
-    const firstHalf = months.slice(0, 6);
-    const secondHalf = months.slice(6, 12);
-    
-    return (
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-1">
-          {firstHalf.map((month, index) => (
-            <button
-              key={month}
-              onClick={() => handleMonthSelect(index)}
-              className={`w-full text-left px-3 py-2 text-sm rounded hover:bg-gray-200 transition-colors ${
-                selectedMonth === index + 1 ? 'text-white' : 'text-gray-700 bg-gray-100'
-              }`}
-              style={selectedMonth === index + 1 ? { backgroundColor: '#F29400' } : {}}
-            >
-              {month}
-            </button>
-          ))}
-        </div>
-        <div className="space-y-1">
-          {secondHalf.map((month, index) => (
-            <button
-              key={month}
-              onClick={() => handleMonthSelect(index + 6)}
-              className={`w-full text-left px-3 py-2 text-sm rounded hover:bg-gray-200 transition-colors ${
-                selectedMonth === index + 7 ? 'text-white' : 'text-gray-700 bg-gray-100'
-              }`}
-              style={selectedMonth === index + 7 ? { backgroundColor: '#F29400' } : {}}
-            >
-              {month}
-            </button>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  const renderYears = () => {
-    return (
-      <div className="space-y-1 max-h-48 overflow-y-auto">
-        {years.map(year => (
-          <button
-            key={year}
-            onClick={() => handleYearSelect(year)}
-            className={`w-full text-center px-3 py-2 text-sm rounded hover:bg-gray-200 transition-colors ${
-              selectedYear === year ? 'text-white' : 'text-gray-700 bg-gray-100'
-            }`}
-            style={selectedYear === year ? { backgroundColor: '#F29400' } : {}}
-          >
-            {year}
-          </button>
-        ))}
-      </div>
-    );
+  const handleYearSelect = (selectedYear: string) => {
+    const newValue = formatDate(day, month, selectedYear);
+    handleInputChange(newValue);
+    setActiveField(null);
   };
 
   return (
     <div className="relative">
       <div className="relative">
-        <input
-          ref={inputRef}
-          type="text"
-          value={value}
+        <DateInputBase
+          value={internalValue}
           onChange={handleInputChange}
-          onClick={handleInputClick}
-          onFocus={() => setIsOpen(true)}
-          className="w-full h-10 px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-1"
-          style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
-          placeholder="TT.MM.JJJJ"
-          maxLength={10}
+          onFocus={handleInputFocus}
+          onKeyDown={handleInputKeyDown}
+          className="pr-10"
         />
         <Calendar 
           className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 cursor-pointer"
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={() => setActiveField(activeField ? null : "day")}
         />
       </div>
 
-      {isOpen && (
+      {activeField && (
         <div
           ref={popupRef}
-          className="absolute top-full left-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg p-4 z-50 min-w-[500px]"
+          className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 z-50"
         >
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-3 gap-x-4 items-start">
             {/* Tage - links */}
-            <div>
-              {renderDays()}
+            <div className="flex flex-col space-y-2">
+              <div className="grid grid-cols-7 gap-2">
+                {days.map((d) => {
+                  const selected = day === d;
+                  return (
+                    <button
+                      key={d}
+                      onMouseDown={() => handleDaySelect(d)}
+                      className={`px-2 py-1 h-8 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 ${
+                        selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
+                      }`}
+                    >
+                      {d}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             {/* Monate - mitte (2 Spalten) */}
-            <div>
-              {renderMonths()}
+            <div className="flex flex-col space-y-2">
+              <div className="grid grid-cols-2 gap-2">
+                <div className="flex flex-col space-y-2">
+                  {months.slice(0, 6).map((m) => {
+                    const selected = month === m.value;
+                    return (
+                      <button
+                        key={m.label}
+                        onMouseDown={() => handleMonthSelect(m.value)}
+                        className={`px-2 py-1 h-8 text-left border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 ${
+                          selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
+                        }`}
+                      >
+                        {m.label}
+                      </button>
+                    );
+                  })}
+                </div>
+                <div className="flex flex-col space-y-2">
+                  {months.slice(6).map((m) => {
+                    const selected = month === m.value;
+                    return (
+                      <button
+                        key={m.label}
+                        onMouseDown={() => handleMonthSelect(m.value)}
+                        className={`px-2 py-1 h-8 text-left border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 ${
+                          selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
+                        }`}
+                      >
+                        {m.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
 
             {/* Jahre - rechts */}
-            <div>
-              {renderYears()}
+            <div className="row-span-2 overflow-y-auto flex flex-col space-y-2 pr-1" style={{ maxHeight: "15rem" }}>
+              {years.map((y) => {
+                const selected = year === y;
+                return (
+                  <button
+                    key={y}
+                    onMouseDown={() => handleYearSelect(y)}
+                    className={`px-2 py-1 h-8 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 ${
+                      selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
+                    }`}
+                  >
+                    {y}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
