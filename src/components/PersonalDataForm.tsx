@@ -72,9 +72,9 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
     }
   }, []);
 
-  // Sync Staatsbürgerschaft with Geburtsland when Geburtsland changes
+  // Sync Staatsbürgerschaft with Geburtsland when checkbox is active and Geburtsland changes
   useEffect(() => {
-    if (data.geburtsland && data.staatsbuergerschaftCheckbox && !data.staatsbuergerschaft) {
+    if (data.geburtsland && data.staatsbuergerschaftCheckbox) {
       updateData('staatsbuergerschaft', data.geburtsland);
     }
   }, [data.geburtsland, data.staatsbuergerschaftCheckbox]);
