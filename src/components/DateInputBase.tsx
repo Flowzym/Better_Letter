@@ -13,7 +13,7 @@ interface DateInputBaseProps {
 
 /**
  * Basis-Komponente für Datumseingabe (TT.MM.JJJJ)
- * Basiert auf MonthYearInputBase, erweitert um Tagesunterstützung
+ * Basiert auf der bewährten MonthYearInputBase-Logik
  */
 export default function DateInputBase({
   value,
@@ -70,9 +70,11 @@ export default function DateInputBase({
     let newCursorPos = cursorPos;
     
     // Automatische Punkte hinzugefügt
-    if (formatted.length > oldValue.length && formatted.includes('.') && !newValue.includes('.')) {
+    if (formatted.length > oldValue.length) {
       const dotsAdded = (formatted.match(/\./g) || []).length - (oldValue.match(/\./g) || []).length;
-      newCursorPos = cursorPos + dotsAdded;
+      if (dotsAdded > 0) {
+        newCursorPos = cursorPos + dotsAdded;
+      }
     }
     
     // Wert aktualisieren
@@ -101,13 +103,13 @@ export default function DateInputBase({
       const secondDot = currentValue.lastIndexOf('.');
       
       if (pos <= firstDot) {
-        // Tag selektieren
+        // Tag selektieren (TT)
         setTimeout(() => input.setSelectionRange(0, firstDot), 0);
       } else if (pos <= secondDot) {
-        // Monat selektieren
+        // Monat selektieren (MM)
         setTimeout(() => input.setSelectionRange(firstDot + 1, secondDot), 0);
       } else {
-        // Jahr selektieren
+        // Jahr selektieren (JJJJ)
         setTimeout(() => input.setSelectionRange(secondDot + 1, currentValue.length), 0);
       }
     } else {
@@ -118,24 +120,26 @@ export default function DateInputBase({
 
   const handleBlur = () => {
     // Validierung beim Verlassen des Feldes
-    const parts = internalValue.split('.');
-    let isValid = true;
-    
-    if (parts.length === 3) {
-      const day = parseInt(parts[0], 10);
-      const month = parseInt(parts[1], 10);
-      const year = parseInt(parts[2], 10);
+    if (internalValue.trim() && internalValue.length > 0) {
+      const parts = internalValue.split('.');
+      let isValid = true;
       
-      if (parts[0].length !== 2 || day < 1 || day > 31) isValid = false;
-      if (parts[1].length !== 2 || month < 1 || month > 12) isValid = false;
-      if (parts[2].length !== 4 || year < 1900 || year > 2099) isValid = false;
-    } else if (internalValue.trim() && internalValue !== '') {
-      isValid = false;
-    }
-    
-    if (!isValid && internalValue.trim()) {
-      setInternalValue('');
-      onChange('');
+      if (parts.length === 3) {
+        const day = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10);
+        const year = parseInt(parts[2], 10);
+        
+        if (parts[0].length !== 2 || day < 1 || day > 31) isValid = false;
+        if (parts[1].length !== 2 || month < 1 || month > 12) isValid = false;
+        if (parts[2].length !== 4 || year < 1900 || year > 2099) isValid = false;
+      } else {
+        isValid = false;
+      }
+      
+      if (!isValid) {
+        setInternalValue('');
+        onChange('');
+      }
     }
     
     onBlur?.();
@@ -150,21 +154,20 @@ export default function DateInputBase({
     const hasSelection = start !== end;
     const currentValue = internalValue;
     
-    // Spezialbehandlung für Ziffern-Eingabe bei Selektion
+    // Spezialbehandlung für Ziffern-Eingabe bei Selektion (wie in MonthYearInputBase)
     if (/^\d$/.test(e.key) && hasSelection) {
       const digit = e.key;
       
-      // Bestimme welches Feld selektiert ist
       if (currentValue.includes('.')) {
         const firstDot = currentValue.indexOf('.');
         const secondDot = currentValue.lastIndexOf('.');
         
-        // Tag selektiert
+        // Tag selektiert (TT)
         if (start === 0 && end === firstDot) {
           e.preventDefault();
           const monthPart = currentValue.substring(firstDot + 1, secondDot);
           const yearPart = currentValue.substring(secondDot + 1);
-          const newValue = `${digit.padStart(2, '0')}.${monthPart}.${yearPart}`;
+          const newValue = `${digit}.${monthPart}.${yearPart}`;
           
           setInternalValue(newValue);
           onChange(newValue);
@@ -177,12 +180,12 @@ export default function DateInputBase({
           return;
         }
         
-        // Monat selektiert
+        // Monat selektiert (MM)
         if (start === firstDot + 1 && end === secondDot) {
           e.preventDefault();
           const dayPart = currentValue.substring(0, firstDot);
           const yearPart = currentValue.substring(secondDot + 1);
-          const newValue = `${dayPart}.${digit.padStart(2, '0')}.${yearPart}`;
+          const newValue = `${dayPart}.${digit}.${yearPart}`;
           
           setInternalValue(newValue);
           onChange(newValue);
@@ -195,7 +198,7 @@ export default function DateInputBase({
           return;
         }
         
-        // Jahr selektiert
+        // Jahr selektiert (JJJJ)
         if (start === secondDot + 1 && end === currentValue.length) {
           e.preventDefault();
           const dayPart = currentValue.substring(0, firstDot);
@@ -215,8 +218,59 @@ export default function DateInputBase({
       }
     }
     
+    // Jahr-Navigation mit Pfeiltasten (wie in MonthYearInputBase)
+    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      const parts = currentValue.split('.');
+      if (parts.length === 3 && parts[2].length === 4) {
+        const increment = e.key === 'ArrowUp' ? 1 : -1;
+        let newYear = parseInt(parts[2], 10) + increment;
+        
+        if (newYear < 1900) newYear = 1900;
+        if (newYear > 2099) newYear = 2099;
+        
+        const newValue = `${parts[0]}.${parts[1]}.${newYear}`;
+        setInternalValue(newValue);
+        onChange(newValue);
+        
+        setTimeout(() => {
+          if (inputRef.current) {
+            const secondDot = newValue.lastIndexOf('.');
+            inputRef.current.setSelectionRange(secondDot + 1, newValue.length);
+          }
+        }, 0);
+      }
+    }
+    
+    // Automatisches Weiterschalten zwischen Segmenten
+    setTimeout(() => {
+      if (inputRef.current) {
+        const currentVal = inputRef.current.value;
+        if (currentVal.includes('.')) {
+          const firstDot = currentVal.indexOf('.');
+          const secondDot = currentVal.lastIndexOf('.');
+          const dayPart = currentVal.substring(0, firstDot);
+          const monthPart = currentVal.substring(firstDot + 1, secondDot);
+          const yearPart = currentVal.substring(secondDot + 1);
+          
+          // Nach 2-stelligem Tag -> Monat markieren
+          if (dayPart.length === 2 && monthPart.length < 2) {
+            inputRef.current.setSelectionRange(firstDot + 1, secondDot);
+          }
+          // Nach 2-stelligem Monat -> Jahr markieren
+          else if (monthPart.length === 2 && yearPart.length < 4) {
+            inputRef.current.setSelectionRange(secondDot + 1, currentVal.length);
+          }
+        }
+      }
+    }, 10);
+    
     onKeyDown?.(e);
   };
+
+  // Bestimme Textfarbe basierend auf Inhalt
+  const isPlaceholderOnly = !internalValue || internalValue.trim() === '';
+  const textColor = isPlaceholderOnly ? '#9CA3AF' : '#1F2937';
 
   return (
     <input
@@ -233,7 +287,10 @@ export default function DateInputBase({
       inputMode="numeric"
       maxLength={10}
       className={`w-full h-10 px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 ${className}`}
-      style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
+      style={{ 
+        '--tw-ring-color': '#F29400',
+        color: textColor
+      } as React.CSSProperties}
     />
   );
 }

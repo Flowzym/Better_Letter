@@ -38,10 +38,16 @@ function parseDate(dateStr: string) {
 }
 
 function formatDate(day: string, month: string, year: string) {
-  const dayPart = day || 'TT';
-  const monthPart = month || 'MM';
-  const yearPart = year || 'JJJJ';
-  return `${dayPart}.${monthPart}.${yearPart}`;
+  if (day && month && year) {
+    return `${day}.${month}.${year}`;
+  }
+  if (day && month) {
+    return `${day}.${month}.`;
+  }
+  if (day) {
+    return `${day}.`;
+  }
+  return '';
 }
 
 export default function DatePicker({ value, onChange }: DatePickerProps) {
@@ -144,10 +150,10 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
       {activeField && (
         <div
           ref={popupRef}
-          className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 z-50"
+          className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 z-50 min-w-[500px]"
         >
-          <div className="grid grid-cols-3 gap-x-4 items-start">
-            {/* Tage - links */}
+          <div className="grid grid-cols-3 gap-x-6 items-start">
+            {/* Tage - links (7x5 Grid) */}
             <div className="flex flex-col space-y-2">
               <div className="grid grid-cols-7 gap-2">
                 {days.map((d) => {
@@ -156,7 +162,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
                     <button
                       key={d}
                       onMouseDown={() => handleDaySelect(d)}
-                      className={`px-2 py-1 h-8 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 ${
+                      className={`px-2 py-1 h-8 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-sm ${
                         selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
                       }`}
                     >
@@ -167,9 +173,9 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
               </div>
             </div>
 
-            {/* Monate - mitte (2 Spalten) */}
+            {/* Monate - mitte (2 Spalten: Januar-Juni | Juli-Dezember) */}
             <div className="flex flex-col space-y-2">
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col space-y-2">
                   {months.slice(0, 6).map((m) => {
                     const selected = month === m.value;
@@ -177,7 +183,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
                       <button
                         key={m.label}
                         onMouseDown={() => handleMonthSelect(m.value)}
-                        className={`px-2 py-1 h-8 text-left border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 ${
+                        className={`px-2 py-1 h-8 text-left border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-sm ${
                           selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
                         }`}
                       >
@@ -193,7 +199,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
                       <button
                         key={m.label}
                         onMouseDown={() => handleMonthSelect(m.value)}
-                        className={`px-2 py-1 h-8 text-left border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 ${
+                        className={`px-2 py-1 h-8 text-left border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-sm ${
                           selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
                         }`}
                       >
@@ -206,14 +212,14 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
             </div>
 
             {/* Jahre - rechts */}
-            <div className="row-span-2 overflow-y-auto flex flex-col space-y-2 pr-1" style={{ maxHeight: "15rem" }}>
+            <div className="overflow-y-auto flex flex-col space-y-2 pr-1" style={{ maxHeight: "15rem" }}>
               {years.map((y) => {
                 const selected = year === y;
                 return (
                   <button
                     key={y}
                     onMouseDown={() => handleYearSelect(y)}
-                    className={`px-2 py-1 h-8 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 ${
+                    className={`px-2 py-1 h-8 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-sm ${
                       selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
                     }`}
                   >
@@ -223,6 +229,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
               })}
             </div>
           </div>
+          <div className="col-span-3 text-xs text-gray-400 mt-2 text-center">Tag und Monat optional</div>
         </div>
       )}
     </div>
