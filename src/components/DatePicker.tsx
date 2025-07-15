@@ -151,7 +151,7 @@ export default function DatePicker({ value, onChange, className = "" }: DatePick
           onChange={handleInputChange}
           onFocus={handleInputFocus}
           onKeyDown={handleInputKeyDown}
-          placeholder="TT.MM.JJ"
+          placeholder="TT.MM.JJJJ"
         />
         
         {/* Icon Container mit beiden Icons */}
@@ -245,7 +245,7 @@ export default function DatePicker({ value, onChange, className = "" }: DatePick
             </div>
 
             {/* Jahre - rechts */}
-            <div className="row-span-2 overflow-y-auto flex flex-col space-y-2 pr-1" style={{ maxHeight: "17rem" }}>
+            <div className="row-span-2 overflow-y-auto flex flex-col space-y-2 pr-1" style={{ maxHeight: "16rem" }}>
               {years.map((y) => {
                 const selected = year === y;
                 return (
