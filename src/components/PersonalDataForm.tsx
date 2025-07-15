@@ -104,7 +104,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
   return (
     <div className="space-y-6">
       {/* Name & Titel */}
-      <Card title="Name & Titel">
+      <Card title="">
         <div className="grid grid-cols-12 gap-4">
           <div className="col-span-3">
             <AutocompleteInput
@@ -150,7 +150,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
       </Card>
 
       {/* Kontaktdaten */}
-      <Card title="Kontaktdaten">
+      <Card title="">
         <div className="space-y-4">
           <div className="grid grid-cols-12 gap-4">
             <div className="col-span-6">
@@ -237,7 +237,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
       </Card>
 
       {/* Adresse */}
-      <Card title="Adresse">
+      <Card title="">
         <div className="grid grid-cols-12 gap-4">
           <div className="col-span-6">
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -284,9 +284,12 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Land
             </label>
-            <CountryAutocomplete
+            <input
+              type="text"
               value={data.land}
-              onChange={(value) => updateData('land', value)}
+              onChange={(e) => updateData('land', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:border-orange-500"
+              style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
               placeholder="Österreich"
             />
           </div>
@@ -294,7 +297,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
       </Card>
 
       {/* Geburtsdaten & Staatsbürgerschaft */}
-      <Card title="Geburtsdaten & Staatsbürgerschaft">
+      <Card title="">
         <>
           {/* Geburtsdaten mit Checkbox */}
           <div className="grid grid-cols-12 gap-4 items-center">
@@ -383,7 +386,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
       </Card>
 
       {/* Familienstand */}
-      <Card title="Familienstand & Kinder">
+      <Card title="">
         <div className="space-y-4">
           <div className="grid grid-cols-12 gap-4 items-start">
             <div className="col-span-4">

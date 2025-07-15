@@ -99,8 +99,8 @@ export default function PhoneInput({ countryCode, phoneNumber, onCountryChange, 
       <div ref={dropdownRef} className="relative">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center space-x-2 px-3 py-2 border rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 min-w-[120px]"
-          style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+          className="flex items-center space-x-2 px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-1 focus:border-orange-500 min-w-[120px]"
+          style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
         >
           <span className="text-lg">{selectedCountry?.flag || '🌍'}</span>
           <span className="text-sm font-medium">{countryCode || '+43'}</span>
@@ -155,8 +155,8 @@ export default function PhoneInput({ countryCode, phoneNumber, onCountryChange, 
           type="tel"
           value={phoneNumber}
           onChange={handlePhoneChange}
-          className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2"
-          style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+          className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:border-orange-500"
+          style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
           placeholder="123 456 7890"
         />
       </div>

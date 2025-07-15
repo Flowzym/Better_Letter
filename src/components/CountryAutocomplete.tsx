@@ -156,7 +156,8 @@ export default function CountryAutocomplete({ value, onChange, placeholder = "La
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
           className="w-full pl-10 pr-10 py-2 border rounded-md focus:outline-none focus:ring-2"
-          style={{ borderColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
+          className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:border-orange-500"
+          style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
           placeholder={placeholder}
           aria-expanded={isOpen}
           aria-haspopup="listbox"
