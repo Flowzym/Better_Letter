@@ -183,19 +183,19 @@ export default function DatePicker({ value, onChange, className = "" }: DatePick
       {activeField && (
         <div
           ref={popupRef}
-          className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 z-50 w-[580px]"
+          className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 z-50 w-[640px] h-[264px]"
         >
-          <div className="grid grid-cols-[200px_240px_100px] gap-x-3 items-start">
+          <div className="grid grid-cols-[328px_200px_80px] gap-x-4 items-start">
             {/* Tage - links */}
             <div className="flex flex-col space-y-2">
-              <div className="grid grid-cols-7 gap-1 h-[192px] content-start"> {/* Gleiche Höhe wie Monate */}
+              <div className="grid grid-cols-7 gap-2 h-[232px] content-start">
                 {days.map((d) => {
                   const selected = day === d;
                   return (
                     <button
                       key={d}
                       onMouseDown={() => handleDaySelect(d)}
-                      className={`aspect-square flex items-center justify-center p-0 h-10 border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-sm font-medium ${
+                      className={`h-10 w-10 flex items-center justify-center p-0 border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-sm font-medium ${
                         selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
                       }`}
                     >
@@ -208,7 +208,7 @@ export default function DatePicker({ value, onChange, className = "" }: DatePick
 
             {/* Monate - mitte */}
             <div className="flex flex-col space-y-2">
-              <div className="grid grid-cols-2 gap-2 h-[192px] content-start">
+              <div className="grid grid-cols-2 gap-2 h-[232px] content-start">
                 <div className="flex flex-col space-y-2">
                   {months.slice(0, 6).map((m) => {
                     const selected = month === m.value;
@@ -216,7 +216,7 @@ export default function DatePicker({ value, onChange, className = "" }: DatePick
                       <button
                         key={m.label}
                         onMouseDown={() => handleMonthSelect(m.value)}
-                        className={`px-3 py-2 h-9 w-28 border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-sm font-medium ${
+                        className={`px-3 py-2 h-8 w-24 border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-sm font-medium ${
                           selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
                         }`}
                       >
@@ -232,7 +232,7 @@ export default function DatePicker({ value, onChange, className = "" }: DatePick
                       <button
                         key={m.label}
                         onMouseDown={() => handleMonthSelect(m.value)}
-                        className={`px-3 py-2 h-9 w-28 border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-sm font-medium ${
+                        className={`px-3 py-2 h-8 w-24 border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-sm font-medium ${
                           selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
                         }`}
                       >
@@ -245,14 +245,14 @@ export default function DatePicker({ value, onChange, className = "" }: DatePick
             </div>
 
             {/* Jahre - rechts */}
-            <div className="overflow-y-auto flex flex-col space-y-2 pr-2 h-[192px]">
+            <div className="overflow-y-auto flex flex-col space-y-2 pr-2 h-[232px]">
               {years.map((y) => {
                 const selected = year === y;
                 return (
                   <button
                     key={y}
                     onMouseDown={() => handleYearSelect(y)}
-                    className={`px-3 py-2 h-9 w-20 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-sm font-medium ${
+                    className={`px-3 py-2 h-8 w-20 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-sm font-medium ${
                       selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
                     }`}
                   >
@@ -263,7 +263,7 @@ export default function DatePicker({ value, onChange, className = "" }: DatePick
             </div>
             
             {/* Info-Text */}
-            <div className="col-span-3 text-xs text-gray-400 mt-3 text-center">Tag und Monat optional</div>
+            <div className="col-span-3 text-xs text-gray-400 mt-2 text-center">Tag und Monat optional</div>
           </div>
         </div>
       )}
