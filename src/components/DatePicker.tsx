@@ -144,18 +144,18 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
   };
 
   return (
-    <div className="relative w-32"> {/* Feste Breite für das Input-Feld */}
+    <div className="relative w-40"> {/* Erweiterte Breite für vollständiges Datum */}
       <div className="relative">
         <DateInputBase
           value={internalValue}
           onChange={handleInputChange}
           onFocus={handleInputFocus}
           onKeyDown={handleInputKeyDown}
-          className="pr-12" // Reduziertes Padding für bessere Textanzeige
+          className="pr-16" {/* Mehr Padding für Icons */}
         />
         
         {/* Icon Container mit beiden Icons */}
-        <div className="absolute right-1 top-1/2 transform -translate-y-1/2 flex items-center space-x-1">
+        <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center space-x-1">
           {/* Clear Button */}
           {internalValue && (
             <button
@@ -183,19 +183,19 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
       {activeField && (
         <div
           ref={popupRef}
-          className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 z-50 w-[580px]" // Feste optimale Breite
+          className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 z-50 w-[600px]" {/* Erweiterte Popup-Breite */}
         >
-          <div className="grid grid-cols-[220px_240px_80px] gap-x-4 items-start"> {/* Erweiterte Spaltenbreiten */}
+          <div className="grid grid-cols-[240px_240px_100px] gap-x-4 items-start"> {/* Optimierte Spaltenbreiten */}
             {/* Tage - links */}
             <div className="flex flex-col space-y-2">
-              <div className="grid grid-cols-7 gap-2">
+              <div className="grid grid-cols-7 gap-1"> {/* Reduzierter Gap für bessere Raumnutzung */}
                 {days.map((d) => {
                   const selected = day === d;
                   return (
                     <button
                       key={d}
                       onMouseDown={() => handleDaySelect(d)}
-                      className={`px-2 py-1 h-8 border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-xs ${
+                      className={`px-2 py-2 h-9 border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-sm font-medium ${
                         selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
                       }`}
                     >
@@ -216,7 +216,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
                       <button
                         key={m.label}
                         onMouseDown={() => handleMonthSelect(m.value)}
-                        className={`px-3 py-1 h-8 w-28 border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-xs ${
+                        className={`px-3 py-2 h-9 w-28 border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-sm font-medium ${
                           selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
                         }`}
                       >
@@ -232,7 +232,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
                       <button
                         key={m.label}
                         onMouseDown={() => handleMonthSelect(m.value)}
-                        className={`px-3 py-1 h-8 w-28 border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-xs ${
+                        className={`px-3 py-2 h-9 w-28 border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-sm font-medium ${
                           selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
                         }`}
                       >
@@ -252,7 +252,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
                   <button
                     key={y}
                     onMouseDown={() => handleYearSelect(y)}
-                    className={`px-2 py-1 h-8 w-16 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-xs ${
+                    className={`px-3 py-2 h-9 w-20 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 text-sm font-medium ${
                       selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"
                     }`}
                   >
