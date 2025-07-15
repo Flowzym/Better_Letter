@@ -136,7 +136,8 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               onFavoriteClick={(value) => toggleFavorite('titel', value || '')}
               suggestions={[...favorites.titel, ...titleSuggestions]}
               placeholder="Titel"
-              showFavoritesButton
+              showFavoritesButton={true}
+              showAddButton={false}
             />
           </div>
           
@@ -243,13 +244,15 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                       className="flex-1 h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
                       placeholder="https://linkedin.com/in/..."
                     />
-                    <button
-                      onClick={addSocialMedia}
-                      className="px-4 py-2 text-white rounded-md"
-                      style={{ backgroundColor: '#F29400' }}
-                    >
-                      +
-                    </button>
+                    {newSocialMedia.trim() && (
+                      <button
+                        onClick={addSocialMedia}
+                        className="px-4 py-2 text-white rounded-md"
+                        style={{ backgroundColor: '#F29400' }}
+                      >
+                        +
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -267,13 +270,15 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                       className="flex-1 h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
                       placeholder="https://meine-website.com"
                     />
-                    <button
-                      onClick={addHomepage}
-                      className="px-4 py-2 text-white rounded-md"
-                      style={{ backgroundColor: '#F29400' }}
-                    >
-                      +
-                    </button>
+                    {newHomepage.trim() && (
+                      <button
+                        onClick={addHomepage}
+                        className="px-4 py-2 text-white rounded-md"
+                        style={{ backgroundColor: '#F29400' }}
+                      >
+                        +
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -321,7 +326,8 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 onFavoriteClick={(value) => toggleFavorite('ort', value || '')}
                 suggestions={[...favorites.ort, ...citySuggestions]}
                 placeholder="Wien"
-                showFavoritesButton
+                showFavoritesButton={true}
+                showAddButton={false}
               />
             </div>
           </div>
@@ -480,13 +486,15 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                   className="flex-1 h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
                   placeholder="z.B. 2010"
                 />
-                <button
-                  onClick={addChild}
-                  className="px-4 py-2 text-white rounded-md"
-                  style={{ backgroundColor: '#F29400' }}
-                >
-                  Hinzufügen
-                </button>
+                {newChild.trim() && (
+                  <button
+                    onClick={addChild}
+                    className="px-4 py-2 text-white rounded-md"
+                    style={{ backgroundColor: '#F29400' }}
+                  >
+                    Hinzufügen
+                  </button>
+                )}
               </div>
             </div>
           </div>
