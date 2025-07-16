@@ -37,8 +37,8 @@ export default function TasksTagInput({
     return Array.from(new Set(combined));
   }, [positionen, suggestions]);
 
-  const addTask = (task?: string) => {
-    const t = (task ?? inputValue).trim();
+  const addTask = (task: string) => {
+    const t = task.trim();
     if (!t || value.includes(t)) return;
     onChange([...value, t]);
     setInputValue("");
@@ -57,8 +57,8 @@ export default function TasksTagInput({
     toggleFavoriteTask(task);
   };
 
-  const handleAddFavoriteInput = (val?: string) => {
-    const toAdd = (val ?? inputValue).trim();
+  const handleAddFavoriteInput = (val: string) => {
+    const toAdd = val.trim();
     if (!toAdd) return;
     toggleFavorite(toAdd);
     setInputValue("");
@@ -101,15 +101,19 @@ export default function TasksTagInput({
         {(inputValue.trim().length > 0 || isInputFocused) && (
           <div className="flex-shrink-0 flex space-x-2">
             <button
-              onClick={() => addTask()}
-              onMouseDown={(e) => e.preventDefault()} // Prevent blur on click
+              onClick={(e) => {
+                e.preventDefault();
+                addTask(inputValue);
+              }}
               className="w-10 h-10 bg-[#F6A800] hover:bg-[#F29400] text-white rounded-md flex items-center justify-center transition-colors duration-200"
             >
               <Plus className="w-5 h-5" />
             </button>
             <button
-              onClick={() => handleAddFavoriteInput()}
-              onMouseDown={(e) => e.preventDefault()} // Prevent blur on click
+              onClick={(e) => {
+                e.preventDefault();
+                handleAddFavoriteInput(inputValue);
+              }}
               className="w-10 h-10 bg-[#F6A800] hover:bg-[#F29400] text-white rounded-md flex items-center justify-center transition-colors duration-200"
             >
               <Star className="w-5 h-5" />

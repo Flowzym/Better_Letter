@@ -52,14 +52,14 @@ export default function TagSelectorWithFavorites({
     onChange(updatedTags);
   };
 
-  const handleAddInput = (val?: string) => {
-    addTag(val ?? inputValue);
+  const handleAddInput = (val: string) => {
+    addTag(val);
     setInputValue('');
   };
 
 
-  const handleAddFavoriteInput = (val?: string) => {
-    const toAdd = (val ?? inputValue).trim();
+  const handleAddFavoriteInput = (val: string) => {
+    const toAdd = val.trim();
     if (!toAdd) return;
     toggleFavorite(toAdd);
     setInputValue('');
@@ -83,8 +83,8 @@ export default function TagSelectorWithFavorites({
       <AutocompleteInput
         value={inputValue}
         onChange={setInputValue}
-        onAdd={handleAddInput}
-        onFavoriteClick={handleAddFavoriteInput}
+        onAdd={(val) => handleAddInput(val || inputValue)}
+        onFavoriteClick={(val) => handleAddFavoriteInput(val || inputValue)}
         suggestions={suggestions ?? options}
         placeholder="Hinzufügen..."
         showFavoritesButton
