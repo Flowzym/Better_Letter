@@ -84,7 +84,7 @@ export default function AutocompleteInput<T = string>({
   // Intelligent filtering and sorting of suggestions
   useEffect(() => {
     if ((value || '').trim() && (value || '').length > 0) {
-      const searchTerm = (value || '').toLowerCase(); 
+      const searchTerm = (value || '').toLowerCase();
       
       const startsWithMatches: T[] = [];
       const containsMatches: T[] = [];
@@ -219,7 +219,7 @@ export default function AutocompleteInput<T = string>({
   const handleAddToFavorites = () => {
     if (onFavoriteClick && (value || '').trim()) {
       onFavoriteClick((value || '').trim());
-      onChange(''); 
+      onChange('');
     }
   };
 
@@ -344,7 +344,7 @@ export default function AutocompleteInput<T = string>({
                 <span className={startsWithSearch ? 'font-medium' : 'font-normal'}>
                   {formatSuggestionDisplay(suggestion)}
                 </span>
-                {startsWithSearch && (
+                {startsWithSearch && suggestion && (
                   <span className="ml-2 text-xs opacity-60">
                     ↗
                   </span>

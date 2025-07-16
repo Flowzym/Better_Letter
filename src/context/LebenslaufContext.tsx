@@ -57,8 +57,10 @@ export interface SoftskillEntry {
 export interface PersonalData {
   vorname: string;
   nachname: string;
+  titel: string;
   email: string;
   telefon: string;
+  telefonVorwahl: string;
   adresse: string;
   plz: string;
   ort: string;
@@ -145,10 +147,12 @@ profileSourceMappings?: ProfileSourceMapping[];
     try {
       const saved = localStorage.getItem(LOCAL_PERSONAL_KEY);
       return saved ? JSON.parse(saved) : {
+        titel: '',
         vorname: '',
         nachname: '',
         email: '',
         telefon: '',
+        telefonVorwahl: '+43',
         adresse: '',
         plz: '',
         ort: '',
@@ -166,10 +170,12 @@ profileSourceMappings?: ProfileSourceMapping[];
     } catch (err) {
       console.error('Failed to load personal data from localStorage:', err);
       return {
+        titel: '',
         vorname: '',
         nachname: '',
         email: '',
         telefon: '',
+        telefonVorwahl: '+43',
         adresse: '',
         plz: '',
         ort: '',
