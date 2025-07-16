@@ -28,6 +28,9 @@ export default function LebenslaufInput() {
     cvSuggestions = { companies: [], positions: [], aufgabenbereiche: [] },
     setActiveTab: contextSetActiveTab,
     activeTab: contextActiveTab
+  } = useLebenslaufContext();
+  
+  const [localActiveTab, setLocalActiveTab] = useState<TabType>('personal');
   
   // Verwende entweder den Context-Wert oder den lokalen State
   const currentTab = contextActiveTab || localActiveTab;
