@@ -482,12 +482,14 @@ profileSourceMappings?: ProfileSourceMapping[];
       }}
     >
       {children}
-    </LebenslaufContext.Provider>
+     </LebenslaufContext.Provider>
+   );
+ }
 
-export function useLebenslaufContext() {
-    }
-  const context = useContext(LebenslaufContext);
-  if (!context) {
+ export function useLebenslaufContext() {
+   const context = useContext(LebenslaufContext);
+   if (!context) {
+
     throw new Error('useLebenslaufContext must be used within LebenslaufProvider');
   }
   return context;
