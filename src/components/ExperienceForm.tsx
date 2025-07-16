@@ -5,6 +5,7 @@ import CompaniesTagInput from './CompaniesTagInput';
 import { Eraser } from 'lucide-react';
 import { Berufserfahrung, useLebenslaufContext } from '../context/LebenslaufContext';
 import { CVSuggestionConfig } from '../services/supabaseService';
+import { getTasksForPositions } from '../constants/positionsToTasks';
 
 interface ExperienceFormProps {
   form: Omit<Berufserfahrung, 'id'>;
@@ -32,6 +33,13 @@ export default function ExperienceForm({
   const hasCompanyData = form.companies.length > 0;
   const hasPositionData = selectedPositions.length > 0;
   const hasTaskData = form.aufgabenbereiche.length > 0;
+  
+  // KI-Vorschläge für Tätigkeiten basierend auf den ausgewählten Positionen
+  const aiTaskSuggestions = useMemo(() => {
+    if (!selectedPositions || selectedPositions.length === 0) return [];
+    return getTasksForPositions(selectedPositions);
+  }, [selectedPositions]);
+  
   return (
     <div className="space-y-4">
       <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
@@ -154,10 +162,9 @@ export default function ExperienceForm({
         <TasksTagInput
           value={form.aufgabenbereiche}
           onChange={(val) => onUpdateField('aufgabenbereiche', val)}
-          positionen={selectedPositions}
+          aiSuggestions={aiTaskSuggestions}
           suggestions={cvSuggestions.aufgabenbereiche}
           positionen={selectedPositions}
-          suggestions={cvSuggestions.aufgabenbereiche}
         />
       </div>
     </div>

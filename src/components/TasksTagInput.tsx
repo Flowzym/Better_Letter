@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useMemo } from "react";
 import TaskTag from "./TaskTag";
 import TagButtonFavorite from "./ui/TagButtonFavorite";
+import { Lightbulb } from "lucide-react";
 import TextInputWithButtons from "./TextInputWithButtons";
 import { useLebenslaufContext } from "../context/LebenslaufContext";
 import { getTasksForPositions } from "../constants/positionsToTasks";
@@ -10,11 +11,18 @@ import "../styles/_tags.scss";
 interface TasksTagInputProps {
   value: string[];
   onChange: (tasks: string[]) => void;
+  aiSuggestions?: string[];
   positionen?: string[];
   suggestions?: string[];
 }
 
-export default function TasksTagInput({ value, onChange, positionen = [], suggestions = [] }: TasksTagInputProps) {
+export default function TasksTagInput({ 
+  value, 
+  onChange, 
+  aiSuggestions = [], 
+  positionen = [], 
+  suggestions = [] 
+}: TasksTagInputProps) {
   const [inputValue, setInputValue] = useState("");
   const { favoriteTasks: favorites, toggleFavoriteTask } = useLebenslaufContext();
   
@@ -81,6 +89,30 @@ export default function TasksTagInput({ value, onChange, positionen = [], sugges
         placeholder="Hinzufügen..."
         className="w-full"
       />
+      
+      {/* KI-Vorschläge basierend auf Positionen */}
+      {aiSuggestions.filter(s => !value.includes(s) && !favorites.includes(s)).length > 0 && (
+        <div>
+          <div className="flex items-center space-x-2 mb-2">
+            <Lightbulb className="h-4 w-4 text-yellow-500" />
+            <h4 className="text-sm font-medium text-gray-700">KI-Vorschläge:</h4>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {aiSuggestions
+              .filter(s => !value.includes(s) && !favorites.includes(s))
+              .map(suggestion => (
+                <button
+                  key={suggestion}
+                  onClick={() => addTask(suggestion)}
+                  className="inline-flex items-center px-3 py-1 bg-yellow-50 text-gray-700 text-sm rounded-full border border-yellow-300 hover:bg-yellow-100 transition-colors duration-200"
+                >
+                  <Lightbulb className="h-3 w-3 mr-1 text-yellow-500" />
+                  <span>{suggestion}</span>
+                </button>
+              ))}
+          </div>
+        </div>
+      )}
 
 
       {favorites.filter((f) => !value.includes(f)).length > 0 && (

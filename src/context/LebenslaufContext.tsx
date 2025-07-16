@@ -258,12 +258,92 @@ profileSourceMappings?: ProfileSourceMapping[];
   const [isEditingExperience, setIsEditingExperience] = useState(false);
   const [selectedEducationId, setSelectedEducationId] = useState<string | null>(null);
   const [isEditingEducation, setIsEditingEducation] = useState(false);
-  const [favoritePositions, setFavoritePositions] = useState<string[]>([]);
-  const [favoriteInstitutions, setFavoriteInstitutions] = useState<string[]>([]);
-  const [favoriteAusbildungsarten, setFavoriteAusbildungsarten] = useState<string[]>([]);
-  const [favoriteAbschluesse, setFavoriteAbschluesse] = useState<string[]>([]);
-  const [favoriteTasks, setFavoriteTasks] = useState<string[]>([]);
-  const [favoriteCompanies, setFavoriteCompanies] = useState<string[]>([]);
+  
+  // Favoriten mit localStorage-Persistenz
+  const [favoritePositions, setFavoritePositions] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('favoritePositions');
+      return saved ? JSON.parse(saved) : [];
+    } catch (err) {
+      console.error('Failed to load favoritePositions from localStorage:', err);
+      return [];
+    }
+  });
+  
+  const [favoriteInstitutions, setFavoriteInstitutions] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('favoriteInstitutions');
+      return saved ? JSON.parse(saved) : [];
+    } catch (err) {
+      console.error('Failed to load favoriteInstitutions from localStorage:', err);
+      return [];
+    }
+  });
+  
+  const [favoriteAusbildungsarten, setFavoriteAusbildungsarten] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('favoriteAusbildungsarten');
+      return saved ? JSON.parse(saved) : [];
+    } catch (err) {
+      console.error('Failed to load favoriteAusbildungsarten from localStorage:', err);
+      return [];
+    }
+  });
+  
+  const [favoriteAbschluesse, setFavoriteAbschluesse] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('favoriteAbschluesse');
+      return saved ? JSON.parse(saved) : [];
+    } catch (err) {
+      console.error('Failed to load favoriteAbschluesse from localStorage:', err);
+      return [];
+    }
+  });
+  
+  const [favoriteTasks, setFavoriteTasks] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('favoriteTasks');
+      return saved ? JSON.parse(saved) : [];
+    } catch (err) {
+      console.error('Failed to load favoriteTasks from localStorage:', err);
+      return [];
+    }
+  });
+  
+  const [favoriteCompanies, setFavoriteCompanies] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('favoriteCompanies');
+      return saved ? JSON.parse(saved) : [];
+    } catch (err) {
+      console.error('Failed to load favoriteCompanies from localStorage:', err);
+      return [];
+    }
+  });
+  
+  // Speichern der Favoriten im localStorage
+  useEffect(() => {
+    localStorage.setItem('favoritePositions', JSON.stringify(favoritePositions));
+  }, [favoritePositions]);
+  
+  useEffect(() => {
+    localStorage.setItem('favoriteInstitutions', JSON.stringify(favoriteInstitutions));
+  }, [favoriteInstitutions]);
+  
+  useEffect(() => {
+    localStorage.setItem('favoriteAusbildungsarten', JSON.stringify(favoriteAusbildungsarten));
+  }, [favoriteAusbildungsarten]);
+  
+  useEffect(() => {
+    localStorage.setItem('favoriteAbschluesse', JSON.stringify(favoriteAbschluesse));
+  }, [favoriteAbschluesse]);
+  
+  useEffect(() => {
+    localStorage.setItem('favoriteTasks', JSON.stringify(favoriteTasks));
+  }, [favoriteTasks]);
+  
+  useEffect(() => {
+    localStorage.setItem('favoriteCompanies', JSON.stringify(favoriteCompanies));
+  }, [favoriteCompanies]);
   const [cvSuggestions, setCvSuggestions] = useState<CVSuggestionConfig>({
     companies: [],
     positions: [],
