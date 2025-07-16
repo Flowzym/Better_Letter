@@ -119,7 +119,7 @@ export default function LebenslaufPreview() {
         >
           <div className="flex justify-between items-start mb-1">
             <div className="flex items-center">
-              <Calendar className="h-4 w-4 mr-1 text-gray-400" />
+              {/* Icon entfernt */}
               <EditablePreviewText
                 value={formatZeitraum(
                   exp.startMonth,
@@ -146,7 +146,7 @@ export default function LebenslaufPreview() {
             </button>
           </div>
           <div className="flex items-center mb-1">
-            <Briefcase className="h-4 w-4 mr-1 text-gray-400" />
+            {/* Icon entfernt */}
             <EditablePreviewText
               value={Array.isArray(exp.position) ? exp.position.join(" / ") : (exp.position || "")}
               onSave={(newValue) => handleExperienceFieldUpdate(exp.id, 'position', newValue)}
@@ -156,7 +156,7 @@ export default function LebenslaufPreview() {
           </div>
 
            <div className="flex items-center mb-1">
-              <Building className="h-4 w-4 mr-1 text-gray-400" />
+              {/* Icon entfernt */}
               <EditablePreviewText
                 value={Array.isArray(exp.companies) ? exp.companies.join(', ') : (exp.companies || "")}
                 onSave={(newValue) => handleExperienceFieldUpdate(exp.id, 'companies', newValue)}
