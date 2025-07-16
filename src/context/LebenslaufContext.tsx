@@ -88,6 +88,10 @@ interface LebenslaufContextType {
   toggleFavoriteAusbildungsart: (art: string) => void;
   toggleFavoriteAbschluss: (abschluss: string) => void;
   cvSuggestions: CVSuggestionConfig;
+  updateEducationField: (id: string, fieldName: keyof AusbildungEntryForm, newValue: string) => void;
+  updateExperienceTask: (expId: string, taskIndex: number, newTaskValue: string) => void;
+  updateExperienceTasksOrder: (id: string, newTasks: string[]) => void;
+  addExperienceTask: (id: string, newTask: string) => void;
 }
 
 const LebenslaufContext = createContext<LebenslaufContextType | undefined>(undefined);
@@ -348,6 +352,55 @@ export function LebenslaufProvider({
     );
   };
 
+  const updateEducationField = (id: string, fieldName: keyof AusbildungEntryForm, newValue: string) => {
+    setAusbildungen(prev => {
+      const updated = prev.map(edu => 
+        edu.id === id ? { ...edu, [fieldName]: newValue } : edu
+      );
+      localStorage.setItem(LOCAL_EDU_KEY, JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const updateExperienceTask = (expId: string, taskIndex: number, newTaskValue: string) => {
+    setBerufserfahrungen(prev => {
+      const updated = prev.map(exp => {
+        if (exp.id === expId) {
+          const newTasks = [...exp.aufgabenbereiche];
+          newTasks[taskIndex] = newTaskValue;
+          return { ...exp, aufgabenbereiche: newTasks };
+        }
+        return exp;
+      });
+      localStorage.setItem(LOCAL_KEY, JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const updateExperienceTasksOrder = (id: string, newTasks: string[]) => {
+    setBerufserfahrungen(prev => {
+      const updated = prev.map(exp => 
+        exp.id === id ? { ...exp, aufgabenbereiche: newTasks } : exp
+      );
+      localStorage.setItem(LOCAL_KEY, JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const addExperienceTask = (id: string, newTask: string) => {
+    if (!newTask.trim()) return;
+    
+    setBerufserfahrungen(prev => {
+      const updated = prev.map(exp => 
+        exp.id === id 
+          ? { ...exp, aufgabenbereiche: [...exp.aufgabenbereiche, newTask.trim()] }
+          : exp
+      );
+      localStorage.setItem(LOCAL_KEY, JSON.stringify(updated));
+      return updated;
+    });
+  };
+
   return (
     <LebenslaufContext.Provider
       value={{
@@ -389,6 +442,10 @@ export function LebenslaufProvider({
         toggleFavoriteTask,
         toggleFavoriteCompany,
         cvSuggestions,
+        updateEducationField,
+        updateExperienceTask,
+        updateExperienceTasksOrder,
+        addExperienceTask,
       }}
     >
       {children}
