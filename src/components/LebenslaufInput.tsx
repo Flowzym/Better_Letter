@@ -28,7 +28,7 @@ export default function LebenslaufInput() {
     cvSuggestions,
     setActiveTab,
     activeTab
-  } = useLebenslaufContext;
+  } = useLebenslaufContext();
 
   console.log('Aktiver Tab:', activeTab); // <-- Fügen Sie diese Zeile hier ein
   
