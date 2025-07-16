@@ -68,6 +68,10 @@ export interface PersonalData {
   geburtsdatum: string;
   staatsangehoerigkeit: string;
   familienstand: string;
+  kinder: string[];
+  socialMedia: string[];
+  ausland: boolean;
+  staatsbuergerschaftCheckbox: boolean;
 }
 
 interface LebenslaufContextType {
@@ -153,7 +157,11 @@ profileSourceMappings?: ProfileSourceMapping[];
         geburtsland: '',
         geburtsdatum: '',
         staatsangehoerigkeit: '',
-        familienstand: ''
+        familienstand: '',
+        kinder: [],
+        socialMedia: [],
+        ausland: false,
+        staatsbuergerschaftCheckbox: false
       };
     } catch (err) {
       console.error('Failed to load personal data from localStorage:', err);
@@ -170,7 +178,11 @@ profileSourceMappings?: ProfileSourceMapping[];
         geburtsland: '',
         geburtsdatum: '',
         staatsangehoerigkeit: '',
-        familienstand: ''
+        familienstand: '',
+        kinder: [],
+        socialMedia: [],
+        ausland: false,
+        staatsbuergerschaftCheckbox: false
       };
     }
   });
