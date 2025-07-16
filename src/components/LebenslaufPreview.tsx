@@ -112,11 +112,12 @@ export default function LebenslaufPreview() {
         <div
           key={exp.id}
           onClick={() => selectExperience(exp.id)}
-          className={`mb-6 border rounded p-4 cursor-pointer ${
+          cclassName={`mb-6 border rounded p-4 cursor-pointer ${
             selectedExperienceId === exp.id ? "bg-orange-50" : "bg-gray-50"
           }`}
+
         >
-          <div className="flex justify-between items-start mb-2">
+          <div className="flex justify-between items-start mb-1">
             <div className="flex items-center">
               <Calendar className="h-4 w-4 mr-1 text-gray-400" />
               <EditablePreviewText
@@ -144,7 +145,7 @@ export default function LebenslaufPreview() {
               <Trash2 className="h-4 w-4" />
             </button>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center mb-1">
             <Briefcase className="h-4 w-4 mr-1 text-gray-400" />
             <EditablePreviewText
               value={Array.isArray(exp.position) ? exp.position.join(" / ") : (exp.position || "")}
@@ -153,13 +154,14 @@ export default function LebenslaufPreview() {
               placeholder="Position eingeben..."
             />
           </div>
-          <div className="flex items-center">
-            <Building className="h-4 w-4 mr-1 text-gray-400" />
-            <EditablePreviewText
-              value={Array.isArray(exp.companies) ? exp.companies.join(', ') : (exp.companies || "")}
-              onSave={(newValue) => handleExperienceFieldUpdate(exp.id, 'companies', newValue)}
-              className="italic text-gray-500"
-              placeholder="Unternehmen eingeben..."
+
+           <div className="flex items-center mb-1">
+              <Building className="h-4 w-4 mr-1 text-gray-400" />
+              <EditablePreviewText
+                value={Array.isArray(exp.companies) ? exp.companies.join(', ') : (exp.companies || "")}
+                onSave={(newValue) => handleExperienceFieldUpdate(exp.id, 'companies', newValue)}
+                className="italic text-gray-500"
+                placeholder="Unternehmen eingeben..."
             />
           </div>
           
@@ -229,11 +231,12 @@ export default function LebenslaufPreview() {
         <div
           key={edu.id}
           onClick={() => selectEducation(edu.id)}
-          className={`mb-6 border rounded p-4 cursor-pointer ${
-            selectedEducationId === edu.id ? "bg-orange-50" : "bg-gray-50"
+          cclassName={`mb-6 border rounded p-4 cursor-pointer ${
+            selectedEducationId === edu.id ? "border-orange-500 border-2 bg-white" : "border border-gray-200 bg-white"
           }`}
+
         >
-          <div className="flex justify-between items-start mb-2">
+          <div className="flex justify-between items-start mb-1">
             <div className="flex items-center">
               <Calendar className="h-4 w-4 mr-1 text-gray-400" />
               <EditablePreviewText
@@ -261,7 +264,7 @@ export default function LebenslaufPreview() {
               <Trash2 className="h-4 w-4" />
             </button>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center mb-1">
             <Briefcase className="h-4 w-4 mr-1 text-gray-400" />
             <EditablePreviewText
               value={`${Array.isArray(edu.ausbildungsart) ? edu.ausbildungsart.join(" / ") : (edu.ausbildungsart || "")} - ${Array.isArray(edu.abschluss) ? edu.abschluss.join(" / ") : (edu.abschluss || "")}`}
