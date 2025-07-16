@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useLebenslaufContext } from '../context/LebenslaufContext';
 import PersonalDataForm from './PersonalDataForm';
-import ExperienceSection from './ExperienceSection';
 import ExperienceForm from './ExperienceForm';
 import AusbildungForm from './AusbildungForm';
+import ExperienceSection from './ExperienceSection';
 import { Plus } from 'lucide-react';
 
 type TabType = 'personal' | 'experience' | 'education' | 'skills' | 'softskills';
@@ -13,10 +13,10 @@ const LebenslaufInput: React.FC = () => {
     personalData,
     updatePersonalData,
     selectedExperienceId,
-    berufserfahrungen,
+    berufserfahrungen = [],
     cvSuggestions,
     selectedEducationId,
-    ausbildungen,
+    ausbildungen = [],
     setActiveTab: contextSetActiveTab,
     activeTab: contextActiveTab,
     addExperience,

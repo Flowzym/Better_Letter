@@ -17,6 +17,7 @@ export default function TextInputWithButtons({
   onFavoriteClick,
   placeholder = '',
   showButtons,
+  className = '',
 }: TextInputWithButtonsProps) {
   const trimmed = (value || '').trim();
   const hasValue = trimmed.length > 0;
@@ -48,12 +49,12 @@ export default function TextInputWithButtons({
       <div className="relative flex-1">
         <input
           ref={inputRef}
-          type="text"
+          type="text" 
           value={value}
           onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className="w-full px-3 h-10 border rounded-md transition-all focus:outline-none focus:ring-1 focus:ring-[#F29400] pr-10"
+          className={`w-full px-3 h-10 border rounded-md transition-all focus:outline-none focus:ring-1 focus:ring-[#F29400] pr-10 ${className}`}
         />
           {hasValue && (
             <button
