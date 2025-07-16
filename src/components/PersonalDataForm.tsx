@@ -33,8 +33,8 @@ interface PersonalData {
 }
 
 interface PersonalDataFormProps {
-  data: PersonalData;
-  onChange: (data: PersonalData) => void;
+  data?: PersonalData;
+  onChange?: (data: PersonalData) => void;
 }
 
 const phoneCountryCodes = [
@@ -53,7 +53,31 @@ const countrySuggestions = ['Österreich', 'Deutschland', 'Schweiz', 'Italien', 
 const familienstandOptions = ['Keine Angabe', 'ledig', 'verheiratet', 'geschieden', 'verwitwet'];
 const arbeitsmarktzugangOptions = ['Keine Angabe', 'Freier Zugang', 'Beschränkt', 'In Prüfung', 'Asylverfahren', 'Kein Zugang'];
 
-export default function PersonalDataForm({ data, onChange }: PersonalDataFormProps) {
+export default function PersonalDataForm({ data = {}, onChange = () => {} }: PersonalDataFormProps) {
+  // Ensure data has all required properties with defaults
+  const safeData: PersonalData = {
+    titel: '',
+    vorname: '',
+    nachname: '',
+    email: '',
+    telefon: '',
+    telefonVorwahl: '+43',
+    adresse: '',
+    plz: '',
+    ort: '',
+    land: '',
+    geburtsort: '',
+    geburtsland: '',
+    geburtsdatum: '',
+    staatsangehoerigkeit: '',
+    familienstand: '',
+    kinder: [],
+    socialMedia: [],
+    ausland: false,
+    staatsbuergerschaftCheckbox: false,
+    ...data
+  };
+
   const [favorites, setFavorites] = useState({
     titel: titleSuggestions.slice(0, 4),
     ort: citySuggestions.slice(0, 5),
@@ -69,20 +93,20 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
 
   // Set default values for country fields
   useEffect(() => {
-    if (!data.geburtsland) {
+    if (!safeData.geburtsland) {
       updateData('geburtsland', 'Österreich');
     }
   }, []);
 
   // Sync Staatsbürgerschaft with Geburtsland when checkbox is active and Geburtsland changes
   useEffect(() => {
-    if (data.geburtsland && data.staatsbuergerschaftCheckbox) {
-      updateData('staatsbuergerschaft', data.geburtsland);
+    if (safeData.geburtsland && safeData.staatsbuergerschaftCheckbox) {
+      updateData('staatsbuergerschaft', safeData.geburtsland);
     }
-  }, [data.geburtsland, data.staatsbuergerschaftCheckbox]);
+  }, [safeData.geburtsland, safeData.staatsbuergerschaftCheckbox]);
 
   const updateData = (field: keyof PersonalData, value: any) => {
-    onChange({ ...data, [field]: value });
+    onChange({ ...safeData, [field]: value });
   };
 
   const toggleFavorite = (category: keyof typeof favorites, value: string) => {
@@ -96,31 +120,31 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
 
   const addChild = () => {
     if (newChild.trim()) {
-      updateData('kinder', [...data.kinder, newChild.trim()]);
+      updateData('kinder', [...safeData.kinder, newChild.trim()]);
       setNewChild('');
     }
   };
 
   const removeChild = (index: number) => {
-    updateData('kinder', data.kinder.filter((_, i) => i !== index));
+    updateData('kinder', safeData.kinder.filter((_, i) => i !== index));
   };
 
   const addSocialMedia = () => {
     if (newSocialMedia.trim()) {
-      updateData('socialMedia', [...data.socialMedia, newSocialMedia.trim()]);
+      updateData('socialMedia', [...safeData.socialMedia, newSocialMedia.trim()]);
       setNewSocialMedia('');
     }
   };
 
   const addHomepage = () => {
     if (newHomepage.trim()) {
-      updateData('socialMedia', [...data.socialMedia, newHomepage.trim()]);
+      updateData('socialMedia', [...safeData.socialMedia, newHomepage.trim()]);
       setNewHomepage('');
     }
   };
 
   const removeSocialMedia = (index: number) => {
-    updateData('socialMedia', data.socialMedia.filter((_, i) => i !== index));
+    updateData('socialMedia', safeData.socialMedia.filter((_, i) => i !== index));
   };
 
   const handleNumericInput = (value: string, setter: (val: string) => void) => {
@@ -137,7 +161,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
           <div className="col-span-3">
             <AutocompleteInput
               label="Titel"
-              value={data.titel}
+              value={safeData.titel}
               onChange={(value) => updateData('titel', value)}
               onAdd={(value) => updateData('titel', value || '')}
               onFavoriteClick={(value) => toggleFavorite('titel', value || '')}
@@ -157,12 +181,12 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 type="text"
                 id="personal-vorname"
                 name="vorname"
-                value={data.vorname}
+                value={safeData.vorname || ''}
                 onChange={(e) => updateData('vorname', e.target.value)}
                 className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 pr-10"
                 placeholder="Vorname"
               />
-              {data.vorname && (
+              {safeData.vorname && (
                 <button
                   type="button"
                   onClick={() => updateData('vorname', '')}
@@ -184,12 +208,12 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 type="text"
                 id="personal-nachname"
                 name="nachname"
-                value={data.nachname}
+                value={safeData.nachname || ''}
                 onChange={(e) => updateData('nachname', e.target.value)}
                 className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 pr-10"
                 placeholder="Nachname"
               />
-              {data.nachname && (
+              {safeData.nachname && (
                 <button
                   type="button"
                   onClick={() => updateData('nachname', '')}
@@ -213,8 +237,8 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 Telefon
               </label>
               <PhoneInput
-                countryCode={data.telefonVorwahl}
-                phoneNumber={data.telefon}
+                countryCode={safeData.telefonVorwahl || '+43'}
+                phoneNumber={safeData.telefon || ''}
                 onCountryChange={(code) => updateData('telefonVorwahl', code)}
                 onPhoneChange={(phone) => updateData('telefon', phone)}
               />
@@ -229,12 +253,12 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                   type="email"
                   id="personal-email"
                   name="email"
-                  value={data.email}
+                  value={safeData.email || ''}
                   onChange={(e) => updateData('email', e.target.value)}
                   className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 pr-10"
                   placeholder="email@beispiel.com"
                 />
-                {data.email && (
+                {safeData.email && (
                   <button
                     type="button"
                     onClick={() => updateData('email', '')}
@@ -330,9 +354,9 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               </div>
               
               {/* Social Media Tags below fields */}
-              {data.socialMedia.length > 0 && (
+              {safeData.socialMedia.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-3">
-                  {data.socialMedia.map((link, index) => (
+                  {safeData.socialMedia.map((link, index) => (
                     <TagButtonSelected
                       key={index}
                       label={link}
@@ -359,12 +383,12 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                   type="text"
                   id="personal-adresse"
                   name="adresse"
-                  value={data.adresse}
+                  value={safeData.adresse || ''}
                   onChange={(e) => updateData('adresse', e.target.value)}
                   className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 pr-10"
                   placeholder="Musterstraße 123"
                 />
-                {data.adresse && (
+                {safeData.adresse && (
                   <button
                     type="button"
                     onClick={() => updateData('adresse', '')}
@@ -388,12 +412,12 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                   pattern="[0-9]*"
                   id="personal-plz"
                   name="plz"
-                  value={data.plz}
+                  value={safeData.plz || ''}
                   onChange={(e) => handleNumericInput(e.target.value, (val) => updateData('plz', val))}
                   className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 pr-10"
                   placeholder="1010"
                 />
-                {data.plz && (
+                {safeData.plz && (
                   <button
                     type="button"
                     onClick={() => updateData('plz', '')}
@@ -409,7 +433,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
             <div className="col-span-5">
               <AutocompleteInput
                 label="Ort"
-                value={data.ort}
+                value={safeData.ort || ''}
                 onChange={(value) => updateData('ort', value)}
                 onAdd={(value) => updateData('ort', value || '')}
                 onFavoriteClick={(value) => toggleFavorite('ort', value || '')}
@@ -428,7 +452,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 type="checkbox"
                 id="personal-ausland"
                 name="ausland"
-                checked={data.ausland}
+                checked={safeData.ausland || false}
                 onChange={(e) => updateData('ausland', e.target.checked)}
                 className="focus:ring-1"
                 style={{ accentColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
@@ -438,11 +462,11 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
           </div>
 
           {/* Land Field - shown in new row when Ausland is checked */}
-          {data.ausland && (
+          {safeData.ausland && (
             <div>
               <CountryDropdown
                 label="Land"
-                value={data.land}
+                value={safeData.land || ''}
                 onChange={(value) => updateData('land', value)}
               />
             </div>
@@ -460,7 +484,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               </label>
               <DatePicker
                 className="w-full"
-                value={data.geburtsdatum}
+                value={safeData.geburtsdatum || ''}
                 onChange={(value) => updateData('geburtsdatum', value)}
               />
             </div>
@@ -469,7 +493,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               <AutocompleteInput
                 className="w-full"
                 label="Geburtsort"
-                value={data.geburtsort}
+                value={safeData.geburtsort || ''}
                 onChange={(value) => updateData('geburtsort', value)}
                 onAdd={(value) => updateData('geburtsort', value || '')}
                 onFavoriteClick={(value) => toggleFavorite('geburtsort', value || '')}
@@ -484,7 +508,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               <CountryDropdown
                 className="w-full"
                 label="Geburtsland"
-                value={data.geburtsland}
+                value={safeData.geburtsland || ''}
                 onChange={(value) => updateData('geburtsland', value)}
               />
             </div>
@@ -497,7 +521,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 type="checkbox"
                 id="personal-staatsbuergerschaft-checkbox"
                 name="staatsbuergerschaftCheckbox"
-                checked={data.staatsbuergerschaftCheckbox}
+                checked={safeData.staatsbuergerschaftCheckbox || false}
                 onChange={(e) => updateData('staatsbuergerschaftCheckbox', e.target.checked)}
                 className="focus:ring-1"
                 style={{ accentColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
@@ -507,12 +531,12 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
           </div>
 
           {/* Bedingte Felder für Staatsbürgerschaft und Arbeitsmarktzugang */}
-          {data.staatsbuergerschaftCheckbox && (
+          {safeData.staatsbuergerschaftCheckbox && (
             <div className="grid grid-cols-12 gap-4">
               <div className="col-span-6">
                 <CountryDropdown
                   label="Staatsbürgerschaft"
-                  value={data.staatsbuergerschaft}
+                  value={safeData.staatsbuergerschaft || ''}
                   onChange={(value) => updateData('staatsbuergerschaft', value)}
                 />
               </div>
@@ -524,7 +548,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 <select
                   id="personal-arbeitsmarktzugang"
                   name="arbeitsmarktzugang"
-                  value={data.arbeitsmarktzugang}
+                  value={safeData.arbeitsmarktzugang || ''}
                   onChange={(e) => updateData('arbeitsmarktzugang', e.target.value)}
                   className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 bg-white"
                 >
@@ -548,7 +572,7 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               <select
                 id="personal-familienstand"
                 name="familienstand"
-                value={data.familienstand}
+                value={safeData.familienstand || ''}
                 onChange={(e) => updateData('familienstand', e.target.value)}
                 className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 bg-white"
               >
@@ -591,9 +615,9 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               </div>
               
               {/* Kinder Tags below field */}
-              {data.kinder.length > 0 && (
+              {(safeData.kinder || []).length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-2">
-                  {data.kinder.map((child, index) => (
+                  {(safeData.kinder || []).map((child, index) => (
                     <TagButtonSelected
                       key={index}
                       label={child}

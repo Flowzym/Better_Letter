@@ -3,6 +3,7 @@ import { useLebenslaufContext } from '../context/LebenslaufContext';
 import PersonalDataForm from './PersonalDataForm';
 import ExperienceForm from './ExperienceForm';
 import AusbildungForm from './AusbildungForm';
+import AusbildungForm from './AusbildungForm';
 
 type TabType = 'personal' | 'experience' | 'education' | 'skills' | 'softskills';
 
@@ -15,6 +16,7 @@ const LebenslaufInput: React.FC = () => {
     setActiveTab: contextSetActiveTab,
     activeTab: contextActiveTab,
     experiences = [],
+    education = [],
     education = [],
     addExperience,
     updateExperience,
@@ -62,23 +64,9 @@ const LebenslaufInput: React.FC = () => {
       case 'personal':
         return <PersonalDataForm data={personalData} onChange={updatePersonalData} />;
       case 'experience':
-        return (
-          <ExperienceForm
-            experiences={experiences}
-            onAdd={addExperience}
-            onUpdate={updateExperience}
-            onDelete={deleteExperience}
-          />
-        );
+        return <div className="p-4">Berufserfahrung - Coming soon</div>;
       case 'education':
-        return (
-          <AusbildungForm
-            education={education}
-            onAdd={addEducation}
-            onUpdate={updateEducation}
-            onDelete={deleteEducation}
-          />
-        );
+        return <div className="p-4">Ausbildung - Coming soon</div>;
       case 'skills':
         return <div className="p-4">Fachkompetenzen - Coming soon</div>;
       case 'softskills':
