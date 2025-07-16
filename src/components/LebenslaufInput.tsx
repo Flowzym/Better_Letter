@@ -78,6 +78,70 @@ export default function LebenslaufInput() {
     zusatzangaben: ''
   });
 
+  // Load selected experience data into form when selectedExperienceId changes
+  useEffect(() => {
+    if (selectedExperienceId) {
+      const selectedExp = berufserfahrungen.find(exp => exp.id === selectedExperienceId);
+      if (selectedExp) {
+        setExperienceForm({
+          companies: selectedExp.companies || [],
+          position: selectedExp.position || [],
+          startMonth: selectedExp.startMonth,
+          startYear: selectedExp.startYear || '',
+          endMonth: selectedExp.endMonth,
+          endYear: selectedExp.endYear,
+          isCurrent: selectedExp.isCurrent || false,
+          aufgabenbereiche: selectedExp.aufgabenbereiche || []
+        });
+      }
+    } else {
+      // Clear form when no experience is selected
+      setExperienceForm({
+        companies: [],
+        position: [],
+        startMonth: null,
+        startYear: '',
+        endMonth: null,
+        endYear: null,
+        isCurrent: false,
+        aufgabenbereiche: []
+      });
+    }
+  }, [selectedExperienceId, berufserfahrungen]);
+
+  // Load selected education data into form when selectedEducationId changes
+  useEffect(() => {
+    if (selectedEducationId) {
+      const selectedEdu = ausbildungen.find(edu => edu.id === selectedEducationId);
+      if (selectedEdu) {
+        setEducationForm({
+          institution: selectedEdu.institution || [],
+          ausbildungsart: selectedEdu.ausbildungsart || [],
+          abschluss: selectedEdu.abschluss || [],
+          startMonth: selectedEdu.startMonth,
+          startYear: selectedEdu.startYear || '',
+          endMonth: selectedEdu.endMonth,
+          endYear: selectedEdu.endYear,
+          isCurrent: selectedEdu.isCurrent || false,
+          zusatzangaben: selectedEdu.zusatzangaben || ''
+        });
+      }
+    } else {
+      // Clear form when no education is selected
+      setEducationForm({
+        institution: [],
+        ausbildungsart: [],
+        abschluss: [],
+        startMonth: null,
+        startYear: '',
+        endMonth: null,
+        endYear: null,
+        isCurrent: false,
+        zusatzangaben: ''
+      });
+    }
+  }, [selectedEducationId, ausbildungen]);
+
   const handleExperienceFormChange = <K extends keyof typeof experienceForm>(
     field: K,
     value: typeof experienceForm[K]

@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { Trash2 } from 'lucide-react';
 import { useLebenslaufContext } from "../context/LebenslaufContext";
 
 export default function LebenslaufPreview() {
@@ -6,9 +7,11 @@ export default function LebenslaufPreview() {
     berufserfahrungen, 
     selectExperience, 
     selectedExperienceId,
+    deleteExperience,
     ausbildungen,
     selectEducation,
-    selectedEducationId
+    selectedEducationId,
+    deleteEducation
   } =
     useLebenslaufContext();
 
@@ -68,15 +71,28 @@ export default function LebenslaufPreview() {
             selectedExperienceId === exp.id ? "bg-orange-50" : "bg-gray-50"
           }`}
         >
-          <p className="text-sm text-gray-500">
-            {formatZeitraum(
-              exp.startMonth,
-              exp.startYear,
-              exp.endMonth,
-              exp.endYear,
-              exp.isCurrent,
-            )}
-          </p>
+          <div className="flex justify-between items-start mb-2">
+            <p className="text-sm text-gray-500">
+              {formatZeitraum(
+                exp.startMonth,
+                exp.startYear,
+                exp.endMonth,
+                exp.endYear,
+                exp.isCurrent,
+              )}
+            </p>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteExperience(exp.id);
+              }}
+              className="text-red-500 hover:text-red-700 p-1 rounded transition-colors duration-200"
+              title="Berufserfahrung löschen"
+              aria-label="Berufserfahrung löschen"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
           <p className="font-bold text-lg text-gray-900">
             {Array.isArray(exp.position) ? exp.position.join(" / ") : (exp.position || "")}
           </p>
@@ -107,15 +123,28 @@ export default function LebenslaufPreview() {
             selectedEducationId === edu.id ? "bg-orange-50" : "bg-gray-50"
           }`}
         >
-          <p className="text-sm text-gray-500">
-            {formatZeitraum(
-              edu.startMonth,
-              edu.startYear,
-              edu.endMonth,
-              edu.endYear,
-              edu.isCurrent,
-            )}
-          </p>
+          <div className="flex justify-between items-start mb-2">
+            <p className="text-sm text-gray-500">
+              {formatZeitraum(
+                edu.startMonth,
+                edu.startYear,
+                edu.endMonth,
+                edu.endYear,
+                edu.isCurrent,
+              )}
+            </p>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteEducation(edu.id);
+              }}
+              className="text-red-500 hover:text-red-700 p-1 rounded transition-colors duration-200"
+              title="Ausbildung löschen"
+              aria-label="Ausbildung löschen"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
           <p className="font-bold text-lg text-gray-900">
             {Array.isArray(edu.ausbildungsart) ? edu.ausbildungsart.join(" / ") : (edu.ausbildungsart || "")} - {Array.isArray(edu.abschluss) ? edu.abschluss.join(" / ") : (edu.abschluss || "")}
           </p>
