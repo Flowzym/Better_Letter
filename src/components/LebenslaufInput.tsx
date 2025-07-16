@@ -21,7 +21,7 @@ export default function LebenslaufInput() {
     ausbildungen,
     addEducation,
     updateEducation,
-    deleteEducation,
+    deleteEducation,schön, dass wir da jetzt sauber sind, aber s werden nach wie vor keine cards in den tabs Persönliche Daten, Berufserfahrung, etc angezeigt...
     selectedEducationId,
     isEditingEducation,
     selectEducation,
