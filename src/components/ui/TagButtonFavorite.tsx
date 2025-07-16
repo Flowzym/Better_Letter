@@ -1,5 +1,6 @@
 import React from 'react';
 import TagButton from '../TagButton';
+import { TagContext } from '../../types/TagContext';
 
 interface TagButtonFavoriteProps {
   label: string;
