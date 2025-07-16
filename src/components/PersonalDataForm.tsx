@@ -155,6 +155,8 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
             <div className="relative">
               <input
                 type="text"
+                id="personal-vorname"
+                name="vorname"
                 value={data.vorname}
                 onChange={(e) => updateData('vorname', e.target.value)}
                 className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 pr-10"
@@ -180,6 +182,8 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
             <div className="relative">
               <input
                 type="text"
+                id="personal-nachname"
+                name="nachname"
                 value={data.nachname}
                 onChange={(e) => updateData('nachname', e.target.value)}
                 className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 pr-10"
@@ -223,6 +227,8 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               <div className="relative">
                 <input
                   type="email"
+                  id="personal-email"
+                  name="email"
                   value={data.email}
                   onChange={(e) => updateData('email', e.target.value)}
                   className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 pr-10"
@@ -247,6 +253,8 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
             <label className="flex items-center space-x-2">
               <input
                 type="checkbox"
+                id="personal-show-social-media"
+                name="showSocialMedia"
                 checked={showSocialMedia}
                 onChange={(e) => setShowSocialMedia(e.target.checked)}
                 className="focus:ring-1"
@@ -268,6 +276,8 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                   <div className="flex space-x-2">
                     <input
                       type="text"
+                      id="personal-social-media"
+                      name="socialMedia"
                       value={newSocialMedia}
                       onChange={(e) => setNewSocialMedia(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && addSocialMedia()}
@@ -296,6 +306,8 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                   <div className="flex space-x-2">
                     <input
                       type="text"
+                      id="personal-homepage"
+                      name="homepage"
                       value={newHomepage}
                       onChange={(e) => setNewHomepage(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && addHomepage()}
@@ -345,6 +357,8 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
               <div className="relative">
                 <input
                   type="text"
+                  id="personal-adresse"
+                  name="adresse"
                   value={data.adresse}
                   onChange={(e) => updateData('adresse', e.target.value)}
                   className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 pr-10"
@@ -372,6 +386,8 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                   type="text"
                   inputMode="numeric"
                   pattern="[0-9]*"
+                  id="personal-plz"
+                  name="plz"
                   value={data.plz}
                   onChange={(e) => handleNumericInput(e.target.value, (val) => updateData('plz', val))}
                   className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 pr-10"
@@ -410,6 +426,8 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
             <label className="flex items-center space-x-2">
               <input
                 type="checkbox"
+                id="personal-ausland"
+                name="ausland"
                 checked={data.ausland}
                 onChange={(e) => updateData('ausland', e.target.checked)}
                 className="focus:ring-1"
@@ -477,6 +495,8 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
             <label className="flex items-center space-x-2">
               <input
                 type="checkbox"
+                id="personal-staatsbuergerschaft-checkbox"
+                name="staatsbuergerschaftCheckbox"
                 checked={data.staatsbuergerschaftCheckbox}
                 onChange={(e) => updateData('staatsbuergerschaftCheckbox', e.target.checked)}
                 className="focus:ring-1"
@@ -502,6 +522,8 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                   Arbeitsmarktzugang
                 </label>
                 <select
+                  id="personal-arbeitsmarktzugang"
+                  name="arbeitsmarktzugang"
                   value={data.arbeitsmarktzugang}
                   onChange={(e) => updateData('arbeitsmarktzugang', e.target.value)}
                   className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 bg-white"
@@ -524,6 +546,8 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                 Familienstand
               </label>
               <select
+                id="personal-familienstand"
+                name="familienstand"
                 value={data.familienstand}
                 onChange={(e) => updateData('familienstand', e.target.value)}
                 className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 bg-white"
@@ -545,6 +569,8 @@ export default function PersonalDataForm({ data, onChange }: PersonalDataFormPro
                   type="text"
                   inputMode="numeric"
                   pattern="[0-9]*"
+                  id="personal-kinder"
+                  name="kinder"
                   value={newChild}
                   onChange={(e) => handleNumericInput(e.target.value, setNewChild)}
                   onKeyPress={(e) => e.key === 'Enter' && addChild()}

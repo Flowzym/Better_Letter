@@ -33,7 +33,7 @@ export default function TextInput({
       <div className="relative">
         <textarea
           id={textareaId}
-          name={textareaName}
+          name={name || textareaName}
           value={value}
           onChange={(e: ChangeEvent<HTMLTextAreaElement>) => onChange(e.target.value)}
           placeholder={placeholder}

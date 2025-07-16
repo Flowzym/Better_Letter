@@ -112,6 +112,8 @@ export default function PhoneInput({ countryCode, phoneNumber, onCountryChange, 
             <div className="p-2 border-b">
               <input
                 type="text"
+                id="phone-country-search"
+                name="countrySearch"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Land suchen..."
@@ -150,6 +152,8 @@ export default function PhoneInput({ countryCode, phoneNumber, onCountryChange, 
       <div className="relative flex-1">
         <input
           type="tel"
+          id="phone-number"
+          name="phoneNumber"
           value={phoneNumber}
           onChange={handlePhoneChange}
         className="w-full h-10 pl-3 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"

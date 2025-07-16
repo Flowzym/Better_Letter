@@ -133,6 +133,8 @@ export default function CountryDropdown({ value, onChange, label, placeholder = 
             <div className="p-2 border-b">
               <input
                 type="text"
+                id="country-search"
+                name="countrySearch"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Land suchen..."

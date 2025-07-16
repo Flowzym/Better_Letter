@@ -8,10 +8,14 @@ interface SimpleInputProps {
 }
 
 export default function SimpleInput({ label, value, onChange, type = 'text' }: SimpleInputProps) {
+  const inputId = `simple-input-${Math.random().toString(36).substr(2, 9)}`;
+  
   return (
-    <label className="space-y-1 block">
+    <label htmlFor={inputId} className="space-y-1 block">
       <span className="text-gray-700">{label}</span>
       <input
+        id={inputId}
+        name={inputId}
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
