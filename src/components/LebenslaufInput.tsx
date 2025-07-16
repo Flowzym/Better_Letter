@@ -13,19 +13,19 @@ const LebenslaufInput: React.FC = () => {
     personalData,
     updatePersonalData,
     berufserfahrungen,
-    selectedExperienceId,
-    cvSuggestions,
-    selectedEducationId,
-    ausbildungen,
-    setActiveTab: contextSetActiveTab,
     addExperience,
     updateExperience,
     deleteExperience,
     updateExperienceField,
+    selectedExperienceId,
+    cvSuggestions,
+    selectedEducationId,
+    ausbildungen,
     addEducation,
     updateEducation,
     deleteEducation,
     updateEducationField,
+    setActiveTab: contextSetActiveTab,
     selectEducation
   } = useLebenslaufContext();
 
@@ -73,6 +73,7 @@ const LebenslaufInput: React.FC = () => {
               <h3 className="text-lg font-medium text-gray-900">Berufserfahrung</h3>
               <button
                 onClick={() => {
+                  console.log('Neue Berufserfahrung Button geklickt');
                   addExperience({
                     companies: [],
                     position: [],
@@ -120,6 +121,7 @@ const LebenslaufInput: React.FC = () => {
                 />
               ) : (
                 <div className="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                  <p className="text-gray-600">Berufserfahrungen: {berufserfahrungen.length}</p>
                   <p className="text-gray-600">Wählen Sie eine Berufserfahrung aus oder erstellen Sie eine neue</p>
                 </div>
               )}
@@ -133,6 +135,7 @@ const LebenslaufInput: React.FC = () => {
               <h3 className="text-lg font-medium text-gray-900">Ausbildung</h3>
               <button
                 onClick={() => {
+                  console.log('Neue Ausbildung Button geklickt');
                   addEducation({
                     institution: [],
                     ausbildungsart: [],
@@ -175,6 +178,7 @@ const LebenslaufInput: React.FC = () => {
               />
             ) : (
               <div className="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                <p className="text-gray-600">Ausbildungen: {ausbildungen.length}</p>
                 <p className="text-gray-600">Wählen Sie eine Ausbildung aus oder erstellen Sie eine neue</p>
               </div>
             )}

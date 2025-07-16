@@ -286,12 +286,15 @@ profileSourceMappings?: ProfileSourceMapping[];
 
   const addExperience = async (data: Omit<Berufserfahrung, 'id'>) => {
     const newExp = { ...data, id: uuidv4() };
+    console.log('Neue Berufserfahrung wird hinzugefügt:', newExp);
     setBerufserfahrungen(prev => {
       const updated = [...prev, newExp];
       localStorage.setItem(LOCAL_KEY, JSON.stringify(updated));
+      console.log('Berufserfahrungen im localStorage gespeichert:', updated);
       return updated;
     });
     // Persisting to Supabase removed
+    setSelectedExperienceId(newExp.id); // Sofort auswählen
     setIsEditingExperience(false);
   };
 
@@ -318,11 +321,14 @@ profileSourceMappings?: ProfileSourceMapping[];
 
   const addEducation = async (data: AusbildungEntryForm) => {
     const newEntry: AusbildungEntry = { ...data, id: uuidv4() };
+    console.log('Neue Ausbildung wird hinzugefügt:', newEntry);
     setAusbildungen(prev => {
       const updated = [...prev, newEntry];
       localStorage.setItem(LOCAL_EDU_KEY, JSON.stringify(updated));
+      console.log('Ausbildungen im localStorage gespeichert:', updated);
       return updated;
     });
+    setSelectedEducationId(newEntry.id); // Sofort auswählen
     setIsEditingEducation(false);
   };
 
