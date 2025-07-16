@@ -174,7 +174,7 @@ export default function LebenslaufPreview() {
                 updateExperienceTasksOrder(exp.id, newTasks);
               }}
               tag="ul"
-              className="list-disc list-inside mt-1 space-y-0.5 text-black"
+              className="list-disc list-inside mt-1 space-y-px text-black"
             >
               {exp.aufgabenbereiche.map((aufgabe, i) => (
                 <li 
@@ -194,7 +194,7 @@ export default function LebenslaufPreview() {
           
           {/* Neue Aufgabe hinzufügen */}
           {selectedExperienceId === exp.id && (
-            <div className="mt-2 flex items-center space-x-2">
+          <div className="mt-1 flex items-center space-x-2">
               <input
                 type="text"
                 value={newTaskInputs[exp.id] || ''}
@@ -263,7 +263,7 @@ export default function LebenslaufPreview() {
               <Trash2 className="h-4 w-4" />
             </button>
           </div>
-          <div className="flex items-center mb-1">
+          <div className="flex items-center mb-0">
             <Briefcase className="h-4 w-4 mr-1 text-gray-400" />
             <EditablePreviewText
               value={`${Array.isArray(edu.ausbildungsart) ? edu.ausbildungsart.join(" / ") : (edu.ausbildungsart || "")} - ${Array.isArray(edu.abschluss) ? edu.abschluss.join(" / ") : (edu.abschluss || "")}`}
