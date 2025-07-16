@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useLebenslaufContext } from '../context/LebenslaufContext';
 import PersonalDataForm from './PersonalDataForm';
 import ExperienceForm from './ExperienceForm';
-import AusbildungForm from './AusbildungForm';
 import ExperienceSection from './ExperienceSection';
+import AusbildungForm from './AusbildungForm';
 import { Plus, Calendar, Building, Briefcase, ChevronRight } from 'lucide-react';
 
 type TabType = 'personal' | 'experience' | 'education' | 'skills' | 'softskills';
@@ -87,7 +87,7 @@ const LebenslaufInput: React.FC = () => {
   const renderTabContent = () => {
     switch (currentTab) {
       case 'personal':
-        return <PersonalDataForm data={personalData || {}} onChange={updatePersonalData} />;
+        return <PersonalDataForm data={personalData} onChange={updatePersonalData} />;
       case 'experience':
         return (
           <div className="space-y-6">
@@ -95,7 +95,6 @@ const LebenslaufInput: React.FC = () => {
               <h3 className="text-lg font-medium text-gray-900">Berufserfahrung</h3>
               <button
                 onClick={() => {
-                  console.log('Neue Berufserfahrung Button geklickt');
                   addExperience({
                     companies: [],
                     position: [],
@@ -114,7 +113,6 @@ const LebenslaufInput: React.FC = () => {
                 <span>Neue Berufserfahrung</span>
               </button>
             </div>
-
             {selectedExperienceId ? (
               <ExperienceSection>
                 <ExperienceForm
@@ -142,53 +140,6 @@ const LebenslaufInput: React.FC = () => {
                   cvSuggestions={cvSuggestions}
                 />
               </ExperienceSection>
-            ) : (
-              <div className="space-y-4">
-                {berufserfahrungen.length > 0 ? (
-                  berufserfahrungen.map(exp => (
-                    <div 
-                      key={exp.id}
-                      onClick={() => selectExperience(exp.id)}
-                      className="bg-white border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-orange-300 hover:shadow-sm transition-all duration-200"
-                    >
-                      <div className="flex justify-between items-center">
-                        <div className="space-y-1">
-                          <div className="flex items-center text-sm text-gray-500">
-                            <Calendar className="h-4 w-4 mr-1 flex-shrink-0" />
-                            <span>
-                              {formatZeitraum(
-                                exp.startMonth,
-                                exp.startYear,
-                                exp.endMonth,
-                                exp.endYear,
-                                exp.isCurrent
-                              )}
-                            </span>
-                          </div>
-                          <div className="font-medium text-gray-900">
-                            {exp.position.join(' / ')}
-                          </div>
-                          <div className="text-sm text-gray-600">
-                            <Building className="h-4 w-4 mr-1 inline-block" />
-                            {exp.companies.join(', ')}
-                          </div>
-                          {exp.aufgabenbereiche.length > 0 && (
-                            <div className="text-xs text-gray-500 mt-1">
-                              {exp.aufgabenbereiche.length} Tätigkeiten
-                            </div>
-                          )}
-                        </div>
-                        <ChevronRight className="h-5 w-5 text-gray-400" />
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-                    <p className="text-gray-600">Keine Berufserfahrungen vorhanden</p>
-                    <p className="text-gray-600">Erstellen Sie eine neue Berufserfahrung mit dem Button oben</p>
-                  </div>
-                )}
-              </div>
             )}
           </div>
         );
@@ -199,7 +150,6 @@ const LebenslaufInput: React.FC = () => {
               <h3 className="text-lg font-medium text-gray-900">Ausbildung</h3>
               <button
                 onClick={() => {
-                  console.log('Neue Ausbildung Button geklickt');
                   addEducation({
                     institution: [],
                     ausbildungsart: [],
@@ -219,7 +169,6 @@ const LebenslaufInput: React.FC = () => {
                 <span>Neue Ausbildung</span>
               </button>
             </div>
-
             {selectedEducationId ? (  
               <AusbildungForm
                 form={ausbildungen.find(e => e.id === selectedEducationId) || {
@@ -240,54 +189,6 @@ const LebenslaufInput: React.FC = () => {
                 }}
                 cvSuggestions={cvSuggestions}
               />
-            ) : (
-              <div className="space-y-4">
-                {ausbildungen.length > 0 ? (
-                  ausbildungen.map(edu => (
-                    <div 
-                      key={edu.id}
-                      onClick={() => selectEducation(edu.id)}
-                      className="bg-white border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-orange-300 hover:shadow-sm transition-all duration-200"
-                    >
-                      <div className="flex justify-between items-center">
-                        <div className="space-y-1">
-                          <div className="flex items-center text-sm text-gray-500">
-                            <Calendar className="h-4 w-4 mr-1 flex-shrink-0" />
-                            <span>
-                              {formatZeitraum(
-                                edu.startMonth,
-                                edu.startYear,
-                                edu.endMonth,
-                                edu.endYear,
-                                edu.isCurrent
-                              )}
-                            </span>
-                          </div>
-                          <div className="font-medium text-gray-900">
-                            {edu.ausbildungsart.join(' / ')}
-                            {edu.abschluss.length > 0 && ` - ${edu.abschluss.join(' / ')}`}
-                          </div>
-                          <div className="text-sm text-gray-600">
-                            <Building className="h-4 w-4 mr-1 inline-block" />
-                            {edu.institution.join(', ')}
-                          </div>
-                          {edu.zusatzangaben && (
-                            <div className="text-xs text-gray-500 mt-1">
-                              Mit Zusatzangaben
-                            </div>
-                          )}
-                        </div>
-                        <ChevronRight className="h-5 w-5 text-gray-400" />
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-                    <p className="text-gray-600">Keine Ausbildungen vorhanden</p>
-                    <p className="text-gray-600">Erstellen Sie eine neue Ausbildung mit dem Button oben</p>
-                  </div>
-                )}
-              </div>
             )}
           </div>
         );
@@ -296,7 +197,7 @@ const LebenslaufInput: React.FC = () => {
       case 'softskills':
         return <div className="p-4">Softskills - Coming soon</div>;
       default:
-        return <PersonalDataForm data={personalData} onChange={updatePersonalData} />;
+        return <PersonalDataForm data={personalData || {}} onChange={updatePersonalData} />;
     }
   };
 
