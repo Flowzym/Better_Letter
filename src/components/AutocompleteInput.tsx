@@ -208,7 +208,6 @@ export default function AutocompleteInput<T = string>({
 
   const handleSuggestionClick = (suggestion: T) => {
     onAdd?.(suggestion);
-    onChange('');
     setIsOpen(false);
     setHighlightedIndex(-1);
     if (inputRef.current) {
@@ -219,16 +218,14 @@ export default function AutocompleteInput<T = string>({
   const handleAddToFavorites = (e?: React.MouseEvent) => {
     if (e) e.preventDefault();
     if (onFavoriteClick && hasInput) {
-      onFavoriteClick(value);
-      onChange('');
+      onFavoriteClick(value.trim());
     }
   };
 
   const handleAdd = (e?: React.MouseEvent) => {
     if (e) e.preventDefault();
     if (!hasInput) return;
-    onAdd?.(value);
-    onChange('');
+    onAdd?.(value.trim());
   };
 
   return (

@@ -17,9 +17,10 @@ export default function CompaniesTagInput({ value, onChange, suggestions = [] }:
 
 
   const addCompany = (val: string) => {
-    const c = (val ?? inputValue).trim();
+    const c = val?.trim() || inputValue.trim();
     if (!c || value.includes(c)) return;
     onChange([...value, c]);
+    setInputValue('');
     setInputValue('');
   };
 
@@ -32,9 +33,10 @@ export default function CompaniesTagInput({ value, onChange, suggestions = [] }:
   };
 
   const handleAddFavoriteInput = (val?: string) => {
-    const trimmed = (val ?? inputValue).trim();
+    const trimmed = val?.trim() || inputValue.trim();
     if (!trimmed) return;
     toggleFavoriteCompany(trimmed);
+    setInputValue('');
     setInputValue('');
   };
 
