@@ -484,9 +484,7 @@ export function LebenslaufProvider({
       }}
     >
       {children}
-    </Leben    }
-    }
-slaufContext.Provider>
+    </LebenslaufContext.Provider>
   );
 }
 
