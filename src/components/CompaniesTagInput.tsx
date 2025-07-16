@@ -17,7 +17,7 @@ export default function CompaniesTagInput({ value, onChange, suggestions = [] }:
 
 
   const addCompany = (val: string) => {
-    const c = val.trim();
+    const c = (val ?? inputValue).trim();
     if (!c || value.includes(c)) return;
     onChange([...value, c]);
     setInputValue('');
@@ -31,8 +31,8 @@ export default function CompaniesTagInput({ value, onChange, suggestions = [] }:
     onChange(value.map((v) => (v === oldVal ? newVal : v)));
   };
 
-  const handleAddFavoriteInput = (val: string) => {
-    const trimmed = val.trim();
+  const handleAddFavoriteInput = (val?: string) => {
+    const trimmed = (val ?? inputValue).trim();
     if (!trimmed) return;
     toggleFavoriteCompany(trimmed);
     setInputValue('');
@@ -56,8 +56,8 @@ export default function CompaniesTagInput({ value, onChange, suggestions = [] }:
       <AutocompleteInput
         value={inputValue}
         onChange={setInputValue}
-        onAdd={(val) => addCompany(val || inputValue)}
-        onFavoriteClick={(val) => handleAddFavoriteInput(val || inputValue)}
+        onAdd={addCompany}
+        onFavoriteClick={handleAddFavoriteInput}
         suggestions={suggestions}
         placeholder="Hinzufügen..."
         showFavoritesButton

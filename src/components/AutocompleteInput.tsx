@@ -217,15 +217,15 @@ export default function AutocompleteInput<T = string>({
   };
 
   const handleAddToFavorites = (e?: React.MouseEvent) => {
-    e.preventDefault();
-    if (onFavoriteClick && (value || '').trim()) {
+    if (e) e.preventDefault();
+    if (onFavoriteClick && hasInput) {
       onFavoriteClick(value);
       onChange('');
     }
   };
 
   const handleAdd = (e?: React.MouseEvent) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     if (!hasInput) return;
     onAdd?.(value);
     onChange('');
@@ -291,7 +291,7 @@ export default function AutocompleteInput<T = string>({
               <button
                 id={addButtonId}
                 name={`add-${inputId}`}
-                onClick={(e) => handleAdd(e)}
+                onClick={handleAdd}
                 className="w-10 h-10 bg-[#F6A800] text-white rounded-md flex items-center justify-center transition-colors duration-200 hover:bg-[#E8950C]"
                 title="Hinzufügen"
                 aria-label="Hinzufügen"
@@ -306,7 +306,8 @@ export default function AutocompleteInput<T = string>({
                 id={favoritesButtonId}
                 name={`favorites-${inputId}`}
                 disabled={disabled}
-                onClick={(e) => handleAddToFavorites(e)}
+                onClick={handleAddToFavorites}
+                className="w-10 h-10 bg-[#F6A800] text-white rounded-md flex items-center justify-center transition-colors duration-200 hover:bg-[#E8950C]"
                 title="Zu Favoriten hinzufügen"
                 aria-label="Zu Favoriten hinzufügen"
               >

@@ -28,8 +28,8 @@ export default function TagSelectorWithFavorites({
   const { favoritePositions: favorites, toggleFavoritePosition } = useLebenslaufContext();
 
 
-  const addTag = (tag: string) => {
-    const trimmed = tag.trim();
+  const addTag = (tag?: string) => {
+    const trimmed = (tag ?? inputValue).trim();
     if (!trimmed) return;
     const opts = suggestions ?? options;
     if (!allowCustom && !opts.includes(trimmed)) return;
@@ -41,8 +41,11 @@ export default function TagSelectorWithFavorites({
     onChange(value.filter((t) => t !== tag));
   };
 
-  const toggleFavorite = (tag: string) => {
-    toggleFavoritePosition(tag);
+  const toggleFavorite = (tag?: string) => {
+    const trimmed = (tag ?? inputValue).trim();
+    if (!trimmed) return;
+    toggleFavoritePosition(trimmed);
+    setInputValue('');
   };
 
   const updateTag = (oldTag: string, newTag: string) => {
@@ -50,19 +53,6 @@ export default function TagSelectorWithFavorites({
     if (!trimmed) return;
     const updatedTags = value.map(tag => tag === oldTag ? trimmed : tag);
     onChange(updatedTags);
-  };
-
-  const handleAddInput = (val: string) => {
-    addTag(val);
-    setInputValue('');
-  };
-
-
-  const handleAddFavoriteInput = (val: string) => {
-    const toAdd = val.trim();
-    if (!toAdd) return;
-    toggleFavorite(toAdd);
-    setInputValue('');
   };
 
   return (
@@ -83,8 +73,8 @@ export default function TagSelectorWithFavorites({
       <AutocompleteInput
         value={inputValue}
         onChange={setInputValue}
-        onAdd={(val) => handleAddInput(val || inputValue)}
-        onFavoriteClick={(val) => handleAddFavoriteInput(val || inputValue)}
+        onAdd={addTag}
+        onFavoriteClick={toggleFavorite}
         suggestions={suggestions ?? options}
         placeholder="Hinzufügen..."
         showFavoritesButton
