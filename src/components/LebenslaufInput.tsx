@@ -26,7 +26,7 @@ export default function LebenslaufInput() {
     isEditingEducation,
     selectEducation,
     cvSuggestions,
-    setActiveTab
+    setActiveTab,
     activeTab
   } = useLebenslaufContext();
   
