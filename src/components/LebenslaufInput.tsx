@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useLebenslaufContext } from '../context/LebenslaufContext';
 import PersonalDataForm from './PersonalDataForm';
+import ExperienceSection from './ExperienceSection';
 import ExperienceForm from './ExperienceForm';
 import AusbildungForm from './AusbildungForm';
+import { Plus } from 'lucide-react';
 
 type TabType = 'personal' | 'experience' | 'education' | 'skills' | 'softskills';
 
@@ -11,11 +13,12 @@ const LebenslaufInput: React.FC = () => {
     personalData,
     updatePersonalData,
     selectedExperienceId,
+    berufserfahrungen,
+    cvSuggestions,
     selectedEducationId,
+    ausbildungen,
     setActiveTab: contextSetActiveTab,
     activeTab: contextActiveTab,
-    experiences = [],
-    education = [],
     addExperience,
     updateExperience,
     deleteExperience,
@@ -60,11 +63,121 @@ const LebenslaufInput: React.FC = () => {
   const renderTabContent = () => {
     switch (currentTab) {
       case 'personal':
-        return <PersonalDataForm data={personalData} onChange={updatePersonalData} />;
+        return <PersonalDataForm data={personalData || {}} onChange={updatePersonalData} />;
       case 'experience':
-        return <div className="p-4">Berufserfahrung - Coming soon</div>;
+        return (
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-medium text-gray-900">Berufserfahrung</h3>
+              <button
+                onClick={() => {
+                  addExperience({
+                    companies: [],
+                    position: [],
+                    startMonth: null,
+                    startYear: '',
+                    endMonth: null,
+                    endYear: null,
+                    isCurrent: false,
+                    aufgabenbereiche: []
+                  });
+                }}
+                className="flex items-center space-x-2 px-4 py-2 text-white rounded-lg transition-colors duration-200"
+                style={{ backgroundColor: '#F29400' }}
+              >
+                <Plus className="h-4 w-4" />
+                <span>Neue Berufserfahrung</span>
+              </button>
+            </div>
+            
+            <ExperienceSection>
+              {selectedExperienceId ? (
+                <ExperienceForm
+                  form={berufserfahrungen.find(e => e.id === selectedExperienceId) || {
+                    companies: [],
+                    position: [],
+                    startMonth: null,
+                    startYear: '',
+                    endMonth: null,
+                    endYear: null,
+                    isCurrent: false,
+                    aufgabenbereiche: []
+                  }}
+                  selectedPositions={(berufserfahrungen.find(e => e.id === selectedExperienceId)?.position || [])}
+                  onUpdateField={(field, value) => {
+                    if (selectedExperienceId) {
+                      updateExperienceField(selectedExperienceId, field, value);
+                    }
+                  }}
+                  onPositionsChange={(positions) => {
+                    if (selectedExperienceId) {
+                      updateExperienceField(selectedExperienceId, 'position', positions);
+                    }
+                  }}
+                  cvSuggestions={cvSuggestions}
+                />
+              ) : (
+                <div className="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                  <p className="text-gray-600">Wählen Sie eine Berufserfahrung aus oder erstellen Sie eine neue</p>
+                </div>
+              )}
+            </ExperienceSection>
+          </div>
+        );
       case 'education':
-        return <div className="p-4">Ausbildung - Coming soon</div>;
+        return (
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-medium text-gray-900">Ausbildung</h3>
+              <button
+                onClick={() => {
+                  addEducation({
+                    institution: [],
+                    ausbildungsart: [],
+                    abschluss: [],
+                    startMonth: null,
+                    startYear: '',
+                    endMonth: null,
+                    endYear: null,
+                    isCurrent: false,
+                    zusatzangaben: ''
+                  });
+                }}
+                className="flex items-center space-x-2 px-4 py-2 text-white rounded-lg transition-colors duration-200"
+                style={{ backgroundColor: '#F29400' }}
+              >
+                <Plus className="h-4 w-4" />
+                <span>Neue Ausbildung</span>
+              </button>
+            </div>
+            
+            {selectedEducationId ? (
+              <AusbildungForm
+                form={ausbildungen.find(e => e.id === selectedEducationId) || {
+                  institution: [],
+                  ausbildungsart: [],
+                  abschluss: [],
+                  startMonth: null,
+                  startYear: '',
+                  endMonth: null,
+                  endYear: null,
+                  isCurrent: false,
+                  zusatzangaben: ''
+                }}
+                onUpdateField={(field, value) => {
+                  if (selectedEducationId) {
+                    updateEducationField(selectedEducationId, field, value);
+                  }
+                }}
+                cvSuggestions={cvSuggestions}
+              />
+            ) : (
+              <div className="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                <p className="text-gray-600">Wählen Sie eine Ausbildung aus oder erstellen Sie eine neue</p>
+              </div>
+            )}
+          </div>
+        );
       case 'skills':
         return <div className="p-4">Fachkompetenzen - Coming soon</div>;
       case 'softskills':
