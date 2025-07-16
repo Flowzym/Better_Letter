@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useMemo } from "react";
 import TaskTag from "./TaskTag";
 import TagButtonFavorite from "./ui/TagButtonFavorite";
 import { Lightbulb, Plus, Star } from "lucide-react";
-import TextInputWithButtons from "./TextInputWithButtons";
 import { useLebenslaufContext } from "../context/LebenslaufContext";
 import { getTasksForPositions } from "../constants/positionsToTasks";
 import "../styles/_tags.scss";
@@ -25,6 +24,8 @@ export default function TasksTagInput({
 }: TasksTagInputProps) {
   const [inputValue, setInputValue] = useState("");
   const { favoriteTasks: favorites, toggleFavoriteTask } = useLebenslaufContext();
+  const [isInputFocused, setIsInputFocused] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
   
   // Kombiniere Vorschläge aus Positionen und externen Vorschlägen
   const allSuggestions = useMemo(() => {
@@ -83,9 +84,12 @@ export default function TasksTagInput({
         <div className="relative flex-1">
           <input
             type="text"
+            ref={inputRef}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && addTask()}
+            onFocus={() => setIsInputFocused(true)}
+            onBlur={() => setIsInputFocused(false)}
             placeholder="Hinzufügen..."
             className="w-full px-3 h-10 border rounded-md transition-all focus:outline-none focus:ring-1 pr-10"
             style={{
@@ -94,20 +98,24 @@ export default function TasksTagInput({
             } as React.CSSProperties}
           />
         </div>
-        <div className="flex-shrink-0 flex space-x-2">
-          <button
-            onClick={() => addTask()}
-            className="w-10 h-10 bg-[#F6A800] hover:bg-[#F29400] text-white rounded-md flex items-center justify-center transition-colors duration-200"
-          >
-            <Plus className="w-5 h-5" />
-          </button>
-          <button
-            onClick={handleAddFavoriteInput}
-            className="w-10 h-10 bg-[#F6A800] hover:bg-[#F29400] text-white rounded-md flex items-center justify-center transition-colors duration-200"
-          >
-            <Star className="w-5 h-5" />
-          </button>
-        </div>
+        {(inputValue.trim().length > 0 || isInputFocused) && (
+          <div className="flex-shrink-0 flex space-x-2">
+            <button
+              onClick={() => addTask()}
+              onMouseDown={(e) => e.preventDefault()} // Prevent blur on click
+              className="w-10 h-10 bg-[#F6A800] hover:bg-[#F29400] text-white rounded-md flex items-center justify-center transition-colors duration-200"
+            >
+              <Plus className="w-5 h-5" />
+            </button>
+            <button
+              onClick={handleAddFavoriteInput}
+              onMouseDown={(e) => e.preventDefault()} // Prevent blur on click
+              className="w-10 h-10 bg-[#F6A800] hover:bg-[#F29400] text-white rounded-md flex items-center justify-center transition-colors duration-200"
+            >
+              <Star className="w-5 h-5" />
+            </button>
+          </div>
+        )}
       </div>
       
       {/* KI-Vorschläge basierend auf Positionen */}
