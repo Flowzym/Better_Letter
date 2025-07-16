@@ -1,8 +1,8 @@
 import { Eraser } from 'lucide-react';
 import ZeitraumPicker from './ZeitraumPicker';
 import TextInput from './TextInput';
-import TagSelectorWithFavorites from './TagSelectorWithFavorites';
 import InstitutionTagInput from './InstitutionTagInput';
+import TagSelectorWithFavorites from './TagSelectorWithFavorites';
 import { AusbildungEntryForm, useLebenslaufContext } from '../context/LebenslaufContext';
 import { CVSuggestionConfig } from '../services/supabaseService';
 
@@ -170,7 +170,7 @@ export default function AusbildungForm({
         <TextInput
           value={form.zusatzangaben}
           onChange={(val) => onUpdateField('zusatzangaben', val)}
-          label=""
+          label="" 
           placeholder="Zusätzliche Informationen zur Ausbildung..."
           rows={4}
         />

@@ -29,14 +29,14 @@ export interface Berufserfahrung {
 export interface AusbildungEntry {
   id: string;
   institution: string[];
-  ausbildungsart: string[];
-  abschluss: string[];
+  ausbildungsart: string[]; 
+  abschluss: string[]; 
   startMonth: string | null;
   startYear: string;
   endMonth: string | null;
   endYear: string | null;
   isCurrent: boolean;
-  zusatzangaben: string;
+  zusatzangaben: string; 
 }
 
 export type AusbildungEntryForm = Omit<AusbildungEntry, 'id'>;
@@ -118,7 +118,7 @@ interface LebenslaufContextType {
   updateExperienceTask: (expId: string, taskIndex: number, newTaskValue: string) => void;
   updateExperienceTasksOrder: (id: string, newTasks: string[]) => void;
   addExperienceTask: (id: string, newTask: string) => void;
-  setActiveTab: Dispatch<SetStateAction<string>>;
+  setActiveTab?: Dispatch<SetStateAction<string>>;
   updateExperienceField: <K extends keyof Omit<Berufserfahrung, 'id'>>(
     id: string, 
     fieldName: K, 
@@ -146,7 +146,7 @@ profileSourceMappings?: ProfileSourceMapping[];
   const [personalData, setPersonalData] = useState<PersonalData>(() => {
     try {
       const saved = localStorage.getItem(LOCAL_PERSONAL_KEY);
-      return saved ? JSON.parse(saved) : {
+      return saved ? JSON.parse(saved) as PersonalData : {
         titel: '',
         vorname: '',
         nachname: '',
@@ -457,7 +457,7 @@ profileSourceMappings?: ProfileSourceMapping[];
   const updateEducationField = (id: string, fieldName: keyof AusbildungEntryForm, newValue: string) => {
     setAusbildungen(prev => {
       const updated = prev.map(edu => 
-        edu.id === id ? { ...edu, [fieldName]: newValue } : edu
+        edu.id === id ? { ...edu, [fieldName]: newValue || '' } : edu
       );
       localStorage.setItem(LOCAL_EDU_KEY, JSON.stringify(updated));
       return updated;

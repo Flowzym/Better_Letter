@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useLebenslaufContext } from '../context/LebenslaufContext';
 import PersonalDataForm from './PersonalDataForm';
-import ExperienceForm from './ExperienceForm';
 import AusbildungForm from './AusbildungForm';
+import ExperienceForm from './ExperienceForm';
 import ExperienceSection from './ExperienceSection';
 import { Plus } from 'lucide-react';
 
@@ -12,19 +12,21 @@ const LebenslaufInput: React.FC = () => {
   const {
     personalData,
     updatePersonalData,
-    selectedExperienceId,
     berufserfahrungen = [],
+    selectedExperienceId,
     cvSuggestions,
     selectedEducationId,
     ausbildungen = [],
     setActiveTab: contextSetActiveTab,
-    activeTab: contextActiveTab,
     addExperience,
     updateExperience,
     deleteExperience,
+    updateExperienceField,
     addEducation,
     updateEducation,
-    deleteEducation
+    deleteEducation,
+    updateEducationField,
+    selectEducation
   } = useLebenslaufContext();
 
   const [localActiveTab, setLocalActiveTab] = useState<TabType>('personal');
@@ -50,7 +52,7 @@ const LebenslaufInput: React.FC = () => {
   }, [selectedEducationId, contextSetActiveTab]);
 
   // Use context value or local state as fallback
-  const currentTab = contextActiveTab || localActiveTab;
+  const currentTab = localActiveTab;
 
   // Function to handle tab changes
   const handleTabChange = (tabId: TabType) => {
@@ -75,7 +77,7 @@ const LebenslaufInput: React.FC = () => {
                     companies: [],
                     position: [],
                     startMonth: null,
-                    startYear: '',
+                    startYear: "",
                     endMonth: null,
                     endYear: null,
                     isCurrent: false,
@@ -97,7 +99,7 @@ const LebenslaufInput: React.FC = () => {
                     companies: [],
                     position: [],
                     startMonth: null,
-                    startYear: '',
+                    startYear: "",
                     endMonth: null,
                     endYear: null,
                     isCurrent: false,
@@ -135,12 +137,12 @@ const LebenslaufInput: React.FC = () => {
                     institution: [],
                     ausbildungsart: [],
                     abschluss: [],
-                    startMonth: null,
-                    startYear: '',
-                    endMonth: null,
-                    endYear: null,
-                    isCurrent: false,
-                    zusatzangaben: ''
+                    startMonth: null, 
+                    startYear: "", 
+                    endMonth: null, 
+                    endYear: null, 
+                    isCurrent: false, 
+                    zusatzangaben: ""
                   });
                 }}
                 className="flex items-center space-x-2 px-4 py-2 text-white rounded-lg transition-colors duration-200"
@@ -157,12 +159,12 @@ const LebenslaufInput: React.FC = () => {
                   institution: [],
                   ausbildungsart: [],
                   abschluss: [],
-                  startMonth: null,
-                  startYear: '',
-                  endMonth: null,
-                  endYear: null,
-                  isCurrent: false,
-                  zusatzangaben: ''
+                  startMonth: null, 
+                  startYear: "", 
+                  endMonth: null, 
+                  endYear: null, 
+                  isCurrent: false, 
+                  zusatzangaben: ""
                 }}
                 onUpdateField={(field, value) => {
                   if (selectedEducationId) {
