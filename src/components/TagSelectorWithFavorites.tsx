@@ -29,7 +29,7 @@ export default function TagSelectorWithFavorites({
 
 
   const addTag = (tag?: string) => {
-    const trimmed = tag?.trim() || inputValue.trim();
+    const trimmed = (tag || inputValue).trim();
     if (!trimmed) return;
     const opts = suggestions ?? options;
     if (!allowCustom && !opts.includes(trimmed)) return;
@@ -43,7 +43,7 @@ export default function TagSelectorWithFavorites({
   };
 
   const toggleFavorite = (tag?: string) => {
-    const trimmed = tag?.trim() || inputValue.trim();
+    const trimmed = (tag || inputValue).trim();
     if (!trimmed) return;
     toggleFavoritePosition(trimmed);
     setInputValue('');
