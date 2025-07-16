@@ -34,7 +34,7 @@ const LebenslaufInput: React.FC = () => {
 
   // Automatisch eine leere Berufserfahrung erstellen, wenn keine ausgewählt ist
   useEffect(() => {
-    if (currentTab === 'experience' && !selectedExperienceId && berufserfahrungen.length === 0) {
+    if (localActiveTab === 'experience' && !selectedExperienceId && berufserfahrungen.length === 0) {
       addExperience({
         companies: [],
         position: [],
@@ -46,11 +46,11 @@ const LebenslaufInput: React.FC = () => {
         aufgabenbereiche: []
       });
     }
-  }, [currentTab, selectedExperienceId, berufserfahrungen.length, addExperience]);
+  }, [localActiveTab, selectedExperienceId, berufserfahrungen.length, addExperience]);
 
   // Automatisch eine leere Ausbildung erstellen, wenn keine ausgewählt ist
   useEffect(() => {
-    if (currentTab === 'education' && !selectedEducationId && ausbildungen.length === 0) {
+    if (localActiveTab === 'education' && !selectedEducationId && ausbildungen.length === 0) {
       addEducation({
         institution: [],
         ausbildungsart: [],
@@ -63,7 +63,7 @@ const LebenslaufInput: React.FC = () => {
         zusatzangaben: ""
       });
     }
-  }, [currentTab, selectedEducationId, ausbildungen.length, addEducation]);
+  }, [localActiveTab, selectedEducationId, ausbildungen.length, addEducation]);
 
   // Auto-switch to experience tab when an experience is selected
   useEffect(() => {
@@ -84,9 +84,6 @@ const LebenslaufInput: React.FC = () => {
       setLocalActiveTab('education');
     }
   }, [selectedEducationId, contextSetActiveTab]);
-
-  // Use context value or local state as fallback
-  const currentTab = localActiveTab;
 
   // Function to handle tab changes
   const handleTabChange = (tabId: TabType) => {
@@ -118,7 +115,7 @@ const LebenslaufInput: React.FC = () => {
   };
 
   const renderTabContent = () => {
-    switch (currentTab) {
+    switch (localActiveTab) {
       case 'personal':
         return <PersonalDataForm data={personalData} onChange={updatePersonalData} />;
       case 'experience':
@@ -286,7 +283,7 @@ const LebenslaufInput: React.FC = () => {
           <button
             onClick={() => handleTabChange('personal')}
             className={`py-3 px-1 border-b-2 font-medium text-sm ${
-              currentTab === 'personal'
+              localActiveTab === 'personal'
                 ? 'border-orange-500 text-orange-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
             }`}
@@ -304,7 +301,7 @@ const LebenslaufInput: React.FC = () => {
           <button
             onClick={() => handleTabChange('experience')}
             className={`py-3 px-1 border-b-2 font-medium text-sm ${
-              currentTab === 'experience'
+              localActiveTab === 'experience'
                 ? 'border-orange-500 text-orange-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
             }`}
@@ -322,7 +319,7 @@ const LebenslaufInput: React.FC = () => {
           <button
             onClick={() => handleTabChange('education')}
             className={`py-3 px-1 border-b-2 font-medium text-sm ${
-              currentTab === 'education'
+              localActiveTab === 'education'
                 ? 'border-orange-500 text-orange-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
             }`}
@@ -340,7 +337,7 @@ const LebenslaufInput: React.FC = () => {
           <button
             onClick={() => handleTabChange('skills')}
             className={`py-3 px-1 border-b-2 font-medium text-sm ${
-              currentTab === 'skills'
+              localActiveTab === 'skills'
                 ? 'border-orange-500 text-orange-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
             }`}
@@ -358,7 +355,7 @@ const LebenslaufInput: React.FC = () => {
           <button
             onClick={() => handleTabChange('softskills')}
             className={`py-3 px-1 border-b-2 font-medium text-sm ${
-              currentTab === 'softskills'
+              localActiveTab === 'softskills'
                 ? 'border-orange-500 text-orange-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
             }`}
