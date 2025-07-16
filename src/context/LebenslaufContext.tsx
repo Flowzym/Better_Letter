@@ -4,6 +4,8 @@ import React, {
   useState,
   ReactNode,
   useEffect,
+  Dispatch,
+  SetStateAction,
 } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -92,6 +94,12 @@ interface LebenslaufContextType {
   updateExperienceTask: (expId: string, taskIndex: number, newTaskValue: string) => void;
   updateExperienceTasksOrder: (id: string, newTasks: string[]) => void;
   addExperienceTask: (id: string, newTask: string) => void;
+  setActiveTab: Dispatch<SetStateAction<string>>;
+  updateExperienceField: <K extends keyof Omit<Berufserfahrung, 'id'>>(
+    id: string, 
+    fieldName: K, 
+    newValue: Omit<Berufserfahrung, 'id'>[K]
+  ) => void;
 }
 
 const LebenslaufContext = createContext<LebenslaufContextType | undefined>(undefined);
@@ -103,6 +111,7 @@ export function LebenslaufProvider({
   children: ReactNode;
   profileSourceMappings?: ProfileSourceMapping[];
 }) {
+  const [activeTab, setActiveTab] = useState<string>('personal');
   const LOCAL_KEY = 'berufserfahrungen';
   const LOCAL_EDU_KEY = 'ausbildungen';
   const LOCAL_SKILL_KEY = 'fachkompetenzen';
@@ -309,11 +318,21 @@ export function LebenslaufProvider({
   const selectExperience = (id: string | null) => {
     setSelectedExperienceId(id);
     setIsEditingExperience(id !== null);
+    if (id !== null) {
+      setSelectedEducationId(null);
+      setIsEditingEducation(false);
+      setActiveTab('experience');
+    }
   };
 
   const selectEducation = (id: string | null) => {
     setSelectedEducationId(id);
     setIsEditingEducation(id !== null);
+    if (id !== null) {
+      setSelectedExperienceId(null);
+      setIsEditingExperience(false);
+      setActiveTab('education');
+    }
   };
 
   const toggleFavoritePosition = (pos: string) => {
@@ -401,6 +420,20 @@ export function LebenslaufProvider({
     });
   };
 
+  const updateExperienceField = <K extends keyof Omit<Berufserfahrung, 'id'>>(
+    id: string, 
+    fieldName: K, 
+    newValue: Omit<Berufserfahrung, 'id'>[K]
+  ) => {
+    setBerufserfahrungen(prev => {
+      const updated = prev.map(exp => 
+        exp.id === id ? { ...exp, [fieldName]: newValue } : exp
+      );
+      localStorage.setItem(LOCAL_KEY, JSON.stringify(updated));
+      return updated;
+    });
+  };
+
   return (
     <LebenslaufContext.Provider
       value={{
@@ -446,6 +479,8 @@ export function LebenslaufProvider({
         updateExperienceTask,
         updateExperienceTasksOrder,
         addExperienceTask,
+        setActiveTab,
+        updateExperienceField,
       }}
     >
       {children}
