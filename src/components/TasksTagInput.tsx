@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { useMemo } from "react";
 import TaskTag from "./TaskTag";
 import TagButtonFavorite from "./ui/TagButtonFavorite";
 import TextInputWithButtons from "./TextInputWithButtons";
 import { useLebenslaufContext } from "../context/LebenslaufContext";
+import { getTasksForPositions } from "../constants/positionsToTasks";
 import "../styles/_tags.scss";
 
 interface TasksTagInputProps {

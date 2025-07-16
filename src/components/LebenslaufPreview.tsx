@@ -8,10 +8,10 @@ import TextInputWithButtons from './TextInputWithButtons';
 export default function LebenslaufPreview() {
   const { 
     berufserfahrungen, 
+    ausbildungen,
     selectExperience, 
     selectedExperienceId,
     deleteExperience,
-    ausbildungen,
     selectEducation,
     selectedEducationId,
     deleteEducation,
@@ -26,6 +26,7 @@ export default function LebenslaufPreview() {
   const [newTaskInputs, setNewTaskInputs] = useState<Record<string, string>>({});
 
   const sortedErfahrungen = useMemo(() => {
+    console.log('Berufserfahrungen für Vorschau:', berufserfahrungen);
     return [...berufserfahrungen].sort((a, b) => {
       const yearA = parseInt(a.startYear || '0', 10);
       const yearB = parseInt(b.startYear || '0', 10);
@@ -38,6 +39,7 @@ export default function LebenslaufPreview() {
   }, [berufserfahrungen]);
 
   const sortedAusbildungen = useMemo(() => {
+    console.log('Ausbildungen für Vorschau:', ausbildungen);
     return [...ausbildungen].sort((a, b) => {
       const yearA = parseInt(a.startYear || '0', 10);
       const yearB = parseInt(b.startYear || '0', 10);
