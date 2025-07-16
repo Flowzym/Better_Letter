@@ -28,16 +28,13 @@ export default function LebenslaufInput() {
     cvSuggestions = { companies: [], positions: [], aufgabenbereiche: [] },
     setActiveTab: contextSetActiveTab,
     activeTab: contextActiveTab
-  } = useLebenslaufContext();
-
-  // Lokaler State für den aktiven Tab, falls der Context-Wert nicht funktioniert
-  const [localActiveTab, setLocalActiveTab] = useState<TabType>('personal');
   
   // Verwende entweder den Context-Wert oder den lokalen State
-  const activeTab = contextActiveTab || localActiveTab;
+  const currentTab = contextActiveTab || localActiveTab;
   
   // Funktion zum Wechseln des Tabs
   const handleTabChange = (tabId: TabType) => {
+    console.log('Tab wechseln zu:', tabId);
     // Versuche zuerst die Context-Funktion
     if (typeof contextSetActiveTab === 'function') {
       contextSetActiveTab(tabId);
@@ -45,6 +42,8 @@ export default function LebenslaufInput() {
     // Setze immer auch den lokalen State als Fallback
     setLocalActiveTab(tabId);
   };
+  
+  console.log('Aktiver Tab:', contextActiveTab);
   
   // Automatisch zum entsprechenden Tab wechseln, wenn ein Eintrag ausgewählt wird
   useEffect(() => {
@@ -58,27 +57,6 @@ export default function LebenslaufInput() {
       handleTabChange('education');
     }
   }, [selectedEducationId]);
-  const [localActiveTab, setLocalActiveTab] = useState<TabType>('personal');
-  
-  // Verwende entweder den Context-Wert oder den lokalen State
-  const currentTab = activeTab || localActiveTab;
-  
-  // Funktion zum Wechseln des Tabs
-  const handleTabChange = (tabId: TabType) => {
-    console.log('Tab wechseln zu:', tabId);
-    // Versuche zuerst die Context-Funktion
-    if (typeof setActiveTab === 'function') {
-      setActiveTab(tabId);
-    }
-    // Setze immer auch den lokalen State als Fallback
-    setLocalActiveTab(tabId);
-  };
-  
-  console.log('Aktiver Tab:', currentTab);
-  
-  // Get activeTab from context
-  
-  // Sync local state with context
 
   // Personal Data State
   const [personalData, setPersonalData] = useState({
