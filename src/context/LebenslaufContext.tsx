@@ -105,12 +105,10 @@ interface LebenslaufContextType {
 const LebenslaufContext = createContext<LebenslaufContextType | undefined>(undefined);
 
 export function LebenslaufProvider({
+  }
   children,
   profileSourceMappings = [],
 }: {
-  children: ReactNode;
-  profileSourceMappings?: ProfileSourceMapping[];
-}) {
   children: ReactNode;
   profileSourceMappings?: ProfileSourceMapping[];
   profileSourceMappings?: ProfileSourceMapping[];
@@ -488,6 +486,7 @@ export function LebenslaufProvider({
     </LebenslaufContext.Provider>
 
 export function useLebenslaufContext() {
+    }
   const context = useContext(LebenslaufContext);
   if (!context) {
     throw new Error('useLebenslaufContext must be used within LebenslaufProvider');
