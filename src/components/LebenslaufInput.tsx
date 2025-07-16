@@ -7,10 +7,9 @@ import AusbildungForm from './AusbildungForm';
 import { useLebenslaufContext } from '../context/LebenslaufContext';
 import CVSection from './CVSection';
 
-type TabType = 'personal' | 'experience' | 'education' | 'skills' | 'softskills';
+export type TabType = 'personal' | 'experience' | 'education' | 'skills' | 'softskills';
 
 export default function LebenslaufInput() {
-  const [activeTab, setActiveTab] = useState<TabType>('personal');
   const {
     berufserfahrungen,
     addExperience,
@@ -27,7 +26,23 @@ export default function LebenslaufInput() {
     isEditingEducation,
     selectEducation,
     cvSuggestions
+    setActiveTab,
   } = useLebenslaufContext();
+  
+  // Get activeTab from context
+  const [activeTab, setLocalActiveTab] = useState<TabType>('personal');
+  
+  // Sync local state with context
+  useEffect(() => {
+    const handleTabChange = (tab: string) => {
+      setLocalActiveTab(tab as TabType);
+      setActiveTab(tab);
+    };
+    
+    return () => {
+      setActiveTab(activeTab);
+    };
+  }, [activeTab, setActiveTab]);
 
   // Personal Data State
   const [personalData, setPersonalData] = useState({
@@ -210,7 +225,7 @@ export default function LebenslaufInput() {
         {tabs.map(tab => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id as TabType)}
+            onClick={() => setLocalActiveTab(tab.id as TabType)}
             className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
               activeTab === tab.id
                 ? 'bg-white shadow-sm'

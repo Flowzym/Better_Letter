@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Trash2, Plus } from 'lucide-react';
+import { Trash2, Plus, Calendar, Building, Briefcase } from 'lucide-react';
 import { ReactSortable } from 'react-sortablejs';
 import { useLebenslaufContext } from "../context/LebenslaufContext";
 import EditablePreviewText from './EditablePreviewText';
@@ -18,7 +18,8 @@ export default function LebenslaufPreview() {
     updateEducationField,
     updateExperienceTask,
     updateExperienceTasksOrder,
-    addExperienceTask
+    addExperienceTask,
+    updateExperienceField
   } =
     useLebenslaufContext();
 
@@ -76,6 +77,33 @@ export default function LebenslaufPreview() {
     }
   };
 
+  const handleExperienceFieldUpdate = (expId: string, field: string, value: string) => {
+    if (field === 'companies') {
+      updateExperienceField(expId, 'companies', value.split(', '));
+    } else if (field === 'position') {
+      updateExperienceField(expId, 'position', value.split(' / '));
+    } else if (field === 'zeitraum') {
+      // Zeitraum-Bearbeitung ist komplexer und würde eine spezielle Komponente erfordern
+      // Für diesen Prototyp belassen wir es bei der einfachen Textbearbeitung
+      console.log('Zeitraum bearbeiten:', value);
+    }
+  };
+
+  const handleEducationFieldUpdate = (eduId: string, field: string, value: string) => {
+    if (field === 'institution') {
+      updateEducationField(eduId, 'institution', value.split(', '));
+    } else if (field === 'ausbildungsart') {
+      const parts = value.split(' - ');
+      updateEducationField(eduId, 'ausbildungsart', parts[0].split(' / '));
+      if (parts.length > 1) {
+        updateEducationField(eduId, 'abschluss', parts[1].split(' / '));
+      }
+    } else if (field === 'zeitraum') {
+      // Zeitraum-Bearbeitung ist komplexer und würde eine spezielle Komponente erfordern
+      console.log('Zeitraum bearbeiten:', value);
+    }
+  };
+
   return (
     <>
       <h3 className="font-bold text-xl mb-4">Berufserfahrung</h3>
@@ -89,15 +117,21 @@ export default function LebenslaufPreview() {
           }`}
         >
           <div className="flex justify-between items-start mb-2">
-            <p className="text-sm text-gray-500">
-              {formatZeitraum(
-                exp.startMonth,
-                exp.startYear,
-                exp.endMonth,
-                exp.endYear,
-                exp.isCurrent,
-              )}
-            </p>
+            <div className="flex items-center">
+              <Calendar className="h-4 w-4 mr-1 text-gray-400" />
+              <EditablePreviewText
+                value={formatZeitraum(
+                  exp.startMonth,
+                  exp.startYear,
+                  exp.endMonth,
+                  exp.endYear,
+                  exp.isCurrent,
+                )}
+                onSave={(newValue) => handleExperienceFieldUpdate(exp.id, 'zeitraum', newValue)}
+                className="text-sm text-gray-500"
+                placeholder="Zeitraum eingeben..."
+              />
+            </div>
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -110,10 +144,24 @@ export default function LebenslaufPreview() {
               <Trash2 className="h-4 w-4" />
             </button>
           </div>
-          <p className="font-bold text-lg text-gray-900">
-            {Array.isArray(exp.position) ? exp.position.join(" / ") : (exp.position || "")}
-          </p>
-          <p className="italic text-gray-500">{Array.isArray(exp.companies) ? exp.companies.join(', ') : (exp.companies || "")}</p>
+          <div className="flex items-center">
+            <Briefcase className="h-4 w-4 mr-1 text-gray-400" />
+            <EditablePreviewText
+              value={Array.isArray(exp.position) ? exp.position.join(" / ") : (exp.position || "")}
+              onSave={(newValue) => handleExperienceFieldUpdate(exp.id, 'position', newValue)}
+              className="font-bold text-lg text-gray-900"
+              placeholder="Position eingeben..."
+            />
+          </div>
+          <div className="flex items-center">
+            <Building className="h-4 w-4 mr-1 text-gray-400" />
+            <EditablePreviewText
+              value={Array.isArray(exp.companies) ? exp.companies.join(', ') : (exp.companies || "")}
+              onSave={(newValue) => handleExperienceFieldUpdate(exp.id, 'companies', newValue)}
+              className="italic text-gray-500"
+              placeholder="Unternehmen eingeben..."
+            />
+          </div>
           
           {/* Drag-and-Drop Aufgabenbereiche */}
           {Array.isArray(exp.aufgabenbereiche) && exp.aufgabenbereiche.length > 0 && (
@@ -143,25 +191,27 @@ export default function LebenslaufPreview() {
           )}
           
           {/* Neue Aufgabe hinzufügen */}
-          <div className="mt-3 flex items-center space-x-2">
-            <input
-              type="text"
-              value={newTaskInputs[exp.id] || ''}
-              onChange={(e) => setNewTaskInputs(prev => ({ ...prev, [exp.id]: e.target.value }))}
-              onKeyPress={(e) => e.key === 'Enter' && handleAddTask(exp.id)}
-              placeholder="Neue Aufgabe hinzufügen..."
-              className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-orange-500"
-            />
-            <button
-              onClick={() => handleAddTask(exp.id)}
-              disabled={!newTaskInputs[exp.id]?.trim()}
-              className="p-1 text-white rounded hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-              style={{ backgroundColor: '#F29400' }}
-              title="Aufgabe hinzufügen"
-            >
-              <Plus className="h-4 w-4" />
-            </button>
-          </div>
+          {selectedExperienceId === exp.id && (
+            <div className="mt-3 flex items-center space-x-2">
+              <input
+                type="text"
+                value={newTaskInputs[exp.id] || ''}
+                onChange={(e) => setNewTaskInputs(prev => ({ ...prev, [exp.id]: e.target.value }))}
+                onKeyPress={(e) => e.key === 'Enter' && handleAddTask(exp.id)}
+                placeholder="Neue Aufgabe hinzufügen..."
+                className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-orange-500"
+              />
+              <button
+                onClick={() => handleAddTask(exp.id)}
+                disabled={!newTaskInputs[exp.id]?.trim()}
+                className="p-1 text-white rounded hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                style={{ backgroundColor: '#F29400' }}
+                title="Aufgabe hinzufügen"
+              >
+                <Plus className="h-4 w-4" />
+              </button>
+            </div>
+          )}
         </div>
       ))}
       {berufserfahrungen.length === 0 && (
@@ -184,15 +234,21 @@ export default function LebenslaufPreview() {
           }`}
         >
           <div className="flex justify-between items-start mb-2">
-            <p className="text-sm text-gray-500">
-              {formatZeitraum(
-                edu.startMonth,
-                edu.startYear,
-                edu.endMonth,
-                edu.endYear,
-                edu.isCurrent,
-              )}
-            </p>
+            <div className="flex items-center">
+              <Calendar className="h-4 w-4 mr-1 text-gray-400" />
+              <EditablePreviewText
+                value={formatZeitraum(
+                  edu.startMonth,
+                  edu.startYear,
+                  edu.endMonth,
+                  edu.endYear,
+                  edu.isCurrent,
+                )}
+                onSave={(newValue) => handleEducationFieldUpdate(edu.id, 'zeitraum', newValue)}
+                className="text-sm text-gray-500"
+                placeholder="Zeitraum eingeben..."
+              />
+            </div>
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -205,10 +261,24 @@ export default function LebenslaufPreview() {
               <Trash2 className="h-4 w-4" />
             </button>
           </div>
-          <p className="font-bold text-lg text-gray-900">
-            {Array.isArray(edu.ausbildungsart) ? edu.ausbildungsart.join(" / ") : (edu.ausbildungsart || "")} - {Array.isArray(edu.abschluss) ? edu.abschluss.join(" / ") : (edu.abschluss || "")}
-          </p>
-          <p className="italic text-gray-500">{Array.isArray(edu.institution) ? edu.institution.join(', ') : (edu.institution || "")}</p>
+          <div className="flex items-center">
+            <Briefcase className="h-4 w-4 mr-1 text-gray-400" />
+            <EditablePreviewText
+              value={`${Array.isArray(edu.ausbildungsart) ? edu.ausbildungsart.join(" / ") : (edu.ausbildungsart || "")} - ${Array.isArray(edu.abschluss) ? edu.abschluss.join(" / ") : (edu.abschluss || "")}`}
+              onSave={(newValue) => handleEducationFieldUpdate(edu.id, 'ausbildungsart', newValue)}
+              className="font-bold text-lg text-gray-900"
+              placeholder="Ausbildungsart und Abschluss eingeben..."
+            />
+          </div>
+          <div className="flex items-center">
+            <Building className="h-4 w-4 mr-1 text-gray-400" />
+            <EditablePreviewText
+              value={Array.isArray(edu.institution) ? edu.institution.join(', ') : (edu.institution || "")}
+              onSave={(newValue) => handleEducationFieldUpdate(edu.id, 'institution', newValue)}
+              className="italic text-gray-500"
+              placeholder="Institution eingeben..."
+            />
+          </div>
           
           {/* Bearbeitbare Zusatzangaben */}
           <div className="text-black mt-2">
