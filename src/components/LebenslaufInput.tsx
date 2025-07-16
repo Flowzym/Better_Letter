@@ -18,6 +18,7 @@ const LebenslaufInput: React.FC = () => {
     deleteExperience,
     updateExperienceField,
     selectedExperienceId,
+    selectExperience,
     cvSuggestions,
     selectedEducationId,
     ausbildungen,
