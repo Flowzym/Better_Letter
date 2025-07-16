@@ -3,7 +3,6 @@ import { useLebenslaufContext } from '../context/LebenslaufContext';
 import PersonalDataForm from './PersonalDataForm';
 import ExperienceForm from './ExperienceForm';
 import AusbildungForm from './AusbildungForm';
-import AusbildungForm from './AusbildungForm';
 
 type TabType = 'personal' | 'experience' | 'education' | 'skills' | 'softskills';
 
