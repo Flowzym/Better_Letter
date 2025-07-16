@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useLebenslaufContext } from '../context/LebenslaufContext';
 import PersonalDataForm from './PersonalDataForm';
-import AusbildungForm from './AusbildungForm';
 import ExperienceForm from './ExperienceForm';
+import AusbildungForm from './AusbildungForm';
 import ExperienceSection from './ExperienceSection';
 import { Plus } from 'lucide-react';
 
@@ -12,11 +12,11 @@ const LebenslaufInput: React.FC = () => {
   const {
     personalData,
     updatePersonalData,
-    berufserfahrungen = [],
+    berufserfahrungen,
     selectedExperienceId,
     cvSuggestions,
     selectedEducationId,
-    ausbildungen = [],
+    ausbildungen,
     setActiveTab: contextSetActiveTab,
     addExperience,
     updateExperience,
@@ -97,7 +97,7 @@ const LebenslaufInput: React.FC = () => {
                 <ExperienceForm
                   form={berufserfahrungen.find(e => e.id === selectedExperienceId) || {
                     companies: [],
-                    position: [],
+                    position: berufserfahrungen.find(e => e.id === selectedExperienceId)?.position || [],
                     startMonth: null,
                     startYear: "",
                     endMonth: null,
@@ -105,7 +105,7 @@ const LebenslaufInput: React.FC = () => {
                     isCurrent: false,
                     aufgabenbereiche: []
                   }}
-                  selectedPositions={(berufserfahrungen.find(e => e.id === selectedExperienceId)?.position || [])}
+                  selectedPositions={berufserfahrungen.find(e => e.id === selectedExperienceId)?.position || []}
                   onUpdateField={(field, value) => {
                     if (selectedExperienceId) {
                       updateExperienceField(selectedExperienceId, field, value);

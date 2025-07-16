@@ -8,11 +8,23 @@ import "../styles/_tags.scss";
 interface TasksTagInputProps {
   value: string[];
   onChange: (tasks: string[]) => void;
+  positionen?: string[];
+  suggestions?: string[];
 }
 
-export default function TasksTagInput({ value, onChange }: TasksTagInputProps) {
+export default function TasksTagInput({ value, onChange, positionen = [], suggestions = [] }: TasksTagInputProps) {
   const [inputValue, setInputValue] = useState("");
   const { favoriteTasks: favorites, toggleFavoriteTask } = useLebenslaufContext();
+  
+  // Kombiniere Vorschläge aus Positionen und externen Vorschlägen
+  const allSuggestions = useMemo(() => {
+    const combined = [...suggestions];
+    if (positionen && positionen.length > 0) {
+      const positionTasks = getTasksForPositions(positionen);
+      combined.push(...positionTasks);
+    }
+    return Array.from(new Set(combined));
+  }, [positionen, suggestions]);
 
   const addTask = (task?: string) => {
     const t = (task ?? inputValue).trim();
@@ -62,6 +74,7 @@ export default function TasksTagInput({ value, onChange }: TasksTagInputProps) {
         value={inputValue}
         onChange={setInputValue}
         onAdd={addTask}
+        suggestions={allSuggestions.filter(s => !value.includes(s))}
         onFavoriteClick={handleAddFavoriteInput}
         placeholder="Hinzufügen..."
         className="w-full"
