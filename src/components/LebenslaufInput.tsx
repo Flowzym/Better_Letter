@@ -29,6 +29,8 @@ export default function LebenslaufInput() {
     setActiveTab,
     activeTab
   } = useLebenslaufContext();
+
+  console.log('Aktiver Tab:', activeTab); // <-- Fügen Sie diese Zeile hier ein
   
   // Get activeTab from context
   
