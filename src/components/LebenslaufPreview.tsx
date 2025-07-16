@@ -100,6 +100,7 @@ export default function LebenslaufPreview() {
       }
     } else if (field === 'zeitraum') {
       // Zeitraum-Bearbeitung ist komplexer und würde eine spezielle Komponente erfordern
+      // Für diesen Prototyp belassen wir es bei der einfachen Textbearbeitung
       console.log('Zeitraum bearbeiten:', value);
     }
   };
@@ -112,10 +113,9 @@ export default function LebenslaufPreview() {
         <div
           key={exp.id}
           onClick={() => selectExperience(exp.id)}
-          cclassName={`mb-6 border rounded p-4 cursor-pointer ${
-            selectedExperienceId === exp.id ? "bg-orange-50" : "bg-gray-50"
+          className={`mb-6 border rounded p-4 cursor-pointer ${
+            selectedExperienceId === exp.id ? "border-orange-500 border-2 bg-white" : "border border-gray-200 bg-white"
           }`}
-
         >
           <div className="flex justify-between items-start mb-1">
             <div className="flex items-center">
@@ -174,7 +174,7 @@ export default function LebenslaufPreview() {
                 updateExperienceTasksOrder(exp.id, newTasks);
               }}
               tag="ul"
-              className="list-disc list-inside mt-2 space-y-1 text-black"
+              className="list-disc list-inside mt-1 space-y-0.5 text-black"
             >
               {exp.aufgabenbereiche.map((aufgabe, i) => (
                 <li 
@@ -194,7 +194,7 @@ export default function LebenslaufPreview() {
           
           {/* Neue Aufgabe hinzufügen */}
           {selectedExperienceId === exp.id && (
-            <div className="mt-3 flex items-center space-x-2">
+            <div className="mt-2 flex items-center space-x-2">
               <input
                 type="text"
                 value={newTaskInputs[exp.id] || ''}
@@ -231,10 +231,9 @@ export default function LebenslaufPreview() {
         <div
           key={edu.id}
           onClick={() => selectEducation(edu.id)}
-          cclassName={`mb-6 border rounded p-4 cursor-pointer ${
+          className={`mb-6 border rounded p-4 cursor-pointer ${
             selectedEducationId === edu.id ? "border-orange-500 border-2 bg-white" : "border border-gray-200 bg-white"
           }`}
-
         >
           <div className="flex justify-between items-start mb-1">
             <div className="flex items-center">
@@ -273,7 +272,7 @@ export default function LebenslaufPreview() {
               placeholder="Ausbildungsart und Abschluss eingeben..."
             />
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center mb-1">
             <Building className="h-4 w-4 mr-1 text-gray-400" />
             <EditablePreviewText
               value={Array.isArray(edu.institution) ? edu.institution.join(', ') : (edu.institution || "")}
