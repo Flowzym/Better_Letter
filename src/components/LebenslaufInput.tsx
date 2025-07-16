@@ -16,7 +16,6 @@ const LebenslaufInput: React.FC = () => {
     activeTab: contextActiveTab,
     experiences = [],
     education = [],
-    education = [],
     addExperience,
     updateExperience,
     deleteExperience,
