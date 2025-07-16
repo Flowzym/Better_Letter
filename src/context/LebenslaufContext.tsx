@@ -484,6 +484,8 @@ export function LebenslaufProvider({
     >
       {children}
     </LebenslaufContext.Provider>
+      );
+}
 
 export function useLebenslaufContext() {
     }
