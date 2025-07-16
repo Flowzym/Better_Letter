@@ -56,8 +56,8 @@ export default function CompaniesTagInput({ value, onChange, suggestions = [] }:
       <AutocompleteInput
         value={inputValue}
         onChange={setInputValue}
-        onAdd={addCompany}
-        onFavoriteClick={handleAddFavoriteInput}
+        onAdd={() => addCompany()}
+        onFavoriteClick={() => handleAddFavoriteInput()}
         suggestions={suggestions}
         placeholder="Hinzufügen..."
         showFavoritesButton
