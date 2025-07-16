@@ -485,11 +485,4 @@ export function LebenslaufProvider({
       {children}
     </LebenslaufContext.Provider>
 
-export function useLebenslaufContext() {
-    }
-  const context = useContext(LebenslaufContext);
-  if (!context) {
-    throw new Error('useLebenslaufContext must be used within LebenslaufProvider');
-  }
-  return context;
-}
+C
