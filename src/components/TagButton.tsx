@@ -105,8 +105,8 @@ export default function TagButton({
     containerClasses = "flex items-center justify-between w-full";
     starSize = 19;
     xSize = "w-3.5 h-3.5";
-    starStroke = isFavorite ? "#FDE047" : "#FFFFFF";
-    starFill = isFavorite ? "#FDE047" : "none";
+    starStroke = "#FFFFFF";
+    starFill = isFavorite ? "#FDE047" : "none"; 
     starStrokeWidth = isFavorite ? 1 : 1;
   } else if (variant === TagContext.Favorite) {
     // Favoriten-Button: Grau mit dicker gelber Umrandung
@@ -115,8 +115,8 @@ export default function TagButton({
     containerClasses = "flex items-center justify-between w-full";
     starSize = 16; // Größerer Stern für Favoriten
     xSize = "w-3 h-3";
-    starStroke = isFavorite ? "#FDE047" : "#4B5563";
-    starFill = isFavorite ? "#FDE047" : "none";
+    starStroke = "#FDE047";
+    starFill = "#FDE047";
     starStrokeWidth = isFavorite ? 1 : 1;
   } else {
     // Suggestion/Standard Button
@@ -138,7 +138,7 @@ export default function TagButton({
     buttonStyle = {
       padding: '0.125rem 0.375rem 0.125rem 0.625rem',
       borderWidth: '2px',
-      borderColor: '#ffefb3'
+      borderColor: '#F29400'
     };
   } else {
     buttonStyle = { padding: '0.25rem 0.5rem' };

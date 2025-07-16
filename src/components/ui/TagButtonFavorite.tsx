@@ -11,7 +11,7 @@ export default function TagButtonFavorite({ label, onClick, onRemove }: TagButto
   return (
     <TagButton
       label={label}
-      variant="favorite"
+      variant={TagContext.Favorite}
       isFavorite
       onClick={onClick}
       onRemove={onRemove}
