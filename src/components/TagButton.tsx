@@ -34,16 +34,16 @@ export default function TagButton({
   // Nur setzen wenn sich das Label ändert UND wir nicht gerade bearbeiten
   useEffect(() => {
     if (!editing && label !== originalLabel) {
-      setEditValue(label);
-      setOriginalLabel(label);
+      setEditValue(label || '');
+      setOriginalLabel(label || '');
     }
   }, [label, editing, originalLabel]);
 
   const startEditing = (e: React.MouseEvent) => {
     if (!editable) return;
     e.stopPropagation();
-    setEditValue(label);
-    setOriginalLabel(label);
+    setEditValue(label || '');
+    setOriginalLabel(label || '');
     setEditing(true);
     setTimeout(() => inputRef.current?.select(), 0);
   };

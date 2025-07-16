@@ -16,12 +16,12 @@ export default function EditablePreviewText({
   placeholder = 'Klicken zum Bearbeiten...'
 }: EditablePreviewTextProps) {
   const [isEditing, setIsEditing] = useState(false);
-  const [editValue, setEditValue] = useState(value);
+  const [editValue, setEditValue] = useState(value || '');
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
 
   // Sync with external value changes
   useEffect(() => {
-    setEditValue(value);
+    setEditValue(value || '');
   }, [value]);
 
   // Focus input when entering edit mode
@@ -33,20 +33,20 @@ export default function EditablePreviewText({
   }, [isEditing]);
 
   const startEditing = () => {
-    setEditValue(value);
+    setEditValue(value || '');
     setIsEditing(true);
   };
 
   const saveChanges = () => {
     const trimmedValue = editValue.trim();
-    if (trimmedValue !== value) {
+    if (trimmedValue !== (value || '')) {
       onSave(trimmedValue);
     }
     setIsEditing(false);
   };
 
   const cancelEditing = () => {
-    setEditValue(value);
+    setEditValue(value || '');
     setIsEditing(false);
   };
 

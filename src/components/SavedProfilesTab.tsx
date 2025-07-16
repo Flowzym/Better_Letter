@@ -63,28 +63,28 @@ export default function SavedProfilesTab({ onContentChange }: SavedProfilesTabPr
   const loadProfile = (profile: SavedProfile) => {
     const sections: string[] = []; // build textual sections
     
-    if (profile.data.berufe.length > 0) {
-      sections.push(`BERUFE:\n${profile.data.berufe.join(', ')}`);
+    if (profile.data.berufe && profile.data.berufe.length > 0) {
+      sections.push(`BERUFE:\n${(profile.data.berufe || []).join(', ')}`);
     }
     
-    if (profile.data.taetigkeiten.length > 0) {
-      sections.push(`TÄTIGKEITEN:\n${profile.data.taetigkeiten.join(', ')}`);
+    if (profile.data.taetigkeiten && profile.data.taetigkeiten.length > 0) {
+      sections.push(`TÄTIGKEITEN:\n${(profile.data.taetigkeiten || []).join(', ')}`);
     }
     
-    if (profile.data.skills.length > 0) {
-      sections.push(`SKILLS:\n${profile.data.skills.join(', ')}`);
+    if (profile.data.skills && profile.data.skills.length > 0) {
+      sections.push(`SKILLS:\n${(profile.data.skills || []).join(', ')}`);
     }
     
-    if (profile.data.softskills.length > 0) {
-      sections.push(`SOFT SKILLS:\n${profile.data.softskills.join(', ')}`);
+    if (profile.data.softskills && profile.data.softskills.length > 0) {
+      sections.push(`SOFT SKILLS:\n${(profile.data.softskills || []).join(', ')}`);
     }
     
-    if (profile.data.ausbildung && profile.data.ausbildung.length > 0) {
-      sections.push(`AUSBILDUNG/QUALIFIKATIONEN:\n${profile.data.ausbildung.join(', ')}`);
+    if (profile.data.ausbildung && profile.data.ausbildung.length > 0) { 
+      sections.push(`AUSBILDUNG/QUALIFIKATIONEN:\n${(profile.data.ausbildung || []).join(', ')}`);
     }
     
-    if (profile.data.zusatzangaben.trim()) {
-      sections.push(`ZUSÄTZLICHE ANGABEN:\n${profile.data.zusatzangaben.trim()}`);
+    if (profile.data.zusatzangaben && profile.data.zusatzangaben.trim()) {
+      sections.push(`ZUSÄTZLICHE ANGABEN:\n${(profile.data.zusatzangaben || '').trim()}`);
     }
     
     onContentChange(sections.join('\n\n'));

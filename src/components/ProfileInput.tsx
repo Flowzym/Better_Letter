@@ -91,28 +91,28 @@ export default function ProfileInput({ onContentChange, profileConfig, initialCo
     const sections = [];
     
     // BOLT-UI-ANPASSUNG 2025-01-15: Neue Reihenfolge
-    if (newData.berufe.length > 0) {
-      sections.push(`BERUFE:\n${newData.berufe.join(', ')}`);
+    if (newData.berufe && newData.berufe.length > 0) {
+      sections.push(`BERUFE:\n${(newData.berufe || []).join(', ')}`);
     }
     
-    if (newData.taetigkeiten.length > 0) {
-      sections.push(`TÄTIGKEITEN:\n${newData.taetigkeiten.join(', ')}`);
+    if (newData.taetigkeiten && newData.taetigkeiten.length > 0) {
+      sections.push(`TÄTIGKEITEN:\n${(newData.taetigkeiten || []).join(', ')}`);
     }
     
-    if (newData.ausbildung.length > 0) {
-      sections.push(`AUSBILDUNG/QUALIFIKATIONEN:\n${newData.ausbildung.join(', ')}`);
+    if (newData.ausbildung && newData.ausbildung.length > 0) {
+      sections.push(`AUSBILDUNG/QUALIFIKATIONEN:\n${(newData.ausbildung || []).join(', ')}`);
     }
     
-    if (newData.skills.length > 0) {
-      sections.push(`FACHLICHE KOMPETENZEN:\n${newData.skills.join(', ')}`);
+    if (newData.skills && newData.skills.length > 0) {
+      sections.push(`FACHLICHE KOMPETENZEN:\n${(newData.skills || []).join(', ')}`);
     }
     
-    if (newData.softskills.length > 0) {
-      sections.push(`PERSÖNLICHE KOMPETENZEN:\n${newData.softskills.join(', ')}`);
+    if (newData.softskills && newData.softskills.length > 0) {
+      sections.push(`PERSÖNLICHE KOMPETENZEN:\n${(newData.softskills || []).join(', ')}`);
     }
     
-    if (newData.zusatzangaben.trim()) {
-      sections.push(`ZUSÄTZLICHE ANGABEN:\n${newData.zusatzangaben.trim()}`);
+    if (newData.zusatzangaben && newData.zusatzangaben.trim()) {
+      sections.push(`ZUSÄTZLICHE ANGABEN:\n${(newData.zusatzangaben || '').trim()}`);
     }
     
     onContentChange(sections.join('\n\n'));
@@ -123,8 +123,8 @@ export default function ProfileInput({ onContentChange, profileConfig, initialCo
   useEffect(() => {
     if (!initialContent) return;
     setProfileData(prev => {
-      if (prev.zusatzangaben === initialContent) return prev;
-      const newData = { ...prev, zusatzangaben: initialContent };
+      if ((prev.zusatzangaben || '') === initialContent) return prev;
+      const newData = { ...prev, zusatzangaben: initialContent || '' };
       updateProfileContent(newData);
       return newData;
     });
@@ -134,10 +134,10 @@ export default function ProfileInput({ onContentChange, profileConfig, initialCo
     const newData = { ...profileData };
     const currentItems = newData[category];
     
-    if (currentItems.includes(item)) {
-      newData[category] = currentItems.filter(i => i !== item);
+    if (currentItems && currentItems.includes(item)) {
+      newData[category] = (currentItems || []).filter(i => i !== item);
     } else {
-      newData[category] = [...currentItems, item];
+      newData[category] = [...(currentItems || []), item];
     }
     
     setProfileData(newData);
@@ -148,9 +148,9 @@ export default function ProfileInput({ onContentChange, profileConfig, initialCo
     // Verwende den übergebenen Wert oder den aktuellen Input-Wert
     const valueToAdd = customValue || customInputs[category].trim();
     
-    if (valueToAdd && !profileData[category].includes(valueToAdd)) {
+    if (valueToAdd && (!profileData[category] || !profileData[category].includes(valueToAdd))) {
       const newData = { ...profileData };
-      newData[category] = [...newData[category], valueToAdd];
+      newData[category] = [...(newData[category] || []), valueToAdd];
       setProfileData(newData);
       updateProfileContent(newData);
       
@@ -166,7 +166,7 @@ export default function ProfileInput({ onContentChange, profileConfig, initialCo
 
   const removeItem = useCallback((category: keyof Omit<ProfileData, 'zusatzangaben'>, item: string) => {
     const newData = { ...profileData };
-    newData[category] = newData[category].filter(i => i !== item);
+    newData[category] = (newData[category] || []).filter(i => i !== item);
     setProfileData(newData);
     updateProfileContent(newData);
   }, [profileData, updateProfileContent]); // ✅ KORRIGIERT: useCallback mit Dependencies

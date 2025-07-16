@@ -148,7 +148,7 @@ export default function LebenslaufPreview() {
           <div className="flex items-center mb-1">
             {/* Icon entfernt */}
             <EditablePreviewText
-              value={Array.isArray(exp.position) ? exp.position.join(" / ") : (exp.position || "")}
+              value={Array.isArray(exp.position) ? (exp.position || []).join(" / ") : (exp.position || "")}
               onSave={(newValue) => handleExperienceFieldUpdate(exp.id, 'position', newValue)}
               className="font-bold text-lg text-gray-900"
               placeholder="Position eingeben..."
@@ -158,7 +158,7 @@ export default function LebenslaufPreview() {
            <div className="flex items-center mb-1">
               {/* Icon entfernt */}
               <EditablePreviewText
-                value={Array.isArray(exp.companies) ? exp.companies.join(', ') : (exp.companies || "")}
+                value={Array.isArray(exp.companies) ? (exp.companies || []).join(', ') : (exp.companies || "")}
                 onSave={(newValue) => handleExperienceFieldUpdate(exp.id, 'companies', newValue)}
                 className="italic text-gray-500"
                 placeholder="Unternehmen eingeben..."
@@ -168,9 +168,9 @@ export default function LebenslaufPreview() {
           {/* Drag-and-Drop Aufgabenbereiche */}
           {Array.isArray(exp.aufgabenbereiche) && exp.aufgabenbereiche.length > 0 && (
             <ReactSortable
-              list={exp.aufgabenbereiche.map((task, index) => ({ id: `${exp.id}-${index}`, content: task }))}
+              list={(exp.aufgabenbereiche || []).map((task, index) => ({ id: `${exp.id}-${index}`, content: task || '' }))}
               setList={(newList) => {
-                const newTasks = newList.map(item => item.content);
+                const newTasks = newList.map(item => item.content || '');
                 updateExperienceTasksOrder(exp.id, newTasks);
               }}
               tag="ul"
@@ -266,7 +266,7 @@ export default function LebenslaufPreview() {
           <div className="flex items-center mb-0">
             <Briefcase className="h-4 w-4 mr-1 text-gray-400" />
             <EditablePreviewText
-              value={`${Array.isArray(edu.ausbildungsart) ? edu.ausbildungsart.join(" / ") : (edu.ausbildungsart || "")} - ${Array.isArray(edu.abschluss) ? edu.abschluss.join(" / ") : (edu.abschluss || "")}`}
+              value={`${Array.isArray(edu.ausbildungsart) ? (edu.ausbildungsart || []).join(" / ") : (edu.ausbildungsart || "")} - ${Array.isArray(edu.abschluss) ? (edu.abschluss || []).join(" / ") : (edu.abschluss || "")}`}
               onSave={(newValue) => handleEducationFieldUpdate(edu.id, 'ausbildungsart', newValue)}
               className="font-bold text-lg text-gray-900"
               placeholder="Ausbildungsart und Abschluss eingeben..."
@@ -275,7 +275,7 @@ export default function LebenslaufPreview() {
           <div className="flex items-center mb-1">
             <Building className="h-4 w-4 mr-1 text-gray-400" />
             <EditablePreviewText
-              value={Array.isArray(edu.institution) ? edu.institution.join(', ') : (edu.institution || "")}
+              value={Array.isArray(edu.institution) ? (edu.institution || []).join(', ') : (edu.institution || "")}
               onSave={(newValue) => handleEducationFieldUpdate(edu.id, 'institution', newValue)}
               className="italic text-gray-500"
               placeholder="Institution eingeben..."

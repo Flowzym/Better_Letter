@@ -18,7 +18,7 @@ export default function TextInputWithButtons({
   placeholder = '',
   showButtons,
 }: TextInputWithButtonsProps) {
-  const trimmed = value.trim();
+  const trimmed = (value || '').trim();
   const hasValue = trimmed.length > 0;
   const buttonsVisible = showButtons ?? hasValue;
 

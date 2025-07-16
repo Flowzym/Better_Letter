@@ -59,17 +59,17 @@ export default function CoverLetterDisplay({
     console.log("🔄 Content prop changed:", content?.substring(0, 100) + "...");
 
     // Only update if content actually changed
-    if (content !== lastContentRef.current) {
+    if ((content || '') !== lastContentRef.current) {
       console.log("📝 Updating editor with new content from props");
-      lastContentRef.current = content;
-      setEditorContent(content || "");
+      lastContentRef.current = content || '';
+      setEditorContent(content || '');
     }
   }, [content]); // ✅ KORRIGIERT: content als Dependency
 
   const handleCopy = useCallback(async () => {
     try {
       // Strip HTML tags for plain text copy
-      const textToCopy = stripHtml(editorContent || content);
+      const textToCopy = stripHtml(editorContent || content || '');
       await navigator.clipboard.writeText(textToCopy);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -79,7 +79,7 @@ export default function CoverLetterDisplay({
   }, [editorContent, content]); // ✅ KORRIGIERT: useCallback mit Dependencies
 
   const handleDownload = useCallback(() => {
-    const textToDownload = stripHtml(editorContent || content);
+    const textToDownload = stripHtml(editorContent || content || '');
     const element = document.createElement("a");
     const file = new Blob([textToDownload], { type: "text/plain" });
     element.href = URL.createObjectURL(file);
@@ -94,7 +94,7 @@ export default function CoverLetterDisplay({
       const { Document, Packer, Paragraph, TextRun, AlignmentType } =
         await import("docx");
 
-      const textToExport = stripHtml(editorContent || content);
+      const textToExport = stripHtml(editorContent || content || '');
       const lines = textToExport
         .split("\n")
         .filter((line) => line.trim() !== "");
