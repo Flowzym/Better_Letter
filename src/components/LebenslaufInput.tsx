@@ -27,22 +27,12 @@ export default function LebenslaufInput() {
     selectEducation,
     cvSuggestions,
     setActiveTab
+    activeTab
   } = useLebenslaufContext();
   
   // Get activeTab from context
-  const [activeTab, setLocalActiveTab] = useState<TabType>('personal');
   
   // Sync local state with context
-  useEffect(() => {
-    const handleTabChange = (tab: string) => {
-      setLocalActiveTab(tab as TabType);
-      setActiveTab(tab);
-    };
-    
-    return () => {
-      setActiveTab(activeTab);
-    };
-  }, [activeTab, setActiveTab]);
 
   // Personal Data State
   const [personalData, setPersonalData] = useState({
@@ -225,7 +215,7 @@ export default function LebenslaufInput() {
         {tabs.map(tab => (
           <button
             key={tab.id}
-            onClick={() => setLocalActiveTab(tab.id as TabType)}
+            onClick={() => setActiveTab(tab.id as TabType)}
             className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
               activeTab === tab.id
                 ? 'bg-white shadow-sm'
