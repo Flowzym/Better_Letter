@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useMemo } from "react";
 import TaskTag from "./TaskTag";
 import TagButtonFavorite from "./ui/TagButtonFavorite";
-import { Lightbulb } from "lucide-react";
+import { Lightbulb, Plus, Star } from "lucide-react";
 import TextInputWithButtons from "./TextInputWithButtons";
 import { useLebenslaufContext } from "../context/LebenslaufContext";
 import { getTasksForPositions } from "../constants/positionsToTasks";
@@ -26,6 +26,16 @@ export default function TasksTagInput({
   const [inputValue, setInputValue] = useState("");
   const { favoriteTasks: favorites, toggleFavoriteTask } = useLebenslaufContext();
   
+  // Kombiniere Vorschläge aus Positionen und externen Vorschlägen
+  const allSuggestions = useMemo(() => {
+    const combined = [...suggestions];
+    if (positionen && positionen.length > 0) {
+      const positionTasks = getTasksForPositions(positionen);
+      combined.push(...positionTasks);
+    }
+    return Array.from(new Set(combined));
+  }, [positionen, suggestions]);
+
   // Kombiniere Vorschläge aus Positionen und externen Vorschlägen
   const allSuggestions = useMemo(() => {
     const combined = [...suggestions];
@@ -63,7 +73,6 @@ export default function TasksTagInput({
     setInputValue("");
   };
 
-
   return (
     <div className="space-y-4">
 
@@ -80,18 +89,39 @@ export default function TasksTagInput({
           </div>
       )}
 
-      <TextInputWithButtons
-        value={inputValue}
-        onChange={setInputValue}
-        onAdd={addTask}
-        suggestions={allSuggestions.filter(s => !value.includes(s))}
-        onFavoriteClick={handleAddFavoriteInput}
-        placeholder="Hinzufügen..."
-        className="w-full"
-      />
+      <div className="flex items-center w-full space-x-2">
+        <div className="relative flex-1">
+          <input
+            type="text"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && addTask()}
+            placeholder="Hinzufügen..."
+            className="w-full px-3 h-10 border rounded-md transition-all focus:outline-none focus:ring-1 pr-10"
+            style={{
+              borderColor: '#D1D5DB',
+              '--tw-ring-color': '#F29400'
+            } as React.CSSProperties}
+          />
+        </div>
+        <div className="flex-shrink-0 flex space-x-2">
+          <button
+            onClick={() => addTask()}
+            className="w-10 h-10 bg-[#F6A800] hover:bg-[#F29400] text-white rounded-md flex items-center justify-center transition-colors duration-200"
+          >
+            <Plus className="w-5 h-5" />
+          </button>
+          <button
+            onClick={handleAddFavoriteInput}
+            className="w-10 h-10 bg-[#F6A800] hover:bg-[#F29400] text-white rounded-md flex items-center justify-center transition-colors duration-200"
+          >
+            <Star className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
       
       {/* KI-Vorschläge basierend auf Positionen */}
-      {aiSuggestions.filter(s => !value.includes(s) && !favorites.includes(s)).length > 0 && (
+      {aiSuggestions && aiSuggestions.filter(s => !value.includes(s) && !favorites.includes(s)).length > 0 && (
         <div>
           <div className="flex items-center space-x-2 mb-2">
             <Lightbulb className="h-4 w-4 text-yellow-500" />
@@ -115,7 +145,7 @@ export default function TasksTagInput({
       )}
 
 
-      {favorites.filter((f) => !value.includes(f)).length > 0 && (
+      {favorites && favorites.filter((f) => !value.includes(f)).length > 0 && (
         <div>
           <div className="flex items-center space-x-2 mb-2">
             <svg

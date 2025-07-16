@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import TagSelectorWithFavorites from './TagSelectorWithFavorites';
 import ZeitraumPicker from './ZeitraumPicker';
 import TasksTagInput from './TasksTagInput';
@@ -38,7 +38,9 @@ export default function ExperienceForm({
   // KI-Vorschläge für Tätigkeiten basierend auf den ausgewählten Positionen
   const aiTaskSuggestions = useMemo(() => {
     if (!selectedPositions || selectedPositions.length === 0) return [];
-    return getTasksForPositions(selectedPositions);
+    const suggestions = getTasksForPositions(selectedPositions);
+    console.log('AI Task Suggestions:', suggestions);
+    return suggestions;
   }, [selectedPositions]);
   
   return (
