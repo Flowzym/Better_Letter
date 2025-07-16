@@ -117,7 +117,29 @@ export function LebenslaufProvider({
   const [ausbildungen, setAusbildungen] = useState<AusbildungEntry[]>(() => {
     try {
       const saved = localStorage.getItem(LOCAL_EDU_KEY);
-      return saved ? (JSON.parse(saved) as AusbildungEntry[]) : [];
+      if (saved) {
+        const parsed = JSON.parse(saved) as AusbildungEntry[];
+        // Ensure all institution fields are arrays
+        return parsed.map(entry => ({
+          ...entry,
+          institution: Array.isArray(entry.institution) 
+            ? entry.institution 
+            : typeof entry.institution === 'string' 
+              ? [entry.institution] 
+              : [],
+          ausbildungsart: Array.isArray(entry.ausbildungsart) 
+            ? entry.ausbildungsart 
+            : typeof entry.ausbildungsart === 'string' 
+              ? [entry.ausbildungsart] 
+              : [],
+          abschluss: Array.isArray(entry.abschluss) 
+            ? entry.abschluss 
+            : typeof entry.abschluss === 'string' 
+              ? [entry.abschluss] 
+              : []
+        }));
+      }
+      return [];
     } catch (err) {
       console.error('Failed to load educations from localStorage:', err);
       return [];

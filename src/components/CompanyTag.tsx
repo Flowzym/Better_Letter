@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import { useLebenslaufContext } from '../context/LebenslaufContext';
 import TagButtonSelected from './ui/TagButtonSelected';
 
@@ -12,14 +12,6 @@ export default function CompanyTag({ label, onRemove, onEdit }: CompanyTagProps)
   const { favoriteCompanies, toggleFavoriteCompany } = useLebenslaufContext();
   const isFavorite = favoriteCompanies.includes(label);
 
-  const [editing, setEditing] = useState(false);
-  const [editValue, setEditValue] = useState(label);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  // Setze den Wert nur beim ersten Laden
-  useEffect(() => {
-  }
-  )
   return (
     <TagButtonSelected
       label={label}
