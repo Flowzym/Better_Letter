@@ -54,7 +54,25 @@ export interface SoftskillEntry {
   bisTags: string[];
 }
 
+export interface PersonalData {
+  vorname: string;
+  nachname: string;
+  email: string;
+  telefon: string;
+  adresse: string;
+  plz: string;
+  ort: string;
+  land: string;
+  geburtsort: string;
+  geburtsland: string;
+  geburtsdatum: string;
+  staatsangehoerigkeit: string;
+  familienstand: string;
+}
+
 interface LebenslaufContextType {
+  personalData: PersonalData;
+  updatePersonalData: (data: Partial<PersonalData>) => void;
   berufserfahrungen: Berufserfahrung[];
   ausbildungen: AusbildungEntry[];
   fachkompetenzen: FachkompetenzEntry[];
@@ -117,6 +135,45 @@ profileSourceMappings?: ProfileSourceMapping[];
   const LOCAL_EDU_KEY = 'ausbildungen';
   const LOCAL_SKILL_KEY = 'fachkompetenzen';
   const LOCAL_SOFT_KEY = 'softskills';
+  const LOCAL_PERSONAL_KEY = 'personalData';
+
+  const [personalData, setPersonalData] = useState<PersonalData>(() => {
+    try {
+      const saved = localStorage.getItem(LOCAL_PERSONAL_KEY);
+      return saved ? JSON.parse(saved) : {
+        vorname: '',
+        nachname: '',
+        email: '',
+        telefon: '',
+        adresse: '',
+        plz: '',
+        ort: '',
+        land: '',
+        geburtsort: '',
+        geburtsland: '',
+        geburtsdatum: '',
+        staatsangehoerigkeit: '',
+        familienstand: ''
+      };
+    } catch (err) {
+      console.error('Failed to load personal data from localStorage:', err);
+      return {
+        vorname: '',
+        nachname: '',
+        email: '',
+        telefon: '',
+        adresse: '',
+        plz: '',
+        ort: '',
+        land: '',
+        geburtsort: '',
+        geburtsland: '',
+        geburtsdatum: '',
+        staatsangehoerigkeit: '',
+        familienstand: ''
+      };
+    }
+  });
 
   const [berufserfahrungen, setBerufserfahrungen] = useState<Berufserfahrung[]>(() => {
     try {
@@ -201,6 +258,13 @@ profileSourceMappings?: ProfileSourceMapping[];
     }
   }, [profileSourceMappings]);
 
+  const updatePersonalData = (data: Partial<PersonalData>) => {
+    setPersonalData(prev => {
+      const updated = { ...prev, ...data };
+      localStorage.setItem(LOCAL_PERSONAL_KEY, JSON.stringify(updated));
+      return updated;
+    });
+  };
 
   const addExperience = async (data: Omit<Berufserfahrung, 'id'>) => {
     const newExp = { ...data, id: uuidv4() };
@@ -438,6 +502,8 @@ profileSourceMappings?: ProfileSourceMapping[];
   return (
     <LebenslaufContext.Provider
       value={{
+        personalData,
+        updatePersonalData,
         berufserfahrungen,
         ausbildungen,
         fachkompetenzen,

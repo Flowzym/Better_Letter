@@ -8,6 +8,8 @@ type TabType = 'personal' | 'experience' | 'education' | 'skills' | 'softskills'
 
 const LebenslaufInput: React.FC = () => {
   const {
+    personalData,
+    updatePersonalData,
     selectedExperienceId,
     selectedEducationId,
     setActiveTab: contextSetActiveTab,
@@ -58,7 +60,7 @@ const LebenslaufInput: React.FC = () => {
   const renderTabContent = () => {
     switch (currentTab) {
       case 'personal':
-        return <PersonalDataForm />;
+        return <PersonalDataForm data={personalData} onChange={updatePersonalData} />;
       case 'experience':
         return (
           <ExperienceForm
