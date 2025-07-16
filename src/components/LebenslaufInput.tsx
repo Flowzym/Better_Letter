@@ -26,11 +26,28 @@ export default function LebenslaufInput() {
     isEditingEducation = false,
     selectEducation = () => {},
     cvSuggestions = { companies: [], positions: [], aufgabenbereiche: [] },
-    setActiveTab = () => {},
-    activeTab = 'personal'
+    activeTab,
+    setActiveTab
   } = useLebenslaufContext();
 
-  console.log('Aktiver Tab:', activeTab); // <-- Fügen Sie diese Zeile hier ein
+  // Lokaler State für den aktiven Tab, falls der Context-Wert nicht funktioniert
+  const [localActiveTab, setLocalActiveTab] = useState<TabType>('personal');
+  
+  // Verwende entweder den Context-Wert oder den lokalen State
+  const currentTab = activeTab || localActiveTab;
+  
+  // Funktion zum Wechseln des Tabs
+  const handleTabChange = (tabId: TabType) => {
+    console.log('Tab wechseln zu:', tabId);
+    // Versuche zuerst die Context-Funktion
+    if (typeof setActiveTab === 'function') {
+      setActiveTab(tabId);
+    }
+    // Setze immer auch den lokalen State als Fallback
+    setLocalActiveTab(tabId);
+  };
+  
+  console.log('Aktiver Tab:', currentTab);
   
   // Get activeTab from context
   
@@ -217,13 +234,13 @@ export default function LebenslaufInput() {
         {tabs.map(tab => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id as TabType)}
+            onClick={() => handleTabChange(tab.id as TabType)}
             className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
-              activeTab === tab.id
+              currentTab === tab.id
                 ? 'bg-white shadow-sm'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
-            style={activeTab === tab.id ? { color: '#F29400' } : {}}
+            style={currentTab === tab.id ? { color: '#F29400' } : {}}
           >
             {tab.icon}
             <span>{tab.label}</span>
@@ -232,14 +249,14 @@ export default function LebenslaufInput() {
       </div>
 
       {/* Tab Content */}
-      {activeTab === 'personal' && (
+      {currentTab === 'personal' && (
         <PersonalDataForm
           data={personalData}
           onChange={setPersonalData}
         />
       )}
 
-      {activeTab === 'experience' && (
+      {currentTab === 'experience' && (
         <div className="space-y-6">
           {/* Experience Form */}
           <div className="border border-gray-200 rounded-lg overflow-hidden">
@@ -280,7 +297,7 @@ export default function LebenslaufInput() {
         </div>
       )}
 
-      {activeTab === 'education' && (
+      {currentTab === 'education' && (
         <div className="space-y-6">
           {/* Education Form */}
           <div className="border border-gray-200 rounded-lg overflow-hidden">
@@ -319,7 +336,7 @@ export default function LebenslaufInput() {
         </div>
       )}
 
-      {activeTab === 'skills' && (
+      {currentTab === 'skills' && (
         <div className="p-6 bg-gray-50 rounded-lg border border-gray-200">
           <h3 className="text-lg font-medium text-gray-900 mb-4">Fachkompetenzen</h3>
           <p className="text-gray-600">
@@ -328,7 +345,7 @@ export default function LebenslaufInput() {
         </div>
       )}
 
-      {activeTab === 'softskills' && (
+      {currentTab === 'softskills' && (
         <div className="p-6 bg-gray-50 rounded-lg border border-gray-200">
           <h3 className="text-lg font-medium text-gray-900 mb-4">Softskills</h3>
           <p className="text-gray-600">
