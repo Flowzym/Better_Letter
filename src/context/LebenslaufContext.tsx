@@ -105,13 +105,15 @@ interface LebenslaufContextType {
 const LebenslaufContext = createContext<LebenslaufContextType | undefined>(undefined);
 
 export function LebenslaufProvider({
+  }
   children,
   profileSourceMappings = [],
 }: {
   children: ReactNode;
   profileSourceMappings?: ProfileSourceMapping[];
-}) { // Diese Klammer auf Zeile 113 ist die korrekte schließende Klammer für die Typdefinition.
-  const [activeTab, setActiveTab] = useState<string>('personal'); // Dies sollte die nächste Zeile sein.
+  profileSourceMappings?: ProfileSourceMapping[];
+}) {
+  const [activeTab, setActiveTab] = useState<string>('personal');
   const LOCAL_KEY = 'berufserfahrungen';
   const LOCAL_EDU_KEY = 'ausbildungen';
   const LOCAL_SKILL_KEY = 'fachkompetenzen';
@@ -484,6 +486,7 @@ export function LebenslaufProvider({
     </LebenslaufContext.Provider>
 
 export function useLebenslaufContext() {
+    }
   const context = useContext(LebenslaufContext);
   if (!context) {
     throw new Error('useLebenslaufContext must be used within LebenslaufProvider');
