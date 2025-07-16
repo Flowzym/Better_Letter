@@ -1,6 +1,9 @@
-import React, { useMemo } from 'react';
-import { Trash2 } from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import { Trash2, Plus } from 'lucide-react';
+import { ReactSortable } from 'react-sortablejs';
 import { useLebenslaufContext } from "../context/LebenslaufContext";
+import EditablePreviewText from './EditablePreviewText';
+import TextInputWithButtons from './TextInputWithButtons';
 
 export default function LebenslaufPreview() {
   const { 
@@ -11,9 +14,15 @@ export default function LebenslaufPreview() {
     ausbildungen,
     selectEducation,
     selectedEducationId,
-    deleteEducation
+    deleteEducation,
+    updateEducationField,
+    updateExperienceTask,
+    updateExperienceTasksOrder,
+    addExperienceTask
   } =
     useLebenslaufContext();
+
+  const [newTaskInputs, setNewTaskInputs] = useState<Record<string, string>>({});
 
   const sortedErfahrungen = useMemo(() => {
     return [...berufserfahrungen].sort((a, b) => {
@@ -59,6 +68,14 @@ export default function LebenslaufPreview() {
     return start || end;
   };
 
+  const handleAddTask = (expId: string) => {
+    const newTask = newTaskInputs[expId]?.trim();
+    if (newTask) {
+      addExperienceTask(expId, newTask);
+      setNewTaskInputs(prev => ({ ...prev, [expId]: '' }));
+    }
+  };
+
   return (
     <>
       <h3 className="font-bold text-xl mb-4">Berufserfahrung</h3>
@@ -97,11 +114,54 @@ export default function LebenslaufPreview() {
             {Array.isArray(exp.position) ? exp.position.join(" / ") : (exp.position || "")}
           </p>
           <p className="italic text-gray-500">{Array.isArray(exp.companies) ? exp.companies.join(', ') : (exp.companies || "")}</p>
-          <ul className="list-disc list-inside mt-2 space-y-1 text-black">
-            {Array.isArray(exp.aufgabenbereiche) ? exp.aufgabenbereiche.map((aufgabe, i) => (
-              <li key={i}>{aufgabe}</li>
-            )) : null}
-          </ul>
+          
+          {/* Drag-and-Drop Aufgabenbereiche */}
+          {Array.isArray(exp.aufgabenbereiche) && exp.aufgabenbereiche.length > 0 && (
+            <ReactSortable
+              list={exp.aufgabenbereiche.map((task, index) => ({ id: `${exp.id}-${index}`, content: task }))}
+              setList={(newList) => {
+                const newTasks = newList.map(item => item.content);
+                updateExperienceTasksOrder(exp.id, newTasks);
+              }}
+              tag="ul"
+              className="list-disc list-inside mt-2 space-y-1 text-black"
+            >
+              {exp.aufgabenbereiche.map((aufgabe, i) => (
+                <li 
+                  key={`${exp.id}-${i}`}
+                  data-id={`${exp.id}-${i}`}
+                  className="cursor-move hover:bg-gray-50 rounded p-1 transition-colors duration-200"
+                >
+                  <EditablePreviewText
+                    value={aufgabe}
+                    onSave={(newValue) => updateExperienceTask(exp.id, i, newValue)}
+                    placeholder="Aufgabe eingeben..."
+                  />
+                </li>
+              ))}
+            </ReactSortable>
+          )}
+          
+          {/* Neue Aufgabe hinzufügen */}
+          <div className="mt-3 flex items-center space-x-2">
+            <input
+              type="text"
+              value={newTaskInputs[exp.id] || ''}
+              onChange={(e) => setNewTaskInputs(prev => ({ ...prev, [exp.id]: e.target.value }))}
+              onKeyPress={(e) => e.key === 'Enter' && handleAddTask(exp.id)}
+              placeholder="Neue Aufgabe hinzufügen..."
+              className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-orange-500"
+            />
+            <button
+              onClick={() => handleAddTask(exp.id)}
+              disabled={!newTaskInputs[exp.id]?.trim()}
+              className="p-1 text-white rounded hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+              style={{ backgroundColor: '#F29400' }}
+              title="Aufgabe hinzufügen"
+            >
+              <Plus className="h-4 w-4" />
+            </button>
+          </div>
         </div>
       ))}
       {berufserfahrungen.length === 0 && (
@@ -149,7 +209,16 @@ export default function LebenslaufPreview() {
             {Array.isArray(edu.ausbildungsart) ? edu.ausbildungsart.join(" / ") : (edu.ausbildungsart || "")} - {Array.isArray(edu.abschluss) ? edu.abschluss.join(" / ") : (edu.abschluss || "")}
           </p>
           <p className="italic text-gray-500">{Array.isArray(edu.institution) ? edu.institution.join(', ') : (edu.institution || "")}</p>
-          {edu.zusatzangaben && <p className="text-black mt-2">{edu.zusatzangaben}</p>}
+          
+          {/* Bearbeitbare Zusatzangaben */}
+          <div className="text-black mt-2">
+            <EditablePreviewText
+              value={edu.zusatzangaben}
+              onSave={(newValue) => updateEducationField(edu.id, 'zusatzangaben', newValue)}
+              isTextArea={true}
+              placeholder="Zusatzangaben eingeben..."
+            />
+          </div>
         </div>
       ))}
       {sortedAusbildungen.length === 0 && (
