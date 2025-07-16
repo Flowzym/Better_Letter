@@ -140,7 +140,7 @@ const LebenslaufInput: React.FC = () => {
                   cvSuggestions={cvSuggestions}
                 />
               </ExperienceSection>
-            )}
+            ) : null}
           </div>
         );
       case 'education':
@@ -189,7 +189,7 @@ const LebenslaufInput: React.FC = () => {
                 }}
                 cvSuggestions={cvSuggestions}
               />
-            )}
+            ) : null}
           </div>
         );
       case 'skills':
