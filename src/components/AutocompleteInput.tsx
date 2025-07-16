@@ -42,7 +42,7 @@ export default function AutocompleteInput<T = string>({
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const hasInput = value.trim().length > 0;
+  const hasInput = (value || '').trim().length > 0;
   const [isFocused, setIsFocused] = useState(false);
 
   // Helper functions with defaults for string suggestions
@@ -83,8 +83,8 @@ export default function AutocompleteInput<T = string>({
 
   // Intelligent filtering and sorting of suggestions
   useEffect(() => {
-    if (value.trim() && value.length > 0) {
-      const searchTerm = value.toLowerCase();
+    if ((value || '').trim() && (value || '').length > 0) {
+      const searchTerm = (value || '').toLowerCase();
       
       const startsWithMatches: T[] = [];
       const containsMatches: T[] = [];
@@ -217,8 +217,8 @@ export default function AutocompleteInput<T = string>({
   };
 
   const handleAddToFavorites = () => {
-    if (onFavoriteClick && value.trim()) {
-      onFavoriteClick(value.trim());
+    if (onFavoriteClick && (value || '').trim()) {
+      onFavoriteClick((value || '').trim());
       onChange('');
     }
   };
@@ -324,7 +324,7 @@ export default function AutocompleteInput<T = string>({
           aria-label="Vorschläge"
         >
           {filteredSuggestions.map((suggestion, index) => {
-            const searchTerm = value.toLowerCase();
+            const searchTerm = (value || '').toLowerCase();
             const suggestionText = getSuggestionText(suggestion);
             const suggestionLower = suggestionText.toLowerCase();
             const startsWithSearch = suggestionLower.startsWith(searchTerm);
