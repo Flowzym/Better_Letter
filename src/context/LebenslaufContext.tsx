@@ -104,7 +104,10 @@ interface LebenslaufContextType {
 
 const LebenslaufContext = createContext<LebenslaufContextType | undefined>(undefined);
 
-export function LebenslaufProvider(children, profileSourceMappings = [],
+export function LebenslaufProvider({
+  }
+  children,
+  profileSourceMappings = [],
 }: {
   children: ReactNode;
   profileSourceMappings?: ProfileSourceMapping[];
