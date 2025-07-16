@@ -83,8 +83,8 @@ export default function TagSelectorWithFavorites({
       <AutocompleteInput
         value={inputValue}
         onChange={setInputValue}
-        onAdd={() => handleAddInput()}
-        onFavoriteClick={() => handleAddFavoriteInput()}
+        onAdd={handleAddInput}
+        onFavoriteClick={handleAddFavoriteInput}
         suggestions={suggestions ?? options}
         placeholder="Hinzufügen..."
         showFavoritesButton
