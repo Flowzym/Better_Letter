@@ -15,19 +15,19 @@ export default function LebenslaufInput() {
     addExperience,
     updateExperience,
     deleteExperience,
-    selectedExperienceId,
-    isEditingExperience,
-    selectExperience,
-    ausbildungen,
-    addEducation,
-    updateEducation,
-    deleteEducation,
-    selectedEducationId,
-    isEditingEducation,
-    selectEducation,
-    cvSuggestions,
-    setActiveTab,
-    activeTab
+    selectedExperienceId = null,
+    isEditingExperience = false,
+    selectExperience = () => {},
+    ausbildungen = [],
+    addEducation = async () => {},
+    updateEducation = async () => {},
+    deleteEducation = async () => {},
+    selectedEducationId = null,
+    isEditingEducation = false,
+    selectEducation = () => {},
+    cvSuggestions = { companies: [], positions: [], aufgabenbereiche: [] },
+    setActiveTab = () => {},
+    activeTab = 'personal'
   } = useLebenslaufContext();
 
   console.log('Aktiver Tab:', activeTab); // <-- Fügen Sie diese Zeile hier ein
