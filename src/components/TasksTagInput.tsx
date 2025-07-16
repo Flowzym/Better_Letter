@@ -36,16 +36,6 @@ export default function TasksTagInput({
     return Array.from(new Set(combined));
   }, [positionen, suggestions]);
 
-  // Kombiniere Vorschläge aus Positionen und externen Vorschlägen
-  const allSuggestions = useMemo(() => {
-    const combined = [...suggestions];
-    if (positionen && positionen.length > 0) {
-      const positionTasks = getTasksForPositions(positionen);
-      combined.push(...positionTasks);
-    }
-    return Array.from(new Set(combined));
-  }, [positionen, suggestions]);
-
   const addTask = (task?: string) => {
     const t = (task ?? inputValue).trim();
     if (!t || value.includes(t)) return;
