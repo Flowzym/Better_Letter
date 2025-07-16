@@ -247,7 +247,7 @@ export default function AutocompleteInput<T = string>({
             ref={inputRef}
             type="text"
             id={inputId}
-            name={`autocomplete-${inputId}`}
+            name={id || `autocomplete-${inputId}`}
             value={value}
             onChange={(e) => onChange(e.target.value)}
             onKeyDown={handleKeyDown}
