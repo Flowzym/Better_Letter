@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useLebenslaufContext } from '../context/LebenslaufContext';
 import PersonalDataForm from './PersonalDataForm';
 import ExperienceForm from './ExperienceForm';
-import ExperienceSection from './ExperienceSection';
 import AusbildungForm from './AusbildungForm';
 import { Plus, Calendar, Building, Briefcase, ChevronRight } from 'lucide-react';
 
@@ -33,8 +32,82 @@ const LebenslaufInput: React.FC = () => {
   const [localActiveTab, setLocalActiveTab] = useState<TabType>('personal');
 
   // Automatisch eine leere Berufserfahrung erstellen, wenn keine ausgewählt ist
+  const createEmptyExperience = () => {
+    if (!selectedExperienceId) {
+      // Prüfen, ob es bereits eine leere Berufserfahrung gibt
+      const hasEmptyExperience = berufserfahrungen.some(
+        exp => exp.companies.length === 0 && exp.position.length === 0 && !exp.startYear
+      );
+      
+      if (!hasEmptyExperience) {
+        // Keine leere Berufserfahrung gefunden, neue erstellen
+        addExperience({
+          companies: [],
+          position: [],
+          startMonth: null,
+          startYear: "",
+          endMonth: null,
+          endYear: null,
+          isCurrent: false,
+          aufgabenbereiche: []
+        });
+      } else {
+        // Leere Berufserfahrung gefunden, diese auswählen
+        const emptyExp = berufserfahrungen.find(
+          exp => exp.companies.length === 0 && exp.position.length === 0 && !exp.startYear
+        );
+        if (emptyExp) {
+          selectExperience(emptyExp.id);
+        }
+      }
+    }
+  };
+
+  // Automatisch eine leere Ausbildung erstellen, wenn keine ausgewählt ist
+  const createEmptyEducation = () => {
+    if (!selectedEducationId) {
+      // Prüfen, ob es bereits eine leere Ausbildung gibt
+      const hasEmptyEducation = ausbildungen.some(
+        edu => edu.institution.length === 0 && edu.ausbildungsart.length === 0 && !edu.startYear
+      );
+      
+      if (!hasEmptyEducation) {
+        // Keine leere Ausbildung gefunden, neue erstellen
+        addEducation({
+          institution: [],
+          ausbildungsart: [],
+          abschluss: [],
+          startMonth: null, 
+          startYear: "", 
+          endMonth: null, 
+          endYear: null, 
+          isCurrent: false, 
+          zusatzangaben: ""
+        });
+      } else {
+        // Leere Ausbildung gefunden, diese auswählen
+        const emptyEdu = ausbildungen.find(
+          edu => edu.institution.length === 0 && edu.ausbildungsart.length === 0 && !edu.startYear
+        );
+        if (emptyEdu) {
+          selectEducation(emptyEdu.id);
+        }
+      }
+    }
+  };
+
+  // Beim ersten Laden und bei Tab-Wechsel
   useEffect(() => {
-    if (localActiveTab === 'experience' && !selectedExperienceId && berufserfahrungen.length === 0) {
+    if (localActiveTab === 'experience') {
+      createEmptyExperience();
+    } else if (localActiveTab === 'education') {
+      createEmptyEducation();
+    }
+  }, [localActiveTab]);
+
+  // Beim ersten Laden
+  useEffect(() => {
+    if (localActiveTab === 'experience' && berufserfahrungen.length === 0) {
       addExperience({
         companies: [],
         position: [],
@@ -45,12 +118,7 @@ const LebenslaufInput: React.FC = () => {
         isCurrent: false,
         aufgabenbereiche: []
       });
-    }
-  }, [localActiveTab, selectedExperienceId, berufserfahrungen.length, addExperience]);
-
-  // Automatisch eine leere Ausbildung erstellen, wenn keine ausgewählt ist
-  useEffect(() => {
-    if (localActiveTab === 'education' && !selectedEducationId && ausbildungen.length === 0) {
+    } else if (localActiveTab === 'education' && ausbildungen.length === 0) {
       addEducation({
         institution: [],
         ausbildungsart: [],
@@ -63,7 +131,7 @@ const LebenslaufInput: React.FC = () => {
         zusatzangaben: ""
       });
     }
-  }, [localActiveTab, selectedEducationId, ausbildungen.length, addEducation]);
+  }, []);
 
   // Auto-switch to experience tab when an experience is selected
   useEffect(() => {
@@ -125,70 +193,38 @@ const LebenslaufInput: React.FC = () => {
               <h3 className="text-lg font-medium text-gray-900">
                 Berufserfahrung {berufserfahrungen.length > 0 ? `(${berufserfahrungen.length})` : ''}
               </h3>
-              {berufserfahrungen.length > 0 && (
-                <button
-                  onClick={() => {
-                    // Prüfen, ob es bereits eine leere Berufserfahrung gibt
-                    const hasEmptyExperience = berufserfahrungen.some(
-                      exp => exp.companies.length === 0 && exp.position.length === 0 && !exp.startYear
-                    );
-                    
-                    if (!hasEmptyExperience) {
-                      addExperience({
-                        companies: [],
-                        position: [],
-                        startMonth: null,
-                        startYear: "",
-                        endMonth: null,
-                        endYear: null,
-                        isCurrent: false,
-                        aufgabenbereiche: []
-                      });
-                    } else {
-                      // Wähle die erste leere Berufserfahrung aus
-                      const emptyExp = berufserfahrungen.find(
-                        exp => exp.companies.length === 0 && exp.position.length === 0 && !exp.startYear
-                      );
-                      if (emptyExp) {
-                        selectExperience(emptyExp.id);
-                      }
-                    }
-                  }}
-                  className="flex items-center px-4 py-2 text-white rounded-lg transition-colors duration-200"
-                  style={{ backgroundColor: '#F29400' }}
-                >
-                  <Plus className="h-4 w-4" />
-                </button>
-              )}
+              <button
+                onClick={createEmptyExperience}
+                className="flex items-center justify-center w-10 h-10 text-white rounded-lg transition-colors duration-200"
+                style={{ backgroundColor: '#F29400' }}
+              >
+                <Plus className="h-4 w-4" />
+              </button>
             </div>
-            {selectedExperienceId && (
-              <ExperienceSection>
-                <ExperienceForm
-                  form={berufserfahrungen.find(e => e.id === selectedExperienceId) || {
-                    companies: [],
-                    position: berufserfahrungen.find(e => e.id === selectedExperienceId)?.position || [],
-                    startMonth: null,
-                    startYear: "",
-                    endMonth: null,
-                    endYear: null,
-                    isCurrent: false,
-                    aufgabenbereiche: []
-                  }}
-                  selectedPositions={berufserfahrungen.find(e => e.id === selectedExperienceId)?.position || []}
-                  onUpdateField={(field, value) => {
-                    if (selectedExperienceId) {
-                      updateExperienceField(selectedExperienceId, field, value);
-                    }
-                  }}
-                  onPositionsChange={(positions) => {
-                    if (selectedExperienceId) {
-                      updateExperienceField(selectedExperienceId, 'position', positions);
-                    }
-                  }}
-                  cvSuggestions={cvSuggestions}
-                />
-              </ExperienceSection>
-            )}
+            <ExperienceForm
+              form={berufserfahrungen.find(e => e.id === selectedExperienceId) || {
+                companies: [],
+                position: berufserfahrungen.find(e => e.id === selectedExperienceId)?.position || [],
+                startMonth: null,
+                startYear: "",
+                endMonth: null,
+                endYear: null,
+                isCurrent: false,
+                aufgabenbereiche: []
+              }}
+              selectedPositions={berufserfahrungen.find(e => e.id === selectedExperienceId)?.position || []}
+              onUpdateField={(field, value) => {
+                if (selectedExperienceId) {
+                  updateExperienceField(selectedExperienceId, field, value);
+                }
+              }}
+              onPositionsChange={(positions) => {
+                if (selectedExperienceId) {
+                  updateExperienceField(selectedExperienceId, 'position', positions);
+                }
+              }}
+              cvSuggestions={cvSuggestions}
+            />
           </div>
         );
       case 'education':
@@ -198,64 +234,33 @@ const LebenslaufInput: React.FC = () => {
               <h3 className="text-lg font-medium text-gray-900">
                 Ausbildung {ausbildungen.length > 0 ? `(${ausbildungen.length})` : ''}
               </h3>
-              {ausbildungen.length > 0 && (
-                <button
-                  onClick={() => {
-                    // Prüfen, ob es bereits eine leere Ausbildung gibt
-                    const hasEmptyEducation = ausbildungen.some(
-                      edu => edu.institution.length === 0 && edu.ausbildungsart.length === 0 && !edu.startYear
-                    );
-                    
-                    if (!hasEmptyEducation) {
-                      addEducation({
-                        institution: [],
-                        ausbildungsart: [],
-                        abschluss: [],
-                        startMonth: null, 
-                        startYear: "", 
-                        endMonth: null, 
-                        endYear: null, 
-                        isCurrent: false, 
-                        zusatzangaben: ""
-                      });
-                    } else {
-                      // Wähle die erste leere Ausbildung aus
-                      const emptyEdu = ausbildungen.find(
-                        edu => edu.institution.length === 0 && edu.ausbildungsart.length === 0 && !edu.startYear
-                      );
-                      if (emptyEdu) {
-                        selectEducation(emptyEdu.id);
-                      }
-                    }
-                  }}
-                  className="flex items-center px-4 py-2 text-white rounded-lg transition-colors duration-200"
-                  style={{ backgroundColor: '#F29400' }}
-                >
-                  <Plus className="h-4 w-4" />
-                </button>
-              )}
+              <button
+                onClick={createEmptyEducation}
+                className="flex items-center justify-center w-10 h-10 text-white rounded-lg transition-colors duration-200"
+                style={{ backgroundColor: '#F29400' }}
+              >
+                <Plus className="h-4 w-4" />
+              </button>
             </div>
-            {selectedEducationId && (  
-              <AusbildungForm
-                form={ausbildungen.find(e => e.id === selectedEducationId) || {
-                  institution: [],
-                  ausbildungsart: [],
-                  abschluss: [],
-                  startMonth: null, 
-                  startYear: "", 
-                  endMonth: null, 
-                  endYear: null, 
-                  isCurrent: false, 
-                  zusatzangaben: ""
-                }}
-                onUpdateField={(field, value) => {
-                  if (selectedEducationId) {
-                    updateEducationField(selectedEducationId, field, value);
-                  }
-                }}
-                cvSuggestions={cvSuggestions}
-              />
-            )}
+            <AusbildungForm
+              form={ausbildungen.find(e => e.id === selectedEducationId) || {
+                institution: [],
+                ausbildungsart: [],
+                abschluss: [],
+                startMonth: null, 
+                startYear: "", 
+                endMonth: null, 
+                endYear: null, 
+                isCurrent: false, 
+                zusatzangaben: ""
+              }}
+              onUpdateField={(field, value) => {
+                if (selectedEducationId) {
+                  updateEducationField(selectedEducationId, field, value);
+                }
+              }}
+              cvSuggestions={cvSuggestions}
+            />
           </div>
         );
       case 'skills':
