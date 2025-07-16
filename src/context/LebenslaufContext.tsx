@@ -105,6 +105,7 @@ interface LebenslaufContextType {
 const LebenslaufContext = createContext<LebenslaufContextType | undefined>(undefined);
 
 export function LebenslaufProvider({
+  }
   children,
   profileSourceMappings = [],
 }: {
@@ -485,6 +486,7 @@ export function LebenslaufProvider({
     >
       {children}
     </Leben    }
+    }
 slaufContext.Provider>
   );
 }
