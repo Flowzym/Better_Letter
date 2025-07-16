@@ -26,11 +26,38 @@ export default function LebenslaufInput() {
     isEditingEducation = false,
     selectEducation = () => {},
     cvSuggestions = { companies: [], positions: [], aufgabenbereiche: [] },
-    activeTab,
-    setActiveTab
+    setActiveTab: contextSetActiveTab,
+    activeTab: contextActiveTab
   } = useLebenslaufContext();
 
   // Lokaler State für den aktiven Tab, falls der Context-Wert nicht funktioniert
+  const [localActiveTab, setLocalActiveTab] = useState<TabType>('personal');
+  
+  // Verwende entweder den Context-Wert oder den lokalen State
+  const activeTab = contextActiveTab || localActiveTab;
+  
+  // Funktion zum Wechseln des Tabs
+  const handleTabChange = (tabId: TabType) => {
+    // Versuche zuerst die Context-Funktion
+    if (typeof contextSetActiveTab === 'function') {
+      contextSetActiveTab(tabId);
+    }
+    // Setze immer auch den lokalen State als Fallback
+    setLocalActiveTab(tabId);
+  };
+  
+  // Automatisch zum entsprechenden Tab wechseln, wenn ein Eintrag ausgewählt wird
+  useEffect(() => {
+    if (selectedExperienceId) {
+      handleTabChange('experience');
+    }
+  }, [selectedExperienceId]);
+  
+  useEffect(() => {
+    if (selectedEducationId) {
+      handleTabChange('education');
+    }
+  }, [selectedEducationId]);
   const [localActiveTab, setLocalActiveTab] = useState<TabType>('personal');
   
   // Verwende entweder den Context-Wert oder den lokalen State
