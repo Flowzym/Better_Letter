@@ -1,366 +1,125 @@
-import React, { useState, useEffect } from 'react';
-import { ChevronDown, ChevronUp, Plus, User, Briefcase, GraduationCap, Zap, Heart } from 'lucide-react';
-import PersonalDataForm from './PersonalDataForm';
-import ExperienceForm from './ExperienceForm';
-import ExperienceSection from './ExperienceSection';
-import AusbildungForm from './AusbildungForm';
-import { useLebenslaufContext } from '../context/LebenslaufContext';
-import CVSection from './CVSection';
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en-US"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en-US"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en-US"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en-US"> <!--<![endif]-->
+<head>
 
-export type TabType = 'personal' | 'experience' | 'education' | 'skills' | 'softskills';
 
-export default function LebenslaufInput() {
-  const {
-    berufserfahrungen,
-    addExperience,
-    updateExperience,
-    deleteExperience,
-    selectedExperienceId = null,
-    isEditingExperience = false,
-    selectExperience = () => {},
-    ausbildungen = [],
-    addEducation = async () => {},
-    updateEducation = async () => {},
-    deleteEducation = async () => {},
-    selectedEducationId = null,
-    isEditingEducation = false,
-    selectEducation = () => {},
-    cvSuggestions = { companies: [], positions: [], aufgabenbereiche: [] },
-    setActiveTab: contextSetActiveTab,
-    activeTab: contextActiveTab
-  } = useLebenslaufContext();
-  
-  const [localActiveTab, setLocalActiveTab] = useState<TabType>('personal');
-  
-  // Verwende entweder den Context-Wert oder den lokalen State
-  const currentTab = contextActiveTab || localActiveTab;
-  
-  // Funktion zum Wechseln des Tabs
-  const handleTabChange = (tabId: TabType) => {
-    console.log('Tab wechseln zu:', tabId);
-    // Versuche zuerst die Context-Funktion
-    if (typeof contextSetActiveTab === 'function') {
-      contextSetActiveTab(tabId);
-    }
-    // Setze immer auch den lokalen State als Fallback
-    setLocalActiveTab(tabId);
-  };
-  
-  console.log('Aktiver Tab:', contextActiveTab);
-  
-  // Automatisch zum entsprechenden Tab wechseln, wenn ein Eintrag ausgewählt wird
-  useEffect(() => {
-    if (selectedExperienceId) {
-      handleTabChange('experience');
-    }
-  }, [selectedExperienceId]);
-  
-  useEffect(() => {
-    if (selectedEducationId) {
-      handleTabChange('education');
-    }
-  }, [selectedEducationId]);
+<title>bolt.new | 524: A timeout occurred</title>
+<meta charset="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="stylesheet" id="cf_styles-css" href="/cdn-cgi/styles/main.css" />
 
-  // Personal Data State
-  const [personalData, setPersonalData] = useState({
-    vorname: '',
-    nachname: '',
-    titel: '',
-    geburtsdatum: '',
-    geburtsort: '',
-    geburtsland: '',
-    staatsbuergerschaftCheckbox: false,
-    staatsbuergerschaft: '',
-    arbeitsmarktzugang: '',
-    familienstand: '',
-    kinder: [],
-    adresse: '',
-    plz: '',
-    ort: '',
-    land: '',
-    ausland: false,
-    telefon: '',
-    telefonVorwahl: '+43',
-    email: '',
-    socialMedia: [],
-  });
 
-  // Experience Form State
-  const [experienceForm, setExperienceForm] = useState({
-    companies: [],
-    position: [],
-    startMonth: null,
-    startYear: '',
-    endMonth: null,
-    endYear: null,
-    isCurrent: false,
-    aufgabenbereiche: []
-  });
-
-  // Education Form State
-  const [educationForm, setEducationForm] = useState({
-    institution: [],
-    ausbildungsart: [],
-    abschluss: [],
-    startMonth: null,
-    startYear: '',
-    endMonth: null,
-    endYear: null,
-    isCurrent: false,
-    zusatzangaben: ''
-  });
-
-  // Load selected experience data into form when selectedExperienceId changes
-  useEffect(() => {
-    if (selectedExperienceId) {
-      const selectedExp = berufserfahrungen.find(exp => exp.id === selectedExperienceId);
-      if (selectedExp) {
-        setExperienceForm({
-          companies: selectedExp.companies || [],
-          position: selectedExp.position || [],
-          startMonth: selectedExp.startMonth,
-          startYear: selectedExp.startYear || '',
-          endMonth: selectedExp.endMonth,
-          endYear: selectedExp.endYear,
-          isCurrent: selectedExp.isCurrent || false,
-          aufgabenbereiche: selectedExp.aufgabenbereiche || []
-        });
-      }
-    } else {
-      // Clear form when no experience is selected
-      setExperienceForm({
-        companies: [],
-        position: [],
-        startMonth: null,
-        startYear: '',
-        endMonth: null,
-        endYear: null,
-        isCurrent: false,
-        aufgabenbereiche: []
-      });
-    }
-  }, [selectedExperienceId, berufserfahrungen]);
-
-  // Load selected education data into form when selectedEducationId changes
-  useEffect(() => {
-    if (selectedEducationId) {
-      const selectedEdu = ausbildungen.find(edu => edu.id === selectedEducationId);
-      if (selectedEdu) {
-        setEducationForm({
-          institution: selectedEdu.institution || [],
-          ausbildungsart: selectedEdu.ausbildungsart || [],
-          abschluss: selectedEdu.abschluss || [],
-          startMonth: selectedEdu.startMonth,
-          startYear: selectedEdu.startYear || '',
-          endMonth: selectedEdu.endMonth,
-          endYear: selectedEdu.endYear,
-          isCurrent: selectedEdu.isCurrent || false,
-          zusatzangaben: selectedEdu.zusatzangaben || ''
-        });
-      }
-    } else {
-      // Clear form when no education is selected
-      setEducationForm({
-        institution: [],
-        ausbildungsart: [],
-        abschluss: [],
-        startMonth: null,
-        startYear: '',
-        endMonth: null,
-        endYear: null,
-        isCurrent: false,
-        zusatzangaben: ''
-      });
-    }
-  }, [selectedEducationId, ausbildungen]);
-
-  const handleExperienceFormChange = <K extends keyof typeof experienceForm>(
-    field: K,
-    value: typeof experienceForm[K]
-  ) => {
-    setExperienceForm(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleEducationFormChange = <K extends keyof typeof educationForm>(
-    field: K,
-    value: typeof educationForm[K]
-  ) => {
-    setEducationForm(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleAddExperience = async () => {
-    await addExperience(experienceForm);
-    setExperienceForm({
-      companies: [],
-      position: [],
-      startMonth: null,
-      startYear: '',
-      endMonth: null,
-      endYear: null,
-      isCurrent: false,
-      aufgabenbereiche: []
-    });
-  };
-
-  const handleUpdateExperience = async () => {
-    if (!selectedExperienceId) return;
-    await updateExperience(selectedExperienceId, experienceForm);
-  };
-
-  const handleAddEducation = async () => {
-    await addEducation(educationForm);
-    setEducationForm({
-      institution: [],
-      ausbildungsart: [],
-      abschluss: [],
-      startMonth: null,
-      startYear: '',
-      endMonth: null,
-      endYear: null,
-      isCurrent: false,
-      zusatzangaben: ''
-    });
-  };
-
-  const handleUpdateEducation = async () => {
-    if (!selectedEducationId) return;
-    await updateEducation(selectedEducationId, educationForm);
-  };
-
-  const tabs = [
-    { id: 'personal', label: 'Persönliche Daten', icon: <User className="h-4 w-4" /> },
-    { id: 'experience', label: 'Berufserfahrung', icon: <Briefcase className="h-4 w-4" /> },
-    { id: 'education', label: 'Ausbildung', icon: <GraduationCap className="h-4 w-4" /> },
-    { id: 'skills', label: 'Fachkompetenzen', icon: <Zap className="h-4 w-4" /> },
-    { id: 'softskills', label: 'Softskills', icon: <Heart className="h-4 w-4" /> }
-  ];
-
-  return (
-    <div className="space-y-6">
-      {/* Tabs */}
-      <div className="flex space-x-1 mb-6 bg-gray-100 p-1 rounded-lg">
-        {tabs.map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => handleTabChange(tab.id as TabType)}
-            className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
-              currentTab === tab.id
-                ? 'bg-white shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-            style={currentTab === tab.id ? { color: '#F29400' } : {}}
-          >
-            {tab.icon}
-            <span>{tab.label}</span>
-          </button>
-        ))}
-      </div>
-
-      {/* Tab Content */}
-      {currentTab === 'personal' && (
-        <PersonalDataForm
-          data={personalData}
-          onChange={setPersonalData}
-        />
-      )}
-
-      {currentTab === 'experience' && (
-        <div className="space-y-6">
-          {/* Experience Form */}
-          <div className="border border-gray-200 rounded-lg overflow-hidden">
-            <div className="px-4 py-3 bg-gray-50 flex items-center justify-between">
-              <h3 className="font-medium text-gray-900">
-                {isEditingExperience && selectedExperienceId
-                  ? 'Berufserfahrung bearbeiten'
-                  : 'Neue Berufserfahrung hinzufügen'}
-              </h3>
-              {isEditingExperience && selectedExperienceId && (
-                <button
-                  onClick={() => selectExperience(null)}
-                  className="text-sm text-gray-600 hover:text-gray-900"
-                >
-                  Abbrechen
-                </button>
-              )}
+</head>
+<body>
+<div id="cf-wrapper">
+    <div id="cf-error-details" class="p-0">
+        <header class="mx-auto pt-10 lg:pt-6 lg:px-8 w-240 lg:w-full mb-8">
+            <h1 class="inline-block sm:block sm:mb-2 font-light text-60 lg:text-4xl text-black-dark leading-tight mr-2">
+              <span class="inline-block">A timeout occurred</span>
+              <span class="code-label">Error code 524</span>
+            </h1>
+            <div>
+               Visit <a href="https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_524&utm_campaign=bolt.new" target="_blank" rel="noopener noreferrer">cloudflare.com</a> for more information.
             </div>
-            <div className="p-4">
-              <ExperienceForm
-                form={experienceForm}
-                selectedPositions={experienceForm.position}
-                onUpdateField={handleExperienceFormChange}
-                onPositionsChange={positions => handleExperienceFormChange('position', positions)}
-                cvSuggestions={cvSuggestions}
-              />
-              <div className="mt-4 flex justify-end">
-                <button
-                  onClick={isEditingExperience ? handleUpdateExperience : handleAddExperience}
-                  className="px-4 py-2 text-white rounded-md"
-                  style={{ backgroundColor: '#F29400' }}
-                >
-                  {isEditingExperience ? 'Aktualisieren' : 'Hinzufügen'}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+            <div class="mt-3">2025-07-16 20:49:12 UTC</div>
+        </header>
+        <div class="my-8 bg-gradient-gray">
+            <div class="w-240 lg:w-full mx-auto">
+                <div class="clearfix md:px-8">
+                  
+<div id="cf-browser-status" class=" relative w-1/3 md:w-full py-15 md:p-0 md:py-8 md:text-left md:border-solid md:border-0 md:border-b md:border-gray-400 overflow-hidden float-left md:float-none text-center">
+  <div class="relative mb-10 md:m-0">
+    
+    <span class="cf-icon-browser block md:hidden h-20 bg-center bg-no-repeat"></span>
+    <span class="cf-icon-ok w-12 h-12 absolute left-1/2 md:left-auto md:right-0 md:top-0 -ml-6 -bottom-4"></span>
+    
+  </div>
+  <span class="md:block w-full truncate">You</span>
+  <h3 class="md:inline-block mt-3 md:mt-0 text-2xl text-gray-600 font-light leading-1.3">
+    
+    Browser
+    
+  </h3>
+  <span class="leading-1.3 text-2xl text-green-success">Working</span>
+</div>
 
-      {currentTab === 'education' && (
-        <div className="space-y-6">
-          {/* Education Form */}
-          <div className="border border-gray-200 rounded-lg overflow-hidden">
-            <div className="px-4 py-3 bg-gray-50 flex items-center justify-between">
-              <h3 className="font-medium text-gray-900">
-                {isEditingEducation && selectedEducationId
-                  ? 'Ausbildung bearbeiten'
-                  : 'Neue Ausbildung hinzufügen'}
-              </h3>
-              {isEditingEducation && selectedEducationId && (
-                <button
-                  onClick={() => selectEducation(null)}
-                  className="text-sm text-gray-600 hover:text-gray-900"
-                >
-                  Abbrechen
-                </button>
-              )}
-            </div>
-            <div className="p-4">
-              <AusbildungForm
-                form={educationForm}
-                onUpdateField={handleEducationFormChange}
-                cvSuggestions={cvSuggestions}
-              />
-              <div className="mt-4 flex justify-end">
-                <button
-                  onClick={isEditingEducation ? handleUpdateEducation : handleAddEducation}
-                  className="px-4 py-2 text-white rounded-md"
-                  style={{ backgroundColor: '#F29400' }}
-                >
-                  {isEditingEducation ? 'Aktualisieren' : 'Hinzufügen'}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+<div id="cf-cloudflare-status" class=" relative w-1/3 md:w-full py-15 md:p-0 md:py-8 md:text-left md:border-solid md:border-0 md:border-b md:border-gray-400 overflow-hidden float-left md:float-none text-center">
+  <div class="relative mb-10 md:m-0">
+    <a href="https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_524&utm_campaign=bolt.new" target="_blank" rel="noopener noreferrer">
+    <span class="cf-icon-cloud block md:hidden h-20 bg-center bg-no-repeat"></span>
+    <span class="cf-icon-ok w-12 h-12 absolute left-1/2 md:left-auto md:right-0 md:top-0 -ml-6 -bottom-4"></span>
+    </a>
+  </div>
+  <span class="md:block w-full truncate">Vienna</span>
+  <h3 class="md:inline-block mt-3 md:mt-0 text-2xl text-gray-600 font-light leading-1.3">
+    <a href="https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_524&utm_campaign=bolt.new" target="_blank" rel="noopener noreferrer">
+    Cloudflare
+    </a>
+  </h3>
+  <span class="leading-1.3 text-2xl text-green-success">Working</span>
+</div>
 
-      {currentTab === 'skills' && (
-        <div className="p-6 bg-gray-50 rounded-lg border border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Fachkompetenzen</h3>
-          <p className="text-gray-600">
-            Dieser Bereich wird in einer zukünftigen Version implementiert.
-          </p>
-        </div>
-      )}
+<div id="cf-host-status" class="cf-error-source relative w-1/3 md:w-full py-15 md:p-0 md:py-8 md:text-left md:border-solid md:border-0 md:border-b md:border-gray-400 overflow-hidden float-left md:float-none text-center">
+  <div class="relative mb-10 md:m-0">
+    
+    <span class="cf-icon-server block md:hidden h-20 bg-center bg-no-repeat"></span>
+    <span class="cf-icon-error w-12 h-12 absolute left-1/2 md:left-auto md:right-0 md:top-0 -ml-6 -bottom-4"></span>
+    
+  </div>
+  <span class="md:block w-full truncate">bolt.new</span>
+  <h3 class="md:inline-block mt-3 md:mt-0 text-2xl text-gray-600 font-light leading-1.3">
+    
+    Host
+    
+  </h3>
+  <span class="leading-1.3 text-2xl text-red-error">Error</span>
+</div>
 
-      {currentTab === 'softskills' && (
-        <div className="p-6 bg-gray-50 rounded-lg border border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Softskills</h3>
-          <p className="text-gray-600">
-            Dieser Bereich wird in einer zukünftigen Version implementiert.
-          </p>
+                </div>
+            </div>
         </div>
-      )}
+
+        <div class="w-240 lg:w-full mx-auto mb-8 lg:px-8">
+            <div class="clearfix">
+                <div class="w-1/2 md:w-full float-left pr-6 md:pb-10 md:pr-0 leading-relaxed">
+                    <h2 class="text-3xl font-normal leading-1.3 mb-4">What happened?</h2>
+                    <p>The origin web server timed out responding to this request.</p>
+                </div>
+                <div class="w-1/2 md:w-full float-left leading-relaxed">
+                    <h2 class="text-3xl font-normal leading-1.3 mb-4">What can I do?</h2>
+                          <h3 class="text-15 font-semibold mb-2">If you're a visitor of this website:</h3>
+      <p class="mb-6">Please try again in a few minutes.</p>
+
+      <h3 class="text-15 font-semibold mb-2">If you're the owner of this website:</h3>
+      <p><span>The connection to the origin web server was made, but the origin web server timed out before responding. The likely cause is an overloaded background task, database or application, stressing the resources on your web server. To resolve, please work with your hosting provider or web development team to free up resources for your database or overloaded application.</span> <a rel="noopener noreferrer" href="https://developers.cloudflare.com/support/troubleshooting/http-status-codes/cloudflare-5xx-errors/error-524/">Additional troubleshooting information here.</a></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="cf-error-footer cf-wrapper w-240 lg:w-full py-10 sm:py-4 sm:px-8 mx-auto text-center sm:text-left border-solid border-0 border-t border-gray-300">
+  <p class="text-13">
+    <span class="cf-footer-item sm:block sm:mb-1">Cloudflare Ray ID: <strong class="font-semibold">96045af5acaccb7b</strong></span>
+    <span class="cf-footer-separator sm:hidden">&bull;</span>
+    <span id="cf-footer-item-ip" class="cf-footer-item hidden sm:block sm:mb-1">
+      Your IP:
+      <button type="button" id="cf-footer-ip-reveal" class="cf-footer-ip-reveal-btn">Click to reveal</button>
+      <span class="hidden" id="cf-footer-ip">212.241.107.153</span>
+      <span class="cf-footer-separator sm:hidden">&bull;</span>
+    </span>
+    <span class="cf-footer-item sm:block sm:mb-1"><span>Performance &amp; security by</span> <a rel="noopener noreferrer" href="https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_524&utm_campaign=bolt.new" id="brand_link" target="_blank">Cloudflare</a></span>
+    
+  </p>
+  <script>(function(){function d(){var b=a.getElementById("cf-footer-item-ip"),c=a.getElementById("cf-footer-ip-reveal");b&&"classList"in b&&(b.classList.remove("hidden"),c.addEventListener("click",function(){c.classList.add("hidden");a.getElementById("cf-footer-ip").classList.remove("hidden")}))}var a=document;document.addEventListener&&a.addEventListener("DOMContentLoaded",d)})();</script>
+</div><!-- /.error-footer -->
+
+
     </div>
-  );
-}
+</div>
+</body>
+</html>
