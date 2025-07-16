@@ -109,6 +109,9 @@ export function LebenslaufProvider({
   children,
   profileSourceMappings = [],
 }: {
+  children: ReactNode;
+  profileSourceMappings?: ProfileSourceMapping[];
+  profileSourceMappings?: ProfileSourceMapping[];
 }) {
   const [activeTab, setActiveTab] = useState<string>('personal');
   const LOCAL_KEY = 'berufserfahrungen';
