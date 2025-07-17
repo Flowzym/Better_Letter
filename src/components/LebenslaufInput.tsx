@@ -35,7 +35,7 @@ const LebenslaufInput: React.FC = () => {
   const createEmptyExperience = () => {
     // Prüfen, ob bereits eine leere Berufserfahrung existiert
     const hasEmptyExperience = berufserfahrung.some(exp => 
-      exp.companyName === '' && 
+      (!exp.companies || exp.companies.length === 0) && 
       exp.position.length === 0 && 
       exp.aufgabenbereiche.length === 0 &&
       !exp.startYear
@@ -44,7 +44,7 @@ const LebenslaufInput: React.FC = () => {
     // Wenn bereits eine leere Berufserfahrung existiert, diese auswählen statt eine neue zu erstellen
     if (hasEmptyExperience) {
       const emptyExp = berufserfahrung.find(exp => 
-        exp.companyName === '' && 
+        (!exp.companies || exp.companies.length === 0) && 
         exp.position.length === 0 && 
         exp.aufgabenbereiche.length === 0 &&
         !exp.startYear
@@ -57,9 +57,7 @@ const LebenslaufInput: React.FC = () => {
     
     // Immer eine neue Berufserfahrung erstellen, wenn der Button geklickt wird
     const newExp = {
-      companyName: '',
-      companyCity: '',
-      companyCountry: '',
+      companies: [],
       position: [],
       startMonth: null,
       startYear: "",
@@ -216,9 +214,7 @@ const LebenslaufInput: React.FC = () => {
                 form={(() => {
                   const experience = berufserfahrung.find(e => e.id === selectedExperienceId);
                   return {
-                    companyName: experience?.companyName || "",
-                    companyCity: experience?.companyCity || "",
-                    companyCountry: experience?.companyCountry || "",
+                    companies: Array.isArray(experience?.companies) ? experience.companies : [],
                     position: Array.isArray(experience?.position) ? experience.position : [],
                     startMonth: experience?.startMonth || null,
                     startYear: experience?.startYear || "",

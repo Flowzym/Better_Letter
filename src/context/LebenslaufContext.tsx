@@ -17,9 +17,7 @@ export interface PersonalData {
 
 export interface Berufserfahrung {
   id: string;
-  companyName: string;
-  companyCity: string;
-  companyCountry: string;
+  companies: string[];
   position: string[];
   startMonth: string | null;
   startYear: string;

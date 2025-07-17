@@ -154,23 +154,13 @@ export default function LebenslaufPreview() {
           <div className="flex items-center mb-1">
             {/* Icon entfernt */}
             <EditablePreviewText
-              value={`${exp.companyName || ''}${exp.companyCity ? `, ${exp.companyCity}` : ''}${exp.companyCountry ? `, ${exp.companyCountry}` : ''}`}
-              onSave={(newValue) => handleExperienceFieldUpdate(exp.id, 'companyInfo', newValue)}
+              value={Array.isArray(exp.companies) ? (exp.companies || []).join(', ') : (exp.companies || "")}
+              onSave={(newValue) => handleExperienceFieldUpdate(exp.id, 'companies', newValue)}
               className="font-bold text-lg text-gray-900"
-              placeholder="Position eingeben..."
+              placeholder="Unternehmen eingeben..."
             />
           </div>
 
-           <div className="flex items-center mb-1">
-              {/* Icon entfernt */}
-              <EditablePreviewText
-                value={Array.isArray(exp.companies) ? (exp.companies || []).join(', ') : (exp.companies || "")}
-                onSave={(newValue) => handleExperienceFieldUpdate(exp.id, 'companies', newValue)}
-                className="italic text-gray-500"
-                placeholder="Unternehmen eingeben..."
-            />
-          </div>
-          
           {/* Drag-and-Drop Aufgabenbereiche */}
           {Array.isArray(exp.aufgabenbereiche) && exp.aufgabenbereiche.length > 0 && (
             <ReactSortable
