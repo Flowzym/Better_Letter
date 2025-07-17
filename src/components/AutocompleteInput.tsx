@@ -44,6 +44,7 @@ export default function AutocompleteInput<T = string>({
   const [isOpen, setIsOpen] = useState(false);
   const [filteredSuggestions, setFilteredSuggestions] = useState<T[]>([]);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const [dropdownWidth, setDropdownWidth] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -86,6 +87,25 @@ export default function AutocompleteInput<T = string>({
       container.classList.add('autocomplete-input');
     }
   }, []);
+
+  // Update dropdown width when input width changes or dropdown opens
+  useEffect(() => {
+    if (isOpen && inputRef.current) {
+      setDropdownWidth(inputRef.current.offsetWidth);
+    }
+  }, [isOpen]);
+
+  // Update dropdown width on window resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (isOpen && inputRef.current) {
+        setDropdownWidth(inputRef.current.offsetWidth);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isOpen]);
 
   // Intelligent filtering and sorting of suggestions
   useEffect(() => {
@@ -332,10 +352,9 @@ export default function AutocompleteInput<T = string>({
         {isOpen && filteredSuggestions.length > 0 && (
         <div
           ref={dropdownRef}
-          className="absolute z-50 mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto"
+          className="absolute z-50 mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto left-0"
           style={{ 
-            width: inputRef.current?.offsetWidth + 'px',
-            left: '0'
+            width: dropdownWidth ? `${dropdownWidth}px` : 'auto'
           }}
           role="listbox"
           aria-label="Vorschläge"
