@@ -216,22 +216,19 @@ const LebenslaufInput: React.FC = () => {
                 form={(() => {
                   const experience = berufserfahrung.find(e => e.id === selectedExperienceId);
                   return {
-                    companyName: experience?.companyName || '',
-                    companyCity: experience?.companyCity || '',
-                    companyCountry: experience?.companyCountry || '',
-                    position: experience?.position || [],
+                    companyName: experience?.companyName || "",
+                    companyCity: experience?.companyCity || "",
+                    companyCountry: experience?.companyCountry || "",
+                    position: Array.isArray(experience?.position) ? experience.position : [],
                     startMonth: experience?.startMonth || null,
                     startYear: experience?.startYear || "",
                     endMonth: experience?.endMonth || null,
                     endYear: experience?.endYear || null,
                     isCurrent: experience?.isCurrent || false,
-                    aufgabenbereiche: experience?.aufgabenbereiche || []
+                    aufgabenbereiche: Array.isArray(experience?.aufgabenbereiche) ? experience.aufgabenbereiche : []
                   };
                 })()}
-                selectedPositions={(() => {
-                  const experience = berufserfahrung.find(e => e.id === selectedExperienceId);
-                  return experience?.position || [];
-                })()}
+                selectedPositions={berufserfahrung.find(e => e.id === selectedExperienceId)?.position || []}
                 onUpdateField={(field, value) => {
                   if (selectedExperienceId) {
                     updateExperienceField(selectedExperienceId, field, value);

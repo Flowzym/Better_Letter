@@ -62,6 +62,7 @@ export interface LebenslaufContextType {
   softSkills: string[];
   cvSuggestions: CVSuggestions;
   favoritePositions: string[];
+  favoriteCompanies: string[];
   favoriteCities: string[];
   favoriteTasks: string[];
   favoriteSkills: string[];
@@ -83,6 +84,7 @@ export interface LebenslaufContextType {
   updateSkills: (skills: string[]) => void;
   updateSoftSkills: (softSkills: string[]) => void;
   toggleFavoritePosition: (position: string) => void;
+  toggleFavoriteCompany: (company: string) => void;
   toggleFavoriteCity: (city: string) => void;
   toggleFavoriteTask: (task: string) => void;
   toggleFavoriteSkill: (skill: string) => void;
@@ -141,6 +143,7 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
   
   // Favorites
   const [favoritePositions, setFavoritePositions] = useState<string[]>([]);
+  const [favoriteCompanies, setFavoriteCompanies] = useState<string[]>([]);
   const [favoriteCities, setFavoriteCities] = useState<string[]>([]);
   const [favoriteTasks, setFavoriteTasks] = useState<string[]>([]);
   const [favoriteSkills, setFavoriteSkills] = useState<string[]>([]);
@@ -197,6 +200,9 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
     }
     if (savedFavoritePositions) {
       setFavoritePositions(JSON.parse(savedFavoritePositions));
+    }
+    if (savedFavoriteCompanies) { 
+      setFavoriteCities(JSON.parse(savedFavoriteCities));
     }
     if (savedFavoriteCities) {
       setFavoriteCities(JSON.parse(savedFavoriteCities));
@@ -266,6 +272,10 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
   useEffect(() => {
     localStorage.setItem('favoritePositions', JSON.stringify(favoritePositions));
   }, [favoritePositions]);
+
+  useEffect(() => {
+    localStorage.setItem('favoriteCompanies', JSON.stringify(favoriteCompanies));
+  }, [favoriteCompanies]);
 
   useEffect(() => {
     localStorage.setItem('favoriteCities', JSON.stringify(favoriteCities));
@@ -390,6 +400,14 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
     );
   };
 
+  const toggleFavoriteCompany = (company: string) => {
+    setFavoriteCompanies(prev => 
+      prev.includes(company) 
+        ? prev.filter(c => c !== company)
+        : [...prev, company]
+    );
+  };
+
   const toggleFavoriteCity = (city: string) => {
     setFavoriteCities(prev => 
       prev.includes(city) 
@@ -505,6 +523,7 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
     softSkills,
     cvSuggestions,
     favoritePositions,
+    favoriteCompanies,
     favoriteCities,
     favoriteTasks,
     favoriteSkills,
@@ -527,9 +546,10 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
     updateSoftSkills,
     selectExperience,
     selectEducation,
+    selectEducation,
     setActiveTab,
     toggleFavoritePosition,
-    toggleFavoriteCity,
+    toggleFavoriteCompany,
     toggleFavoriteTask,
     toggleFavoriteSkill,
     toggleFavoriteSoftSkill,

@@ -4,6 +4,7 @@ import TasksTagInput from './TasksTagInput';
 import TextInput from './TextInput';
 import CountryDropdown from './CountryDropdown';
 import AutocompleteInput from './AutocompleteInput';
+import TagSelectorWithFavorites from './TagSelectorWithFavorites';
 import { Eraser } from 'lucide-react';
 import { Berufserfahrung, useLebenslauf } from '../context/LebenslaufContext';
 import { CVSuggestionConfig } from '../services/supabaseService';
@@ -24,7 +25,7 @@ export default function ExperienceForm({
   onPositionsChange,
   cvSuggestions,
 }: ExperienceFormProps) {
-  const { favoriteTasks, favoriteCities, toggleFavoriteCity } = useLebenslauf();
+  const { favoriteTasks, favoriteCities, toggleFavoriteCity, favoritePositions, toggleFavoritePosition } = useLebenslauf();
 
   const hasZeitraumData =
     form.startMonth !== null ||
@@ -123,7 +124,8 @@ export default function ExperienceForm({
         </div>
         <div className="space-y-4">
           <TextInput
-            label="Unternehmen"
+            id="company-name"
+            label="Unternehmen" 
             value={form.companyName}
             onChange={(val) => onUpdateField('companyName', val)}
             placeholder="Name des Unternehmens..."
@@ -131,13 +133,13 @@ export default function ExperienceForm({
           <AutocompleteInput
             label="Ort"
             value={form.companyCity}
-            onChange={(val) => onUpdateField('companyCity', val)}
-            onAdd={(val) => onUpdateField('companyCity', val as string)}
-            onFavoriteClick={(val) => toggleFavoriteCity(val as string)}
+            onChange={(val) => onUpdateField('companyCity', val)} 
+            onAdd={(val) => onUpdateField('companyCity', val as string)} 
+            onFavoriteClick={(val) => toggleFavoriteCity(val as string)} 
             suggestions={favoriteCities}
             placeholder="Ort des Unternehmens..."
             showFavoritesButton={true}
-            showAddButton={false}
+            showAddButton={true}
           />
           <CountryDropdown
             label="Land"
@@ -164,23 +166,16 @@ export default function ExperienceForm({
             </button>
           )}
         </div>
-        <AutocompleteInput
-          label=""
-          value={selectedPositions.join(', ')}
+        <TagSelectorWithFavorites
+          label="Position"
+          value={selectedPositions}
           onChange={(val) => {
-            const positions = val.split(',').map(p => p.trim()).filter(p => p);
-            onPositionsChange(positions);
-            onUpdateField('position', positions);
+            onPositionsChange(val);
+            onUpdateField('position', val);
           }}
-          onAdd={(val) => {
-            if (typeof val === 'string') {
-              const positions = [...selectedPositions, val];
-              onPositionsChange(positions);
-              onUpdateField('position', positions);
-            }
-          }}
-          suggestions={cvSuggestions.positions}
-          placeholder="Position eingeben..."
+          options={[]}
+          allowCustom={true}
+          suggestions={cvSuggestions.positions || []}
         />
       </div>
 
@@ -201,7 +196,7 @@ export default function ExperienceForm({
         <TasksTagInput
           value={form.aufgabenbereiche}
           onChange={(val) => onUpdateField('aufgabenbereiche', val)}
-          aiSuggestions={aiTaskSuggestions}
+          aiSuggestions={aiTaskSuggestions || []}
           suggestions={cvSuggestions.aufgabenbereiche}
           positionen={selectedPositions}
         />
