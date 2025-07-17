@@ -231,7 +231,6 @@ export default function AutocompleteInput<T = string>({
   return (
     <div
       ref={containerRef}
-      onFavoriteClick(value);
     >
       {label && (
         <label
