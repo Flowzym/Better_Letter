@@ -70,6 +70,12 @@ const LebenslaufInput: React.FC = () => {
     addExperience(newExp);
   };
 
+  // Funktion zum Deselektieren aller Einträge (für Floating Button)
+  const deselectAllEntries = () => {
+    selectExperience('');
+    selectEducation('');
+  };
+
   // Hilfsfunktion zum Erstellen einer neuen Ausbildung
   const createEmptyEducation = () => {
     // Immer eine neue Ausbildung erstellen, wenn der Button geklickt wird
@@ -196,18 +202,9 @@ const LebenslaufInput: React.FC = () => {
       case 'experience':
         return (
           <div className="space-y-6">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium text-gray-900">
-                Berufserfahrung {berufserfahrung.length > 0 ? `(${berufserfahrung.length})` : ''}
-              </h3>
-              <button
-                onClick={createEmptyExperience}
-                className="flex items-center justify-center w-10 h-10 text-white rounded-lg transition-colors duration-200"
-                style={{ backgroundColor: '#F29400', width: '40px', height: '40px' }}
-              >
-                <Plus className="h-4 w-4" />
-              </button>
-            </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Berufserfahrung {berufserfahrung.length > 0 ? `(${berufserfahrung.length})` : ''}
+            </h3>
             {/* Immer das Formular anzeigen, unabhängig davon, ob ein Eintrag ausgewählt ist */}
             {(selectedExperienceId || berufserfahrung.length > 0) && (
               <ExperienceForm
@@ -244,18 +241,9 @@ const LebenslaufInput: React.FC = () => {
       case 'education':
         return (
           <div className="space-y-6">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium text-gray-900">
-                Ausbildung {ausbildung.length > 0 ? `(${ausbildung.length})` : ''}
-              </h3>
-              <button
-                onClick={createEmptyEducation}
-                className="flex items-center justify-center w-10 h-10 text-white rounded-lg transition-colors duration-200"
-                style={{ backgroundColor: '#F29400', width: '40px', height: '40px' }}
-              >
-                <Plus className="h-4 w-4" />
-              </button>
-            </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Ausbildung {ausbildung.length > 0 ? `(${ausbildung.length})` : ''}
+            </h3>
             {/* Immer das Formular anzeigen, unabhängig davon, ob ein Eintrag ausgewählt ist */}
             {(selectedEducationId || ausbildung.length > 0) && (
               <AusbildungForm
@@ -293,7 +281,7 @@ const LebenslaufInput: React.FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 relative">
       <div className="flex items-center gap-2 p-4 border-b border-gray-200">
         <div className="w-5 h-5 text-orange-500">
           <svg viewBox="0 0 24 24" fill="currentColor">
@@ -399,6 +387,36 @@ const LebenslaufInput: React.FC = () => {
 
       <div className="p-4">
         {renderTabContent()}
+      </div>
+
+      {/* Floating Button */}
+      <div className="absolute bottom-4 right-4 z-10">
+        <button
+          onClick={() => {
+            if (selectedExperienceId || selectedEducationId) {
+              // Aktualisieren: Alle Einträge deselektieren
+              deselectAllEntries();
+            } else {
+              // Neue Berufserfahrung hinzufügen
+              createEmptyExperience();
+            }
+          }}
+          className="flex items-center justify-center w-14 h-14 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+          style={{ backgroundColor: '#F29400' }}
+          title={
+            selectedExperienceId || selectedEducationId 
+              ? "Bearbeitung beenden" 
+              : "Neue Berufserfahrung hinzufügen"
+          }
+        >
+          {selectedExperienceId || selectedEducationId ? (
+            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          ) : (
+            <Plus className="h-6 w-6" />
+          )}
+        </button>
       </div>
     </div>
   );
