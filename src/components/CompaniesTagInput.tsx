@@ -16,8 +16,8 @@ export default function CompaniesTagInput({ value, onChange, suggestions = [] }:
     useLebenslaufContext();
 
   const addCompany = (val?: string) => {
-    if (!val && !inputValue.trim()) return;
-    const c = val || inputValue.trim();
+    const c = (val ?? inputValue).trim();
+    if (!c || value.includes(c)) return;
     if (value.includes(c)) return;
     onChange([...value, c]);
     setInputValue('');
@@ -32,8 +32,8 @@ export default function CompaniesTagInput({ value, onChange, suggestions = [] }:
   };
 
   const handleAddFavoriteInput = (val?: string) => {
-    if (!val && !inputValue.trim()) return;
-    const company = val || inputValue.trim();
+    const company = (val ?? inputValue).trim();
+    if (!company) return;
     toggleFavoriteCompany(company);
     setInputValue('');
   };
