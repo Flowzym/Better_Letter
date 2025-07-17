@@ -1,724 +1,125 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  ReactNode,
-  useEffect,
-  Dispatch,
-  SetStateAction,
-} from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import {
-  CVSuggestionConfig,
-  loadCVSuggestions,
-  ProfileSourceMapping,
-} from '../services/supabaseService';
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en-US"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en-US"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en-US"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en-US"> <!--<![endif]-->
+<head>
 
-export interface Berufserfahrung {
-  id: string;
-  companyName: string;
-  companyCity: string;
-  companyCountry: string;
-  companyCity: string;
-  companyCountry: string;
-  position: string[];
-  startMonth: string | null;
-  startYear: string;
-  endMonth: string | null;
-  endYear: string | null;
-  isCurrent: boolean;
-  aufgabenbereiche: string[];
-}
 
-export interface AusbildungEntry {
-  id: string;
-  institution: string[];
-  ausbildungsart: string[]; 
-  abschluss: string[]; 
-  startMonth: string | null;
-  startYear: string;
-  endMonth: string | null;
-  endYear: string | null;
-  isCurrent: boolean;
-  zusatzangaben: string; 
-}
+<title>bolt.new | 524: A timeout occurred</title>
+<meta charset="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="stylesheet" id="cf_styles-css" href="/cdn-cgi/styles/main.css" />
 
-export type AusbildungEntryForm = Omit<AusbildungEntry, 'id'>;
 
-export interface FachkompetenzEntry {
-  id: string;
-  kategorie: string;
-  kompetenzen: string[];
-  level?: string;
-}
-
-export interface SoftskillEntry {
-  id: string;
-  text: string;
-  bisTags: string[];
-}
-
-export interface PersonalData {
-  vorname: string;
-  nachname: string;
-  titel: string;
-  email: string;
-  telefon: string;
-  telefonVorwahl: string;
-  adresse: string;
-  plz: string;
-  ort: string;
-  land: string;
-  geburtsort: string;
-  geburtsland: string;
-  geburtsdatum: string;
-  staatsangehoerigkeit: string;
-  familienstand: string;
-  kinder: string[];
-  socialMedia: string[];
-  ausland: boolean;
-  staatsbuergerschaftCheckbox: boolean;
-}
-
-interface LebenslaufContextType {
-  personalData: PersonalData;
-  updatePersonalData: (data: Partial<PersonalData>) => void;
-  berufserfahrungen: Berufserfahrung[];
-  ausbildungen: AusbildungEntry[];
-  fachkompetenzen: FachkompetenzEntry[];
-  softskills: SoftskillEntry[];
-  selectedExperienceId: string | null;
-  isEditingExperience: boolean;
-  addExperience: (data: Omit<Berufserfahrung, 'id'>) => Promise<void>;
-  updateExperience: (id: string, data: Omit<Berufserfahrung, 'id'>) => Promise<void>;
-  deleteExperience: (id: string) => Promise<void>;
-  selectExperience: (id: string | null) => void;
-  selectedEducationId: string | null;
-  isEditingEducation: boolean;
-  addEducation: (data: AusbildungEntryForm) => Promise<void>;
-  updateEducation: (id: string, data: AusbildungEntryForm) => Promise<void>;
-  deleteEducation: (id: string) => Promise<void>;
-  selectEducation: (id: string | null) => void;
-  addSkill: (data: Omit<FachkompetenzEntry, 'id'>) => Promise<void>;
-  updateSkill: (id: string, data: Omit<FachkompetenzEntry, 'id'>) => Promise<void>;
-  deleteSkill: (id: string) => Promise<void>;
-  addSoftskill: (data: Omit<SoftskillEntry, 'id'>) => Promise<void>;
-  updateSoftskill: (id: string, data: Omit<SoftskillEntry, 'id'>) => Promise<void>;
-  deleteSoftskill: (id: string) => Promise<void>;
-  favoritePositions: string[];
-  favoriteTasks: string[];
-  favoriteCompanies: string[];
-  favoriteCities: string[];
-  favoriteCities: string[];
-  toggleFavoritePosition: (pos: string) => void;
-  toggleFavoriteTask: (task: string) => void;
-  toggleFavoriteCompany: (company: string) => void;
-  toggleFavoriteCity: (city: string) => void;
-  toggleFavoriteCity: (city: string) => void;
-  favoriteInstitutions: string[];
-  favoriteAusbildungsarten: string[];
-  favoriteAbschluesse: string[];
-  toggleFavoriteInstitution: (institution: string) => void;
-  toggleFavoriteAusbildungsart: (art: string) => void;
-  toggleFavoriteAbschluss: (abschluss: string) => void;
-  cvSuggestions: CVSuggestionConfig;
-  updateEducationField: (id: string, fieldName: keyof AusbildungEntryForm, newValue: string) => void;
-  updateExperienceTask: (expId: string, taskIndex: number, newTaskValue: string) => void;
-  updateExperienceTasksOrder: (id: string, newTasks: string[]) => void;
-  addExperienceTask: (id: string, newTask: string) => void;
-  setActiveTab?: Dispatch<SetStateAction<string>>;
-  updateExperienceField: <K extends keyof Omit<Berufserfahrung, 'id'>>(
-    id: string, 
-    fieldName: K, 
-    newValue: Omit<Berufserfahrung, 'id'>[K]
-  ) => void;
-}
-
-const LebenslaufContext = createContext<LebenslaufContextType | undefined>(undefined);
-
-export function LebenslaufProvider({
-children,
-profileSourceMappings = [],
-}: {
-children: ReactNode;
-profileSourceMappings?: ProfileSourceMapping[];
-
-}) {
-  const [activeTab, setActiveTab] = useState<string>('personal');
-  const LOCAL_KEY = 'berufserfahrungen';
-  const LOCAL_EDU_KEY = 'ausbildungen';
-  const LOCAL_SKILL_KEY = 'fachkompetenzen';
-  const LOCAL_SOFT_KEY = 'softskills';
-  const LOCAL_PERSONAL_KEY = 'personalData';
-
-  const [personalData, setPersonalData] = useState<PersonalData>(() => {
-    try {
-      const saved = localStorage.getItem(LOCAL_PERSONAL_KEY);
-      return saved ? JSON.parse(saved) as PersonalData : {
-        titel: '',
-        vorname: '',
-        nachname: '',
-        email: '',
-        telefon: '',
-        telefonVorwahl: '+43',
-        adresse: '',
-        plz: '',
-        ort: '',
-        land: '',
-        geburtsort: '',
-        geburtsland: '',
-        geburtsdatum: '',
-        staatsangehoerigkeit: '',
-        familienstand: '',
-        kinder: [],
-        socialMedia: [],
-        ausland: false,
-        staatsbuergerschaftCheckbox: false
-      };
-    } catch (err) {
-      console.error('Failed to load personal data from localStorage:', err);
-      return {
-        titel: '',
-        vorname: '',
-        nachname: '',
-        email: '',
-        telefon: '',
-        telefonVorwahl: '+43',
-        adresse: '',
-        plz: '',
-        ort: '',
-        land: '',
-        geburtsort: '',
-        geburtsland: '',
-        geburtsdatum: '',
-        staatsangehoerigkeit: '',
-        familienstand: '',
-        kinder: [],
-        socialMedia: [],
-        ausland: false,
-        staatsbuergerschaftCheckbox: false
-      };
-    }
-  });
-
-  const [berufserfahrungen, setBerufserfahrungen] = useState<Berufserfahrung[]>(() => {
-    try {
-      const saved = localStorage.getItem(LOCAL_KEY);
-      return saved ? (JSON.parse(saved) as Berufserfahrung[]) : [];
-    } catch (err) {
-      console.error('Failed to load experiences from localStorage:', err);
-      return [];
-    }
-  });
-
-  const [ausbildungen, setAusbildungen] = useState<AusbildungEntry[]>(() => {
-    try {
-      const saved = localStorage.getItem(LOCAL_EDU_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved) as AusbildungEntry[];
-        // Ensure all institution fields are arrays
-        return parsed.map(entry => ({
-          ...entry,
-          institution: Array.isArray(entry.institution) 
-            ? entry.institution 
-            : typeof entry.institution === 'string' 
-              ? [entry.institution] 
-              : [],
-          ausbildungsart: Array.isArray(entry.ausbildungsart) 
-            ? entry.ausbildungsart 
-            : typeof entry.ausbildungsart === 'string' 
-              ? [entry.ausbildungsart] 
-              : [],
-          abschluss: Array.isArray(entry.abschluss) 
-            ? entry.abschluss 
-            : typeof entry.abschluss === 'string' 
-              ? [entry.abschluss] 
-              : []
-        }));
-      }
-      return [];
-    } catch (err) {
-      console.error('Failed to load educations from localStorage:', err);
-      return [];
-    }
-  });
-
-  const [fachkompetenzen, setFachkompetenzen] = useState<FachkompetenzEntry[]>(() => {
-    try {
-      const saved = localStorage.getItem(LOCAL_SKILL_KEY);
-      return saved ? (JSON.parse(saved) as FachkompetenzEntry[]) : [];
-    } catch (err) {
-      console.error('Failed to load skills from localStorage:', err);
-      return [];
-    }
-  });
-
-  const [softskills, setSoftskills] = useState<SoftskillEntry[]>(() => {
-    try {
-      const saved = localStorage.getItem(LOCAL_SOFT_KEY);
-      return saved ? (JSON.parse(saved) as SoftskillEntry[]) : [];
-    } catch (err) {
-      console.error('Failed to load softskills from localStorage:', err);
-      return [];
-    }
-  });
-  const [selectedExperienceId, setSelectedExperienceId] = useState<string | null>(null);
-  const [isEditingExperience, setIsEditingExperience] = useState(false);
-  const [selectedEducationId, setSelectedEducationId] = useState<string | null>(null);
-  const [isEditingEducation, setIsEditingEducation] = useState(false);
-  
-  // Favoriten mit localStorage-Persistenz
-  const [favoritePositions, setFavoritePositions] = useState<string[]>(() => {
-    try {
-      const saved = localStorage.getItem('favoritePositions');
-      return saved ? JSON.parse(saved) : [];
-    } catch (err) {
-      console.error('Failed to load favoritePositions from localStorage:', err);
-      return [];
-    }
-  });
-  
-  const [favoriteInstitutions, setFavoriteInstitutions] = useState<string[]>(() => {
-    try {
-      const saved = localStorage.getItem('favoriteInstitutions');
-      return saved ? JSON.parse(saved) : [];
-    } catch (err) {
-      console.error('Failed to load favoriteInstitutions from localStorage:', err);
-      return [];
-    }
-  });
-  
-  const [favoriteAusbildungsarten, setFavoriteAusbildungsarten] = useState<string[]>(() => {
-    try {
-      const saved = localStorage.getItem('favoriteAusbildungsarten');
-      return saved ? JSON.parse(saved) : [];
-    } catch (err) {
-      console.error('Failed to load favoriteAusbildungsarten from localStorage:', err);
-      return [];
-    }
-  });
-  
-  const [favoriteAbschluesse, setFavoriteAbschluesse] = useState<string[]>(() => {
-    try {
-      const saved = localStorage.getItem('favoriteAbschluesse');
-      return saved ? JSON.parse(saved) : [];
-    } catch (err) {
-      console.error('Failed to load favoriteAbschluesse from localStorage:', err);
-      return [];
-    }
-  });
-  
-  const [favoriteTasks, setFavoriteTasks] = useState<string[]>(() => {
-    try {
-      const saved = localStorage.getItem('favoriteTasks');
-      return saved ? JSON.parse(saved) : [];
-    } catch (err) {
-      console.error('Failed to load favoriteTasks from localStorage:', err);
-      return [];
-    }
-  });
-  
-  const [favoriteCompanies, setFavoriteCompanies] = useState<string[]>(() => {
-    try {
-      const saved = localStorage.getItem('favoriteCompanies');
-      return saved ? JSON.parse(saved) as string[] : [];
-    } catch (err) {
-      console.error('Failed to load favoriteCompanies from localStorage:', err);
-      return [];
-    }
-  });
-  
-  const [favoriteCities, setFavoriteCities] = useState<string[]>(() => {
-    try {
-      const saved = localStorage.getItem('favoriteCities');
-      return saved ? JSON.parse(saved) as string[] : [];
-    } catch (err) {
-      console.error('Failed to load favoriteCities from localStorage:', err);
-      return [];
-    }
-  });
-  
-  const [favoriteCities, setFavoriteCities] = useState<string[]>(() => {
-    try {
-      const saved = localStorage.getItem('favoriteCities');
-      return saved ? JSON.parse(saved) : [];
-    } catch (err) {
-      console.error('Failed to load favoriteCities from localStorage:', err);
-      return [];
-    }
-  });
-  
-  // Speichern der Favoriten im localStorage
-  useEffect(() => {
-    localStorage.setItem('favoritePositions', JSON.stringify(favoritePositions));
-  }, [favoritePositions]);
-  
-  useEffect(() => {
-    localStorage.setItem('favoriteInstitutions', JSON.stringify(favoriteInstitutions));
-  }, [favoriteInstitutions]);
-  
-  useEffect(() => {
-    localStorage.setItem('favoriteAusbildungsarten', JSON.stringify(favoriteAusbildungsarten));
-  }, [favoriteAusbildungsarten]);
-  
-  useEffect(() => {
-    localStorage.setItem('favoriteAbschluesse', JSON.stringify(favoriteAbschluesse));
-  }, [favoriteAbschluesse]);
-  
-  useEffect(() => {
-    localStorage.setItem('favoriteTasks', JSON.stringify(favoriteTasks));
-  }, [favoriteTasks]);
-  
-  useEffect(() => {
-    localStorage.setItem('favoriteCompanies', JSON.stringify(favoriteCompanies));
-  }, [favoriteCompanies]);
-
-  useEffect(() => {
-    localStorage.setItem('favoriteCities', JSON.stringify(favoriteCities));
-  }, [favoriteCities]);
-  
-  useEffect(() => {
-    localStorage.setItem('favoriteCities', JSON.stringify(favoriteCities));
-  }, [favoriteCities]);
-  
-  const [cvSuggestions, setCvSuggestions] = useState<CVSuggestionConfig>({
-    companies: [],
-    positions: [],
-    aufgabenbereiche: [],
-  });
-
-  useEffect(() => {
-    if (profileSourceMappings?.length > 0) {
-      loadCVSuggestions(profileSourceMappings).then(setCvSuggestions);
-    }
-  }, [profileSourceMappings]);
-
-  const updatePersonalData = (data: Partial<PersonalData>) => {
-    setPersonalData(prev => {
-      const updated = { ...prev, ...data };
-      localStorage.setItem(LOCAL_PERSONAL_KEY, JSON.stringify(updated));
-      return updated;
-    });
-  };
-
-  const addExperience = async (data: Omit<Berufserfahrung, 'id'>) => {
-    const newExp = { ...data, id: uuidv4() };
-    // Stellen Sie sicher, dass die neuen Felder initialisiert sind
-    if (!newExp.companyName) newExp.companyName = '';
-    if (!newExp.companyCity) newExp.companyCity = '';
-    if (!newExp.companyCountry) newExp.companyCountry = '';
+</head>
+<body>
+<div id="cf-wrapper">
+    <div id="cf-error-details" class="p-0">
+        <header class="mx-auto pt-10 lg:pt-6 lg:px-8 w-240 lg:w-full mb-8">
+            <h1 class="inline-block sm:block sm:mb-2 font-light text-60 lg:text-4xl text-black-dark leading-tight mr-2">
+              <span class="inline-block">A timeout occurred</span>
+              <span class="code-label">Error code 524</span>
+            </h1>
+            <div>
+               Visit <a href="https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_524&utm_campaign=bolt.new" target="_blank" rel="noopener noreferrer">cloudflare.com</a> for more information.
+            </div>
+            <div class="mt-3">2025-07-17 08:32:43 UTC</div>
+        </header>
+        <div class="my-8 bg-gradient-gray">
+            <div class="w-240 lg:w-full mx-auto">
+                <div class="clearfix md:px-8">
+                  
+<div id="cf-browser-status" class=" relative w-1/3 md:w-full py-15 md:p-0 md:py-8 md:text-left md:border-solid md:border-0 md:border-b md:border-gray-400 overflow-hidden float-left md:float-none text-center">
+  <div class="relative mb-10 md:m-0">
     
-    console.log('Neue Berufserfahrung wird hinzugefügt:', newExp);
-    setBerufserfahrungen(prev => {
-      const updated = [...prev, newExp];
-      localStorage.setItem(LOCAL_KEY, JSON.stringify(updated));
-      console.log('Berufserfahrungen im localStorage gespeichert:', updated);
-      return updated;
-    });
-    // Persisting to Supabase removed
-    setSelectedExperienceId(newExp.id); // Sofort auswählen
-    setIsEditingExperience(false);
-  };
-
-  const updateExperience = async (id: string, data: Omit<Berufserfahrung, 'id'>) => {
-    const updatedExp = { ...data, id };
-    setBerufserfahrungen(prev => {
-      const updated = prev.map(exp => (exp.id === id ? updatedExp : exp));
-      localStorage.setItem(LOCAL_KEY, JSON.stringify(updated));
-      return updated;
-    });
-    // Persisting to Supabase removed
-    setIsEditingExperience(false);
-  };
-
-  const deleteExperience = async (id: string) => {
-    setBerufserfahrungen(prev => {
-      const updated = prev.filter(exp => exp.id !== id);
-      localStorage.setItem(LOCAL_KEY, JSON.stringify(updated));
-      return updated;
-    });
-    setSelectedExperienceId(null);
-    setIsEditingExperience(false);
-  };
-
-  const addEducation = async (data: AusbildungEntryForm) => {
-    const newEntry: AusbildungEntry = { ...data, id: uuidv4() };
-    console.log('Neue Ausbildung wird hinzugefügt:', newEntry);
-    setAusbildungen(prev => {
-      const updated = [...prev, newEntry];
-      localStorage.setItem(LOCAL_EDU_KEY, JSON.stringify(updated));
-      console.log('Ausbildungen im localStorage gespeichert:', updated);
-      return updated;
-    });
-    setSelectedEducationId(newEntry.id); // Sofort auswählen
-    setIsEditingEducation(false);
-  };
-
-  const updateEducation = async (id: string, data: AusbildungEntryForm) => {
-    const updatedEntry: AusbildungEntry = { ...data, id };
-    setAusbildungen(prev => {
-      const updated = prev.map(e => (e.id === id ? updatedEntry : e));
-      localStorage.setItem(LOCAL_EDU_KEY, JSON.stringify(updated));
-      return updated;
-    });
-    setIsEditingEducation(false);
-  };
-
-  const deleteEducation = async (id: string) => {
-    setAusbildungen(prev => {
-      const updated = prev.filter(e => e.id !== id);
-      localStorage.setItem(LOCAL_EDU_KEY, JSON.stringify(updated));
-      return updated;
-    });
-    setSelectedEducationId(null);
-    setIsEditingEducation(false);
-  };
-
-  const addSkill = async (data: Omit<FachkompetenzEntry, 'id'>) => {
-    const newEntry = { ...data, id: uuidv4() };
-    setFachkompetenzen(prev => {
-      const updated = [...prev, newEntry];
-      localStorage.setItem(LOCAL_SKILL_KEY, JSON.stringify(updated));
-      return updated;
-    });
-  };
-
-  const updateSkill = async (id: string, data: Omit<FachkompetenzEntry, 'id'>) => {
-    const updatedEntry = { ...data, id };
-    setFachkompetenzen(prev => {
-      const updated = prev.map(s => (s.id === id ? updatedEntry : s));
-      localStorage.setItem(LOCAL_SKILL_KEY, JSON.stringify(updated));
-      return updated;
-    });
-  };
-
-  const deleteSkill = async (id: string) => {
-    setFachkompetenzen(prev => {
-      const updated = prev.filter(s => s.id !== id);
-      localStorage.setItem(LOCAL_SKILL_KEY, JSON.stringify(updated));
-      return updated;
-    });
-  };
-
-  const addSoftskill = async (data: Omit<SoftskillEntry, 'id'>) => {
-    const newEntry = { ...data, id: uuidv4() };
-    setSoftskills(prev => {
-      const updated = [...prev, newEntry];
-      localStorage.setItem(LOCAL_SOFT_KEY, JSON.stringify(updated));
-      return updated;
-    });
-  };
-
-  const updateSoftskill = async (id: string, data: Omit<SoftskillEntry, 'id'>) => {
-    const updatedEntry = { ...data, id };
-    setSoftskills(prev => {
-      const updated = prev.map(s => (s.id === id ? updatedEntry : s));
-      localStorage.setItem(LOCAL_SOFT_KEY, JSON.stringify(updated));
-      return updated;
-    });
-  };
-
-  const deleteSoftskill = async (id: string) => {
-    setSoftskills(prev => {
-      const updated = prev.filter(s => s.id !== id);
-      localStorage.setItem(LOCAL_SOFT_KEY, JSON.stringify(updated));
-      return updated;
-    });
-  };
-
-  const selectExperience = (id: string | null) => {
-    setSelectedExperienceId(id);
-    setIsEditingExperience(id !== null);
-    if (id !== null) {
-      setSelectedEducationId(null);
-      setIsEditingEducation(false);
-      setActiveTab('experience');
-    }
-  };
-
-  const selectEducation = (id: string | null) => {
-    setSelectedEducationId(id);
-    setIsEditingEducation(id !== null);
-    if (id !== null) {
-      setSelectedExperienceId(null);
-      setIsEditingExperience(false);
-      setActiveTab('education');
-    }
-  };
-
-  const toggleFavoritePosition = (pos: string) => {
-    setFavoritePositions(prev =>
-      prev.includes(pos) ? prev.filter(p => p !== pos) : [...prev, pos]
-    );
-  };
-
-  const toggleFavoriteCompany = (company: string) => {
-    setFavoriteCompanies(prev =>
-      prev.includes(company) ? prev.filter(c => c !== company) : [...prev, company]
-    );
-  };
-
-  const toggleFavoriteCity = (city: string) => {
-    setFavoriteCities(prev =>
-      prev.includes(city) ? prev.filter(c => c !== city) : [...prev, city]
-    );
-  };
-  
-  const toggleFavoriteCity = (city: string) => {
-    setFavoriteCities(prev =>
-      prev.includes(city) ? prev.filter(c => c !== city) : [...prev, city]
-    );
-  };
-
-  const toggleFavoriteTask = (task: string) => {
-    setFavoriteTasks(prev =>
-      prev.includes(task) ? prev.filter(t => t !== task) : [...prev, task]
-    );
-  };
-
-  const toggleFavoriteInstitution = (institution: string) => {
-    setFavoriteInstitutions(prev =>
-      prev.includes(institution) ? prev.filter(i => i !== institution) : [...prev, institution]
-    );
-  };
-
-  const toggleFavoriteAusbildungsart = (art: string) => {
-    setFavoriteAusbildungsarten(prev =>
-      prev.includes(art) ? prev.filter(a => a !== art) : [...prev, art]
-    );
-  };
-
-  const toggleFavoriteAbschluss = (abschluss: string) => {
-    setFavoriteAbschluesse(prev =>
-      prev.includes(abschluss) ? prev.filter(a => a !== abschluss) : [...prev, abschluss]
-    );
-  };
-
-  const updateEducationField = (id: string, fieldName: keyof AusbildungEntryForm, newValue: string) => {
-    setAusbildungen(prev => {
-      const updated = prev.map(edu => 
-        edu.id === id ? { ...edu, [fieldName]: newValue || '' } : edu
-      );
-      localStorage.setItem(LOCAL_EDU_KEY, JSON.stringify(updated));
-      return updated;
-    });
-  };
-
-  const updateExperienceTask = (expId: string, taskIndex: number, newTaskValue: string) => {
-    setBerufserfahrungen(prev => {
-      const updated = prev.map(exp => {
-        if (exp.id === expId) {
-          const newTasks = [...exp.aufgabenbereiche];
-          newTasks[taskIndex] = newTaskValue;
-          return { ...exp, aufgabenbereiche: newTasks };
-        }
-        return exp;
-      });
-      localStorage.setItem(LOCAL_KEY, JSON.stringify(updated));
-      return updated;
-    });
-  };
-
-  const updateExperienceTasksOrder = (id: string, newTasks: string[]) => {
-    setBerufserfahrungen(prev => {
-      const updated = prev.map(exp => 
-        exp.id === id ? { ...exp, aufgabenbereiche: newTasks } : exp
-      );
-      localStorage.setItem(LOCAL_KEY, JSON.stringify(updated));
-      return updated;
-    });
-  };
-
-  const addExperienceTask = (id: string, newTask: string) => {
-    if (!newTask.trim()) return;
+    <span class="cf-icon-browser block md:hidden h-20 bg-center bg-no-repeat"></span>
+    <span class="cf-icon-ok w-12 h-12 absolute left-1/2 md:left-auto md:right-0 md:top-0 -ml-6 -bottom-4"></span>
     
-    setBerufserfahrungen(prev => {
-      const updated = prev.map(exp => 
-        exp.id === id 
-          ? { ...exp, aufgabenbereiche: [...exp.aufgabenbereiche, newTask.trim()] }
-          : exp
-      );
-      localStorage.setItem(LOCAL_KEY, JSON.stringify(updated));
-      return updated;
-    });
-  };
+  </div>
+  <span class="md:block w-full truncate">You</span>
+  <h3 class="md:inline-block mt-3 md:mt-0 text-2xl text-gray-600 font-light leading-1.3">
+    
+    Browser
+    
+  </h3>
+  <span class="leading-1.3 text-2xl text-green-success">Working</span>
+</div>
 
-  const updateExperienceField = <K extends keyof Omit<Berufserfahrung, 'id'>>(
-    id: string, 
-    fieldName: K, 
-    newValue: Omit<Berufserfahrung, 'id'>[K]
-  ) => {
-    setBerufserfahrungen(prev => {
-      const updated = prev.map(exp => 
-        exp.id === id ? { ...exp, [fieldName]: newValue } : exp
-      );
-      localStorage.setItem(LOCAL_KEY, JSON.stringify(updated));
-      return updated;
-    });
-  };
+<div id="cf-cloudflare-status" class=" relative w-1/3 md:w-full py-15 md:p-0 md:py-8 md:text-left md:border-solid md:border-0 md:border-b md:border-gray-400 overflow-hidden float-left md:float-none text-center">
+  <div class="relative mb-10 md:m-0">
+    <a href="https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_524&utm_campaign=bolt.new" target="_blank" rel="noopener noreferrer">
+    <span class="cf-icon-cloud block md:hidden h-20 bg-center bg-no-repeat"></span>
+    <span class="cf-icon-ok w-12 h-12 absolute left-1/2 md:left-auto md:right-0 md:top-0 -ml-6 -bottom-4"></span>
+    </a>
+  </div>
+  <span class="md:block w-full truncate">Vienna</span>
+  <h3 class="md:inline-block mt-3 md:mt-0 text-2xl text-gray-600 font-light leading-1.3">
+    <a href="https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_524&utm_campaign=bolt.new" target="_blank" rel="noopener noreferrer">
+    Cloudflare
+    </a>
+  </h3>
+  <span class="leading-1.3 text-2xl text-green-success">Working</span>
+</div>
 
-  return (
-    <LebenslaufContext.Provider
-      value={{
-        personalData,
-        updatePersonalData,
-        berufserfahrungen,
-        ausbildungen,
-        fachkompetenzen,
-        softskills,
-        selectedExperienceId,
-        isEditingExperience,
-        selectedEducationId,
-        isEditingEducation,
-        addExperience,
-        updateExperience,
-        deleteExperience,
-        selectExperience,
-        addEducation,
-        updateEducation,
-        deleteEducation,
-        selectEducation,
-        addSkill,
-        updateSkill,
-        deleteSkill,
-        addSoftskill,
-        updateSoftskill,
-        deleteSoftskill,
-        favoritePositions,
-        favoriteTasks,
-        favoriteCompanies,
-        favoriteCities,
-        favoriteCities,
-        favoriteInstitutions,
-        favoriteAusbildungsarten,
-        favoriteAbschluesse,
-        toggleFavoriteInstitution,
-        toggleFavoriteAusbildungsart,
-        toggleFavoriteAbschluss,
-        toggleFavoritePosition,
-        toggleFavoriteTask,
-        toggleFavoriteCompany,
-        toggleFavoriteCity,
-        toggleFavoriteCity,
-        cvSuggestions,
-        updateEducationField,
-        updateExperienceTask,
-        updateExperienceTasksOrder,
-        addExperienceTask,
-        setActiveTab,
-        updateExperienceField,
-      }}
-    >
-      {children}
-     </LebenslaufContext.Provider>
-   );
- }
+<div id="cf-host-status" class="cf-error-source relative w-1/3 md:w-full py-15 md:p-0 md:py-8 md:text-left md:border-solid md:border-0 md:border-b md:border-gray-400 overflow-hidden float-left md:float-none text-center">
+  <div class="relative mb-10 md:m-0">
+    
+    <span class="cf-icon-server block md:hidden h-20 bg-center bg-no-repeat"></span>
+    <span class="cf-icon-error w-12 h-12 absolute left-1/2 md:left-auto md:right-0 md:top-0 -ml-6 -bottom-4"></span>
+    
+  </div>
+  <span class="md:block w-full truncate">bolt.new</span>
+  <h3 class="md:inline-block mt-3 md:mt-0 text-2xl text-gray-600 font-light leading-1.3">
+    
+    Host
+    
+  </h3>
+  <span class="leading-1.3 text-2xl text-red-error">Error</span>
+</div>
 
- export function useLebenslaufContext() {
-   const context = useContext(LebenslaufContext);
-   if (!context) {
+                </div>
+            </div>
+        </div>
 
-    throw new Error('useLebenslaufContext must be used within LebenslaufProvider');
-  }
-  return context;
-}
+        <div class="w-240 lg:w-full mx-auto mb-8 lg:px-8">
+            <div class="clearfix">
+                <div class="w-1/2 md:w-full float-left pr-6 md:pb-10 md:pr-0 leading-relaxed">
+                    <h2 class="text-3xl font-normal leading-1.3 mb-4">What happened?</h2>
+                    <p>The origin web server timed out responding to this request.</p>
+                </div>
+                <div class="w-1/2 md:w-full float-left leading-relaxed">
+                    <h2 class="text-3xl font-normal leading-1.3 mb-4">What can I do?</h2>
+                          <h3 class="text-15 font-semibold mb-2">If you're a visitor of this website:</h3>
+      <p class="mb-6">Please try again in a few minutes.</p>
+
+      <h3 class="text-15 font-semibold mb-2">If you're the owner of this website:</h3>
+      <p><span>The connection to the origin web server was made, but the origin web server timed out before responding. The likely cause is an overloaded background task, database or application, stressing the resources on your web server. To resolve, please work with your hosting provider or web development team to free up resources for your database or overloaded application.</span> <a rel="noopener noreferrer" href="https://developers.cloudflare.com/support/troubleshooting/http-status-codes/cloudflare-5xx-errors/error-524/">Additional troubleshooting information here.</a></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="cf-error-footer cf-wrapper w-240 lg:w-full py-10 sm:py-4 sm:px-8 mx-auto text-center sm:text-left border-solid border-0 border-t border-gray-300">
+  <p class="text-13">
+    <span class="cf-footer-item sm:block sm:mb-1">Cloudflare Ray ID: <strong class="font-semibold">9608617e58d85bae</strong></span>
+    <span class="cf-footer-separator sm:hidden">&bull;</span>
+    <span id="cf-footer-item-ip" class="cf-footer-item hidden sm:block sm:mb-1">
+      Your IP:
+      <button type="button" id="cf-footer-ip-reveal" class="cf-footer-ip-reveal-btn">Click to reveal</button>
+      <span class="hidden" id="cf-footer-ip">212.241.107.153</span>
+      <span class="cf-footer-separator sm:hidden">&bull;</span>
+    </span>
+    <span class="cf-footer-item sm:block sm:mb-1"><span>Performance &amp; security by</span> <a rel="noopener noreferrer" href="https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_524&utm_campaign=bolt.new" id="brand_link" target="_blank">Cloudflare</a></span>
+    
+  </p>
+  <script>(function(){function d(){var b=a.getElementById("cf-footer-item-ip"),c=a.getElementById("cf-footer-ip-reveal");b&&"classList"in b&&(b.classList.remove("hidden"),c.addEventListener("click",function(){c.classList.add("hidden");a.getElementById("cf-footer-ip").classList.remove("hidden")}))}var a=document;document.addEventListener&&a.addEventListener("DOMContentLoaded",d)})();</script>
+</div><!-- /.error-footer -->
+
+
+    </div>
+</div>
+</body>
+</html>
