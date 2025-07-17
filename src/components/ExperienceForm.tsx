@@ -54,10 +54,6 @@ export default function ExperienceForm({
   const hasPositionData = selectedPositions.length > 0;
   const hasTaskData = form.aufgabenbereiche.length > 0;
 
-  // Prüft, ob der aktuelle Wert bereits in den Favoriten ist
-  const isCompanyInFavorites = companyNameInput.trim() !== '' && favorites.includes(companyNameInput.trim());
-  const isCityInFavorites = companyCityInput.trim() !== '' && favoriteCities.includes(companyCityInput.trim());
-  
   // Prüft, ob mindestens ein Eingabefeld gefüllt ist
   const hasInputData = companyNameInput.trim() !== '' || companyCityInput.trim() !== '';
   
@@ -131,7 +127,7 @@ export default function ExperienceForm({
         } else {
           // Entferne das letzte "&" wenn vorhanden
           const lastCity = currentCities.pop() || '';
-          const otherCities = currentCities.join(', ');
+          const otherCities = currentCities.join(',');
           setCompanyCityInput(`${otherCities}${otherCities ? ', ' : ''}${lastCity} & ${favorite}`);
         }
       }
@@ -250,7 +246,7 @@ export default function ExperienceForm({
                 onFocus={() => setIsCompanyInputFocused(true)}
                 onBlur={() => setIsCompanyInputFocused(false)}
                 onFavoriteClick={(val?: string) => {
-                  const valueToAdd = val || companyNameInput.trim();
+                  const valueToAdd = (val !== undefined) ? val : companyNameInput.trim();
                   if (valueToAdd) toggleFavoriteCompany(valueToAdd);
                 }}
                 suggestions={favorites}
@@ -270,7 +266,7 @@ export default function ExperienceForm({
                 onBlur={() => setIsCityInputFocused(false)}
                 onAdd={() => {}} // Wird nicht verwendet
                 onFavoriteClick={(val?: string) => {
-                  const valueToAdd = val || companyCityInput.trim();
+                  const valueToAdd = (val !== undefined) ? val : companyCityInput.trim();
                   if (valueToAdd) toggleFavoriteCity(valueToAdd);
                 }}
                 suggestions={favoriteCities}
@@ -295,14 +291,14 @@ export default function ExperienceForm({
           </div>
           
           {/* Unternehmen Favoriten */}
-          {favorites.filter(f => !form.companies.includes(f)).length > 0 && (
+          {favorites.length > 0 && (
             <div className="mt-4"> 
               <div className="flex items-center space-x-2 mb-1">
                 <Star className="h-4 w-4 text-gray-400" />
                 <h4 className="text-xs font-medium text-gray-700">Unternehmen-Favoriten:</h4>
               </div>
               <div className="flex flex-wrap gap-2">
-                {favorites.filter(f => !form.companies.includes(f)).map((company) => (
+                {favorites.map((company) => (
                   <TagButtonFavorite
                     key={company}
                     label={company}
@@ -315,14 +311,14 @@ export default function ExperienceForm({
           )}
           
           {/* Ort Favoriten */}
-          {favoriteCities.filter(f => !form.companies.some(c => c.includes(f))).length > 0 && (
+          {favoriteCities.length > 0 && (
             <div className="mt-4"> 
               <div className="flex items-center space-x-2 mb-1">
                 <Star className="h-4 w-4 text-gray-400" />
                 <h4 className="text-xs font-medium text-gray-700">Ort-Favoriten:</h4>
               </div>
               <div className="flex flex-wrap gap-2">
-                {favoriteCities.filter(f => !form.companies.some(c => c.includes(f))).map((city) => (
+                {favoriteCities.map((city) => (
                   <TagButtonFavorite
                     key={city}
                     label={city}

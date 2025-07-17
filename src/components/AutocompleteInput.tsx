@@ -213,14 +213,14 @@ export default function AutocompleteInput<T = string>({
   const handleAddToFavorites = (e?: React.MouseEvent) => {
     if (e) e.preventDefault();
     if (onFavoriteClick && hasInput) {
-      onFavoriteClick(value.trim());
+      onFavoriteClick();
     }
   };
 
   const handleAdd = (e?: React.MouseEvent) => {
     if (e) e.preventDefault();
     if (!hasInput) return;
-    onAdd?.(value.trim());
+    onAdd?.();
   };
 
   return (
@@ -248,7 +248,7 @@ export default function AutocompleteInput<T = string>({
             placeholder={placeholder}
             disabled={disabled}
             className={`w-full px-3 h-10 border rounded-md transition-all focus:outline-none focus:ring-1 pr-10 ${hasInput ? 'border-orange-500' : 'border-gray-300'}`}
-            style={{
+              value.trim() ? 'border-orange-500' : 'border-gray-300'
               '--tw-ring-color': '#F29400'
             } as React.CSSProperties}
             aria-expanded={isOpen}
