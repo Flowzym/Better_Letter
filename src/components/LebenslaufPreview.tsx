@@ -167,31 +167,31 @@ export default function LebenslaufPreview() {
       </div>
 
       {/* Scrollbarer Inhalt */}
-      <div className="flex-1 overflow-y-auto space-y-6">
+      <div className="flex-1 overflow-y-auto space-y-1">
         {/* Berufserfahrung */}
         <div>
-          <h3 className="font-bold text-xl mb-4">Berufserfahrung</h3>
-          <div className="space-y-2">
+          <h3 className="font-bold text-xl mb-2">Berufserfahrung</h3>
+          <div className="space-y-1">
             {sortedErfahrungen.map((exp, index) => {
               const isSelected = selectedExperienceId === exp.id;
               const isCardExpanded = isExpanded(exp.id, 'experience');
               
               return (
                 <div key={exp.id} className="relative">
-                  {/* Vertikale Trennlinie (außer beim ersten Element) */}
+                  {/* Vertikale Trennlinie zwischen Karten */}
                   {index > 0 && (
-                    <div className="absolute -top-2 left-4 w-px h-4 bg-gray-200"></div>
+                    <div className="w-full h-px bg-gray-200 mb-1"></div>
                   )}
                   
                   <div
                     onClick={() => selectExperience(exp.id)}
                     className={`p-4 cursor-pointer transition-all duration-200 ${
                       isSelected 
-                        ? "border border-[#F29400] bg-white rounded-md" 
+                        ? "border border-[#F29400] bg-white rounded-md py-2" 
                         : "bg-white hover:bg-gray-50"
                     }`}
                   >
-                    <div className="flex justify-between items-start mb-2">
+                    <div className="flex justify-between items-start mb-1">
                       {/* Zeitraum */}
                       <EditablePreviewText
                         value={formatZeitraum(
@@ -219,7 +219,7 @@ export default function LebenslaufPreview() {
                     </div>
 
                     {/* Position */}
-                    <div className="mb-2">
+                    <div className="mb-1">
                       <EditablePreviewText
                         value={Array.isArray(exp.position) ? exp.position.join(' / ') : (exp.position || "")}
                         onSave={(newValue) => handleExperienceFieldUpdate(exp.id, 'position', newValue)}
@@ -229,7 +229,7 @@ export default function LebenslaufPreview() {
                     </div>
 
                     {/* Unternehmen/Ort */}
-                    <div className="mb-2">
+                    <div className="mb-1">
                       <EditablePreviewText
                         value={Array.isArray(exp.companies) ? exp.companies.join(' // ') : (exp.companies || "")}
                         onSave={(newValue) => handleExperienceFieldUpdate(exp.id, 'companies', newValue)}
@@ -243,7 +243,7 @@ export default function LebenslaufPreview() {
                       <>
                         {/* Weitere Angaben */}
                         {exp.zusatzangaben && (
-                          <div className="mb-3 border-t pt-2 border-gray-100">
+                          <div className="mb-2 border-t pt-1 border-gray-100">
                             <div className="flex items-start space-x-2">
                               <FileText className="h-4 w-4 mt-1 text-gray-400 flex-shrink-0" />
                               <EditablePreviewText
@@ -265,33 +265,33 @@ export default function LebenslaufPreview() {
                               updateExperienceTasksOrder(exp.id, newTasks);
                             }}
                             tag="ul"
-                            className="list-disc list-inside mt-3 space-y-1 text-black"
+                            className="list-disc list-inside mt-2 space-y-0 text-black"
                           >
                             {exp.aufgabenbereiche.map((aufgabe, i) => (
                               <li 
                                 key={`${exp.id}-${i}`}
                                 data-id={`${exp.id}-${i}`}
-                                className="cursor-move hover:bg-gray-50 rounded p-2 transition-colors duration-200 group relative"
+                                className="cursor-move hover:bg-gray-50 rounded py-1 px-2 transition-colors duration-200 group relative"
                               >
-                                <div className="flex items-center justify-between">
+                                <div className="flex items-start justify-between">
                                   <EditablePreviewText
                                     value={aufgabe}
                                     onSave={(newValue) => updateExperienceTask(exp.id, i, newValue)}
                                     placeholder="Aufgabe eingeben..."
-                                    className="flex-1"
+                                    className="flex-1 pr-2"
                                   />
                                   {/* Hover-Buttons für Tätigkeiten */}
-                                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center space-x-1 ml-2">
+                                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center space-x-1 flex-shrink-0">
                                     <button
                                       onClick={(e) => {
                                         e.stopPropagation();
                                         toggleTaskFavorite(aufgabe);
                                       }}
-                                      className="p-1 hover:bg-gray-200 rounded transition-colors duration-200"
+                                      className="p-0.5 hover:bg-gray-200 rounded transition-colors duration-200"
                                       title={favoriteTasks.includes(aufgabe) ? 'Aus Favoriten entfernen' : 'Zu Favoriten hinzufügen'}
                                     >
                                       <Star 
-                                        className={`h-3 w-3 ${favoriteTasks.includes(aufgabe) ? 'fill-current text-yellow-500' : 'text-gray-400'}`} 
+                                        className={`h-4 w-4 ${favoriteTasks.includes(aufgabe) ? 'fill-current text-yellow-500' : 'text-gray-400'}`} 
                                       />
                                     </button>
                                     <button
@@ -299,10 +299,10 @@ export default function LebenslaufPreview() {
                                         e.stopPropagation();
                                         removeTask(exp.id, i);
                                       }}
-                                      className="p-1 hover:bg-gray-200 rounded transition-colors duration-200"
+                                      className="p-0.5 hover:bg-gray-200 rounded transition-colors duration-200"
                                       title="Aufgabe löschen"
                                     >
-                                      <X className="h-3 w-3 text-gray-400 hover:text-red-500" />
+                                      <X className="h-4 w-4 text-gray-400 hover:text-red-500" />
                                     </button>
                                   </div>
                                 </div>
@@ -313,7 +313,7 @@ export default function LebenslaufPreview() {
                         
                         {/* Neue Aufgabe hinzufügen */}
                         {selectedExperienceId === exp.id && (
-                          <div className="mt-3 flex items-center space-x-2">
+                          <div className="mt-2 flex items-center space-x-2">
                             <input
                               type="text"
                               value={newTaskInputs[exp.id] || ''}
@@ -351,28 +351,28 @@ export default function LebenslaufPreview() {
 
         {/* Ausbildung */}
         <div>
-          <h3 className="font-bold text-xl mb-4">Ausbildung</h3>
-          <div className="space-y-2">
+          <h3 className="font-bold text-xl mb-2">Ausbildung</h3>
+          <div className="space-y-1">
             {sortedAusbildungen.map((edu, index) => {
               const isSelected = selectedEducationId === edu.id;
               const isCardExpanded = isExpanded(edu.id, 'education');
               
               return (
                 <div key={edu.id} className="relative">
-                  {/* Vertikale Trennlinie (außer beim ersten Element) */}
+                  {/* Horizontale Trennlinie zwischen Karten */}
                   {index > 0 && (
-                    <div className="absolute -top-2 left-4 w-px h-4 bg-gray-200"></div>
+                    <div className="w-full h-px bg-gray-200 mb-1"></div>
                   )}
                   
                   <div
                     onClick={() => selectEducation(edu.id)}
                     className={`p-4 cursor-pointer transition-all duration-200 ${
                       isSelected 
-                        ? "border border-[#F29400] bg-white rounded-md" 
+                        ? "border border-[#F29400] bg-white rounded-md py-2" 
                         : "bg-white hover:bg-gray-50"
                     }`}
                   >
-                    <div className="flex justify-between items-start mb-2">
+                    <div className="flex justify-between items-start mb-1">
                       {/* Zeitraum */}
                       <EditablePreviewText
                         value={formatZeitraum(
@@ -400,7 +400,7 @@ export default function LebenslaufPreview() {
                     </div>
 
                     {/* Ausbildungsart */}
-                    <div className="mb-2">
+                    <div className="mb-1">
                       <EditablePreviewText
                         value={`${Array.isArray(edu.ausbildungsart) ? edu.ausbildungsart.join(" / ") : (edu.ausbildungsart || "")} - ${Array.isArray(edu.abschluss) ? edu.abschluss.join(" / ") : (edu.abschluss || "")}`}
                         onSave={(newValue) => handleEducationFieldUpdate(edu.id, 'ausbildungsart', newValue)}
@@ -413,7 +413,7 @@ export default function LebenslaufPreview() {
                     {isCardExpanded && (
                       <>
                         {/* Institution */}
-                        <div className="mb-2">
+                        <div className="mb-1">
                           <EditablePreviewText
                             value={Array.isArray(edu.institution) ? edu.institution.join(', ') : (edu.institution || "")}
                             onSave={(newValue) => handleEducationFieldUpdate(edu.id, 'institution', newValue)}
@@ -424,7 +424,7 @@ export default function LebenslaufPreview() {
                         
                         {/* Bearbeitbare Zusatzangaben */}
                         {edu.zusatzangaben && (
-                          <div className="text-black mt-2">
+                          <div className="text-black mt-1">
                             <EditablePreviewText
                               value={edu.zusatzangaben}
                               onSave={(newValue) => updateEducationField(edu.id, 'zusatzangaben', newValue)}
