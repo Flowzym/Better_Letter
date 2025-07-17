@@ -287,7 +287,7 @@ export default function AutocompleteInput<T = string>({
               <button
                 id={addButtonId}
                 name={`add-${inputId}`}
-                onClick={handleAdd}
+                onClick={() => onAdd?.(value)}
                 className="w-10 h-10 bg-[#F6A800] text-white rounded-md flex items-center justify-center transition-colors duration-200 hover:bg-[#E8950C]"
                 title="Hinzufügen"
                 aria-label="Hinzufügen"
@@ -302,7 +302,7 @@ export default function AutocompleteInput<T = string>({
                 id={favoritesButtonId}
                 name={`favorites-${inputId}`}
                 disabled={disabled}
-                onClick={handleAddToFavorites}
+                onClick={() => onFavoriteClick?.(value)}
                 className="w-10 h-10 bg-[#F6A800] text-white rounded-md flex items-center justify-center transition-colors duration-200 hover:bg-[#E8950C]"
                 title="Zu Favoriten hinzufügen"
                 aria-label="Zu Favoriten hinzufügen"

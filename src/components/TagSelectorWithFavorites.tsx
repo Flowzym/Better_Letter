@@ -60,9 +60,9 @@ export default function TagSelectorWithFavorites({
     <div className="space-y-4">
       {value.length > 0 && (
         <div className="flex flex-wrap gap-2">
-          {value.map((tag, index) => (
+          {value.map((tag) => (
             <PositionTag
-              key={`${tag}-${index}`}
+              key={tag}
               label={tag}
               onRemove={() => removeTag(tag)}
               onEdit={(newTag) => updateTag(tag, newTag)}
