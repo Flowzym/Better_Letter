@@ -1,11 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Plus, Star, X } from 'lucide-react';
 
-interface Position {
-  top: number;
-  width: number;
-}
-
 interface AutocompleteInputProps<T = string> {
   value: string;
   onChange: (value: string) => void;
@@ -44,13 +39,13 @@ export default function AutocompleteInput<T = string>({
   const [isOpen, setIsOpen] = useState(false);
   const [filteredSuggestions, setFilteredSuggestions] = useState<T[]>([]);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
-  const [dropdownWidth, setDropdownWidth] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const hasInput = (value || '').trim().length > 0;
-  const [isFocused, setIsFocused] = useState(false); 
+  const [isFocused, setIsFocused] = useState(false);
+  const [showButtons, setShowButtons] = useState(false);
 
   // Helper functions with defaults for string suggestions
   const getSuggestionText = (item: T): string => {
@@ -78,34 +73,11 @@ export default function AutocompleteInput<T = string>({
   const inputId = id || `autocomplete-input-${Math.random().toString(36).substr(2, 9)}`;
   const favoritesButtonId = `${inputId}-favorites`;
   const addButtonId = `${inputId}-add`;
-
-  // Focus management - mark as profile input
+  
+  // Determine when to show buttons
   useEffect(() => {
-    const container = containerRef.current;
-    if (container) {
-      container.classList.add('profile-input');
-      container.classList.add('autocomplete-input');
-    }
-  }, []);
-
-  // Update dropdown width when input width changes or dropdown opens
-  useEffect(() => {
-    if (isOpen && inputRef.current) {
-      setDropdownWidth(inputRef.current.offsetWidth);
-    }
-  }, [isOpen]);
-
-  // Update dropdown width on window resize
-  useEffect(() => {
-    const handleResize = () => {
-      if (isOpen && inputRef.current) {
-        setDropdownWidth(inputRef.current.offsetWidth);
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [isOpen]);
+    setShowButtons(hasInput || isFocused || isOpen);
+  }, [hasInput, isFocused, isOpen]);
 
   // Intelligent filtering and sorting of suggestions
   useEffect(() => {
@@ -165,20 +137,11 @@ export default function AutocompleteInput<T = string>({
   // Focus event handler - prevents editor focus
   const handleFocus = (e: React.FocusEvent) => {
     setIsFocused(true);
-    // Mark the input as active for focus management
-    if (e.currentTarget) {
-      e.currentTarget.setAttribute('data-profile-input-active', 'true');
-    }
   };
 
   const handleBlur = (e: React.FocusEvent) => {
-    setIsFocused(false);
-    // Remove the marking after short delay
-    setTimeout(() => {
-      if (e.currentTarget) {
-        e.currentTarget.removeAttribute('data-profile-input-active');
-      }
-    }, 100);
+    // Delay setting isFocused to false to allow button clicks to register
+    setTimeout(() => setIsFocused(false), 200);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -255,7 +218,7 @@ export default function AutocompleteInput<T = string>({
   };
 
   return (
-    <div ref={containerRef} className="relative">
+    <div ref={containerRef} className="relative profile-input autocomplete-input">
       {label && (
         <label
           htmlFor={inputId}
@@ -303,8 +266,8 @@ export default function AutocompleteInput<T = string>({
             </button>
           )}
         </div>
-
-        {(hasInput && (isFocused || isOpen)) && (
+        
+        {showButtons && (
           <div className="flex-shrink-0 flex space-x-2">
             {/* Add button */}
             {showAddButton && (
@@ -349,7 +312,7 @@ export default function AutocompleteInput<T = string>({
         {/* Dropdown with improved sorting */}
         {isOpen && filteredSuggestions.length > 0 && (
         <div
-          ref={dropdownRef}
+          ref={dropdownRef} 
           className="absolute z-50 mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto"
           style={{
             width: inputRef.current?.offsetWidth + 'px',
