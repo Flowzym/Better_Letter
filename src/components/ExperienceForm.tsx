@@ -4,7 +4,7 @@ import TasksTagInput from './TasksTagInput';
 import CountryDropdown from './CountryDropdown';
 import AutocompleteInput from './AutocompleteInput';
 import TagSelectorWithFavorites from './TagSelectorWithFavorites';
-import { Eraser, Plus } from 'lucide-react';
+import { Eraser, Plus, Star } from 'lucide-react';
 import CompanyTag from './CompanyTag';
 import { Berufserfahrung, useLebenslauf } from '../context/LebenslaufContext';
 import { CVSuggestionConfig } from '../services/supabaseService';
