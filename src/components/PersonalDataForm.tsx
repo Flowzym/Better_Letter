@@ -7,6 +7,7 @@ import DatePicker from './DatePicker';
 import PhoneInput from './PhoneInput';
 import CountryAutocomplete from './CountryAutocomplete';
 import CountryDropdown from './CountryDropdown';
+import ToggleSwitch from './ToggleSwitch';
 import Card from './cards/Card';
 
 interface PersonalData {
