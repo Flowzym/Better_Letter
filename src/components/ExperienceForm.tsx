@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import React, { useMemo, useState } from 'react';
 import ZeitraumPicker from './ZeitraumPicker';
 import TasksTagInput from './TasksTagInput';
 import TextInput from './TextInput';
@@ -30,9 +29,9 @@ export default function ExperienceForm({
   const { 
     favoriteTasks, 
     favoriteCities, 
-    toggleFavoriteCity, 
     favoriteCompanies,
     toggleFavoriteCompany,
+    toggleFavoriteCity,
     favoritePositions, 
     toggleFavoritePosition 
   } = useLebenslauf();
