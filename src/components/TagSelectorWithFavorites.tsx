@@ -24,7 +24,6 @@ export default function TagSelectorWithFavorites({
   const [inputValue, setInputValue] = useState('');
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [editValue, setEditValue] = useState('');
-  const { favoritePositions: favorites, toggleFavoritePosition } = useLebenslaufContext();
   const { favoritePositions: favorites, toggleFavoritePosition } = useLebenslauf();
 
 
