@@ -281,14 +281,10 @@ const LebenslaufInput: React.FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 relative">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 relative p-6">
       <div className="flex items-center gap-2 p-4 border-b border-gray-200">
-        <div className="w-5 h-5 text-orange-500">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1H5C3.89 1 3 1.89 3 3V21C3 22.11 3.89 23 5 23H19C20.11 23 21 22.11 21 21V9M19 9H14V4H5V21H19V9Z"/>
-          </svg>
-        </div>
-        <h2 className="text-lg font-semibold text-gray-800">Lebenslauf</h2>
+        <User className="h-6 w-6 mr-2" style={{ color: '#F29400' }} stroke="#F29400" fill="none" />
+        <h2 className="text-lg font-semibold text-gray-900">Lebenslauf</h2>
       </div>
 
       <div className="border-b border-gray-200">
@@ -390,7 +386,7 @@ const LebenslaufInput: React.FC = () => {
       </div>
 
       {/* Floating Button */}
-      <div className="fixed bottom-4 right-4 z-50">
+      <div className="absolute bottom-4 right-4 z-50">
         <button
           onClick={() => {
             if (selectedExperienceId || selectedEducationId) {

@@ -8,6 +8,7 @@ import PhoneInput from './PhoneInput';
 import CountryAutocomplete from './CountryAutocomplete';
 import CountryDropdown from './CountryDropdown';
 import Card from './cards/Card';
+import ToggleSwitch from './ToggleSwitch';
 
 interface PersonalData {
   titel: string;
@@ -273,19 +274,12 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
           </div>
 
           {/* Social Media Checkbox */}
-          <div className="flex items-center justify-end">
-            <label className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="personal-show-social-media"
-                name="showSocialMedia"
-                checked={showSocialMedia}
-                onChange={(e) => setShowSocialMedia(e.target.checked)}
-                className="focus:ring-1"
-                style={{ accentColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-              />
-              <span className="text-sm font-medium text-gray-500">Social Media / Homepage</span>
-            </label>
+          <div className="flex justify-end">
+            <ToggleSwitch
+              checked={showSocialMedia}
+              onChange={setShowSocialMedia}
+              label="Social Media / Homepage"
+            />
           </div>
 
           {/* Social Media Fields */}
@@ -446,19 +440,12 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
           </div>
 
           {/* Ausland Checkbox */}
-          <div className="flex items-center justify-end">
-            <label className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="personal-ausland"
-                name="ausland"
-                checked={safeData.ausland || false}
-                onChange={(e) => updateData('ausland', e.target.checked)}
-                className="focus:ring-1"
-                style={{ accentColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-              />
-              <span className="text-sm font-medium text-gray-500">Ausland</span>
-            </label>
+          <div className="flex justify-end">
+            <ToggleSwitch
+              checked={safeData.ausland || false}
+              onChange={(checked) => updateData('ausland', checked)}
+              label="Ausland"
+            />
           </div>
 
           {/* Land Field - shown in new row when Ausland is checked */}
@@ -515,19 +502,12 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
           </div>
 
           {/* Staatsbürgerschaft Checkbox */}
-          <div className="flex items-center justify-end">
-            <label className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="personal-staatsbuergerschaft-checkbox"
-                name="staatsbuergerschaftCheckbox"
-                checked={safeData.staatsbuergerschaftCheckbox || false}
-                onChange={(e) => updateData('staatsbuergerschaftCheckbox', e.target.checked)}
-                className="focus:ring-1"
-                style={{ accentColor: '#F29400', '--tw-ring-color': '#F29400' } as React.CSSProperties}
-              />
-              <span className="text-sm font-medium text-gray-500">Staatsbürgerschaft</span>
-            </label>
+          <div className="flex justify-end">
+            <ToggleSwitch
+              checked={safeData.staatsbuergerschaftCheckbox || false}
+              onChange={(checked) => updateData('staatsbuergerschaftCheckbox', checked)}
+              label="Staatsbürgerschaft"
+            />
           </div>
 
           {/* Bedingte Felder für Staatsbürgerschaft und Arbeitsmarktzugang */}

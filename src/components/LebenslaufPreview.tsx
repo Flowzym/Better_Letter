@@ -1,10 +1,18 @@
 import React, { useMemo, useState } from 'react';
-import { Trash2, Plus, FileText, Star, X, ToggleLeft, ToggleRight } from 'lucide-react';
+import { Trash2, Plus, FileText, Star, X, ToggleLeft, ToggleRight, Edit, Check } from 'lucide-react';
 import { ReactSortable } from 'react-sortablejs';
 import { useLebenslauf } from "../context/LebenslaufContext";
 import EditablePreviewText from './EditablePreviewText';
 
 export default function LebenslaufPreview() {
+  const containerStyle = {
+    backgroundColor: 'white',
+    padding: '1.5rem',
+    borderRadius: '0.5rem',
+    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+    border: '1px solid #e5e7eb'
+  };
+
   const { 
     berufserfahrung, 
     ausbildung,
@@ -144,10 +152,10 @@ export default function LebenslaufPreview() {
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col" style={containerStyle}>
       {/* Header mit Toggle-Button */}
       <div className="flex items-center justify-between mb-4 flex-shrink-0">
-        <h2 className="text-lg font-semibold text-gray-900">📄 Vorschau</h2>
+        <h2 className="text-lg font-semibold text-gray-900 flex items-center">📄 <span className="ml-2">Vorschau</span></h2>
         <div className="flex items-center space-x-2">
           <span className="text-sm text-gray-600">
             {showAllExpanded ? 'Alle ausgeklappt' : 'Nur aktive ausgeklappt'}
@@ -185,11 +193,7 @@ export default function LebenslaufPreview() {
                   
                   <div
                     onClick={() => selectExperience(exp.id)}
-                    className={`p-4 cursor-pointer transition-all duration-200 ${
-                      isSelected 
-                        ? "border border-[#F29400] bg-white rounded-md p-2" 
-                        : "bg-white hover:bg-gray-50"
-                    }`}
+                    className="p-2 cursor-pointer transition-all duration-200 bg-white hover:bg-gray-50"
                   >
                     <div className="flex justify-between items-start mb-0.5">
                       {/* Zeitraum */}
@@ -205,17 +209,34 @@ export default function LebenslaufPreview() {
                         className="text-sm text-gray-700"
                         placeholder="Zeitraum eingeben..."
                       />
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          deleteExperience(exp.id);
-                        }}
-                        className="text-gray-500 hover:text-gray-700 p-1 rounded transition-colors duration-200"
-                        title="Berufserfahrung löschen"
-                        aria-label="Berufserfahrung löschen"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
+                      <div className="flex items-center space-x-1">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (isSelected) {
+                              selectExperience('');
+                            } else {
+                              selectExperience(exp.id);
+                            }
+                          }}
+                          className="text-gray-500 hover:text-gray-700 p-1 rounded transition-colors duration-200"
+                          title={isSelected ? "Bearbeitung beenden" : "Bearbeiten"}
+                          aria-label={isSelected ? "Bearbeitung beenden" : "Bearbeiten"}
+                        >
+                          {isSelected ? <Check className="h-4 w-4" /> : <Edit className="h-4 w-4" />}
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteExperience(exp.id);
+                          }}
+                          className="text-gray-500 hover:text-gray-700 p-1 rounded transition-colors duration-200"
+                          title="Berufserfahrung löschen"
+                          aria-label="Berufserfahrung löschen"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
                     </div>
 
                     {/* Position */}
@@ -266,29 +287,29 @@ export default function LebenslaufPreview() {
                                 updateExperienceTasksOrder(exp.id, newTasks);
                               }}
                               tag="div"
-                              className="space-y-0 text-black ml-4"
+                              className="space-y-0 text-black ml-6"
                             >
                               {exp.aufgabenbereiche.map((aufgabe, i) => (
                                 <div 
                                   key={`${exp.id}-${i}`}
                                   data-id={`${exp.id}-${i}`}
-                                  className="cursor-move hover:bg-gray-50 rounded transition-colors duration-200 group relative flex items-start py-0.5 px-1"
+                                  className="cursor-move hover:bg-gray-50 rounded transition-colors duration-200 group relative flex items-start py-0.25 px-1"
                                 >
                                   {/* Manueller Aufzählungspunkt */}
-                                  <span className="text-black mr-2 flex-shrink-0 leading-tight">•</span>
+                                  <span className="text-black mr-2 flex-shrink-0 leading-none">•</span>
                                   
                                   {/* Aufgabentext */}
-                                  <div className="flex-1 min-w-0">
+                                  <div className="flex-1 min-w-0 leading-none">
                                     <EditablePreviewText
                                       value={aufgabe}
                                       onSave={(newValue) => updateExperienceTask(exp.id, i, newValue)}
                                       placeholder="Aufgabe eingeben..."
-                                      className="leading-tight"
+                                      className="leading-none"
                                     />
                                   </div>
                                   
                                   {/* Hover-Buttons für Tätigkeiten */}
-                                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-start space-x-1 flex-shrink-0 ml-2">
+                                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center space-x-1 flex-shrink-0 ml-2">
                                     <button
                                       onClick={(e) => {
                                         e.stopPropagation();
@@ -373,11 +394,7 @@ export default function LebenslaufPreview() {
                   
                   <div
                     onClick={() => selectEducation(edu.id)}
-                    className={`p-4 cursor-pointer transition-all duration-200 ${
-                      isSelected 
-                        ? "border border-[#F29400] bg-white rounded-md p-2" 
-                        : "bg-white hover:bg-gray-50"
-                    }`}
+                    className="p-2 cursor-pointer transition-all duration-200 bg-white hover:bg-gray-50"
                   >
                     <div className="flex justify-between items-start mb-0.5">
                       {/* Zeitraum */}
@@ -393,17 +410,34 @@ export default function LebenslaufPreview() {
                         className="text-sm text-gray-700"
                         placeholder="Zeitraum eingeben..."
                       />
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          deleteEducation(edu.id);
-                        }}
-                        className="text-gray-500 hover:text-gray-700 p-1 rounded transition-colors duration-200"
-                        title="Ausbildung löschen"
-                        aria-label="Ausbildung löschen"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
+                      <div className="flex items-center space-x-1">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (isSelected) {
+                              selectEducation('');
+                            } else {
+                              selectEducation(edu.id);
+                            }
+                          }}
+                          className="text-gray-500 hover:text-gray-700 p-1 rounded transition-colors duration-200"
+                          title={isSelected ? "Bearbeitung beenden" : "Bearbeiten"}
+                          aria-label={isSelected ? "Bearbeitung beenden" : "Bearbeiten"}
+                        >
+                          {isSelected ? <Check className="h-4 w-4" /> : <Edit className="h-4 w-4" />}
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteEducation(edu.id);
+                          }}
+                          className="text-gray-500 hover:text-gray-700 p-1 rounded transition-colors duration-200"
+                          title="Ausbildung löschen"
+                          aria-label="Ausbildung löschen"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
                     </div>
 
                     {/* Ausbildungsart */}

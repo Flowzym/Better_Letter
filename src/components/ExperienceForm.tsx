@@ -11,6 +11,7 @@ import { Berufserfahrung, useLebenslauf } from '../context/LebenslaufContext';
 import { CVSuggestionConfig } from '../services/supabaseService';
 import { getTasksForPositions } from '../constants/positionsToTasks';
 import TextInput from './TextInput';
+import ToggleSwitch from './ToggleSwitch';
 
 interface ExperienceFormProps {
   form: Omit<Berufserfahrung, 'id'>;
@@ -340,18 +341,12 @@ export default function ExperienceForm({
           )}
           
           {/* Ausland Checkbox */}
-          <div className="flex items-center justify-end mt-4">
-            <input
-              type="checkbox" 
-              id="show-foreign-country"
+          <div className="flex justify-end mt-4">
+            <ToggleSwitch
               checked={showForeignCountry}
-              onChange={(e) => setShowForeignCountry(e.target.checked)}
-              className="mr-2"
-              style={{ accentColor: '#F29400' }}
+              onChange={setShowForeignCountry}
+              label="Ausland"
             />
-            <label htmlFor="show-foreign-country" className="text-sm text-gray-700">
-              Ausland
-            </label>
           </div>
           
           {/* Land Dropdown - nur anzeigen wenn Ausland ausgewählt */}

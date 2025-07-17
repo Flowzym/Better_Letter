@@ -12,19 +12,14 @@ export default function LebenslaufEditor({
 }) {
   return (
     <LebenslaufProvider profileSourceMappings={profileSourceMappings}>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 relative">
         {/* Linke Spalte: Eingabe */}
-        <div className="bg-white p-6 rounded-lg shadow border border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-            <User className="h-6 w-6 mr-2" style={{ color: '#F29400' }} stroke="#F29400" fill="none" />
-            <span>Lebenslauf</span>
-          </h2>
+        <div className="relative">
           <LebenslaufInput />
         </div>
 
         {/* Rechte Spalte: Vorschau */}
-        <div className="bg-white p-6 rounded-lg shadow border border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">📄 <span className="ml-2">Vorschau</span></h2>
+        <div>
           <LebenslaufPreview />
         </div>
       </div>
