@@ -145,7 +145,6 @@ export default function ExperienceForm({
             onChange={(val) => onUpdateField('companyCountry', val)}
           />
         </div>
-        />
       </div>
 
       <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
