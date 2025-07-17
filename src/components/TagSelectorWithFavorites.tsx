@@ -49,8 +49,8 @@ export default function TagSelectorWithFavorites({
     setInputValue('');
   };
 
-  const addTag = (val?: string) => {
-    const trimmed = (val ?? inputValue).trim();
+  const updateTag = (oldTag: string, newTag: string) => {
+    const trimmed = newTag.trim();
     if (!trimmed) return;
     const updatedTags = value.map(tag => tag === oldTag ? trimmed : tag);
     onChange(updatedTags);
