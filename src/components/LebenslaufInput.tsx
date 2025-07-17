@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLebenslaufContext } from '../context/LebenslaufContext';
+import { useLebenslauf } from '../context/LebenslaufContext';
 import PersonalDataForm from './PersonalDataForm';
 import ExperienceForm from './ExperienceForm';
 import AusbildungForm from './AusbildungForm';
@@ -28,6 +28,7 @@ const LebenslaufInput: React.FC = () => {
     setActiveTab: contextSetActiveTab,
     selectEducation
   } = useLebenslaufContext();
+  } = useLebenslauf();
 
   const [localActiveTab, setLocalActiveTab] = useState<TabType>('personal');
   

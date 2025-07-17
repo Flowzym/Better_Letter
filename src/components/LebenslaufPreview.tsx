@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Trash2, Plus, Calendar, Building, Briefcase } from 'lucide-react';
 import { ReactSortable } from 'react-sortablejs';
-import { useLebenslaufContext } from "../context/LebenslaufContext";
+import { useLebenslauf } from "../context/LebenslaufContext";
 import EditablePreviewText from './EditablePreviewText';
 import TextInputWithButtons from './TextInputWithButtons';
 
@@ -21,7 +21,7 @@ export default function LebenslaufPreview() {
     addExperienceTask,
     updateExperienceField
   } =
-    useLebenslaufContext();
+    useLebenslauf();
 
   const [newTaskInputs, setNewTaskInputs] = useState<Record<string, string>>({});
 

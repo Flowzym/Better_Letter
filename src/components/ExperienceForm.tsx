@@ -4,7 +4,7 @@ import ZeitraumPicker from './ZeitraumPicker';
 import TasksTagInput from './TasksTagInput';
 import CompaniesTagInput from './CompaniesTagInput';
 import { Eraser } from 'lucide-react';
-import { Berufserfahrung, useLebenslaufContext } from '../context/LebenslaufContext';
+import { Berufserfahrung, useLebenslauf } from '../context/LebenslaufContext';
 import { CVSuggestionConfig } from '../services/supabaseService';
 import { getTasksForPositions } from '../constants/positionsToTasks';
 
@@ -23,7 +23,7 @@ export default function ExperienceForm({
   onPositionsChange,
   cvSuggestions,
 }: ExperienceFormProps) {
-  const { favoriteTasks, favoriteCompanies } = useLebenslaufContext();
+  const { favoriteTasks, favoriteCompanies } = useLebenslauf();
 
   const hasZeitraumData =
     form.startMonth !== null ||

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLebenslaufContext } from '../context/LebenslaufContext';
+import { useLebenslauf } from '../context/LebenslaufContext';
 import TagButtonSelected from './ui/TagButtonSelected';
 
 interface CompanyTagProps {
@@ -9,7 +9,7 @@ interface CompanyTagProps {
 }
 
 export default function CompanyTag({ label, onRemove, onEdit }: CompanyTagProps) {
-  const { favoriteCompanies, toggleFavoriteCompany } = useLebenslaufContext();
+  const { favoriteCompanies, toggleFavoriteCompany } = useLebenslauf();
   const isFavorite = favoriteCompanies.includes(label);
 
   return (

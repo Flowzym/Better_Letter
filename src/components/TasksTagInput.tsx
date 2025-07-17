@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import TaskTag from "./TaskTag";
 import TagButtonFavorite from "./ui/TagButtonFavorite";
 import { Lightbulb, Plus, Star } from "lucide-react";
-import { useLebenslaufContext } from "../context/LebenslaufContext";
+import { useLebenslauf } from "../context/LebenslaufContext";
 import { getTasksForPositions } from "../constants/positionsToTasks";
 import "../styles/_tags.scss";
 
@@ -24,6 +24,7 @@ export default function TasksTagInput({
 }: TasksTagInputProps) {
   const [inputValue, setInputValue] = useState("");
   const { favoriteTasks: favorites, toggleFavoriteTask } = useLebenslaufContext();
+  const { favoriteTasks: favorites, toggleFavoriteTask } = useLebenslauf();
   const [isInputFocused, setIsInputFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   

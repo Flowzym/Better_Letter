@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLebenslaufContext } from '../context/LebenslaufContext';
+import { useLebenslauf } from '../context/LebenslaufContext';
 import TagButtonSelected from './ui/TagButtonSelected';
 
 interface PositionTagProps {
@@ -9,7 +9,7 @@ interface PositionTagProps {
 }
 
 export default function PositionTag({ label, onRemove, onEdit }: PositionTagProps) {
-  const { favoritePositions, toggleFavoritePosition } = useLebenslaufContext();
+  const { favoritePositions, toggleFavoritePosition } = useLebenslauf();
   const isFavorite = favoritePositions.includes(label);
 
   return (

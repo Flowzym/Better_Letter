@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import PositionTag from './PositionTag';
 import TagButtonFavorite from './ui/TagButtonFavorite';
-import { useLebenslaufContext } from '../context/LebenslaufContext';
+import { useLebenslauf } from '../context/LebenslaufContext';
 import AutocompleteInput from './AutocompleteInput';
 
 interface TagSelectorWithFavoritesProps {
@@ -25,6 +25,7 @@ export default function TagSelectorWithFavorites({
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [editValue, setEditValue] = useState('');
   const { favoritePositions: favorites, toggleFavoritePosition } = useLebenslaufContext();
+  const { favoritePositions: favorites, toggleFavoritePosition } = useLebenslauf();
 
 
   const addTag = (val?: string) => {

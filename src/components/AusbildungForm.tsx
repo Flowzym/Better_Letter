@@ -3,7 +3,7 @@ import ZeitraumPicker from './ZeitraumPicker';
 import TextInput from './TextInput';
 import InstitutionTagInput from './InstitutionTagInput';
 import TagSelectorWithFavorites from './TagSelectorWithFavorites';
-import { AusbildungEntryForm, useLebenslaufContext } from '../context/LebenslaufContext';
+import { AusbildungEntryForm, useLebenslauf } from '../context/LebenslaufContext';
 import { CVSuggestionConfig } from '../services/supabaseService';
 
 interface AusbildungFormProps {
@@ -17,7 +17,7 @@ export default function AusbildungForm({
   onUpdateField,
   cvSuggestions,
 }: AusbildungFormProps) {
-  const { favoriteAusbildungsarten, favoriteAbschluesse } = useLebenslaufContext();
+  const { favoriteAusbildungsarten, favoriteAbschluesse } = useLebenslauf();
 
   const hasZeitraumData =
     form.startMonth !== null ||

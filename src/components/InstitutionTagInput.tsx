@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import CompanyTag from './CompanyTag';
 import TagButtonFavorite from './ui/TagButtonFavorite';
-import { useLebenslaufContext } from '../context/LebenslaufContext';
+import { useLebenslauf } from '../context/LebenslaufContext';
 import AutocompleteInput from './AutocompleteInput';
 
 interface InstitutionTagInputProps {
@@ -13,7 +13,7 @@ interface InstitutionTagInputProps {
 export default function InstitutionTagInput({ value, onChange, suggestions = [] }: InstitutionTagInputProps) {
   const [inputValue, setInputValue] = useState('');
   const { favoriteInstitutions: favorites, toggleFavoriteInstitution } =
-    useLebenslaufContext();
+    useLebenslauf();
 
   const addInstitution = (val?: string) => {
     const c = (val ?? inputValue).trim();
