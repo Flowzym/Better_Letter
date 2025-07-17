@@ -40,6 +40,7 @@ export default function ExperienceForm({
   const [companyNameInput, setCompanyNameInput] = useState('');
   const [companyCityInput, setCompanyCityInput] = useState('');
   const [selectedCountryInput, setSelectedCountryInput] = useState('Österreich');
+  const [showForeignCountry, setShowForeignCountry] = useState(false);
 
   const hasZeitraumData =
     form.startMonth !== null ||
@@ -66,19 +67,19 @@ export default function ExperienceForm({
     
     // Format: "Unternehmen, Ort (Land)" oder Variationen
     if (companyNameInput.trim() && companyCityInput.trim()) {
-      if (selectedCountryInput && selectedCountryInput !== 'Österreich') {
+      if (showForeignCountry && selectedCountryInput && selectedCountryInput !== 'Österreich') {
         newEntry = `${companyNameInput.trim()}, ${companyCityInput.trim()} (${selectedCountryInput})`;
       } else {
         newEntry = `${companyNameInput.trim()}, ${companyCityInput.trim()}`;
       }
     } else if (companyNameInput.trim()) {
-      if (selectedCountryInput && selectedCountryInput !== 'Österreich') {
+      if (showForeignCountry && selectedCountryInput && selectedCountryInput !== 'Österreich') {
         newEntry = `${companyNameInput.trim()} (${selectedCountryInput})`;
       } else {
         newEntry = companyNameInput.trim();
       }
     } else if (companyCityInput.trim()) {
-      if (selectedCountryInput && selectedCountryInput !== 'Österreich') {
+      if (showForeignCountry && selectedCountryInput && selectedCountryInput !== 'Österreich') {
         newEntry = `${companyCityInput.trim()} (${selectedCountryInput})`;
       } else {
         newEntry = companyCityInput.trim();
@@ -108,19 +109,31 @@ export default function ExperienceForm({
     }
   };
   
-  // Funktion zum Hinzufügen eines Favoriten zum Eingabefeld
-  const addCompanyFavoriteToInput = (favorite: string) => {
-    if (companyNameInput.trim()) {
-      setCompanyNameInput(companyNameInput.trim() + ' / ' + favorite);
-    } else {
-      setCompanyNameInput(favorite);
+  // Funktion zum direkten Hinzufügen eines Unternehmens-Favoriten
+  const addCompanyFavorite = (favorite: string) => {
+    let newEntry = favorite;
+    
+    if ((!form.companies || !form.companies.includes(newEntry))) {
+      onUpdateField('companies', [...(form.companies || []), newEntry]);
     }
   };
   
   // Funktion zum Hinzufügen eines Ort-Favoriten zum Eingabefeld
   const addCityFavoriteToInput = (favorite: string) => {
     if (companyCityInput.trim()) {
-      setCompanyCityInput(companyCityInput.trim() + ' / ' + favorite);
+      // Formatierung: "Ort1 & Ort2" oder "Ort1, Ort2 & Ort3"
+      const currentCities = companyCityInput.trim().split(/,\s*|&\s*/);
+      
+      if (!currentCities.includes(favorite)) {
+        if (currentCities.length === 1) {
+          setCompanyCityInput(`${currentCities[0]} & ${favorite}`);
+        } else {
+          // Entferne das letzte "&" wenn vorhanden
+          const lastCity = currentCities.pop() || '';
+          const otherCities = currentCities.join(', ');
+          setCompanyCityInput(`${otherCities}, ${lastCity} & ${favorite}`);
+        }
+      }
     } else {
       setCompanyCityInput(favorite);
     }
@@ -137,7 +150,7 @@ export default function ExperienceForm({
     <div className="space-y-4">
       <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
         <div className="flex justify-between mb-2">
-          <h3 className="text-sm font-medium text-gray-700">Zeitraum</h3>
+          <h3 className="text-sm font-bold text-gray-700">Zeitraum</h3>
           {hasZeitraumData && (
             <button
               type="button"
@@ -191,7 +204,7 @@ export default function ExperienceForm({
 
       <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
         <div className="flex justify-between mb-2">
-          <h3 className="text-sm font-medium text-gray-700">Unternehmen &amp; Ort</h3>
+          <h3 className="text-sm font-bold text-gray-700">Unternehmen & Ort</h3>
           {hasCompanyData && (
             <button
               type="button"
@@ -224,102 +237,118 @@ export default function ExperienceForm({
         )}
         
         <div className="space-y-3">
-          {/* Unternehmen Eingabefeld */}
-          <div>
-            <AutocompleteInput
-              label=""
-              id="company-name-input"
-              value={companyNameInput}
-              onChange={setCompanyNameInput}
-              onAdd={() => {}} // Wird nicht verwendet
-              onFavoriteClick={(val?: string) => {
-                const valueToAdd = val || companyNameInput.trim();
-                if (valueToAdd) toggleFavoriteCompany(valueToAdd);
-              }}
-              suggestions={favorites}
-              placeholder="Name des Unternehmens..."
-              showFavoritesButton={!isCompanyInFavorites}
-              showAddButton={false}
-            />
+          {/* Unternehmen & Ort Eingabefelder nebeneinander */}
+          <div className="flex space-x-2 items-start">
+            <div className="flex-1">
+              <AutocompleteInput
+                label=""
+                id="company-name-input"
+                value={companyNameInput}
+                onChange={setCompanyNameInput}
+                onAdd={() => {}} // Wird nicht verwendet
+                onFavoriteClick={(val?: string) => {
+                  const valueToAdd = val || companyNameInput.trim();
+                  if (valueToAdd) toggleFavoriteCompany(valueToAdd);
+                }}
+                suggestions={favorites}
+                placeholder="Name des Unternehmens..."
+                showFavoritesButton={!isCompanyInFavorites}
+                showAddButton={false}
+              />
+            </div>
             
-            {/* Unternehmen Favoriten */}
-            {favorites.length > 0 && (
-              <div className="mt-2">
-                <div className="flex items-center space-x-2 mb-1">
-                  <Star className="h-4 w-4 text-gray-400" />
-                  <h4 className="text-xs font-medium text-gray-700">Unternehmen-Favoriten:</h4>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {favorites.map((company) => (
-                    <TagButtonFavorite
-                      key={company}
-                      label={company}
-                      onClick={() => addCompanyFavoriteToInput(company)}
-                      onRemove={() => toggleFavoriteCompany(company)}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-          
-          {/* Ort Eingabefeld */}
-          <div>
-            <AutocompleteInput
-              label=""
-              id="company-city-input"
-              value={companyCityInput}
-              onChange={setCompanyCityInput}
-              onAdd={() => {}} // Wird nicht verwendet
-              onFavoriteClick={(val?: string) => {
-                const valueToAdd = val || companyCityInput.trim();
-                if (valueToAdd) toggleFavoriteCity(valueToAdd);
-              }}
-              suggestions={favoriteCities}
-              placeholder="Ort des Unternehmens..."
-              showFavoritesButton={!isCityInFavorites}
-              showAddButton={false}
-            />
+            <div className="flex-1">
+              <AutocompleteInput
+                label=""
+                id="company-city-input"
+                value={companyCityInput}
+                onChange={setCompanyCityInput}
+                onAdd={() => {}} // Wird nicht verwendet
+                onFavoriteClick={(val?: string) => {
+                  const valueToAdd = val || companyCityInput.trim();
+                  if (valueToAdd) toggleFavoriteCity(valueToAdd);
+                }}
+                suggestions={favoriteCities}
+                placeholder="Ort des Unternehmens..."
+                showFavoritesButton={!isCityInFavorites}
+                showAddButton={false}
+              />
+            </div>
             
-            {/* Ort Favoriten */}
-            {favoriteCities.length > 0 && (
-              <div className="mt-2">
-                <div className="flex items-center space-x-2 mb-1">
-                  <Star className="h-4 w-4 text-gray-400" />
-                  <h4 className="text-xs font-medium text-gray-700">Ort-Favoriten:</h4>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {favoriteCities.map((city) => (
-                    <TagButtonFavorite
-                      key={city}
-                      label={city}
-                      onClick={() => addCityFavoriteToInput(city)}
-                      onRemove={() => toggleFavoriteCity(city)}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-          
-          {/* Land Dropdown */}
-          <CountryDropdown
-            label=""
-            value={selectedCountryInput}
-            onChange={setSelectedCountryInput}
-          />
-          
-          {/* Hinzufügen-Button */}
-          {hasInputData && (
-            <div className="flex justify-end mt-3">
+            {/* Hinzufügen-Button */}
+            {hasInputData && (
               <button 
                 onClick={addCompanyEntry}
-                className="flex items-center space-x-2 px-3 py-2 text-white rounded-md transition-colors duration-200"
+                className="flex items-center space-x-2 px-3 py-2 h-10 text-white rounded-md transition-colors duration-200"
                 style={{ backgroundColor: '#F29400' }}
               >
                 <Plus className="h-4 w-4" />
                 <span>Hinzufügen</span>
               </button>
+            )}
+          </div>
+          
+          {/* Ausland Checkbox */}
+          <div className="flex items-center mt-2">
+            <input
+              type="checkbox"
+              id="show-foreign-country"
+              checked={showForeignCountry}
+              onChange={(e) => setShowForeignCountry(e.target.checked)}
+              className="mr-2"
+              style={{ accentColor: '#F29400' }}
+            />
+            <label htmlFor="show-foreign-country" className="text-sm text-gray-700">
+              Ausland
+            </label>
+          </div>
+          
+          {/* Land Dropdown - nur anzeigen wenn Ausland ausgewählt */}
+          {showForeignCountry && (
+            <CountryDropdown
+              label=""
+              value={selectedCountryInput}
+              onChange={setSelectedCountryInput}
+            />
+          )}
+          
+          {/* Unternehmen Favoriten */}
+          {favorites.length > 0 && (
+            <div className="mt-4">
+              <div className="flex items-center space-x-2 mb-1">
+                <Star className="h-4 w-4 text-gray-400" />
+                <h4 className="text-xs font-medium text-gray-700">Unternehmen-Favoriten:</h4>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {favorites.map((company) => (
+                  <TagButtonFavorite
+                    key={company}
+                    label={company}
+                    onClick={() => addCompanyFavorite(company)}
+                    onRemove={() => toggleFavoriteCompany(company)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {/* Ort Favoriten */}
+          {favoriteCities.length > 0 && (
+            <div className="mt-4">
+              <div className="flex items-center space-x-2 mb-1">
+                <Star className="h-4 w-4 text-gray-400" />
+                <h4 className="text-xs font-medium text-gray-700">Ort-Favoriten:</h4>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {favoriteCities.map((city) => (
+                  <TagButtonFavorite
+                    key={city}
+                    label={city}
+                    onClick={() => addCityFavoriteToInput(city)}
+                    onRemove={() => toggleFavoriteCity(city)}
+                  />
+                ))}
+              </div>
             </div>
           )}
         </div>
@@ -327,7 +356,7 @@ export default function ExperienceForm({
 
       <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
         <div className="flex justify-between mb-2">
-          <h3 className="text-sm font-medium text-gray-700">Position</h3>
+          <h3 className="text-sm font-bold text-gray-700">Position</h3>
           {hasPositionData && (
             <button
               type="button"
@@ -357,7 +386,7 @@ export default function ExperienceForm({
 
       <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
         <div className="flex justify-between mb-2">
-          <h3 className="text-sm font-medium text-gray-700">Tätigkeiten</h3>
+          <h3 className="text-sm font-bold text-gray-700">Tätigkeiten</h3>
           {hasTaskData && (
             <button
               type="button"
