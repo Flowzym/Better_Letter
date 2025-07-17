@@ -10,6 +10,7 @@ import TagButtonFavorite from './ui/TagButtonFavorite';
 import { Berufserfahrung, useLebenslauf } from '../context/LebenslaufContext';
 import { CVSuggestionConfig } from '../services/supabaseService';
 import { getTasksForPositions } from '../constants/positionsToTasks';
+import TextInput from './TextInput';
 
 interface ExperienceFormProps {
   form: Omit<Berufserfahrung, 'id'>;
@@ -53,6 +54,7 @@ export default function ExperienceForm({
   const hasCompanyData = form.companies && form.companies.length > 0;
   const hasPositionData = selectedPositions.length > 0;
   const hasTaskData = form.aufgabenbereiche.length > 0;
+  const hasAdditionalInfo = form.zusatzangaben && form.zusatzangaben.trim().length > 0;
 
   // Prüft, ob mindestens ein Eingabefeld gefüllt ist
   const hasInputData = companyNameInput.trim() !== '' || companyCityInput.trim() !== '';
@@ -388,6 +390,28 @@ export default function ExperienceForm({
           allowCustom={true}
           suggestions={cvSuggestions.positions || []}
         />
+        
+        {/* KI-Vorschläge für Positionen */}
+        {selectedPositions.length > 0 && aiTaskSuggestions.length > 0 && (
+          <div className="mt-3">
+            <div className="flex items-center space-x-2 mb-2">
+              <Lightbulb className="h-4 w-4 text-yellow-500" />
+              <h4 className="text-sm font-medium text-gray-700">KI-Vorschläge basierend auf Position:</h4>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {aiTaskSuggestions.slice(0, 5).map(suggestion => (
+                <button
+                  key={suggestion}
+                  onClick={() => onUpdateField('aufgabenbereiche', [...form.aufgabenbereiche, suggestion])}
+                  className="inline-flex items-center px-3 py-1 bg-yellow-50 text-gray-700 text-sm rounded-full border border-yellow-300 hover:bg-yellow-100 transition-colors duration-200"
+                >
+                  <Lightbulb className="h-3 w-3 mr-1 text-yellow-500" />
+                  <span>{suggestion}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
@@ -410,6 +434,29 @@ export default function ExperienceForm({
           aiSuggestions={aiTaskSuggestions || []}
           suggestions={cvSuggestions.aufgabenbereiche}
           positionen={selectedPositions}
+        />
+      </div>
+      
+      <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
+        <div className="flex justify-between mb-2">
+          <h3 className="text-sm font-bold text-gray-700">Weitere Angaben</h3>
+          {hasAdditionalInfo && (
+            <button
+              type="button"
+              onClick={() => onUpdateField('zusatzangaben', '')}
+              className="p-1 text-gray-600 hover:text-gray-900"
+              title="Weitere Angaben zurücksetzen"
+            >
+              <Eraser className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+        <TextInput
+          value={form.zusatzangaben || ''}
+          onChange={(val) => onUpdateField('zusatzangaben', val)}
+          label=""
+          placeholder="Zusätzliche Informationen zur Berufserfahrung..."
+          rows={4}
         />
       </div>
     </div>
