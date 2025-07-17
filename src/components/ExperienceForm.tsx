@@ -256,9 +256,9 @@ export default function ExperienceForm({
                 }}
                 suggestions={favorites}
                 placeholder="Name des Unternehmens..."
-                showFavoritesButton={isCompanyInputFocused && !isCompanyInFavorites}
+                showFavoritesButton={isCompanyInputFocused}
                 showAddButton={false}
-                className={companyNameInput.trim() ? "border-orange-500" : ""}
+                className="border-orange-500"
               />
             </div>
             
@@ -277,9 +277,9 @@ export default function ExperienceForm({
                 }}
                 suggestions={favoriteCities}
                 placeholder="Ort des Unternehmens..."
-                showFavoritesButton={isCityInputFocused && !isCityInFavorites}
+                showFavoritesButton={isCityInputFocused}
                 showAddButton={false}
-                className={companyCityInput.trim() ? "border-orange-500" : ""}
+                className="border-orange-500"
               />
             </div>
             

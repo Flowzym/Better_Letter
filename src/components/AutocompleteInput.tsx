@@ -321,7 +321,7 @@ export default function AutocompleteInput<T = string>({
           ref={dropdownRef} 
           className="absolute z-50 mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto"
           style={{
-            width: inputRef.current?.offsetWidth + 'px',
+            borderColor: value.trim() ? '#F29400' : '#D1D5DB', // Orange wenn Wert, sonst grau
             left: '0'
           }}
           role="listbox"
