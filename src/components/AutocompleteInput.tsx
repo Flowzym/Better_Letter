@@ -14,6 +14,7 @@ interface AutocompleteInputProps<T = string> {
   className?: string;
   showFavoritesButton?: boolean;
   showAddButton?: boolean;
+  buttonColor?: string;
   id?: string;
   label?: string;
   formatSuggestion?: (item: T) => React.ReactNode;
@@ -36,6 +37,7 @@ export default function AutocompleteInput<T = string>({
   showAddButton = true,
   id,
   label,
+  buttonColor = '#F6A800',
   formatSuggestion,
   getSearchableString,
   getKey
@@ -213,7 +215,7 @@ export default function AutocompleteInput<T = string>({
   const handleAddToFavorites = (e?: React.MouseEvent) => {
     if (e) e.preventDefault();
     if (onFavoriteClick && hasInput) {
-      onFavoriteClick(value.trim());
+      onFavoriteClick(value);
     }
   };
 
@@ -266,6 +268,8 @@ export default function AutocompleteInput<T = string>({
                 inputRef.current?.focus();
               }}
               className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-300"
+              style={{ backgroundColor: buttonColor }}
+              style={{ backgroundColor: buttonColor }}
               aria-label="Textfeld leeren"
             >
               <X className="w-4 h-4" />
@@ -313,7 +317,7 @@ export default function AutocompleteInput<T = string>({
           ref={dropdownRef} 
           className="absolute z-50 mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto"
           style={{
-            borderColor: value.trim() ? '#F29400' : '#D1D5DB', // Orange wenn Wert, sonst grau
+            borderColor: hasInput ? '#F29400' : '#D1D5DB',
             left: '0'
           }}
           role="listbox"

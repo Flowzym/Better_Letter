@@ -43,6 +43,8 @@ export default function ExperienceForm({
   const [companyCityInput, setCompanyCityInput] = useState('');
   const [selectedCountryInput, setSelectedCountryInput] = useState('Österreich');
   const [showForeignCountry, setShowForeignCountry] = useState(false);
+  const [showCompanyButtons, setShowCompanyButtons] = useState(false);
+  const [showCityButtons, setShowCityButtons] = useState(false);
 
   const hasZeitraumData =
     form.startMonth !== null ||
@@ -120,14 +122,14 @@ export default function ExperienceForm({
   const addCityFavoriteToInput = (favorite: string) => {
     if (companyCityInput.trim()) {
       const currentCities = companyCityInput.trim().split(/,\s*|&\s*/).map(s => s.trim());
-      
+
       if (!currentCities.includes(favorite)) {
         if (currentCities.length === 1) {
           setCompanyCityInput(`${currentCities[0]} & ${favorite}`);
         } else {
           // Entferne das letzte "&" wenn vorhanden
           const lastCity = currentCities.pop() || '';
-          const otherCities = currentCities.join(',');
+          const otherCities = currentCities.join(', ');
           setCompanyCityInput(`${otherCities}${otherCities ? ', ' : ''}${lastCity} & ${favorite}`);
         }
       }
@@ -246,17 +248,14 @@ export default function ExperienceForm({
                 onFocus={() => setIsCompanyInputFocused(true)}
                 onBlur={() => setIsCompanyInputFocused(false)}
                 onFavoriteClick={(val?: string) => {
-                  // Wenn val übergeben wird, diesen verwenden, sonst den aktuellen Input-Wert
-                  if (val) {
-                    toggleFavoriteCompany(val);
-                  } else if (companyNameInput.trim()) {
-                    toggleFavoriteCompany(companyNameInput.trim());
-                  }
+                  const valueToAdd = val || companyNameInput.trim();
+                  if (valueToAdd) toggleFavoriteCompany(valueToAdd);
                 }}
                 suggestions={favorites}
                 placeholder="Name des Unternehmens..."
-                showFavoritesButton={isCompanyInputFocused}
+                showFavoritesButton={true}
                 showAddButton={false}
+                buttonColor="orange"
               />
             </div>
             
@@ -270,17 +269,14 @@ export default function ExperienceForm({
                 onBlur={() => setIsCityInputFocused(false)}
                 onAdd={() => {}} // Wird nicht verwendet
                 onFavoriteClick={(val?: string) => {
-                  // Wenn val übergeben wird, diesen verwenden, sonst den aktuellen Input-Wert
-                  if (val) {
-                    toggleFavoriteCity(val);
-                  } else if (companyCityInput.trim()) {
-                    toggleFavoriteCity(companyCityInput.trim());
-                  }
+                  const valueToAdd = val || companyCityInput.trim();
+                  if (valueToAdd) toggleFavoriteCity(valueToAdd);
                 }}
                 suggestions={favoriteCities}
                 placeholder="Ort des Unternehmens..."
-                showFavoritesButton={isCityInputFocused}
+                showFavoritesButton={true}
                 showAddButton={false}
+                buttonColor="orange"
               />
             </div>
             
