@@ -6,6 +6,7 @@ import AutocompleteInput from './AutocompleteInput';
 import TagSelectorWithFavorites from './TagSelectorWithFavorites';
 import { Eraser, Plus, Star } from 'lucide-react';
 import CompanyTag from './CompanyTag';
+import TagButtonFavorite from './ui/TagButtonFavorite';
 import { Berufserfahrung, useLebenslauf } from '../context/LebenslaufContext';
 import { CVSuggestionConfig } from '../services/supabaseService';
 import { getTasksForPositions } from '../constants/positionsToTasks';
