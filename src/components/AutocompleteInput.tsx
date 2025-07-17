@@ -4,6 +4,8 @@ import { Plus, Star, X } from 'lucide-react';
 interface AutocompleteInputProps<T = string> {
   value: string;
   onChange: (value: string) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
   onAdd?: (valueToAdd?: string | T) => void;
   onFavoriteClick?: (valueToAdd?: string) => void;
   suggestions: T[];
@@ -22,6 +24,8 @@ interface AutocompleteInputProps<T = string> {
 export default function AutocompleteInput<T = string>({
   value,
   onChange,
+  onFocus,
+  onBlur,
   onAdd,
   onFavoriteClick,
   suggestions,
@@ -137,11 +141,13 @@ export default function AutocompleteInput<T = string>({
   // Focus event handler - prevents editor focus
   const handleFocus = (e: React.FocusEvent) => {
     setIsFocused(true);
+    onFocus?.();
   };
 
   const handleBlur = (e: React.FocusEvent) => {
     // Delay setting isFocused to false to allow button clicks to register
     setTimeout(() => setIsFocused(false), 200);
+    onBlur?.();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

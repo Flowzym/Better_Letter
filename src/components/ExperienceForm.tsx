@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import ZeitraumPicker from './ZeitraumPicker';
 import TasksTagInput from './TasksTagInput';
-import CountryDropdown from './CountryDropdown';
+import CountryDropdown from './CountryDropdown'; 
 import AutocompleteInput from './AutocompleteInput';
 import TagSelectorWithFavorites from './TagSelectorWithFavorites';
 import { Eraser, Plus, Star } from 'lucide-react';
@@ -40,6 +40,8 @@ export default function ExperienceForm({
   const [companyNameInput, setCompanyNameInput] = useState('');
   const [companyCityInput, setCompanyCityInput] = useState('');
   const [selectedCountryInput, setSelectedCountryInput] = useState('Österreich');
+  const [isCompanyInputFocused, setIsCompanyInputFocused] = useState(false);
+  const [isCityInputFocused, setIsCityInputFocused] = useState(false);
   const [showForeignCountry, setShowForeignCountry] = useState(false);
 
   const hasZeitraumData =
@@ -92,7 +94,7 @@ export default function ExperienceForm({
 
     // Eingabefelder leeren nach dem Hinzufügen
     setCompanyNameInput('');
-    setCompanyCityInput('');
+    setCompanyCityInput(''); 
   };
   
   // Funktion zum Entfernen eines Unternehmenseintrags
@@ -241,10 +243,12 @@ export default function ExperienceForm({
           <div className="flex space-x-2 items-start">
             <div className="flex-1">
               <AutocompleteInput
-                label=""
+                label="" 
                 id="company-name-input"
                 value={companyNameInput}
                 onChange={setCompanyNameInput}
+                onFocus={() => setIsCompanyInputFocused(true)}
+                onBlur={() => setTimeout(() => setIsCompanyInputFocused(false), 200)}
                 onAdd={() => {}} // Wird nicht verwendet
                 onFavoriteClick={(val?: string) => {
                   const valueToAdd = val || companyNameInput.trim();
@@ -252,7 +256,7 @@ export default function ExperienceForm({
                 }}
                 suggestions={favorites}
                 placeholder="Name des Unternehmens..."
-                showFavoritesButton={!isCompanyInFavorites}
+                showFavoritesButton={!isCompanyInFavorites && isCompanyInputFocused}
                 showAddButton={false}
               />
             </div>
@@ -263,6 +267,8 @@ export default function ExperienceForm({
                 id="company-city-input"
                 value={companyCityInput}
                 onChange={setCompanyCityInput}
+                onFocus={() => setIsCityInputFocused(true)}
+                onBlur={() => setTimeout(() => setIsCityInputFocused(false), 200)}
                 onAdd={() => {}} // Wird nicht verwendet
                 onFavoriteClick={(val?: string) => {
                   const valueToAdd = val || companyCityInput.trim();
@@ -270,7 +276,7 @@ export default function ExperienceForm({
                 }}
                 suggestions={favoriteCities}
                 placeholder="Ort des Unternehmens..."
-                showFavoritesButton={!isCityInFavorites}
+                showFavoritesButton={!isCityInFavorites && isCityInputFocused}
                 showAddButton={false}
               />
             </div>
@@ -278,12 +284,16 @@ export default function ExperienceForm({
             {/* Hinzufügen-Button */}
             {hasInputData && (
               <button 
-                onClick={addCompanyEntry}
-                className="flex items-center space-x-2 px-3 py-2 h-10 text-white rounded-md transition-colors duration-200"
+                onClick={addCompanyEntry} 
+                className="flex flex-col items-center justify-center px-3 py-2 h-10 text-white rounded-md transition-colors duration-200"
                 style={{ backgroundColor: '#F29400' }}
+                title="Unternehmen und Ort zusammen hinzufügen"
               >
-                <Plus className="h-4 w-4" />
-                <span>Hinzufügen</span>
+                <div className="flex items-center">
+                  <Plus className="h-4 w-4 mr-1" />
+                  <span>Hinzufügen</span>
+                </div>
+                <span className="text-xs font-light">Beide Felder</span>
               </button>
             )}
           </div>
@@ -291,7 +301,7 @@ export default function ExperienceForm({
           {/* Ausland Checkbox */}
           <div className="flex items-center mt-2">
             <input
-              type="checkbox"
+              type="checkbox" 
               id="show-foreign-country"
               checked={showForeignCountry}
               onChange={(e) => setShowForeignCountry(e.target.checked)}
@@ -314,7 +324,7 @@ export default function ExperienceForm({
           
           {/* Unternehmen Favoriten */}
           {favorites.length > 0 && (
-            <div className="mt-4">
+            <div className="mt-4"> 
               <div className="flex items-center space-x-2 mb-1">
                 <Star className="h-4 w-4 text-gray-400" />
                 <h4 className="text-xs font-medium text-gray-700">Unternehmen-Favoriten:</h4>
@@ -334,7 +344,7 @@ export default function ExperienceForm({
           
           {/* Ort Favoriten */}
           {favoriteCities.length > 0 && (
-            <div className="mt-4">
+            <div className="mt-4"> 
               <div className="flex items-center space-x-2 mb-1">
                 <Star className="h-4 w-4 text-gray-400" />
                 <h4 className="text-xs font-medium text-gray-700">Ort-Favoriten:</h4>
