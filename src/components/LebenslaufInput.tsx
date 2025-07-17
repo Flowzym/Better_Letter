@@ -11,7 +11,7 @@ const LebenslaufInput: React.FC = () => {
   const {
     personalData,
     updatePersonalData,
-    berufserfahrungen,
+    berufserfahrung,
     addExperience,
     updateExperience,
     deleteExperience,
@@ -20,7 +20,7 @@ const LebenslaufInput: React.FC = () => {
     selectExperience,
     cvSuggestions,
     selectedEducationId,
-    ausbildungen,
+    ausbildung,
     addEducation,
     updateEducation,
     deleteEducation,
@@ -34,7 +34,7 @@ const LebenslaufInput: React.FC = () => {
   // Hilfsfunktion zum Erstellen einer neuen Berufserfahrung
   const createEmptyExperience = () => {
     // Prüfen, ob bereits eine leere Berufserfahrung existiert
-    const hasEmptyExperience = berufserfahrungen.some(exp => 
+    const hasEmptyExperience = berufserfahrung.some(exp => 
       exp.companies.length === 0 && 
       exp.position.length === 0 && 
       exp.aufgabenbereiche.length === 0 &&
@@ -43,7 +43,7 @@ const LebenslaufInput: React.FC = () => {
     
     // Wenn bereits eine leere Berufserfahrung existiert, diese auswählen statt eine neue zu erstellen
     if (hasEmptyExperience) {
-      const emptyExp = berufserfahrungen.find(exp => 
+      const emptyExp = berufserfahrung.find(exp => 
         exp.companies.length === 0 && 
         exp.position.length === 0 && 
         exp.aufgabenbereiche.length === 0 &&
@@ -93,26 +93,26 @@ const LebenslaufInput: React.FC = () => {
   useEffect(() => {
     if (localActiveTab === 'experience') {
       // Wenn keine Berufserfahrung ausgewählt ist und keine vorhanden sind, eine erstellen
-      if (!selectedExperienceId && berufserfahrungen.length === 0) {
+      if (!selectedExperienceId && berufserfahrung.length === 0) {
         createEmptyExperience();
-      } else if (!selectedExperienceId && berufserfahrungen.length > 0) {
+      } else if (!selectedExperienceId && berufserfahrung.length > 0) {
         // Wenn keine ausgewählt ist, aber welche vorhanden sind, die erste auswählen
-        selectExperience(berufserfahrungen[0].id);
+        selectExperience(berufserfahrung[0].id);
       }
     } else if (localActiveTab === 'education') {
       // Wenn keine Ausbildung ausgewählt ist und keine vorhanden sind, eine erstellen
-      if (!selectedEducationId && ausbildungen.length === 0) {
+      if (!selectedEducationId && ausbildung.length === 0) {
         createEmptyEducation();
-      } else if (!selectedEducationId && ausbildungen.length > 0) {
+      } else if (!selectedEducationId && ausbildung.length > 0) {
         // Wenn keine ausgewählt ist, aber welche vorhanden sind, die erste auswählen
-        selectEducation(ausbildungen[0].id);
+        selectEducation(ausbildung[0].id);
       }
     }
   }, [localActiveTab]);
 
   // Beim ersten Laden
   useEffect(() => {
-    if (localActiveTab === 'experience' && berufserfahrungen.length === 0) {
+    if (localActiveTab === 'experience' && berufserfahrung.length === 0) {
       addExperience({
         companies: [],
         position: [],
@@ -123,7 +123,7 @@ const LebenslaufInput: React.FC = () => {
         isCurrent: false,
         aufgabenbereiche: []
       });
-    } else if (localActiveTab === 'education' && ausbildungen.length === 0) {
+    } else if (localActiveTab === 'education' && ausbildung.length === 0) {
       addEducation({
         institution: [],
         ausbildungsart: [],
@@ -196,7 +196,7 @@ const LebenslaufInput: React.FC = () => {
           <div className="space-y-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-medium text-gray-900">
-                Berufserfahrung {berufserfahrungen.length > 0 ? `(${berufserfahrungen.length})` : ''}
+                Berufserfahrung {berufserfahrung.length > 0 ? `(${berufserfahrung.length})` : ''}
               </h3>
               <button
                 onClick={createEmptyExperience}
@@ -207,11 +207,11 @@ const LebenslaufInput: React.FC = () => {
               </button>
             </div>
             {/* Immer das Formular anzeigen, unabhängig davon, ob ein Eintrag ausgewählt ist */}
-            {(selectedExperienceId || berufserfahrungen.length > 0) && (
+            {(selectedExperienceId || berufserfahrung.length > 0) && (
               <ExperienceForm
-                form={berufserfahrungen.find(e => e.id === selectedExperienceId) || {
+                form={berufserfahrung.find(e => e.id === selectedExperienceId) || {
                   companies: [],
-                  position: berufserfahrungen.find(e => e.id === selectedExperienceId)?.position || [],
+                  position: berufserfahrung.find(e => e.id === selectedExperienceId)?.position || [],
                   startMonth: null,
                   startYear: "",
                   endMonth: null,
@@ -219,7 +219,7 @@ const LebenslaufInput: React.FC = () => {
                   isCurrent: false,
                   aufgabenbereiche: []
                 }}
-                selectedPositions={berufserfahrungen.find(e => e.id === selectedExperienceId)?.position || []}
+                selectedPositions={berufserfahrung.find(e => e.id === selectedExperienceId)?.position || []}
                 onUpdateField={(field, value) => {
                   if (selectedExperienceId) {
                     updateExperienceField(selectedExperienceId, field, value);
@@ -240,7 +240,7 @@ const LebenslaufInput: React.FC = () => {
           <div className="space-y-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-medium text-gray-900">
-                Ausbildung {ausbildungen.length > 0 ? `(${ausbildungen.length})` : ''}
+                Ausbildung {ausbildung.length > 0 ? `(${ausbildung.length})` : ''}
               </h3>
               <button
                 onClick={createEmptyEducation}
@@ -251,9 +251,9 @@ const LebenslaufInput: React.FC = () => {
               </button>
             </div>
             {/* Immer das Formular anzeigen, unabhängig davon, ob ein Eintrag ausgewählt ist */}
-            {(selectedEducationId || ausbildungen.length > 0) && (
+            {(selectedEducationId || ausbildung.length > 0) && (
               <AusbildungForm
-                form={ausbildungen.find(e => e.id === selectedEducationId) || {
+                form={ausbildung.find(e => e.id === selectedEducationId) || {
                   institution: [],
                   ausbildungsart: [],
                   abschluss: [],

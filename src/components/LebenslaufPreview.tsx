@@ -7,8 +7,8 @@ import TextInputWithButtons from './TextInputWithButtons';
 
 export default function LebenslaufPreview() {
   const { 
-    berufserfahrungen, 
-    ausbildungen,
+    berufserfahrung, 
+    ausbildung,
     selectExperience, 
     selectedExperienceId,
     deleteExperience,
@@ -26,8 +26,8 @@ export default function LebenslaufPreview() {
   const [newTaskInputs, setNewTaskInputs] = useState<Record<string, string>>({});
 
   const sortedErfahrungen = useMemo(() => {
-    console.log('Berufserfahrungen für Vorschau:', berufserfahrungen);
-    return [...berufserfahrungen].sort((a, b) => {
+    console.log('Berufserfahrungen für Vorschau:', berufserfahrung);
+    return [...berufserfahrung].sort((a, b) => {
       const yearA = parseInt(a.startYear || '0', 10);
       const yearB = parseInt(b.startYear || '0', 10);
       const monthA = parseInt(a.startMonth || '0', 10);
@@ -36,11 +36,11 @@ export default function LebenslaufPreview() {
       if (yearA !== yearB) return yearB - yearA;
       return monthB - monthA;
     });
-  }, [berufserfahrungen]);
+  }, [berufserfahrung]);
 
   const sortedAusbildungen = useMemo(() => {
-    console.log('Ausbildungen für Vorschau:', ausbildungen);
-    return [...ausbildungen].sort((a, b) => {
+    console.log('Ausbildungen für Vorschau:', ausbildung);
+    return [...ausbildung].sort((a, b) => {
       const yearA = parseInt(a.startYear || '0', 10);
       const yearB = parseInt(b.startYear || '0', 10);
       const monthA = parseInt(a.startMonth || '0', 10);
@@ -49,7 +49,7 @@ export default function LebenslaufPreview() {
       if (yearA !== yearB) return yearB - yearA;
       return monthB - monthA;
     });
-  }, [ausbildungen]);
+  }, [ausbildung]);
 
   const formatZeitraum = (
     startMonth: string | null,
@@ -219,6 +219,7 @@ export default function LebenslaufPreview() {
         </div>
       ))}
       {berufserfahrungen.length === 0 && (
+      {berufserfahrung.length === 0 && (
         <div className="border border-dashed border-gray-300 rounded-lg p-4 bg-gray-50 text-gray-500">
           <p className="italic">
             Hier erscheint die Vorschau deines Lebenslaufs …
