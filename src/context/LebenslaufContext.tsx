@@ -16,7 +16,9 @@ import {
 
 export interface Berufserfahrung {
   id: string;
-  companies: string[];
+  companyName: string;
+  companyCity: string;
+  companyCountry: string;
   position: string[];
   startMonth: string | null;
   startYear: string;
@@ -104,9 +106,11 @@ interface LebenslaufContextType {
   favoritePositions: string[];
   favoriteTasks: string[];
   favoriteCompanies: string[];
+  favoriteCities: string[];
   toggleFavoritePosition: (pos: string) => void;
   toggleFavoriteTask: (task: string) => void;
   toggleFavoriteCompany: (company: string) => void;
+  toggleFavoriteCity: (city: string) => void;
   favoriteInstitutions: string[];
   favoriteAusbildungsarten: string[];
   favoriteAbschluesse: string[];
@@ -320,6 +324,16 @@ profileSourceMappings?: ProfileSourceMapping[];
     }
   });
   
+  const [favoriteCities, setFavoriteCities] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('favoriteCities');
+      return saved ? JSON.parse(saved) : [];
+    } catch (err) {
+      console.error('Failed to load favoriteCities from localStorage:', err);
+      return [];
+    }
+  });
+  
   // Speichern der Favoriten im localStorage
   useEffect(() => {
     localStorage.setItem('favoritePositions', JSON.stringify(favoritePositions));
@@ -344,6 +358,11 @@ profileSourceMappings?: ProfileSourceMapping[];
   useEffect(() => {
     localStorage.setItem('favoriteCompanies', JSON.stringify(favoriteCompanies));
   }, [favoriteCompanies]);
+  
+  useEffect(() => {
+    localStorage.setItem('favoriteCities', JSON.stringify(favoriteCities));
+  }, [favoriteCities]);
+  
   const [cvSuggestions, setCvSuggestions] = useState<CVSuggestionConfig>({
     companies: [],
     positions: [],
@@ -515,6 +534,12 @@ profileSourceMappings?: ProfileSourceMapping[];
       prev.includes(company) ? prev.filter(c => c !== company) : [...prev, company]
     );
   };
+  
+  const toggleFavoriteCity = (city: string) => {
+    setFavoriteCities(prev =>
+      prev.includes(city) ? prev.filter(c => c !== city) : [...prev, city]
+    );
+  };
 
   const toggleFavoriteTask = (task: string) => {
     setFavoriteTasks(prev =>
@@ -633,6 +658,7 @@ profileSourceMappings?: ProfileSourceMapping[];
         favoritePositions,
         favoriteTasks,
         favoriteCompanies,
+        favoriteCities,
         favoriteInstitutions,
         favoriteAusbildungsarten,
         favoriteAbschluesse,
@@ -642,6 +668,7 @@ profileSourceMappings?: ProfileSourceMapping[];
         toggleFavoritePosition,
         toggleFavoriteTask,
         toggleFavoriteCompany,
+        toggleFavoriteCity,
         cvSuggestions,
         updateEducationField,
         updateExperienceTask,
