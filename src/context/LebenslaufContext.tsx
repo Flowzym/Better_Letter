@@ -17,7 +17,9 @@ export interface PersonalData {
 
 export interface Berufserfahrung {
   id: string;
-  companies: string[];
+  companyName: string;
+  companyCity: string;
+  companyCountry: string;
   position: string[];
   startMonth: string | null;
   startYear: string;
@@ -60,7 +62,6 @@ export interface LebenslaufContextType {
   softSkills: string[];
   cvSuggestions: CVSuggestions;
   favoritePositions: string[];
-  favoriteCompanies: string[];
   favoriteCities: string[];
   favoriteTasks: string[];
   favoriteSkills: string[];
@@ -82,7 +83,6 @@ export interface LebenslaufContextType {
   updateSkills: (skills: string[]) => void;
   updateSoftSkills: (softSkills: string[]) => void;
   toggleFavoritePosition: (position: string) => void;
-  toggleFavoriteCompany: (company: string) => void;
   toggleFavoriteCity: (city: string) => void;
   toggleFavoriteTask: (task: string) => void;
   toggleFavoriteSkill: (skill: string) => void;
@@ -119,7 +119,7 @@ const initialPersonalData: PersonalData = {
 
 const initialCVSuggestions: CVSuggestions = {
   positions: [],
-  companies: [],
+  companies: [], // This is still needed for cvSuggestions.companies
   tasks: [],
   skills: [],
   softSkills: [],
@@ -135,14 +135,12 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
   const [softSkills, setSoftSkills] = useState<string[]>([]);
   const [cvSuggestions, setCvSuggestions] = useState<CVSuggestions>(initialCVSuggestions);
   
-  // Selection state
   const [selectedExperienceId, setSelectedExperienceId] = useState<string | null>(null);
   const [selectedEducationId, setSelectedEducationId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>('personal');
   
   // Favorites
   const [favoritePositions, setFavoritePositions] = useState<string[]>([]);
-  const [favoriteCompanies, setFavoriteCompanies] = useState<string[]>([]);
   const [favoriteCities, setFavoriteCities] = useState<string[]>([]);
   const [favoriteTasks, setFavoriteTasks] = useState<string[]>([]);
   const [favoriteSkills, setFavoriteSkills] = useState<string[]>([]);
@@ -161,7 +159,6 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
     const savedSoftSkills = localStorage.getItem('softSkills');
     const savedCvSuggestions = localStorage.getItem('cvSuggestions');
     const savedSelectedExperienceId = localStorage.getItem('selectedExperienceId');
-    const savedSelectedEducationId = localStorage.getItem('selectedEducationId');
     const savedActiveTab = localStorage.getItem('activeTab');
     const savedFavoritePositions = localStorage.getItem('favoritePositions');
     const savedFavoriteCompanies = localStorage.getItem('favoriteCompanies');
@@ -195,9 +192,6 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
     if (savedSelectedExperienceId) {
       setSelectedExperienceId(JSON.parse(savedSelectedExperienceId));
     }
-    if (savedSelectedEducationId) {
-      setSelectedEducationId(JSON.parse(savedSelectedEducationId));
-    }
     if (savedActiveTab) {
       setActiveTab(JSON.parse(savedActiveTab));
     }
@@ -206,9 +200,6 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
     }
     if (savedFavoriteCompanies) {
       setFavoriteCompanies(JSON.parse(savedFavoriteCompanies));
-    }
-    if (savedFavoriteCities) {
-      setFavoriteCities(JSON.parse(savedFavoriteCities));
     }
     if (savedFavoriteTasks) {
       setFavoriteTasks(JSON.parse(savedFavoriteTasks));
@@ -259,7 +250,9 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
   }, [cvSuggestions]);
 
   useEffect(() => {
-    localStorage.setItem('selectedExperienceId', JSON.stringify(selectedExperienceId));
+    if (selectedExperienceId !== undefined) { // Only save if not undefined
+      localStorage.setItem('selectedExperienceId', JSON.stringify(selectedExperienceId));
+    }
   }, [selectedExperienceId]);
 
   useEffect(() => {
@@ -273,10 +266,6 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
   useEffect(() => {
     localStorage.setItem('favoritePositions', JSON.stringify(favoritePositions));
   }, [favoritePositions]);
-
-  useEffect(() => {
-    localStorage.setItem('favoriteCompanies', JSON.stringify(favoriteCompanies));
-  }, [favoriteCompanies]);
 
   useEffect(() => {
     localStorage.setItem('favoriteCities', JSON.stringify(favoriteCities));
@@ -317,7 +306,9 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
   const addExperience = (data: Partial<Berufserfahrung> = {}) => {
     const newExperience: Berufserfahrung = {
       id: Date.now().toString(),
-      companies: [],
+      companyName: '',
+      companyCity: '',
+      companyCountry: '',
       position: [],
       startMonth: null,
       startYear: "",
@@ -396,14 +387,6 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
       prev.includes(position) 
         ? prev.filter(p => p !== position)
         : [...prev, position]
-    );
-  };
-
-  const toggleFavoriteCompany = (company: string) => {
-    setFavoriteCompanies(prev => 
-      prev.includes(company) 
-        ? prev.filter(c => c !== company)
-        : [...prev, company]
     );
   };
 
@@ -522,7 +505,6 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
     softSkills,
     cvSuggestions,
     favoritePositions,
-    favoriteCompanies,
     favoriteCities,
     favoriteTasks,
     favoriteSkills,
@@ -547,7 +529,6 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
     selectEducation,
     setActiveTab,
     toggleFavoritePosition,
-    toggleFavoriteCompany,
     toggleFavoriteCity,
     toggleFavoriteTask,
     toggleFavoriteSkill,
