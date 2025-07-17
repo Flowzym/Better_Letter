@@ -65,9 +65,9 @@ export default function TagSelectorWithFavorites({
     onBlur?.();
   };
 
-  // Prüfen ob Input-Wert vorhanden ist
+  // Buttons nur bei Fokus anzeigen
+  const shouldShowButtons = isFocused;
   const hasInputValue = inputValue.trim().length > 0;
-  const shouldShowButtons = isFocused || hasInputValue;
 
   const updateTag = (oldTag: string, newTag: string) => {
     const trimmed = newTag.trim();
