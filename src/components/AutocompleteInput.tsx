@@ -255,9 +255,7 @@ export default function AutocompleteInput<T = string>({
   };
 
   return (
-    <div
-      ref={containerRef}
-    >
+    <div ref={containerRef} className="relative">
       {label && (
         <label
           htmlFor={inputId}
@@ -352,9 +350,10 @@ export default function AutocompleteInput<T = string>({
         {isOpen && filteredSuggestions.length > 0 && (
         <div
           ref={dropdownRef}
-          className="absolute z-50 mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto left-0"
-          style={{ 
-            width: dropdownWidth ? `${dropdownWidth}px` : 'auto'
+          className="absolute z-50 mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto"
+          style={{
+            width: inputRef.current?.offsetWidth + 'px',
+            left: '0'
           }}
           role="listbox"
           aria-label="Vorschläge"
