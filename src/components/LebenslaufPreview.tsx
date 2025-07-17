@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Trash2, Plus, Calendar, Building, Briefcase } from 'lucide-react';
+import { Trash2, Plus, Calendar, Building, Briefcase, FileText } from 'lucide-react';
 import { ReactSortable } from 'react-sortablejs';
 import { useLebenslauf } from "../context/LebenslaufContext";
 import EditablePreviewText from './EditablePreviewText';
@@ -208,6 +208,21 @@ export default function LebenslaufPreview() {
               >
                 <Plus className="h-4 w-4" />
               </button>
+            </div>
+          )}
+          
+          {/* Zusatzangaben */}
+          {exp.zusatzangaben && (
+            <div className="mt-3 border-t pt-2 border-gray-100">
+              <div className="flex items-start space-x-2">
+                <FileText className="h-4 w-4 mt-1 text-gray-400 flex-shrink-0" />
+                <EditablePreviewText
+                  value={exp.zusatzangaben}
+                  onSave={(newValue) => updateExperienceField(exp.id, 'zusatzangaben', newValue)}
+                  isTextArea={true}
+                  placeholder="Weitere Angaben eingeben..."
+                />
+              </div>
             </div>
           )}
         </div>
