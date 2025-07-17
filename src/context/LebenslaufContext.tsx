@@ -19,6 +19,8 @@ export interface Berufserfahrung {
   companyName: string;
   companyCity: string;
   companyCountry: string;
+  companyCity: string;
+  companyCountry: string;
   position: string[];
   startMonth: string | null;
   startYear: string;
@@ -107,9 +109,11 @@ interface LebenslaufContextType {
   favoriteTasks: string[];
   favoriteCompanies: string[];
   favoriteCities: string[];
+  favoriteCities: string[];
   toggleFavoritePosition: (pos: string) => void;
   toggleFavoriteTask: (task: string) => void;
   toggleFavoriteCompany: (company: string) => void;
+  toggleFavoriteCity: (city: string) => void;
   toggleFavoriteCity: (city: string) => void;
   favoriteInstitutions: string[];
   favoriteAusbildungsarten: string[];
@@ -317,9 +321,19 @@ profileSourceMappings?: ProfileSourceMapping[];
   const [favoriteCompanies, setFavoriteCompanies] = useState<string[]>(() => {
     try {
       const saved = localStorage.getItem('favoriteCompanies');
-      return saved ? JSON.parse(saved) : [];
+      return saved ? JSON.parse(saved) as string[] : [];
     } catch (err) {
       console.error('Failed to load favoriteCompanies from localStorage:', err);
+      return [];
+    }
+  });
+  
+  const [favoriteCities, setFavoriteCities] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('favoriteCities');
+      return saved ? JSON.parse(saved) as string[] : [];
+    } catch (err) {
+      console.error('Failed to load favoriteCities from localStorage:', err);
       return [];
     }
   });
@@ -358,6 +372,10 @@ profileSourceMappings?: ProfileSourceMapping[];
   useEffect(() => {
     localStorage.setItem('favoriteCompanies', JSON.stringify(favoriteCompanies));
   }, [favoriteCompanies]);
+
+  useEffect(() => {
+    localStorage.setItem('favoriteCities', JSON.stringify(favoriteCities));
+  }, [favoriteCities]);
   
   useEffect(() => {
     localStorage.setItem('favoriteCities', JSON.stringify(favoriteCities));
@@ -385,6 +403,11 @@ profileSourceMappings?: ProfileSourceMapping[];
 
   const addExperience = async (data: Omit<Berufserfahrung, 'id'>) => {
     const newExp = { ...data, id: uuidv4() };
+    // Stellen Sie sicher, dass die neuen Felder initialisiert sind
+    if (!newExp.companyName) newExp.companyName = '';
+    if (!newExp.companyCity) newExp.companyCity = '';
+    if (!newExp.companyCountry) newExp.companyCountry = '';
+    
     console.log('Neue Berufserfahrung wird hinzugefügt:', newExp);
     setBerufserfahrungen(prev => {
       const updated = [...prev, newExp];
@@ -534,6 +557,12 @@ profileSourceMappings?: ProfileSourceMapping[];
       prev.includes(company) ? prev.filter(c => c !== company) : [...prev, company]
     );
   };
+
+  const toggleFavoriteCity = (city: string) => {
+    setFavoriteCities(prev =>
+      prev.includes(city) ? prev.filter(c => c !== city) : [...prev, city]
+    );
+  };
   
   const toggleFavoriteCity = (city: string) => {
     setFavoriteCities(prev =>
@@ -659,6 +688,7 @@ profileSourceMappings?: ProfileSourceMapping[];
         favoriteTasks,
         favoriteCompanies,
         favoriteCities,
+        favoriteCities,
         favoriteInstitutions,
         favoriteAusbildungsarten,
         favoriteAbschluesse,
@@ -668,6 +698,7 @@ profileSourceMappings?: ProfileSourceMapping[];
         toggleFavoritePosition,
         toggleFavoriteTask,
         toggleFavoriteCompany,
+        toggleFavoriteCity,
         toggleFavoriteCity,
         cvSuggestions,
         updateEducationField,
