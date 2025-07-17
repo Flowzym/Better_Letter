@@ -51,7 +51,6 @@ export default function AutocompleteInput<T = string>({
 
   const hasInput = (value || '').trim().length > 0;
   const [isFocused, setIsFocused] = useState(false);
-  const [showButtons, setShowButtons] = useState(false);
 
   // Helper functions with defaults for string suggestions
   const getSuggestionText = (item: T): string => {
@@ -79,11 +78,6 @@ export default function AutocompleteInput<T = string>({
   const inputId = id || `autocomplete-input-${Math.random().toString(36).substr(2, 9)}`;
   const favoritesButtonId = `${inputId}-favorites`;
   const addButtonId = `${inputId}-add`;
-  
-  // Determine when to show buttons
-  useEffect(() => {
-    setShowButtons(hasInput || isFocused || isOpen);
-  }, [hasInput, isFocused, isOpen]);
 
   // Intelligent filtering and sorting of suggestions
   useEffect(() => {
@@ -268,8 +262,6 @@ export default function AutocompleteInput<T = string>({
                 inputRef.current?.focus();
               }}
               className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-300"
-              style={{ backgroundColor: buttonColor }}
-              style={{ backgroundColor: buttonColor }}
               aria-label="Textfeld leeren"
             >
               <X className="w-4 h-4" />
@@ -277,7 +269,7 @@ export default function AutocompleteInput<T = string>({
           )}
         </div>
         
-        {showButtons && (
+        {(showAddButton || (showFavoritesButton && onFavoriteClick)) && (
           <div className="flex-shrink-0 flex space-x-2">
             {/* Add button */}
             {showAddButton && (

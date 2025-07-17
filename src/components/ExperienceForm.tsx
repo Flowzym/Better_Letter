@@ -43,8 +43,6 @@ export default function ExperienceForm({
   const [companyCityInput, setCompanyCityInput] = useState('');
   const [selectedCountryInput, setSelectedCountryInput] = useState('Österreich');
   const [showForeignCountry, setShowForeignCountry] = useState(false);
-  const [showCompanyButtons, setShowCompanyButtons] = useState(false);
-  const [showCityButtons, setShowCityButtons] = useState(false);
 
   const hasZeitraumData =
     form.startMonth !== null ||
@@ -247,13 +245,13 @@ export default function ExperienceForm({
                 onAdd={() => {}} // Wird nicht verwendet
                 onFocus={() => setIsCompanyInputFocused(true)}
                 onBlur={() => setIsCompanyInputFocused(false)}
-                onFavoriteClick={(val?: string) => {
-                  const valueToAdd = val || companyNameInput.trim();
-                  if (valueToAdd) toggleFavoriteCompany(valueToAdd);
+                onFavoriteClick={(val) => {
+                  if (val) toggleFavoriteCompany(val);
+                  else if (companyNameInput.trim()) toggleFavoriteCompany(companyNameInput.trim());
                 }}
                 suggestions={favorites}
                 placeholder="Name des Unternehmens..."
-                showFavoritesButton={true}
+                showFavoritesButton={isCompanyInputFocused}
                 showAddButton={false}
                 buttonColor="orange"
               />
@@ -268,13 +266,13 @@ export default function ExperienceForm({
                 onFocus={() => setIsCityInputFocused(true)}
                 onBlur={() => setIsCityInputFocused(false)}
                 onAdd={() => {}} // Wird nicht verwendet
-                onFavoriteClick={(val?: string) => {
-                  const valueToAdd = val || companyCityInput.trim();
-                  if (valueToAdd) toggleFavoriteCity(valueToAdd);
+                onFavoriteClick={(val) => {
+                  if (val) toggleFavoriteCity(val);
+                  else if (companyCityInput.trim()) toggleFavoriteCity(companyCityInput.trim());
                 }}
                 suggestions={favoriteCities}
                 placeholder="Ort des Unternehmens..."
-                showFavoritesButton={true}
+                showFavoritesButton={isCityInputFocused}
                 showAddButton={false}
                 buttonColor="orange"
               />
