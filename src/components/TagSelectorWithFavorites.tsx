@@ -30,6 +30,7 @@ export default function TagSelectorWithFavorites({
   const [inputValue, setInputValue] = useState('');
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [editValue, setEditValue] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
   const { favoritePositions: favorites, toggleFavoritePosition } = useLebenslauf();
 
 
@@ -52,6 +53,21 @@ export default function TagSelectorWithFavorites({
     toggleFavoritePosition(trimmed);
     setInputValue('');
   };
+
+  const handleFocus = () => {
+    setIsFocused(true);
+    onFocus?.();
+  };
+
+  const handleBlur = () => {
+    // Verzögerung hinzufügen, damit Button-Klicks noch registriert werden
+    setTimeout(() => setIsFocused(false), 200);
+    onBlur?.();
+  };
+
+  // Prüfen ob Input-Wert vorhanden ist
+  const hasInputValue = inputValue.trim().length > 0;
+  const shouldShowButtons = isFocused || hasInputValue;
 
   const updateTag = (oldTag: string, newTag: string) => {
     const trimmed = newTag.trim();
@@ -81,12 +97,13 @@ export default function TagSelectorWithFavorites({
         onChange={setInputValue}
         onAdd={addTag}
         onFavoriteClick={toggleFavorite}
-        onFocus={onFocus}
-        onBlur={onBlur}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
         suggestions={suggestions ?? options}
         placeholder="Hinzufügen..."
-        showFavoritesButton={showFavoritesButton}
-        showAddButton={showFavoritesButton}
+        showFavoritesButton={shouldShowButtons && showFavoritesButton}
+        showAddButton={shouldShowButtons}
+        className={hasInputValue && !isFocused ? 'border-orange-500' : ''}
       />
 
       {favorites.filter((f) => !value.includes(f)).length > 0 && (
@@ -127,4 +144,3 @@ export default function TagSelectorWithFavorites({
     </div>
   );
 }
-

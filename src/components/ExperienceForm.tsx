@@ -304,7 +304,9 @@ export default function ExperienceForm({
                 <h4 className="text-xs font-medium text-gray-700">Unternehmen-Favoriten:</h4>
               </div>
               <div className="flex flex-wrap gap-2">
-                {favorites.map((company) => (
+                {favorites
+                  .filter(company => !form.companies?.includes(company))
+                  .map((company) => (
                   <TagButtonFavorite
                     key={company}
                     label={company}
