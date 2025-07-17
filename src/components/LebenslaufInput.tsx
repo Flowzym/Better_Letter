@@ -57,7 +57,9 @@ const LebenslaufInput: React.FC = () => {
     
     // Immer eine neue Berufserfahrung erstellen, wenn der Button geklickt wird
     const newExp = {
-      companies: [],
+      companyName: '',
+      companyCity: '',
+      companyCountry: '',
       position: [],
       startMonth: null,
       startYear: "",
@@ -114,7 +116,9 @@ const LebenslaufInput: React.FC = () => {
   useEffect(() => {
     if (localActiveTab === 'experience' && berufserfahrung.length === 0) {
       addExperience({
-        companies: [],
+        companyName: '',
+        companyCity: '',
+        companyCountry: '',
         position: [],
         startMonth: null,
         startYear: "",
@@ -212,7 +216,9 @@ const LebenslaufInput: React.FC = () => {
                 form={(() => {
                   const experience = berufserfahrung.find(e => e.id === selectedExperienceId);
                   return {
-                    companies: experience?.companies || [],
+                    companyName: experience?.companyName || '',
+                    companyCity: experience?.companyCity || '',
+                    companyCountry: experience?.companyCountry || '',
                     position: experience?.position || [],
                     startMonth: experience?.startMonth || null,
                     startYear: experience?.startYear || "",

@@ -1,8 +1,9 @@
 import React, { useMemo } from 'react';
-import TagSelectorWithFavorites from './TagSelectorWithFavorites';
 import ZeitraumPicker from './ZeitraumPicker';
 import TasksTagInput from './TasksTagInput';
-import CompaniesTagInput from './CompaniesTagInput';
+import TextInput from './TextInput';
+import CountryDropdown from './CountryDropdown';
+import AutocompleteInput from './AutocompleteInput';
 import { Eraser } from 'lucide-react';
 import { Berufserfahrung, useLebenslauf } from '../context/LebenslaufContext';
 import { CVSuggestionConfig } from '../services/supabaseService';
@@ -23,7 +24,7 @@ export default function ExperienceForm({
   onPositionsChange,
   cvSuggestions,
 }: ExperienceFormProps) {
-  const { favoriteTasks, favoriteCompanies } = useLebenslauf();
+  const { favoriteTasks, favoriteCities, toggleFavoriteCity } = useLebenslauf();
 
   const hasZeitraumData =
     form.startMonth !== null ||
@@ -31,7 +32,10 @@ export default function ExperienceForm({
     form.endMonth !== null ||
     form.endYear !== null ||
     form.isCurrent === true;
-  const hasCompanyData = form.companies.length > 0;
+  const hasCompanyData = 
+    form.companyName.trim() !== '' || 
+    form.companyCity.trim() !== '' || 
+    form.companyCountry.trim() !== '';
   const hasPositionData = selectedPositions.length > 0;
   const hasTaskData = form.aufgabenbereiche.length > 0;
   
@@ -105,7 +109,11 @@ export default function ExperienceForm({
           {hasCompanyData && (
             <button
               type="button"
-              onClick={() => onUpdateField('companies', [])}
+              onClick={() => {
+                onUpdateField('companyName', '');
+                onUpdateField('companyCity', '');
+                onUpdateField('companyCountry', '');
+              }}
               className="p-1 text-gray-600 hover:text-gray-900"
               title="Unternehmen &amp; Ort zurücksetzen"
             >
@@ -113,10 +121,30 @@ export default function ExperienceForm({
             </button>
           )}
         </div>
-        <CompaniesTagInput
-          value={form.companies}
-          onChange={(val) => onUpdateField('companies', val)}
-          suggestions={cvSuggestions.companies}
+        <div className="space-y-4">
+          <TextInput
+            label="Unternehmen"
+            value={form.companyName}
+            onChange={(val) => onUpdateField('companyName', val)}
+            placeholder="Name des Unternehmens..."
+          />
+          <AutocompleteInput
+            label="Ort"
+            value={form.companyCity}
+            onChange={(val) => onUpdateField('companyCity', val)}
+            onAdd={(val) => onUpdateField('companyCity', val as string)}
+            onFavoriteClick={(val) => toggleFavoriteCity(val as string)}
+            suggestions={favoriteCities}
+            placeholder="Ort des Unternehmens..."
+            showFavoritesButton={true}
+            showAddButton={false}
+          />
+          <CountryDropdown
+            label="Land"
+            value={form.companyCountry}
+            onChange={(val) => onUpdateField('companyCountry', val)}
+          />
+        </div>
         />
       </div>
 
@@ -137,14 +165,23 @@ export default function ExperienceForm({
             </button>
           )}
         </div>
-        <TagSelectorWithFavorites
-          value={selectedPositions}
+        <AutocompleteInput
+          label=""
+          value={selectedPositions.join(', ')}
           onChange={(val) => {
-            onPositionsChange(val);
-            onUpdateField('position', val);
+            const positions = val.split(',').map(p => p.trim()).filter(p => p);
+            onPositionsChange(positions);
+            onUpdateField('position', positions);
           }}
-          allowCustom={true}
+          onAdd={(val) => {
+            if (typeof val === 'string') {
+              const positions = [...selectedPositions, val];
+              onPositionsChange(positions);
+              onUpdateField('position', positions);
+            }
+          }}
           suggestions={cvSuggestions.positions}
+          placeholder="Position eingeben..."
         />
       </div>
 

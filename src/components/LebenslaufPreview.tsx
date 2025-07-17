@@ -80,8 +80,12 @@ export default function LebenslaufPreview() {
   };
 
   const handleExperienceFieldUpdate = (expId: string, field: string, value: string) => {
-    if (field === 'companies') {
-      updateExperienceField(expId, 'companies', value.split(', '));
+    if (field === 'companyInfo') {
+      // Parse the combined company info string
+      const parts = value.split(',').map(part => part.trim());
+      if (parts.length > 0) updateExperienceField(expId, 'companyName', parts[0]);
+      if (parts.length > 1) updateExperienceField(expId, 'companyCity', parts[1]);
+      if (parts.length > 2) updateExperienceField(expId, 'companyCountry', parts[2]);
     } else if (field === 'position') {
       updateExperienceField(expId, 'position', value.split(' / '));
     } else if (field === 'zeitraum') {
@@ -150,8 +154,8 @@ export default function LebenslaufPreview() {
           <div className="flex items-center mb-1">
             {/* Icon entfernt */}
             <EditablePreviewText
-              value={Array.isArray(exp.position) ? (exp.position || []).join(" / ") : (exp.position || "")}
-              onSave={(newValue) => handleExperienceFieldUpdate(exp.id, 'position', newValue)}
+              value={`${exp.companyName || ''}${exp.companyCity ? `, ${exp.companyCity}` : ''}${exp.companyCountry ? `, ${exp.companyCountry}` : ''}`}
+              onSave={(newValue) => handleExperienceFieldUpdate(exp.id, 'companyInfo', newValue)}
               className="font-bold text-lg text-gray-900"
               placeholder="Position eingeben..."
             />

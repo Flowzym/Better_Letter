@@ -198,8 +198,8 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
     if (savedFavoritePositions) {
       setFavoritePositions(JSON.parse(savedFavoritePositions));
     }
-    if (savedFavoriteCompanies) {
-      setFavoriteCompanies(JSON.parse(savedFavoriteCompanies));
+    if (savedFavoriteCities) {
+      setFavoriteCities(JSON.parse(savedFavoriteCities));
     }
     if (savedFavoriteTasks) {
       setFavoriteTasks(JSON.parse(savedFavoriteTasks));
