@@ -514,7 +514,7 @@ export const LebenslaufProvider: React.FC<LebenslaufProviderProps> = ({
     setBerufserfahrung(prev => 
       prev.map(exp => {
         if (exp.id === expId) {
-          const newTasks = [...exp.aufgabenbereiche];
+          const newTasks = [...(exp.aufgabenbereiche || [])];
           newTasks[taskIndex] = newTask;
           return { ...exp, aufgabenbereiche: newTasks };
         }
@@ -535,7 +535,7 @@ export const LebenslaufProvider: React.FC<LebenslaufProviderProps> = ({
     setBerufserfahrung(prev => 
       prev.map(exp => 
         exp.id === expId 
-          ? { ...exp, aufgabenbereiche: [...exp.aufgabenbereiche, task] }
+          ? { ...exp, aufgabenbereiche: [...(exp.aufgabenbereiche || []), task] }
           : exp
       )
     );
