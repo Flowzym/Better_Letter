@@ -129,7 +129,7 @@ export default function ExperienceForm({
   const aiTaskSuggestions = useMemo(() => {
     if (!selectedPositions || selectedPositions.length === 0) return [];
     const suggestions = getTasksForPositions(selectedPositions);
-    toggleFavoritePosition(toAdd);
+    return suggestions;
   }, [selectedPositions]);
   
   return (
