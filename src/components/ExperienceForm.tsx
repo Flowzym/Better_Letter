@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import ZeitraumPicker from './ZeitraumPicker';
 import TasksTagInput from './TasksTagInput';
-import TextInput from './TextInput';
 import CountryDropdown from './CountryDropdown';
 import AutocompleteInput from './AutocompleteInput';
 import TagSelectorWithFavorites from './TagSelectorWithFavorites';
@@ -29,7 +28,7 @@ export default function ExperienceForm({
   const { 
     favoriteTasks, 
     favoriteCities, 
-    favoriteCompanies,
+    favoriteCompanies: favorites,
     toggleFavoriteCompany,
     toggleFavoriteCity,
     favoritePositions, 
@@ -50,6 +49,10 @@ export default function ExperienceForm({
   const hasCompanyData = form.companies && form.companies.length > 0;
   const hasPositionData = selectedPositions.length > 0;
   const hasTaskData = form.aufgabenbereiche.length > 0;
+
+  // Prüft, ob der aktuelle Wert bereits in den Favoriten ist
+  const isCompanyInFavorites = companyNameInput.trim() !== '' && favorites.includes(companyNameInput.trim());
+  const isCityInFavorites = companyCityInput.trim() !== '' && favoriteCities.includes(companyCityInput.trim());
   
   // Prüft, ob mindestens ein Eingabefeld gefüllt ist
   const hasInputData = companyNameInput.trim() !== '' || companyCityInput.trim() !== '';
@@ -84,8 +87,10 @@ export default function ExperienceForm({
     if (newEntry && (!form.companies || !form.companies.includes(newEntry))) {
       onUpdateField('companies', [...(form.companies || []), newEntry]);
     }
-    
-    // Eingabefelder nicht leeren, damit der Benutzer mehrere ähnliche Einträge hinzufügen kann
+
+    // Eingabefelder leeren nach dem Hinzufügen
+    setCompanyNameInput('');
+    setCompanyCityInput('');
   };
   
   // Funktion zum Entfernen eines Unternehmenseintrags
@@ -124,8 +129,7 @@ export default function ExperienceForm({
   const aiTaskSuggestions = useMemo(() => {
     if (!selectedPositions || selectedPositions.length === 0) return [];
     const suggestions = getTasksForPositions(selectedPositions);
-    console.log('AI Task Suggestions:', suggestions);
-    return suggestions;
+    toggleFavoritePosition(toAdd);
   }, [selectedPositions]);
   
   return (
@@ -223,45 +227,35 @@ export default function ExperienceForm({
           <div>
             <AutocompleteInput
               label=""
+              id="company-name-input"
               value={companyNameInput}
               onChange={setCompanyNameInput}
               onAdd={() => {}} // Wird nicht verwendet
-              onFavoriteClick={(val) => {
-                if (val) toggleFavoriteCompany(val);
+              onFavoriteClick={(val?: string) => {
+                const valueToAdd = val || companyNameInput.trim();
+                if (valueToAdd) toggleFavoriteCompany(valueToAdd);
               }}
-              suggestions={favoriteCompanies}
+              suggestions={favorites}
               placeholder="Name des Unternehmens..."
-              showFavoritesButton={true}
+              showFavoritesButton={!isCompanyInFavorites}
               showAddButton={false}
             />
             
             {/* Unternehmen Favoriten */}
-            {favoriteCompanies.length > 0 && (
+            {favorites.length > 0 && (
               <div className="mt-2">
                 <div className="flex items-center space-x-2 mb-1">
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#9CA3AF"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <polygon points="12 2 15 8.5 22 9.3 17 14 18.2 21 12 17.8 5.8 21 7 14 2 9.3 9 8.5 12 2" fill="none" />
-                  </svg>
+                  <Star className="h-4 w-4 text-gray-400" />
                   <h4 className="text-xs font-medium text-gray-700">Unternehmen-Favoriten:</h4>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {favoriteCompanies.map((company) => (
-                    <button
+                  {favorites.map((company) => (
+                    <TagButtonFavorite
                       key={company}
+                      label={company}
                       onClick={() => addCompanyFavoriteToInput(company)}
-                      className="inline-flex items-center px-3 py-1 bg-white text-gray-700 text-xs rounded-full border border-gray-300 hover:bg-gray-100 transition-colors duration-200"
-                    >
-                      {company}
-                    </button>
+                      onRemove={() => toggleFavoriteCompany(company)}
+                    />
                   ))}
                 </div>
               </div>
@@ -272,15 +266,17 @@ export default function ExperienceForm({
           <div>
             <AutocompleteInput
               label=""
+              id="company-city-input"
               value={companyCityInput}
               onChange={setCompanyCityInput}
               onAdd={() => {}} // Wird nicht verwendet
-              onFavoriteClick={(val) => {
-                if (val) toggleFavoriteCity(val);
+              onFavoriteClick={(val?: string) => {
+                const valueToAdd = val || companyCityInput.trim();
+                if (valueToAdd) toggleFavoriteCity(valueToAdd);
               }}
               suggestions={favoriteCities}
               placeholder="Ort des Unternehmens..."
-              showFavoritesButton={true}
+              showFavoritesButton={!isCityInFavorites}
               showAddButton={false}
             />
             
@@ -288,29 +284,17 @@ export default function ExperienceForm({
             {favoriteCities.length > 0 && (
               <div className="mt-2">
                 <div className="flex items-center space-x-2 mb-1">
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#9CA3AF"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <polygon points="12 2 15 8.5 22 9.3 17 14 18.2 21 12 17.8 5.8 21 7 14 2 9.3 9 8.5 12 2" fill="none" />
-                  </svg>
+                  <Star className="h-4 w-4 text-gray-400" />
                   <h4 className="text-xs font-medium text-gray-700">Ort-Favoriten:</h4>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {favoriteCities.map((city) => (
-                    <button
+                    <TagButtonFavorite
                       key={city}
+                      label={city}
                       onClick={() => addCityFavoriteToInput(city)}
-                      className="inline-flex items-center px-3 py-1 bg-white text-gray-700 text-xs rounded-full border border-gray-300 hover:bg-gray-100 transition-colors duration-200"
-                    >
-                      {city}
-                    </button>
+                      onRemove={() => toggleFavoriteCity(city)}
+                    />
                   ))}
                 </div>
               </div>
@@ -327,7 +311,7 @@ export default function ExperienceForm({
           {/* Hinzufügen-Button */}
           {hasInputData && (
             <div className="flex justify-end mt-3">
-              <button
+              <button 
                 onClick={addCompanyEntry}
                 className="flex items-center space-x-2 px-3 py-2 text-white rounded-md transition-colors duration-200"
                 style={{ backgroundColor: '#F29400' }}
