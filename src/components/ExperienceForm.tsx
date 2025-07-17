@@ -431,26 +431,7 @@ export default function ExperienceForm({
               onClick={() => onUpdateField('zusatzangaben', '')}
               className="p-1 text-gray-600 hover:text-gray-900"
               title="Weitere Angaben zurücksetzen"
-            >
-              <Eraser className="h-4 w-4" />
-            </button>
-          )}
-          {hasAdditionalInfo && (
-            <button
-              type="button"
-              onClick={() => onUpdateField('zusatzangaben', '')}
-              className="p-1 text-gray-600 hover:text-gray-900"
-              title="Weitere Angaben zurücksetzen"
-            >
-              <Eraser className="h-4 w-4" />
-            </button>
-          )}
-          {hasAdditionalInfo && (
-            <button
-              type="button"
-              onClick={() => onUpdateField('zusatzangaben', '')}
-              className="p-1 text-gray-600 hover:text-gray-900"
-              title="Weitere Angaben zurücksetzen"
+              aria-label="Weitere Angaben zurücksetzen"
             >
               <Eraser className="h-4 w-4" />
             </button>

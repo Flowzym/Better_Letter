@@ -25,6 +25,15 @@ export default function TextInput({
   const textareaName = name || `textarea-${textareaId}`;
   const hasValue = value.trim().length > 0;
 
+  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    const newValue = e.target.value;
+    onChange(newValue);
+  };
+
+  const handleClear = () => {
+    onChange('');
+  };
+
   return (
     <div className="space-y-2">
       {label && (
@@ -34,10 +43,11 @@ export default function TextInput({
       )}
       <div className="relative">
         <textarea
+          key={textareaId}
           id={textareaId}
           name={name || textareaName}
           value={value}
-          onChange={(e: ChangeEvent<HTMLTextAreaElement>) => onChange(e.target.value)}
+          onChange={handleChange}
           placeholder={placeholder}
           rows={rows}
           className="w-full px-3 py-2 text-sm placeholder:text-sm rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:border-orange-500 pr-10"
@@ -46,8 +56,9 @@ export default function TextInput({
         {hasValue && (
           <button
             type="button"
-            onClick={() => onChange('')}
+            onClick={handleClear}
             className="absolute top-1 right-1 text-gray-400 hover:text-gray-600"
+            aria-label="Text löschen"
           >
             <X className="w-4 h-4" />
           </button>
