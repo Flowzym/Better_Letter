@@ -218,7 +218,6 @@ export default function LebenslaufPreview() {
           )}
         </div>
       ))}
-      {berufserfahrungen.length === 0 && (
       {berufserfahrung.length === 0 && (
         <div className="border border-dashed border-gray-300 rounded-lg p-4 bg-gray-50 text-gray-500">
           <p className="italic">
