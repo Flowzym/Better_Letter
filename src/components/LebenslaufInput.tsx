@@ -221,7 +221,7 @@ const LebenslaufInput: React.FC = () => {
                     endMonth: experience?.endMonth || null,
                     endYear: experience?.endYear || null,
                     isCurrent: experience?.isCurrent || false,
-                    aufgabenbereiche: Array.isArray(experience?.aufgabenbereiche) ? experience.aufgabenbereiche : []
+                    aufgabenbereiche: Array.isArray(experience?.aufgabenbereiche) ? experience.aufgabenbereiche : [],
                     zusatzangaben: experience?.zusatzangaben || ""
                   };
                 })()}
