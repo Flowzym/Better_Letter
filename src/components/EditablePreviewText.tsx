@@ -74,7 +74,7 @@ export default function EditablePreviewText({
         onChange={(e) => setEditValue(e.target.value)}
         onBlur={saveChanges}
         onKeyDown={handleKeyDown}
-        className={`bg-white border border-orange-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 ${className}`}
+        className={`w-full bg-white border border-orange-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 ${className}`}
         placeholder={placeholder}
         rows={isTextArea ? 3 : undefined}
       />

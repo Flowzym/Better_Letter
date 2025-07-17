@@ -299,8 +299,19 @@ export default function ZeitraumPicker({
           />
         )}
         <label className="ml-2 flex items-center space-x-1 text-sm">
-          <input type="checkbox" checked={isCurrent} onChange={toggleCurrent} />
           <span>laufend</span>
+          <button
+            type="button"
+            onClick={toggleCurrent}
+            className="flex items-center text-gray-600 hover:text-gray-800 transition-colors duration-200 ml-2"
+            title={isCurrent ? 'Laufend deaktivieren' : 'Laufend aktivieren'}
+          >
+            {isCurrent ? (
+              <ToggleRight className="h-5 w-5" style={{ color: '#F29400' }} />
+            ) : (
+              <ToggleLeft className="h-5 w-5" />
+            )}
+          </button>
         </label>
       </div>
       {activeField && (
