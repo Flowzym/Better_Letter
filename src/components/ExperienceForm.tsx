@@ -425,7 +425,7 @@ export default function ExperienceForm({
       <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
         <div className="flex justify-between mb-2">
           <h3 className="text-sm font-bold text-gray-700">Weitere Angaben</h3>
-          {hasAdditionalInfo && (
+          {(form.zusatzangaben && form.zusatzangaben.trim().length > 0) && (
             <button
               type="button"
               onClick={() => onUpdateField('zusatzangaben', '')}

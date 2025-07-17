@@ -19,10 +19,12 @@ export default function EditablePreviewText({
   const [editValue, setEditValue] = useState(value || '');
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
 
-  // Sync with external value changes
+  // Sync with external value changes - but only when NOT editing
   useEffect(() => {
-    setEditValue(value || '');
-  }, [value]);
+    if (!isEditing) {
+      setEditValue(value || '');
+    }
+  }, [value, isEditing]);
 
   // Focus input when entering edit mode
   useEffect(() => {
