@@ -23,7 +23,6 @@ export default function TasksTagInput({
   suggestions = [] 
 }: TasksTagInputProps) {
   const [inputValue, setInputValue] = useState("");
-  const { favoriteTasks: favorites, toggleFavoriteTask } = useLebenslaufContext();
   const { favoriteTasks: favorites, toggleFavoriteTask } = useLebenslauf();
   const [isInputFocused, setIsInputFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
