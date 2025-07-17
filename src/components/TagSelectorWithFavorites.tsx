@@ -86,6 +86,7 @@ export default function TagSelectorWithFavorites({
         suggestions={suggestions ?? options}
         placeholder="Hinzufügen..."
         showFavoritesButton={showFavoritesButton}
+        showAddButton={showFavoritesButton}
       />
 
       {favorites.filter((f) => !value.includes(f)).length > 0 && (

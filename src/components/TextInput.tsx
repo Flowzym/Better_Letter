@@ -27,9 +27,11 @@ export default function TextInput({
 
   return (
     <div className="space-y-2">
-      <label htmlFor={textareaId} className="block text-sm font-medium text-gray-700">
-        {label}
-      </label>
+      {label && (
+        <label htmlFor={textareaId} className="block text-sm font-medium text-gray-700">
+          {label}
+        </label>
+      )}
       <div className="relative">
         <textarea
           id={textareaId}
@@ -38,8 +40,8 @@ export default function TextInput({
           onChange={(e: ChangeEvent<HTMLTextAreaElement>) => onChange(e.target.value)}
           placeholder={placeholder}
           rows={rows}
-          className="w-full px-3 py-2 text-sm placeholder:text-sm rounded-md border pr-10"
-          style={{ borderColor: '#F29400' }}
+          className="w-full px-3 py-2 text-sm placeholder:text-sm rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:border-orange-500 pr-10"
+          style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
         />
         {hasValue && (
           <button
@@ -47,7 +49,7 @@ export default function TextInput({
             onClick={() => onChange('')}
             className="absolute top-1 right-1 text-gray-400 hover:text-gray-600"
           >
-            <X className="w-4 h-4" style={{ backgroundColor: 'transparent' }} />
+            <X className="w-4 h-4" />
           </button>
         )}
       </div>
