@@ -577,6 +577,7 @@ export const LebenslaufProvider: React.FC<LebenslaufProviderProps> = ({
     setActiveTab,
     toggleFavoritePosition,
     toggleFavoriteCompany,
+    toggleFavoriteCity,
     toggleFavoriteTask,
     toggleFavoriteSkill,
     toggleFavoriteSoftSkill,
