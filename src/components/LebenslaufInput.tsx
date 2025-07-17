@@ -209,17 +209,23 @@ const LebenslaufInput: React.FC = () => {
             {/* Immer das Formular anzeigen, unabhängig davon, ob ein Eintrag ausgewählt ist */}
             {(selectedExperienceId || berufserfahrung.length > 0) && (
               <ExperienceForm
-                form={berufserfahrung.find(e => e.id === selectedExperienceId) || {
-                  companies: [],
-                  position: berufserfahrung.find(e => e.id === selectedExperienceId)?.position || [],
-                  startMonth: null,
-                  startYear: "",
-                  endMonth: null,
-                  endYear: null,
-                  isCurrent: false,
-                  aufgabenbereiche: []
-                }}
-                selectedPositions={berufserfahrung.find(e => e.id === selectedExperienceId)?.position || []}
+                form={(() => {
+                  const experience = berufserfahrung.find(e => e.id === selectedExperienceId);
+                  return {
+                    companies: experience?.companies || [],
+                    position: experience?.position || [],
+                    startMonth: experience?.startMonth || null,
+                    startYear: experience?.startYear || "",
+                    endMonth: experience?.endMonth || null,
+                    endYear: experience?.endYear || null,
+                    isCurrent: experience?.isCurrent || false,
+                    aufgabenbereiche: experience?.aufgabenbereiche || []
+                  };
+                })()}
+                selectedPositions={(() => {
+                  const experience = berufserfahrung.find(e => e.id === selectedExperienceId);
+                  return experience?.position || [];
+                })()}
                 onUpdateField={(field, value) => {
                   if (selectedExperienceId) {
                     updateExperienceField(selectedExperienceId, field, value);
@@ -253,17 +259,20 @@ const LebenslaufInput: React.FC = () => {
             {/* Immer das Formular anzeigen, unabhängig davon, ob ein Eintrag ausgewählt ist */}
             {(selectedEducationId || ausbildung.length > 0) && (
               <AusbildungForm
-                form={ausbildung.find(e => e.id === selectedEducationId) || {
-                  institution: [],
-                  ausbildungsart: [],
-                  abschluss: [],
-                  startMonth: null, 
-                  startYear: "", 
-                  endMonth: null, 
-                  endYear: null, 
-                  isCurrent: false, 
-                  zusatzangaben: ""
-                }}
+                form={(() => {
+                  const education = ausbildung.find(e => e.id === selectedEducationId);
+                  return {
+                    institution: education?.institution || [],
+                    ausbildungsart: education?.ausbildungsart || [],
+                    abschluss: education?.abschluss || [],
+                    startMonth: education?.startMonth || null,
+                    startYear: education?.startYear || "",
+                    endMonth: education?.endMonth || null,
+                    endYear: education?.endYear || null,
+                    isCurrent: education?.isCurrent || false,
+                    zusatzangaben: education?.zusatzangaben || ""
+                  };
+                })()}
                 onUpdateField={(field, value) => {
                   if (selectedEducationId) {
                     updateEducationField(selectedEducationId, field, value);
