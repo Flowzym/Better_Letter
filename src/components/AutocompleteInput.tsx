@@ -44,7 +44,6 @@ export default function AutocompleteInput<T = string>({
   const [isOpen, setIsOpen] = useState(false);
   const [filteredSuggestions, setFilteredSuggestions] = useState<T[]>([]);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
-  const [dropdownPosition, setDropdownPosition] = useState<Position>({ top: 0, width: 0 });
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -125,30 +124,6 @@ export default function AutocompleteInput<T = string>({
     }
     setHighlightedIndex(-1);
   }, [value, suggestions]);
-
-  // Update dropdown position when input changes or window resizes
-  const updatePosition = () => {
-    if (inputRef.current) {
-      const rect = inputRef.current.getBoundingClientRect();
-      setDropdownPosition({
-        top: rect.height,
-        width: rect.width
-      });
-    }
-  };
-  
-  // Update position when dropdown opens
-  useEffect(() => {
-    if (isOpen) {
-      updatePosition();
-    }
-  }, [isOpen]);
-  
-  // Update position on window resize
-  useEffect(() => {
-    window.addEventListener('resize', updatePosition);
-    return () => window.removeEventListener('resize', updatePosition);
-  }, []);
 
   // Handle click outside to close dropdown
   useEffect(() => {
@@ -356,8 +331,12 @@ export default function AutocompleteInput<T = string>({
         {/* Dropdown with improved sorting */}
         {isOpen && filteredSuggestions.length > 0 && (
         <div
-          ref={dropdownRef} 
-          className="absolute z-50 left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto"
+          ref={dropdownRef}
+          className="absolute z-50 mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto"
+          style={{ 
+            width: inputRef.current?.offsetWidth + 'px',
+            left: '0'
+          }}
           role="listbox"
           aria-label="Vorschläge"
         >
