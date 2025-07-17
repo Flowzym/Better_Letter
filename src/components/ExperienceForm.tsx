@@ -3,6 +3,7 @@ import ZeitraumPicker from './ZeitraumPicker';
 import TasksTagInput from './TasksTagInput';
 import CountryDropdown from './CountryDropdown';
 import { Eraser, Plus, Star, Lightbulb } from 'lucide-react';
+import { ToggleLeft, ToggleRight } from 'lucide-react';
 import AutocompleteInput from './AutocompleteInput';
 import TagSelectorWithFavorites from './TagSelectorWithFavorites';
 import CompanyTag from './CompanyTag';
