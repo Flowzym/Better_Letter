@@ -129,7 +129,15 @@ const initialCVSuggestions: CVSuggestions = {
   institutions: []
 };
 
-export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+interface LebenslaufProviderProps {
+  children: ReactNode;
+  profileSourceMappings?: any; // Add the missing prop
+}
+
+export const LebenslaufProvider: React.FC<LebenslaufProviderProps> = ({ 
+  children, 
+  profileSourceMappings 
+}) => {
   const [personalData, setPersonalData] = useState<PersonalData>(initialPersonalData);
   const [berufserfahrung, setBerufserfahrung] = useState<Berufserfahrung[]>([]);
   const [ausbildung, setAusbildung] = useState<Ausbildung[]>([]);
@@ -152,6 +160,25 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
   const [favoriteInstitutions, setFavoriteInstitutions] = useState<string[]>([]);
   const [favoriteAusbildungsarten, setFavoriteAusbildungsarten] = useState<string[]>([]);
   const [favoriteAbschluesse, setFavoriteAbschluesse] = useState<string[]>([]);
+
+  // Load cvSuggestions using profileSourceMappings
+  useEffect(() => {
+    const loadCvSuggestions = async () => {
+      if (profileSourceMappings) {
+        try {
+          // Import supabaseService dynamically to avoid circular dependencies
+          const { loadCVSuggestions } = await import('../services/supabaseService');
+          const suggestions = await loadCVSuggestions(profileSourceMappings);
+          setCvSuggestions(suggestions);
+        } catch (error) {
+          console.error('Error loading CV suggestions:', error);
+          // Keep default suggestions if loading fails
+        }
+      }
+    };
+
+    loadCvSuggestions();
+  }, [profileSourceMappings]);
 
   // Load data from localStorage on mount
   useEffect(() => {
