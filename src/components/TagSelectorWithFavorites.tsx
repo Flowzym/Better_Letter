@@ -28,9 +28,9 @@ export default function TagSelectorWithFavorites({
   const { favoritePositions: favorites, toggleFavoritePosition } = useLebenslaufContext();
 
 
-  const addTag = (tag?: string) => {
-    const trimmed = (tag || inputValue).trim();
-    if (!trimmed) return;
+  const addTag = (val?: string) => {
+    if (!val && !inputValue.trim()) return;
+    const trimmed = val || inputValue.trim();
     const opts = suggestions ?? options;
     if (!allowCustom && !opts.includes(trimmed)) return;
     if (value.includes(trimmed)) return;
@@ -42,10 +42,10 @@ export default function TagSelectorWithFavorites({
     onChange(value.filter((t) => t !== tag));
   };
 
-  const toggleFavorite = (tag?: string) => {
-    const trimmed = (tag || inputValue).trim();
-    if (!trimmed) return;
-    toggleFavoritePosition(trimmed);
+  const toggleFavorite = (val?: string) => {
+    if (!val && !inputValue.trim()) return;
+    const position = val || inputValue.trim();
+    toggleFavoritePosition(position);
     setInputValue('');
   };
 

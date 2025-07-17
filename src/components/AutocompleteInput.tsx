@@ -225,13 +225,13 @@ export default function AutocompleteInput<T = string>({
   const handleAdd = (e?: React.MouseEvent) => {
     if (e) e.preventDefault();
     if (!hasInput) return;
-    onAdd?.(value.trim());
+    onAdd?.(value);
   };
 
   return (
     <div
       ref={containerRef}
-      className={`relative profile-input autocomplete-input ${className}`}
+      onFavoriteClick(value);
     >
       {label && (
         <label

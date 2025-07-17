@@ -15,12 +15,11 @@ export default function CompaniesTagInput({ value, onChange, suggestions = [] }:
   const { favoriteCompanies: favorites, toggleFavoriteCompany } =
     useLebenslaufContext();
 
-
-  const addCompany = (val: string) => {
-    const c = val?.trim() || inputValue.trim();
-    if (!c || value.includes(c)) return;
+  const addCompany = (val?: string) => {
+    if (!val && !inputValue.trim()) return;
+    const c = val || inputValue.trim();
+    if (value.includes(c)) return;
     onChange([...value, c]);
-    setInputValue('');
     setInputValue('');
   };
 
@@ -33,10 +32,9 @@ export default function CompaniesTagInput({ value, onChange, suggestions = [] }:
   };
 
   const handleAddFavoriteInput = (val?: string) => {
-    const trimmed = val?.trim() || inputValue.trim();
-    if (!trimmed) return;
-    toggleFavoriteCompany(trimmed);
-    setInputValue('');
+    if (!val && !inputValue.trim()) return;
+    const company = val || inputValue.trim();
+    toggleFavoriteCompany(company);
     setInputValue('');
   };
 
