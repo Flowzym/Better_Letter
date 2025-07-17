@@ -3,7 +3,7 @@ import { useLebenslauf } from '../context/LebenslaufContext';
 import PersonalDataForm from './PersonalDataForm';
 import ExperienceForm from './ExperienceForm';
 import AusbildungForm from './AusbildungForm';
-import { Plus, Calendar, Building, Briefcase, ChevronRight } from 'lucide-react';
+import { Plus, Calendar, Building, Briefcase, ChevronRight, User } from 'lucide-react';
 
 type TabType = 'personal' | 'experience' | 'education' | 'skills' | 'softskills';
 
