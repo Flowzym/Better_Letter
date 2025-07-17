@@ -89,16 +89,17 @@ export default function TasksTagInput({
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && addTask()}
             onFocus={() => setIsInputFocused(true)}
-            onBlur={() => setIsInputFocused(false)}
+            onBlur={() => setTimeout(() => setIsInputFocused(false), 200)}
             placeholder="Hinzufügen..."
-            className="w-full px-3 h-10 border rounded-md transition-all focus:outline-none focus:ring-1 pr-10"
+            className={`w-full px-3 h-10 border rounded-md transition-all focus:outline-none focus:ring-1 pr-10 ${
+              inputValue.trim() && !isInputFocused ? 'border-orange-500' : 'border-gray-300'
+            }`}
             style={{
-              borderColor: '#D1D5DB',
               '--tw-ring-color': '#F29400'
             } as React.CSSProperties}
           />
         </div>
-        {(inputValue.trim().length > 0 || isInputFocused) && (
+        {isInputFocused && (
           <div className="flex-shrink-0 flex space-x-2">
             <button
               onClick={(e) => {
