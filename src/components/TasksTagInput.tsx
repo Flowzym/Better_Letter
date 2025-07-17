@@ -37,8 +37,8 @@ export default function TasksTagInput({
     return Array.from(new Set(combined));
   }, [positionen, suggestions]);
 
-  const addTask = (task: string) => {
-    const t = task.trim();
+  const addTask = (task?: string) => {
+    const t = (task ?? inputValue).trim();
     if (!t || value.includes(t)) return;
     onChange([...value, t]);
     setInputValue("");
