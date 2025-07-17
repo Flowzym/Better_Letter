@@ -39,8 +39,10 @@ export default function AutocompleteInput<T = string>({
   const [isOpen, setIsOpen] = useState(false);
   const [filteredSuggestions, setFilteredSuggestions] = useState<T[]>([]);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, width: 0 });
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const hasInput = (value || '').trim().length > 0;
   const [isFocused, setIsFocused] = useState(false); 
@@ -118,6 +120,23 @@ export default function AutocompleteInput<T = string>({
     }
     setHighlightedIndex(-1);
   }, [value, suggestions]);
+
+  // Update dropdown position when input changes or window resizes
+  useEffect(() => {
+    const updatePosition = () => {
+      if (inputRef.current) {
+        const rect = inputRef.current.getBoundingClientRect();
+        setDropdownPosition({
+          top: rect.height,
+          width: rect.width
+        });
+      }
+    };
+
+    updatePosition();
+    window.addEventListener('resize', updatePosition);
+    return () => window.removeEventListener('resize', updatePosition);
+  }, [isOpen]);
 
   // Handle click outside to close dropdown
   useEffect(() => {
@@ -325,7 +344,12 @@ export default function AutocompleteInput<T = string>({
         {/* Dropdown with improved sorting */}
         {isOpen && filteredSuggestions.length > 0 && (
         <div
-          className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto z-50 autocomplete-dropdown"
+          ref={dropdownRef}
+          className="absolute left-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto z-50 autocomplete-dropdown"
+          style={{
+            top: `${dropdownPosition.top}px`,
+            width: `${dropdownPosition.width}px`
+          }}
           role="listbox"
           aria-label="Vorschläge"
         >
