@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import ZeitraumPicker from './ZeitraumPicker';
 import TasksTagInput from './TasksTagInput';
-import CountryDropdown from './CountryDropdown'; 
+import CountryDropdown from './CountryDropdown';
 import AutocompleteInput from './AutocompleteInput';
 import TagSelectorWithFavorites from './TagSelectorWithFavorites';
 import { Eraser, Plus, Star } from 'lucide-react';
@@ -37,6 +37,8 @@ export default function ExperienceForm({
   } = useLebenslauf();
   
   // Lokale Zustände für die Eingabefelder
+  const [isCompanyInputFocused, setIsCompanyInputFocused] = useState(false);
+  const [isCityInputFocused, setIsCityInputFocused] = useState(false);
   const [companyNameInput, setCompanyNameInput] = useState('');
   const [companyCityInput, setCompanyCityInput] = useState('');
   const [selectedCountryInput, setSelectedCountryInput] = useState('Österreich');
@@ -131,7 +133,7 @@ export default function ExperienceForm({
           // Entferne das letzte "&" wenn vorhanden
           const lastCity = currentCities.pop() || '';
           const otherCities = currentCities.join(', ');
-          setCompanyCityInput(`${otherCities}, ${lastCity} & ${favorite}`);
+          setCompanyCityInput(`${otherCities}${otherCities ? ', ' : ''}${lastCity} & ${favorite}`);
         }
       }
     } else {
@@ -246,13 +248,15 @@ export default function ExperienceForm({
                 value={companyNameInput}
                 onChange={setCompanyNameInput}
                 onAdd={() => {}} // Wird nicht verwendet
+                onFocus={() => setIsCompanyInputFocused(true)}
+                onBlur={() => setIsCompanyInputFocused(false)}
                 onFavoriteClick={(val?: string) => {
                   const valueToAdd = val || companyNameInput.trim();
                   if (valueToAdd) toggleFavoriteCompany(valueToAdd);
                 }}
                 suggestions={favorites}
                 placeholder="Name des Unternehmens..."
-                showFavoritesButton={!isCompanyInFavorites}
+                showFavoritesButton={isCompanyInputFocused && !isCompanyInFavorites}
                 showAddButton={false}
                 className={companyNameInput.trim() ? "border-orange-500" : ""}
               />
@@ -264,6 +268,8 @@ export default function ExperienceForm({
                 id="company-city-input"
                 value={companyCityInput}
                 onChange={setCompanyCityInput}
+                onFocus={() => setIsCityInputFocused(true)}
+                onBlur={() => setIsCityInputFocused(false)}
                 onAdd={() => {}} // Wird nicht verwendet
                 onFavoriteClick={(val?: string) => {
                   const valueToAdd = val || companyCityInput.trim();
@@ -271,7 +277,7 @@ export default function ExperienceForm({
                 }}
                 suggestions={favoriteCities}
                 placeholder="Ort des Unternehmens..."
-                showFavoritesButton={!isCityInFavorites}
+                showFavoritesButton={isCityInputFocused && !isCityInFavorites}
                 showAddButton={false}
                 className={companyCityInput.trim() ? "border-orange-500" : ""}
               />
@@ -332,7 +338,7 @@ export default function ExperienceForm({
           )}
           
           {/* Ausland Checkbox */}
-          <div className="flex items-center justify-end mt-2">
+          <div className="flex items-center justify-end mt-4">
             <input
               type="checkbox" 
               id="show-foreign-country"
@@ -348,11 +354,13 @@ export default function ExperienceForm({
           
           {/* Land Dropdown - nur anzeigen wenn Ausland ausgewählt */}
           {showForeignCountry && (
-            <CountryDropdown
-              label=""
-              value={selectedCountryInput}
-              onChange={setSelectedCountryInput}
-            />
+            <div className="mt-4">
+              <CountryDropdown
+                label=""
+                value={selectedCountryInput}
+                onChange={setSelectedCountryInput}
+              />
+            </div>
           )}
         </div>
       </div>
