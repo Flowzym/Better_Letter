@@ -341,11 +341,12 @@ export default function ExperienceForm({
           )}
           
           {/* Ausland Checkbox */}
-          <div className="flex justify-end mt-4">
+          <div className="flex items-center justify-between mt-4">
+            <span className="text-sm font-medium text-gray-700">Ausland</span>
             <ToggleSwitch
               checked={showForeignCountry}
               onChange={setShowForeignCountry}
-              label="Ausland"
+              label=""
             />
           </div>
           

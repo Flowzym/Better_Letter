@@ -274,11 +274,12 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
           </div>
 
           {/* Social Media Checkbox */}
-          <div className="flex justify-end">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-gray-700">Social Media / Homepage</span>
             <ToggleSwitch
               checked={showSocialMedia}
               onChange={setShowSocialMedia}
-              label="Social Media / Homepage"
+              label=""
             />
           </div>
 
@@ -440,11 +441,12 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
           </div>
 
           {/* Ausland Checkbox */}
-          <div className="flex justify-end">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-gray-700">Ausland</span>
             <ToggleSwitch
               checked={safeData.ausland || false}
               onChange={(checked) => updateData('ausland', checked)}
-              label="Ausland"
+              label=""
             />
           </div>
 
@@ -502,11 +504,12 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
           </div>
 
           {/* Staatsbürgerschaft Checkbox */}
-          <div className="flex justify-end">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-gray-700">Staatsbürgerschaft</span>
             <ToggleSwitch
               checked={safeData.staatsbuergerschaftCheckbox || false}
               onChange={(checked) => updateData('staatsbuergerschaftCheckbox', checked)}
-              label="Staatsbürgerschaft"
+              label=""
             />
           </div>
 
