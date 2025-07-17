@@ -27,7 +27,6 @@ const LebenslaufInput: React.FC = () => {
     updateEducationField,
     setActiveTab: contextSetActiveTab,
     selectEducation
-  } = useLebenslaufContext();
   } = useLebenslauf();
 
   const [localActiveTab, setLocalActiveTab] = useState<TabType>('personal');
