@@ -44,7 +44,6 @@ export default function ExperienceForm({
   const [companyCityInput, setCompanyCityInput] = useState('');
   const [selectedCountryInput, setSelectedCountryInput] = useState('Österreich');
   const [showForeignCountry, setShowForeignCountry] = useState(false);
-  const [isPositionInputFocused, setIsPositionInputFocused] = useState(false);
 
   const hasZeitraumData =
     form.startMonth !== null ||
