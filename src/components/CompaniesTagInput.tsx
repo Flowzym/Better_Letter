@@ -2,7 +2,7 @@ import { useState } from 'react';
 import CompanyTag from './CompanyTag';
 import TagButtonFavorite from './ui/TagButtonFavorite';
 import AutocompleteInput from './AutocompleteInput';
-import { useLebenslaufContext } from '../context/LebenslaufContext';
+import { useLebenslauf } from '../context/LebenslaufContext';
 
 interface CompaniesTagInputProps {
   value: string[];
@@ -13,7 +13,7 @@ interface CompaniesTagInputProps {
 export default function CompaniesTagInput({ value, onChange, suggestions = [] }: CompaniesTagInputProps) {
   const [inputValue, setInputValue] = useState('');
   const { favoriteCompanies: favorites, toggleFavoriteCompany } =
-    useLebenslaufContext();
+    useLebenslauf();
 
   const addCompany = (val?: string) => {
     const c = (val ?? inputValue).trim();
