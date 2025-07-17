@@ -35,7 +35,7 @@ const LebenslaufInput: React.FC = () => {
   const createEmptyExperience = () => {
     // Prüfen, ob bereits eine leere Berufserfahrung existiert
     const hasEmptyExperience = berufserfahrung.some(exp => 
-      exp.companies.length === 0 && 
+      exp.companyName === '' && 
       exp.position.length === 0 && 
       exp.aufgabenbereiche.length === 0 &&
       !exp.startYear
@@ -44,7 +44,7 @@ const LebenslaufInput: React.FC = () => {
     // Wenn bereits eine leere Berufserfahrung existiert, diese auswählen statt eine neue zu erstellen
     if (hasEmptyExperience) {
       const emptyExp = berufserfahrung.find(exp => 
-        exp.companies.length === 0 && 
+        exp.companyName === '' && 
         exp.position.length === 0 && 
         exp.aufgabenbereiche.length === 0 &&
         !exp.startYear
