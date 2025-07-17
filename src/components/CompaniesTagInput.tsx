@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import CompanyTag from './CompanyTag';
 import TagButtonFavorite from './ui/TagButtonFavorite';
+import { X, Plus, Star } from 'lucide-react';
 import { useLebenslaufContext } from '../context/LebenslaufContext';
-import AutocompleteInput from './AutocompleteInput';
 
 interface CompaniesTagInputProps {
   value: string[];
@@ -12,13 +12,13 @@ interface CompaniesTagInputProps {
 
 export default function CompaniesTagInput({ value, onChange, suggestions = [] }: CompaniesTagInputProps) {
   const [inputValue, setInputValue] = useState('');
+  const [isInputFocused, setIsInputFocused] = useState(false);
   const { favoriteCompanies: favorites, toggleFavoriteCompany } =
     useLebenslaufContext();
 
   const addCompany = (val?: string) => {
     const c = (val ?? inputValue).trim();
     if (!c || value.includes(c)) return;
-    if (value.includes(c)) return;
     onChange([...value, c]);
     setInputValue('');
   };
@@ -53,16 +53,58 @@ export default function CompaniesTagInput({ value, onChange, suggestions = [] }:
         </div>
       )}
 
-      <AutocompleteInput
-        value={inputValue}
-        onChange={setInputValue}
-        onAdd={addCompany}
-        onFavoriteClick={handleAddFavoriteInput}
-        suggestions={suggestions}
-        placeholder="Hinzufügen..."
-        showFavoritesButton
-        className="w-full"
-      />
+      <div className="flex items-center w-full space-x-2">
+        <div className="relative flex-1">
+          <input
+            type="text"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && addCompany()}
+            onFocus={() => setIsInputFocused(true)}
+            onBlur={() => setIsInputFocused(false)}
+            placeholder="Hinzufügen..."
+            className="w-full px-3 h-10 border rounded-md transition-all focus:outline-none focus:ring-1 pr-10"
+            style={{
+              borderColor: '#D1D5DB',
+              '--tw-ring-color': '#F29400'
+            } as React.CSSProperties}
+          />
+          {inputValue.trim().length > 0 && (
+            <button
+              type="button"
+              onClick={() => setInputValue('')}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-300"
+              aria-label="Textfeld leeren"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+        {(inputValue.trim().length > 0 || isInputFocused) && (
+          <div className="flex-shrink-0 flex space-x-2">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                addCompany();
+              }}
+              className="w-10 h-10 bg-[#F6A800] hover:bg-[#F29400] text-white rounded-md flex items-center justify-center transition-colors duration-200"
+            >
+              <Plus className="w-5 h-5" />
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                handleAddFavoriteInput();
+              }}
+              className="w-10 h-10 bg-[#F6A800] hover:bg-[#F29400] text-white rounded-md flex items-center justify-center transition-colors duration-200"
+            >
+              <Star className="w-5 h-5" />
+            </button>
+          </div>
+        )}
+      </div>
 
       {favorites.filter((f) => !value.includes(f)).length > 0 && (
         <div>

@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { X } from 'lucide-react';
-import AutocompleteInput from './AutocompleteInput';
+import { X, Plus, Star } from 'lucide-react';
 import PositionTag from './PositionTag';
 import TagButtonFavorite from './ui/TagButtonFavorite';
 import { useLebenslaufContext } from '../context/LebenslaufContext';
@@ -23,6 +22,7 @@ export default function TagSelectorWithFavorites({
   suggestions,
 }: TagSelectorWithFavoritesProps) {
   const [inputValue, setInputValue] = useState('');
+  const [isInputFocused, setIsInputFocused] = useState(false);
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [editValue, setEditValue] = useState('');
   const { favoritePositions: favorites, toggleFavoritePosition } = useLebenslaufContext();
@@ -30,10 +30,9 @@ export default function TagSelectorWithFavorites({
 
   const addTag = (val?: string) => {
     const trimmed = (val ?? inputValue).trim();
-    if (!trimmed) return;
+    if (!trimmed || value.includes(trimmed)) return;
     const opts = suggestions ?? options;
     if (!allowCustom && !opts.includes(trimmed)) return;
-    if (value.includes(trimmed)) return;
     onChange([...value, trimmed]);
     setInputValue('');
   };
@@ -71,18 +70,63 @@ export default function TagSelectorWithFavorites({
         </div>
       )}
 
-      <AutocompleteInput
-        value={inputValue}
-        onChange={setInputValue}
-        onAdd={addTag}
-        onFavoriteClick={toggleFavorite}
-        suggestions={suggestions ?? options}
-        placeholder="Hinzufügen..."
-        showFavoritesButton
-        showAddButton
-        label={label}
-        className="w-full"
-      />
+      <div className="flex items-center w-full space-x-2">
+        <div className="relative flex-1">
+          {label && (
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {label}
+            </label>
+          )}
+          <input
+            type="text"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && addTag()}
+            onFocus={() => setIsInputFocused(true)}
+            onBlur={() => setIsInputFocused(false)}
+            placeholder="Hinzufügen..."
+            className="w-full px-3 h-10 border rounded-md transition-all focus:outline-none focus:ring-1 pr-10"
+            style={{
+              borderColor: '#D1D5DB',
+              '--tw-ring-color': '#F29400'
+            } as React.CSSProperties}
+          />
+          {inputValue.trim().length > 0 && (
+            <button
+              type="button"
+              onClick={() => setInputValue('')}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-300"
+              aria-label="Textfeld leeren"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+        {(inputValue.trim().length > 0 || isInputFocused) && (
+          <div className="flex-shrink-0 flex space-x-2">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                addTag();
+              }}
+              className="w-10 h-10 bg-[#F6A800] hover:bg-[#F29400] text-white rounded-md flex items-center justify-center transition-colors duration-200"
+            >
+              <Plus className="w-5 h-5" />
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                toggleFavorite();
+              }}
+              className="w-10 h-10 bg-[#F6A800] hover:bg-[#F29400] text-white rounded-md flex items-center justify-center transition-colors duration-200"
+            >
+              <Star className="w-5 h-5" />
+            </button>
+          </div>
+        )}
+      </div>
 
       {favorites.filter((f) => !value.includes(f)).length > 0 && (
         <div>
