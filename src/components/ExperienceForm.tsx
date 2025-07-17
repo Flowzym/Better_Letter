@@ -66,7 +66,7 @@ export default function ExperienceForm({
     if (!hasInputData) return;
     
     let newEntry = '';
-    
+
     // Format: "Unternehmen, Ort (Land)" oder Variationen
     if (companyNameInput.trim() && companyCityInput.trim()) {
       if (showForeignCountry && selectedCountryInput && selectedCountryInput !== 'Österreich') {
@@ -123,8 +123,7 @@ export default function ExperienceForm({
   // Funktion zum Hinzufügen eines Ort-Favoriten zum Eingabefeld
   const addCityFavoriteToInput = (favorite: string) => {
     if (companyCityInput.trim()) {
-      // Formatierung: "Ort1 & Ort2" oder "Ort1, Ort2, Ort3 & Ort4"
-      const currentCities = companyCityInput.trim().split(/,\s*|&\s*/);
+      const currentCities = companyCityInput.trim().split(/,\s*|&\s*/).map(s => s.trim());
       
       if (!currentCities.includes(favorite)) {
         if (currentCities.length === 1) {
@@ -258,7 +257,6 @@ export default function ExperienceForm({
                 placeholder="Name des Unternehmens..."
                 showFavoritesButton={isCompanyInputFocused}
                 showAddButton={false}
-                className="border-orange-500"
               />
             </div>
             
@@ -279,7 +277,6 @@ export default function ExperienceForm({
                 placeholder="Ort des Unternehmens..."
                 showFavoritesButton={isCityInputFocused}
                 showAddButton={false}
-                className="border-orange-500"
               />
             </div>
             
