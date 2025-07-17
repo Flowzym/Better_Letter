@@ -1,125 +1,441 @@
-<!DOCTYPE html>
-<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en-US"> <![endif]-->
-<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en-US"> <![endif]-->
-<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en-US"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en-US"> <!--<![endif]-->
-<head>
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
+// Types
+export interface PersonalData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address: string;
+  city: string;
+  postalCode: string;
+  country: string;
+  birthDate: string;
+  nationality: string;
+  maritalStatus: string;
+}
 
-<title>bolt.new | 524: A timeout occurred</title>
-<meta charset="UTF-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-<meta name="robots" content="noindex, nofollow" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<link rel="stylesheet" id="cf_styles-css" href="/cdn-cgi/styles/main.css" />
+export interface Berufserfahrung {
+  id: string;
+  position: string;
+  companyName: string;
+  companyCity: string;
+  companyCountry: string;
+  startDate: string;
+  endDate: string;
+  isCurrentJob: boolean;
+  tasks: string[];
+  description: string;
+}
 
+export interface Ausbildung {
+  id: string;
+  degree: string;
+  institution: string;
+  city: string;
+  country: string;
+  startDate: string;
+  endDate: string;
+  isCurrentEducation: boolean;
+  grade: string;
+  description: string;
+}
 
-</head>
-<body>
-<div id="cf-wrapper">
-    <div id="cf-error-details" class="p-0">
-        <header class="mx-auto pt-10 lg:pt-6 lg:px-8 w-240 lg:w-full mb-8">
-            <h1 class="inline-block sm:block sm:mb-2 font-light text-60 lg:text-4xl text-black-dark leading-tight mr-2">
-              <span class="inline-block">A timeout occurred</span>
-              <span class="code-label">Error code 524</span>
-            </h1>
-            <div>
-               Visit <a href="https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_524&utm_campaign=bolt.new" target="_blank" rel="noopener noreferrer">cloudflare.com</a> for more information.
-            </div>
-            <div class="mt-3">2025-07-17 08:32:43 UTC</div>
-        </header>
-        <div class="my-8 bg-gradient-gray">
-            <div class="w-240 lg:w-full mx-auto">
-                <div class="clearfix md:px-8">
-                  
-<div id="cf-browser-status" class=" relative w-1/3 md:w-full py-15 md:p-0 md:py-8 md:text-left md:border-solid md:border-0 md:border-b md:border-gray-400 overflow-hidden float-left md:float-none text-center">
-  <div class="relative mb-10 md:m-0">
-    
-    <span class="cf-icon-browser block md:hidden h-20 bg-center bg-no-repeat"></span>
-    <span class="cf-icon-ok w-12 h-12 absolute left-1/2 md:left-auto md:right-0 md:top-0 -ml-6 -bottom-4"></span>
-    
-  </div>
-  <span class="md:block w-full truncate">You</span>
-  <h3 class="md:inline-block mt-3 md:mt-0 text-2xl text-gray-600 font-light leading-1.3">
-    
-    Browser
-    
-  </h3>
-  <span class="leading-1.3 text-2xl text-green-success">Working</span>
-</div>
+export interface CVSuggestions {
+  positions: string[];
+  companies: string[];
+  tasks: string[];
+  skills: string[];
+  softSkills: string[];
+  degrees: string[];
+  institutions: string[];
+}
 
-<div id="cf-cloudflare-status" class=" relative w-1/3 md:w-full py-15 md:p-0 md:py-8 md:text-left md:border-solid md:border-0 md:border-b md:border-gray-400 overflow-hidden float-left md:float-none text-center">
-  <div class="relative mb-10 md:m-0">
-    <a href="https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_524&utm_campaign=bolt.new" target="_blank" rel="noopener noreferrer">
-    <span class="cf-icon-cloud block md:hidden h-20 bg-center bg-no-repeat"></span>
-    <span class="cf-icon-ok w-12 h-12 absolute left-1/2 md:left-auto md:right-0 md:top-0 -ml-6 -bottom-4"></span>
-    </a>
-  </div>
-  <span class="md:block w-full truncate">Vienna</span>
-  <h3 class="md:inline-block mt-3 md:mt-0 text-2xl text-gray-600 font-light leading-1.3">
-    <a href="https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_524&utm_campaign=bolt.new" target="_blank" rel="noopener noreferrer">
-    Cloudflare
-    </a>
-  </h3>
-  <span class="leading-1.3 text-2xl text-green-success">Working</span>
-</div>
+export interface LebenslaufContextType {
+  personalData: PersonalData;
+  berufserfahrung: Berufserfahrung[];
+  ausbildung: Ausbildung[];
+  skills: string[];
+  softSkills: string[];
+  cvSuggestions: CVSuggestions;
+  favoritePositions: string[];
+  favoriteCompanies: string[];
+  favoriteCities: string[];
+  favoriteTasks: string[];
+  favoriteSkills: string[];
+  favoriteSoftSkills: string[];
+  favoriteDegrees: string[];
+  favoriteInstitutions: string[];
+  updatePersonalData: (data: Partial<PersonalData>) => void;
+  addExperience: () => void;
+  updateExperience: (id: string, data: Partial<Berufserfahrung>) => void;
+  deleteExperience: (id: string) => void;
+  addEducation: () => void;
+  updateEducation: (id: string, data: Partial<Ausbildung>) => void;
+  deleteEducation: (id: string) => void;
+  updateSkills: (skills: string[]) => void;
+  updateSoftSkills: (softSkills: string[]) => void;
+  toggleFavoritePosition: (position: string) => void;
+  toggleFavoriteCompany: (company: string) => void;
+  toggleFavoriteCity: (city: string) => void;
+  toggleFavoriteTask: (task: string) => void;
+  toggleFavoriteSkill: (skill: string) => void;
+  toggleFavoriteSoftSkill: (softSkill: string) => void;
+  toggleFavoriteDegree: (degree: string) => void;
+  toggleFavoriteInstitution: (institution: string) => void;
+  updateExperienceField: (id: string, field: keyof Berufserfahrung, value: any) => void;
+  updateEducationField: (id: string, field: keyof Ausbildung, value: any) => void;
+}
 
-<div id="cf-host-status" class="cf-error-source relative w-1/3 md:w-full py-15 md:p-0 md:py-8 md:text-left md:border-solid md:border-0 md:border-b md:border-gray-400 overflow-hidden float-left md:float-none text-center">
-  <div class="relative mb-10 md:m-0">
-    
-    <span class="cf-icon-server block md:hidden h-20 bg-center bg-no-repeat"></span>
-    <span class="cf-icon-error w-12 h-12 absolute left-1/2 md:left-auto md:right-0 md:top-0 -ml-6 -bottom-4"></span>
-    
-  </div>
-  <span class="md:block w-full truncate">bolt.new</span>
-  <h3 class="md:inline-block mt-3 md:mt-0 text-2xl text-gray-600 font-light leading-1.3">
-    
-    Host
-    
-  </h3>
-  <span class="leading-1.3 text-2xl text-red-error">Error</span>
-</div>
+const LebenslaufContext = createContext<LebenslaufContextType | undefined>(undefined);
 
-                </div>
-            </div>
-        </div>
+const initialPersonalData: PersonalData = {
+  firstName: '',
+  lastName: '',
+  email: '',
+  phone: '',
+  address: '',
+  city: '',
+  postalCode: '',
+  country: '',
+  birthDate: '',
+  nationality: '',
+  maritalStatus: ''
+};
 
-        <div class="w-240 lg:w-full mx-auto mb-8 lg:px-8">
-            <div class="clearfix">
-                <div class="w-1/2 md:w-full float-left pr-6 md:pb-10 md:pr-0 leading-relaxed">
-                    <h2 class="text-3xl font-normal leading-1.3 mb-4">What happened?</h2>
-                    <p>The origin web server timed out responding to this request.</p>
-                </div>
-                <div class="w-1/2 md:w-full float-left leading-relaxed">
-                    <h2 class="text-3xl font-normal leading-1.3 mb-4">What can I do?</h2>
-                          <h3 class="text-15 font-semibold mb-2">If you're a visitor of this website:</h3>
-      <p class="mb-6">Please try again in a few minutes.</p>
+const initialCVSuggestions: CVSuggestions = {
+  positions: [],
+  companies: [],
+  tasks: [],
+  skills: [],
+  softSkills: [],
+  degrees: [],
+  institutions: []
+};
 
-      <h3 class="text-15 font-semibold mb-2">If you're the owner of this website:</h3>
-      <p><span>The connection to the origin web server was made, but the origin web server timed out before responding. The likely cause is an overloaded background task, database or application, stressing the resources on your web server. To resolve, please work with your hosting provider or web development team to free up resources for your database or overloaded application.</span> <a rel="noopener noreferrer" href="https://developers.cloudflare.com/support/troubleshooting/http-status-codes/cloudflare-5xx-errors/error-524/">Additional troubleshooting information here.</a></p>
-                </div>
-            </div>
-        </div>
+export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [personalData, setPersonalData] = useState<PersonalData>(initialPersonalData);
+  const [berufserfahrung, setBerufserfahrung] = useState<Berufserfahrung[]>([]);
+  const [ausbildung, setAusbildung] = useState<Ausbildung[]>([]);
+  const [skills, setSkills] = useState<string[]>([]);
+  const [softSkills, setSoftSkills] = useState<string[]>([]);
+  const [cvSuggestions, setCvSuggestions] = useState<CVSuggestions>(initialCVSuggestions);
+  
+  // Favorites
+  const [favoritePositions, setFavoritePositions] = useState<string[]>([]);
+  const [favoriteCompanies, setFavoriteCompanies] = useState<string[]>([]);
+  const [favoriteCities, setFavoriteCities] = useState<string[]>([]);
+  const [favoriteTasks, setFavoriteTasks] = useState<string[]>([]);
+  const [favoriteSkills, setFavoriteSkills] = useState<string[]>([]);
+  const [favoriteSoftSkills, setFavoriteSoftSkills] = useState<string[]>([]);
+  const [favoriteDegrees, setFavoriteDegrees] = useState<string[]>([]);
+  const [favoriteInstitutions, setFavoriteInstitutions] = useState<string[]>([]);
 
-        <div class="cf-error-footer cf-wrapper w-240 lg:w-full py-10 sm:py-4 sm:px-8 mx-auto text-center sm:text-left border-solid border-0 border-t border-gray-300">
-  <p class="text-13">
-    <span class="cf-footer-item sm:block sm:mb-1">Cloudflare Ray ID: <strong class="font-semibold">9608617e58d85bae</strong></span>
-    <span class="cf-footer-separator sm:hidden">&bull;</span>
-    <span id="cf-footer-item-ip" class="cf-footer-item hidden sm:block sm:mb-1">
-      Your IP:
-      <button type="button" id="cf-footer-ip-reveal" class="cf-footer-ip-reveal-btn">Click to reveal</button>
-      <span class="hidden" id="cf-footer-ip">212.241.107.153</span>
-      <span class="cf-footer-separator sm:hidden">&bull;</span>
-    </span>
-    <span class="cf-footer-item sm:block sm:mb-1"><span>Performance &amp; security by</span> <a rel="noopener noreferrer" href="https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_524&utm_campaign=bolt.new" id="brand_link" target="_blank">Cloudflare</a></span>
-    
-  </p>
-  <script>(function(){function d(){var b=a.getElementById("cf-footer-item-ip"),c=a.getElementById("cf-footer-ip-reveal");b&&"classList"in b&&(b.classList.remove("hidden"),c.addEventListener("click",function(){c.classList.add("hidden");a.getElementById("cf-footer-ip").classList.remove("hidden")}))}var a=document;document.addEventListener&&a.addEventListener("DOMContentLoaded",d)})();</script>
-</div><!-- /.error-footer -->
+  // Load data from localStorage on mount
+  useEffect(() => {
+    const savedPersonalData = localStorage.getItem('personalData');
+    const savedBerufserfahrung = localStorage.getItem('berufserfahrung');
+    const savedAusbildung = localStorage.getItem('ausbildung');
+    const savedSkills = localStorage.getItem('skills');
+    const savedSoftSkills = localStorage.getItem('softSkills');
+    const savedCvSuggestions = localStorage.getItem('cvSuggestions');
+    const savedFavoritePositions = localStorage.getItem('favoritePositions');
+    const savedFavoriteCompanies = localStorage.getItem('favoriteCompanies');
+    const savedFavoriteCities = localStorage.getItem('favoriteCities');
+    const savedFavoriteTasks = localStorage.getItem('favoriteTasks');
+    const savedFavoriteSkills = localStorage.getItem('favoriteSkills');
+    const savedFavoriteSoftSkills = localStorage.getItem('favoriteSoftSkills');
+    const savedFavoriteDegrees = localStorage.getItem('favoriteDegrees');
+    const savedFavoriteInstitutions = localStorage.getItem('favoriteInstitutions');
 
+    if (savedPersonalData) {
+      setPersonalData(JSON.parse(savedPersonalData));
+    }
+    if (savedBerufserfahrung) {
+      setBerufserfahrung(JSON.parse(savedBerufserfahrung));
+    }
+    if (savedAusbildung) {
+      setAusbildung(JSON.parse(savedAusbildung));
+    }
+    if (savedSkills) {
+      setSkills(JSON.parse(savedSkills));
+    }
+    if (savedSoftSkills) {
+      setSoftSkills(JSON.parse(savedSoftSkills));
+    }
+    if (savedCvSuggestions) {
+      setCvSuggestions(JSON.parse(savedCvSuggestions));
+    }
+    if (savedFavoritePositions) {
+      setFavoritePositions(JSON.parse(savedFavoritePositions));
+    }
+    if (savedFavoriteCompanies) {
+      setFavoriteCompanies(JSON.parse(savedFavoriteCompanies));
+    }
+    if (savedFavoriteCities) {
+      setFavoriteCities(JSON.parse(savedFavoriteCities));
+    }
+    if (savedFavoriteTasks) {
+      setFavoriteTasks(JSON.parse(savedFavoriteTasks));
+    }
+    if (savedFavoriteSkills) {
+      setFavoriteSkills(JSON.parse(savedFavoriteSkills));
+    }
+    if (savedFavoriteSoftSkills) {
+      setFavoriteSoftSkills(JSON.parse(savedFavoriteSoftSkills));
+    }
+    if (savedFavoriteDegrees) {
+      setFavoriteDegrees(JSON.parse(savedFavoriteDegrees));
+    }
+    if (savedFavoriteInstitutions) {
+      setFavoriteInstitutions(JSON.parse(savedFavoriteInstitutions));
+    }
+  }, []);
 
-    </div>
-</div>
-</body>
-</html>
+  // Save to localStorage whenever data changes
+  useEffect(() => {
+    localStorage.setItem('personalData', JSON.stringify(personalData));
+  }, [personalData]);
+
+  useEffect(() => {
+    localStorage.setItem('berufserfahrung', JSON.stringify(berufserfahrung));
+  }, [berufserfahrung]);
+
+  useEffect(() => {
+    localStorage.setItem('ausbildung', JSON.stringify(ausbildung));
+  }, [ausbildung]);
+
+  useEffect(() => {
+    localStorage.setItem('skills', JSON.stringify(skills));
+  }, [skills]);
+
+  useEffect(() => {
+    localStorage.setItem('softSkills', JSON.stringify(softSkills));
+  }, [softSkills]);
+
+  useEffect(() => {
+    localStorage.setItem('cvSuggestions', JSON.stringify(cvSuggestions));
+  }, [cvSuggestions]);
+
+  useEffect(() => {
+    localStorage.setItem('favoritePositions', JSON.stringify(favoritePositions));
+  }, [favoritePositions]);
+
+  useEffect(() => {
+    localStorage.setItem('favoriteCompanies', JSON.stringify(favoriteCompanies));
+  }, [favoriteCompanies]);
+
+  useEffect(() => {
+    localStorage.setItem('favoriteCities', JSON.stringify(favoriteCities));
+  }, [favoriteCities]);
+
+  useEffect(() => {
+    localStorage.setItem('favoriteTasks', JSON.stringify(favoriteTasks));
+  }, [favoriteTasks]);
+
+  useEffect(() => {
+    localStorage.setItem('favoriteSkills', JSON.stringify(favoriteSkills));
+  }, [favoriteSkills]);
+
+  useEffect(() => {
+    localStorage.setItem('favoriteSoftSkills', JSON.stringify(favoriteSoftSkills));
+  }, [favoriteSoftSkills]);
+
+  useEffect(() => {
+    localStorage.setItem('favoriteDegrees', JSON.stringify(favoriteDegrees));
+  }, [favoriteDegrees]);
+
+  useEffect(() => {
+    localStorage.setItem('favoriteInstitutions', JSON.stringify(favoriteInstitutions));
+  }, [favoriteInstitutions]);
+
+  const updatePersonalData = (data: Partial<PersonalData>) => {
+    setPersonalData(prev => ({ ...prev, ...data }));
+  };
+
+  const addExperience = () => {
+    const newExperience: Berufserfahrung = {
+      id: Date.now().toString(),
+      position: '',
+      companyName: '',
+      companyCity: '',
+      companyCountry: '',
+      startDate: '',
+      endDate: '',
+      isCurrentJob: false,
+      tasks: [],
+      description: ''
+    };
+    setBerufserfahrung(prev => [...prev, newExperience]);
+  };
+
+  const updateExperience = (id: string, data: Partial<Berufserfahrung>) => {
+    setBerufserfahrung(prev => 
+      prev.map(exp => exp.id === id ? { ...exp, ...data } : exp)
+    );
+  };
+
+  const deleteExperience = (id: string) => {
+    setBerufserfahrung(prev => prev.filter(exp => exp.id !== id));
+  };
+
+  const addEducation = () => {
+    const newEducation: Ausbildung = {
+      id: Date.now().toString(),
+      degree: '',
+      institution: '',
+      city: '',
+      country: '',
+      startDate: '',
+      endDate: '',
+      isCurrentEducation: false,
+      grade: '',
+      description: ''
+    };
+    setAusbildung(prev => [...prev, newEducation]);
+  };
+
+  const updateEducation = (id: string, data: Partial<Ausbildung>) => {
+    setAusbildung(prev => 
+      prev.map(edu => edu.id === id ? { ...edu, ...data } : edu)
+    );
+  };
+
+  const deleteEducation = (id: string) => {
+    setAusbildung(prev => prev.filter(edu => edu.id !== id));
+  };
+
+  const updateSkills = (newSkills: string[]) => {
+    setSkills(newSkills);
+  };
+
+  const updateSoftSkills = (newSoftSkills: string[]) => {
+    setSoftSkills(newSoftSkills);
+  };
+
+  const toggleFavoritePosition = (position: string) => {
+    setFavoritePositions(prev => 
+      prev.includes(position) 
+        ? prev.filter(p => p !== position)
+        : [...prev, position]
+    );
+  };
+
+  const toggleFavoriteCompany = (company: string) => {
+    setFavoriteCompanies(prev => 
+      prev.includes(company) 
+        ? prev.filter(c => c !== company)
+        : [...prev, company]
+    );
+  };
+
+  const toggleFavoriteCity = (city: string) => {
+    setFavoriteCities(prev => 
+      prev.includes(city) 
+        ? prev.filter(c => c !== city)
+        : [...prev, city]
+    );
+  };
+
+  const toggleFavoriteTask = (task: string) => {
+    setFavoriteTasks(prev => 
+      prev.includes(task) 
+        ? prev.filter(t => t !== task)
+        : [...prev, task]
+    );
+  };
+
+  const toggleFavoriteSkill = (skill: string) => {
+    setFavoriteSkills(prev => 
+      prev.includes(skill) 
+        ? prev.filter(s => s !== skill)
+        : [...prev, skill]
+    );
+  };
+
+  const toggleFavoriteSoftSkill = (softSkill: string) => {
+    setFavoriteSoftSkills(prev => 
+      prev.includes(softSkill) 
+        ? prev.filter(s => s !== softSkill)
+        : [...prev, softSkill]
+    );
+  };
+
+  const toggleFavoriteDegree = (degree: string) => {
+    setFavoriteDegrees(prev => 
+      prev.includes(degree) 
+        ? prev.filter(d => d !== degree)
+        : [...prev, degree]
+    );
+  };
+
+  const toggleFavoriteInstitution = (institution: string) => {
+    setFavoriteInstitutions(prev => 
+      prev.includes(institution) 
+        ? prev.filter(i => i !== institution)
+        : [...prev, institution]
+    );
+  };
+
+  const updateExperienceField = (id: string, field: keyof Berufserfahrung, value: any) => {
+    setBerufserfahrung(prev => 
+      prev.map(exp => exp.id === id ? { ...exp, [field]: value } : exp)
+    );
+  };
+
+  const updateEducationField = (id: string, field: keyof Ausbildung, value: any) => {
+    setAusbildung(prev => 
+      prev.map(edu => edu.id === id ? { ...edu, [field]: value } : edu)
+    );
+  };
+
+  const value: LebenslaufContextType = {
+    personalData,
+    berufserfahrung,
+    ausbildung,
+    skills,
+    softSkills,
+    cvSuggestions,
+    favoritePositions,
+    favoriteCompanies,
+    favoriteCities,
+    favoriteTasks,
+    favoriteSkills,
+    favoriteSoftSkills,
+    favoriteDegrees,
+    favoriteInstitutions,
+    updatePersonalData,
+    addExperience,
+    updateExperience,
+    deleteExperience,
+    addEducation,
+    updateEducation,
+    deleteEducation,
+    updateSkills,
+    updateSoftSkills,
+    toggleFavoritePosition,
+    toggleFavoriteCompany,
+    toggleFavoriteCity,
+    toggleFavoriteTask,
+    toggleFavoriteSkill,
+    toggleFavoriteSoftSkill,
+    toggleFavoriteDegree,
+    toggleFavoriteInstitution,
+    updateExperienceField,
+    updateEducationField
+  };
+
+  return (
+    <LebenslaufContext.Provider value={value}>
+      {children}
+    </LebenslaufContext.Provider>
+  );
+};
+
+export const useLebenslauf = () => {
+  const context = useContext(LebenslaufContext);
+  if (context === undefined) {
+    throw new Error('useLebenslauf must be used within a LebenslaufProvider');
+  }
+  return context;
+};
