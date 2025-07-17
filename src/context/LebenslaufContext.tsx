@@ -17,28 +17,27 @@ export interface PersonalData {
 
 export interface Berufserfahrung {
   id: string;
-  position: string;
-  companyName: string;
-  companyCity: string;
-  companyCountry: string;
-  startDate: string;
-  endDate: string;
-  isCurrentJob: boolean;
-  tasks: string[];
-  description: string;
+  companies: string[];
+  position: string[];
+  startMonth: string | null;
+  startYear: string;
+  endMonth: string | null;
+  endYear: string | null;
+  isCurrent: boolean;
+  aufgabenbereiche: string[];
 }
 
 export interface Ausbildung {
   id: string;
-  degree: string;
-  institution: string;
-  city: string;
-  country: string;
-  startDate: string;
-  endDate: string;
-  isCurrentEducation: boolean;
-  grade: string;
-  description: string;
+  institution: string[];
+  ausbildungsart: string[];
+  abschluss: string[];
+  startMonth: string | null;
+  startYear: string;
+  endMonth: string | null;
+  endYear: string | null;
+  isCurrent: boolean;
+  zusatzangaben: string;
 }
 
 export interface CVSuggestions {
@@ -50,6 +49,8 @@ export interface CVSuggestions {
   degrees: string[];
   institutions: string[];
 }
+
+export type TabType = 'personal' | 'experience' | 'education' | 'skills' | 'softskills';
 
 export interface LebenslaufContextType {
   personalData: PersonalData;
@@ -66,11 +67,16 @@ export interface LebenslaufContextType {
   favoriteSoftSkills: string[];
   favoriteDegrees: string[];
   favoriteInstitutions: string[];
+  favoriteAusbildungsarten: string[];
+  favoriteAbschluesse: string[];
+  selectedExperienceId: string | null;
+  selectedEducationId: string | null;
+  activeTab: TabType;
   updatePersonalData: (data: Partial<PersonalData>) => void;
-  addExperience: () => void;
+  addExperience: (data: Partial<Berufserfahrung>) => void;
   updateExperience: (id: string, data: Partial<Berufserfahrung>) => void;
   deleteExperience: (id: string) => void;
-  addEducation: () => void;
+  addEducation: (data: Partial<Ausbildung>) => void;
   updateEducation: (id: string, data: Partial<Ausbildung>) => void;
   deleteEducation: (id: string) => void;
   updateSkills: (skills: string[]) => void;
@@ -83,8 +89,16 @@ export interface LebenslaufContextType {
   toggleFavoriteSoftSkill: (softSkill: string) => void;
   toggleFavoriteDegree: (degree: string) => void;
   toggleFavoriteInstitution: (institution: string) => void;
+  toggleFavoriteAusbildungsart: (ausbildungsart: string) => void;
+  toggleFavoriteAbschluss: (abschluss: string) => void;
+  selectExperience: (id: string) => void;
+  selectEducation: (id: string) => void;
+  setActiveTab: (tab: TabType) => void;
   updateExperienceField: (id: string, field: keyof Berufserfahrung, value: any) => void;
   updateEducationField: (id: string, field: keyof Ausbildung, value: any) => void;
+  updateExperienceTask: (expId: string, taskIndex: number, newTask: string) => void;
+  updateExperienceTasksOrder: (expId: string, newTasks: string[]) => void;
+  addExperienceTask: (expId: string, task: string) => void;
 }
 
 const LebenslaufContext = createContext<LebenslaufContextType | undefined>(undefined);
@@ -121,6 +135,11 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
   const [softSkills, setSoftSkills] = useState<string[]>([]);
   const [cvSuggestions, setCvSuggestions] = useState<CVSuggestions>(initialCVSuggestions);
   
+  // Selection state
+  const [selectedExperienceId, setSelectedExperienceId] = useState<string | null>(null);
+  const [selectedEducationId, setSelectedEducationId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<TabType>('personal');
+  
   // Favorites
   const [favoritePositions, setFavoritePositions] = useState<string[]>([]);
   const [favoriteCompanies, setFavoriteCompanies] = useState<string[]>([]);
@@ -130,6 +149,8 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
   const [favoriteSoftSkills, setFavoriteSoftSkills] = useState<string[]>([]);
   const [favoriteDegrees, setFavoriteDegrees] = useState<string[]>([]);
   const [favoriteInstitutions, setFavoriteInstitutions] = useState<string[]>([]);
+  const [favoriteAusbildungsarten, setFavoriteAusbildungsarten] = useState<string[]>([]);
+  const [favoriteAbschluesse, setFavoriteAbschluesse] = useState<string[]>([]);
 
   // Load data from localStorage on mount
   useEffect(() => {
@@ -139,6 +160,9 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
     const savedSkills = localStorage.getItem('skills');
     const savedSoftSkills = localStorage.getItem('softSkills');
     const savedCvSuggestions = localStorage.getItem('cvSuggestions');
+    const savedSelectedExperienceId = localStorage.getItem('selectedExperienceId');
+    const savedSelectedEducationId = localStorage.getItem('selectedEducationId');
+    const savedActiveTab = localStorage.getItem('activeTab');
     const savedFavoritePositions = localStorage.getItem('favoritePositions');
     const savedFavoriteCompanies = localStorage.getItem('favoriteCompanies');
     const savedFavoriteCities = localStorage.getItem('favoriteCities');
@@ -147,6 +171,8 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
     const savedFavoriteSoftSkills = localStorage.getItem('favoriteSoftSkills');
     const savedFavoriteDegrees = localStorage.getItem('favoriteDegrees');
     const savedFavoriteInstitutions = localStorage.getItem('favoriteInstitutions');
+    const savedFavoriteAusbildungsarten = localStorage.getItem('favoriteAusbildungsarten');
+    const savedFavoriteAbschluesse = localStorage.getItem('favoriteAbschluesse');
 
     if (savedPersonalData) {
       setPersonalData(JSON.parse(savedPersonalData));
@@ -165,6 +191,15 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
     }
     if (savedCvSuggestions) {
       setCvSuggestions(JSON.parse(savedCvSuggestions));
+    }
+    if (savedSelectedExperienceId) {
+      setSelectedExperienceId(JSON.parse(savedSelectedExperienceId));
+    }
+    if (savedSelectedEducationId) {
+      setSelectedEducationId(JSON.parse(savedSelectedEducationId));
+    }
+    if (savedActiveTab) {
+      setActiveTab(JSON.parse(savedActiveTab));
     }
     if (savedFavoritePositions) {
       setFavoritePositions(JSON.parse(savedFavoritePositions));
@@ -189,6 +224,12 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
     }
     if (savedFavoriteInstitutions) {
       setFavoriteInstitutions(JSON.parse(savedFavoriteInstitutions));
+    }
+    if (savedFavoriteAusbildungsarten) {
+      setFavoriteAusbildungsarten(JSON.parse(savedFavoriteAusbildungsarten));
+    }
+    if (savedFavoriteAbschluesse) {
+      setFavoriteAbschluesse(JSON.parse(savedFavoriteAbschluesse));
     }
   }, []);
 
@@ -216,6 +257,18 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
   useEffect(() => {
     localStorage.setItem('cvSuggestions', JSON.stringify(cvSuggestions));
   }, [cvSuggestions]);
+
+  useEffect(() => {
+    localStorage.setItem('selectedExperienceId', JSON.stringify(selectedExperienceId));
+  }, [selectedExperienceId]);
+
+  useEffect(() => {
+    localStorage.setItem('selectedEducationId', JSON.stringify(selectedEducationId));
+  }, [selectedEducationId]);
+
+  useEffect(() => {
+    localStorage.setItem('activeTab', JSON.stringify(activeTab));
+  }, [activeTab]);
 
   useEffect(() => {
     localStorage.setItem('favoritePositions', JSON.stringify(favoritePositions));
@@ -249,24 +302,33 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
     localStorage.setItem('favoriteInstitutions', JSON.stringify(favoriteInstitutions));
   }, [favoriteInstitutions]);
 
+  useEffect(() => {
+    localStorage.setItem('favoriteAusbildungsarten', JSON.stringify(favoriteAusbildungsarten));
+  }, [favoriteAusbildungsarten]);
+
+  useEffect(() => {
+    localStorage.setItem('favoriteAbschluesse', JSON.stringify(favoriteAbschluesse));
+  }, [favoriteAbschluesse]);
+
   const updatePersonalData = (data: Partial<PersonalData>) => {
     setPersonalData(prev => ({ ...prev, ...data }));
   };
 
-  const addExperience = () => {
+  const addExperience = (data: Partial<Berufserfahrung> = {}) => {
     const newExperience: Berufserfahrung = {
       id: Date.now().toString(),
-      position: '',
-      companyName: '',
-      companyCity: '',
-      companyCountry: '',
-      startDate: '',
-      endDate: '',
-      isCurrentJob: false,
-      tasks: [],
-      description: ''
+      companies: [],
+      position: [],
+      startMonth: null,
+      startYear: "",
+      endMonth: null,
+      endYear: null,
+      isCurrent: false,
+      aufgabenbereiche: [],
+      ...data
     };
     setBerufserfahrung(prev => [...prev, newExperience]);
+    setSelectedExperienceId(newExperience.id);
   };
 
   const updateExperience = (id: string, data: Partial<Berufserfahrung>) => {
@@ -277,22 +339,27 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
 
   const deleteExperience = (id: string) => {
     setBerufserfahrung(prev => prev.filter(exp => exp.id !== id));
+    if (selectedExperienceId === id) {
+      setSelectedExperienceId(null);
+    }
   };
 
-  const addEducation = () => {
+  const addEducation = (data: Partial<Ausbildung> = {}) => {
     const newEducation: Ausbildung = {
       id: Date.now().toString(),
-      degree: '',
-      institution: '',
-      city: '',
-      country: '',
-      startDate: '',
-      endDate: '',
-      isCurrentEducation: false,
-      grade: '',
-      description: ''
+      institution: [],
+      ausbildungsart: [],
+      abschluss: [],
+      startMonth: null,
+      startYear: "",
+      endMonth: null,
+      endYear: null,
+      isCurrent: false,
+      zusatzangaben: "",
+      ...data
     };
     setAusbildung(prev => [...prev, newEducation]);
+    setSelectedEducationId(newEducation.id);
   };
 
   const updateEducation = (id: string, data: Partial<Ausbildung>) => {
@@ -303,6 +370,9 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
 
   const deleteEducation = (id: string) => {
     setAusbildung(prev => prev.filter(edu => edu.id !== id));
+    if (selectedEducationId === id) {
+      setSelectedEducationId(null);
+    }
   };
 
   const updateSkills = (newSkills: string[]) => {
@@ -311,6 +381,14 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
 
   const updateSoftSkills = (newSoftSkills: string[]) => {
     setSoftSkills(newSoftSkills);
+  };
+
+  const selectExperience = (id: string) => {
+    setSelectedExperienceId(id);
+  };
+
+  const selectEducation = (id: string) => {
+    setSelectedEducationId(id);
   };
 
   const toggleFavoritePosition = (position: string) => {
@@ -377,6 +455,22 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
     );
   };
 
+  const toggleFavoriteAusbildungsart = (ausbildungsart: string) => {
+    setFavoriteAusbildungsarten(prev => 
+      prev.includes(ausbildungsart) 
+        ? prev.filter(a => a !== ausbildungsart)
+        : [...prev, ausbildungsart]
+    );
+  };
+
+  const toggleFavoriteAbschluss = (abschluss: string) => {
+    setFavoriteAbschluesse(prev => 
+      prev.includes(abschluss) 
+        ? prev.filter(a => a !== abschluss)
+        : [...prev, abschluss]
+    );
+  };
+
   const updateExperienceField = (id: string, field: keyof Berufserfahrung, value: any) => {
     setBerufserfahrung(prev => 
       prev.map(exp => exp.id === id ? { ...exp, [field]: value } : exp)
@@ -386,6 +480,37 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
   const updateEducationField = (id: string, field: keyof Ausbildung, value: any) => {
     setAusbildung(prev => 
       prev.map(edu => edu.id === id ? { ...edu, [field]: value } : edu)
+    );
+  };
+
+  const updateExperienceTask = (expId: string, taskIndex: number, newTask: string) => {
+    setBerufserfahrung(prev => 
+      prev.map(exp => {
+        if (exp.id === expId) {
+          const newTasks = [...exp.aufgabenbereiche];
+          newTasks[taskIndex] = newTask;
+          return { ...exp, aufgabenbereiche: newTasks };
+        }
+        return exp;
+      })
+    );
+  };
+
+  const updateExperienceTasksOrder = (expId: string, newTasks: string[]) => {
+    setBerufserfahrung(prev => 
+      prev.map(exp => 
+        exp.id === expId ? { ...exp, aufgabenbereiche: newTasks } : exp
+      )
+    );
+  };
+
+  const addExperienceTask = (expId: string, task: string) => {
+    setBerufserfahrung(prev => 
+      prev.map(exp => 
+        exp.id === expId 
+          ? { ...exp, aufgabenbereiche: [...exp.aufgabenbereiche, task] }
+          : exp
+      )
     );
   };
 
@@ -404,6 +529,11 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
     favoriteSoftSkills,
     favoriteDegrees,
     favoriteInstitutions,
+    favoriteAusbildungsarten,
+    favoriteAbschluesse,
+    selectedExperienceId,
+    selectedEducationId,
+    activeTab,
     updatePersonalData,
     addExperience,
     updateExperience,
@@ -413,6 +543,9 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
     deleteEducation,
     updateSkills,
     updateSoftSkills,
+    selectExperience,
+    selectEducation,
+    setActiveTab,
     toggleFavoritePosition,
     toggleFavoriteCompany,
     toggleFavoriteCity,
@@ -421,8 +554,13 @@ export const LebenslaufProvider: React.FC<{ children: ReactNode }> = ({ children
     toggleFavoriteSoftSkill,
     toggleFavoriteDegree,
     toggleFavoriteInstitution,
+    toggleFavoriteAusbildungsart,
+    toggleFavoriteAbschluss,
     updateExperienceField,
-    updateEducationField
+    updateEducationField,
+    updateExperienceTask,
+    updateExperienceTasksOrder,
+    addExperienceTask
   };
 
   return (
