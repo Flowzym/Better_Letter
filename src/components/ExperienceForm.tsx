@@ -125,13 +125,13 @@ export default function ExperienceForm({
         <div className="space-y-4">
           <TextInput
             id="company-name"
-            label="Unternehmen" 
+            label="" 
             value={form.companyName}
             onChange={(val) => onUpdateField('companyName', val)}
             placeholder="Name des Unternehmens..."
           />
           <AutocompleteInput
-            label="Ort"
+            label=""
             value={form.companyCity}
             onChange={(val) => onUpdateField('companyCity', val)} 
             onAdd={(val) => onUpdateField('companyCity', val as string)} 
@@ -142,7 +142,7 @@ export default function ExperienceForm({
             showAddButton={true}
           />
           <CountryDropdown
-            label="Land"
+            label=""
             value={form.companyCountry}
             onChange={(val) => onUpdateField('companyCountry', val)}
           />
@@ -167,7 +167,7 @@ export default function ExperienceForm({
           )}
         </div>
         <TagSelectorWithFavorites
-          label="Position"
+          label=""
           value={selectedPositions}
           onChange={(val) => {
             onPositionsChange(val);
