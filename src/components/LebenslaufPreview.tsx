@@ -202,7 +202,7 @@ export default function LebenslaufPreview() {
                           exp.isCurrent,
                         )}
                         onSave={(newValue) => handleExperienceFieldUpdate(exp.id, 'zeitraum', newValue)}
-                        className="text-sm text-gray-500"
+                        className="text-sm text-gray-700"
                         placeholder="Zeitraum eingeben..."
                       />
                       <button
@@ -210,7 +210,7 @@ export default function LebenslaufPreview() {
                           e.stopPropagation();
                           deleteExperience(exp.id);
                         }}
-                        className="text-red-500 hover:text-red-700 p-1 rounded transition-colors duration-200"
+                        className="text-gray-500 hover:text-gray-700 p-1 rounded transition-colors duration-200"
                         title="Berufserfahrung löschen"
                         aria-label="Berufserfahrung löschen"
                       >
@@ -266,7 +266,7 @@ export default function LebenslaufPreview() {
                                 updateExperienceTasksOrder(exp.id, newTasks);
                               }}
                               tag="div"
-                              className="space-y-0 text-black"
+                              className="space-y-0 text-black ml-4"
                             >
                               {exp.aufgabenbereiche.map((aufgabe, i) => (
                                 <div 
@@ -390,7 +390,7 @@ export default function LebenslaufPreview() {
                           edu.isCurrent,
                         )}
                         onSave={(newValue) => handleEducationFieldUpdate(edu.id, 'zeitraum', newValue)}
-                        className="text-sm text-gray-500"
+                        className="text-sm text-gray-700"
                         placeholder="Zeitraum eingeben..."
                       />
                       <button
@@ -398,7 +398,7 @@ export default function LebenslaufPreview() {
                           e.stopPropagation();
                           deleteEducation(edu.id);
                         }}
-                        className="text-red-500 hover:text-red-700 p-1 rounded transition-colors duration-200"
+                        className="text-gray-500 hover:text-gray-700 p-1 rounded transition-colors duration-200"
                         title="Ausbildung löschen"
                         aria-label="Ausbildung löschen"
                       >
