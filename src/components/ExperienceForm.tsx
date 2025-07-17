@@ -44,6 +44,7 @@ export default function ExperienceForm({
   const [companyCityInput, setCompanyCityInput] = useState('');
   const [selectedCountryInput, setSelectedCountryInput] = useState('Österreich');
   const [showForeignCountry, setShowForeignCountry] = useState(false);
+  const [isPositionInputFocused, setIsPositionInputFocused] = useState(false);
 
   const hasZeitraumData =
     form.startMonth !== null ||
@@ -250,6 +251,7 @@ export default function ExperienceForm({
                 onFavoriteClick={(val) => {
                   const valueToAdd = val || companyNameInput.trim();
                   if (valueToAdd) toggleFavoriteCompany(valueToAdd);
+                  setCompanyNameInput('');
                 }}
                 suggestions={favorites}
                 placeholder="Name des Unternehmens..."
@@ -271,6 +273,7 @@ export default function ExperienceForm({
                 onFavoriteClick={(val) => {
                   const valueToAdd = val || companyCityInput.trim();
                   if (valueToAdd) toggleFavoriteCity(valueToAdd);
+                  setCompanyCityInput('');
                 }}
                 suggestions={favoriteCities}
                 placeholder="Ort des Unternehmens..."
@@ -383,9 +386,13 @@ export default function ExperienceForm({
           label=""
           value={selectedPositions}
           onChange={(val) => {
+            console.log('Positions changed:', val);
             onPositionsChange(val);
             onUpdateField('position', val);
           }}
+          onFocus={() => setIsPositionInputFocused(true)}
+          onBlur={() => setTimeout(() => setIsPositionInputFocused(false), 100)}
+          showFavoritesButton={isPositionInputFocused}
           options={[]}
           allowCustom={true}
           suggestions={cvSuggestions.positions || []}
@@ -450,6 +457,16 @@ export default function ExperienceForm({
               <Eraser className="h-4 w-4" />
             </button>
           )}
+          {hasAdditionalInfo && (
+            <button
+              type="button"
+              onClick={() => onUpdateField('zusatzangaben', '')}
+              className="p-1 text-gray-600 hover:text-gray-900"
+              title="Weitere Angaben zurücksetzen"
+            >
+              <Eraser className="h-4 w-4" />
+            </button>
+          )}
         </div>
         <TextInput
           value={form.zusatzangaben || ''}
@@ -457,6 +474,8 @@ export default function ExperienceForm({
           label=""
           placeholder="Zusätzliche Informationen zur Berufserfahrung..."
           rows={4}
+          id="experience-additional-info"
+          name="experience-additional-info"
         />
       </div>
     </div>

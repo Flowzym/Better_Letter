@@ -8,6 +8,9 @@ interface TagSelectorWithFavoritesProps {
   label: string;
   value: string[];
   onChange: (val: string[]) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
+  showFavoritesButton?: boolean;
   options?: string[];
   allowCustom: boolean;
   suggestions?: string[];
@@ -17,6 +20,9 @@ export default function TagSelectorWithFavorites({
   label,
   value,
   onChange,
+  onFocus,
+  onBlur,
+  showFavoritesButton = true,
   options = [],
   allowCustom,
   suggestions,
@@ -75,9 +81,11 @@ export default function TagSelectorWithFavorites({
         onChange={setInputValue}
         onAdd={addTag}
         onFavoriteClick={toggleFavorite}
+        onFocus={onFocus}
+        onBlur={onBlur}
         suggestions={suggestions ?? options}
         placeholder="Hinzufügen..."
-        showFavoritesButton={true}
+        showFavoritesButton={showFavoritesButton}
       />
 
       {favorites.filter((f) => !value.includes(f)).length > 0 && (
