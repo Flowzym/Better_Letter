@@ -40,8 +40,6 @@ export default function ExperienceForm({
   const [companyNameInput, setCompanyNameInput] = useState('');
   const [companyCityInput, setCompanyCityInput] = useState('');
   const [selectedCountryInput, setSelectedCountryInput] = useState('Österreich');
-  const [isCompanyInputFocused, setIsCompanyInputFocused] = useState(false);
-  const [isCityInputFocused, setIsCityInputFocused] = useState(false);
   const [showForeignCountry, setShowForeignCountry] = useState(false);
 
   const hasZeitraumData =
@@ -123,7 +121,7 @@ export default function ExperienceForm({
   // Funktion zum Hinzufügen eines Ort-Favoriten zum Eingabefeld
   const addCityFavoriteToInput = (favorite: string) => {
     if (companyCityInput.trim()) {
-      // Formatierung: "Ort1 & Ort2" oder "Ort1, Ort2 & Ort3"
+      // Formatierung: "Ort1 & Ort2" oder "Ort1, Ort2, Ort3 & Ort4"
       const currentCities = companyCityInput.trim().split(/,\s*|&\s*/);
       
       if (!currentCities.includes(favorite)) {
@@ -241,14 +239,12 @@ export default function ExperienceForm({
         <div className="space-y-3">
           {/* Unternehmen & Ort Eingabefelder nebeneinander */}
           <div className="flex space-x-2 items-start">
-            <div className="flex-1">
+            <div className="flex-1 relative">
               <AutocompleteInput
                 label="" 
                 id="company-name-input"
                 value={companyNameInput}
                 onChange={setCompanyNameInput}
-                onFocus={() => setIsCompanyInputFocused(true)}
-                onBlur={() => setTimeout(() => setIsCompanyInputFocused(false), 200)}
                 onAdd={() => {}} // Wird nicht verwendet
                 onFavoriteClick={(val?: string) => {
                   const valueToAdd = val || companyNameInput.trim();
@@ -256,19 +252,18 @@ export default function ExperienceForm({
                 }}
                 suggestions={favorites}
                 placeholder="Name des Unternehmens..."
-                showFavoritesButton={!isCompanyInFavorites && isCompanyInputFocused}
+                showFavoritesButton={!isCompanyInFavorites}
                 showAddButton={false}
+                className={companyNameInput.trim() ? "border-orange-500" : ""}
               />
             </div>
             
-            <div className="flex-1">
+            <div className="flex-1 relative">
               <AutocompleteInput
                 label=""
                 id="company-city-input"
                 value={companyCityInput}
                 onChange={setCompanyCityInput}
-                onFocus={() => setIsCityInputFocused(true)}
-                onBlur={() => setTimeout(() => setIsCityInputFocused(false), 200)}
                 onAdd={() => {}} // Wird nicht verwendet
                 onFavoriteClick={(val?: string) => {
                   const valueToAdd = val || companyCityInput.trim();
@@ -276,8 +271,9 @@ export default function ExperienceForm({
                 }}
                 suggestions={favoriteCities}
                 placeholder="Ort des Unternehmens..."
-                showFavoritesButton={!isCityInFavorites && isCityInputFocused}
+                showFavoritesButton={!isCityInFavorites}
                 showAddButton={false}
+                className={companyCityInput.trim() ? "border-orange-500" : ""}
               />
             </div>
             
@@ -285,21 +281,58 @@ export default function ExperienceForm({
             {hasInputData && (
               <button 
                 onClick={addCompanyEntry} 
-                className="flex flex-col items-center justify-center px-3 py-2 h-10 text-white rounded-md transition-colors duration-200"
+                className="flex items-center justify-center px-3 py-2 h-10 text-white rounded-md transition-colors duration-200"
                 style={{ backgroundColor: '#F29400' }}
                 title="Unternehmen und Ort zusammen hinzufügen"
               >
-                <div className="flex items-center">
-                  <Plus className="h-4 w-4 mr-1" />
-                  <span>Hinzufügen</span>
-                </div>
-                <span className="text-xs font-light">Beide Felder</span>
+                <Plus className="h-4 w-4 mr-1" />
+                <span>Hinzufügen</span>
               </button>
             )}
           </div>
           
+          {/* Unternehmen Favoriten */}
+          {favorites.filter(f => !form.companies.includes(f)).length > 0 && (
+            <div className="mt-4"> 
+              <div className="flex items-center space-x-2 mb-1">
+                <Star className="h-4 w-4 text-gray-400" />
+                <h4 className="text-xs font-medium text-gray-700">Unternehmen-Favoriten:</h4>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {favorites.filter(f => !form.companies.includes(f)).map((company) => (
+                  <TagButtonFavorite
+                    key={company}
+                    label={company}
+                    onClick={() => addCompanyFavorite(company)}
+                    onRemove={() => toggleFavoriteCompany(company)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {/* Ort Favoriten */}
+          {favoriteCities.filter(f => !form.companies.some(c => c.includes(f))).length > 0 && (
+            <div className="mt-4"> 
+              <div className="flex items-center space-x-2 mb-1">
+                <Star className="h-4 w-4 text-gray-400" />
+                <h4 className="text-xs font-medium text-gray-700">Ort-Favoriten:</h4>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {favoriteCities.filter(f => !form.companies.some(c => c.includes(f))).map((city) => (
+                  <TagButtonFavorite
+                    key={city}
+                    label={city}
+                    onClick={() => addCityFavoriteToInput(city)}
+                    onRemove={() => toggleFavoriteCity(city)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+          
           {/* Ausland Checkbox */}
-          <div className="flex items-center mt-2">
+          <div className="flex items-center justify-end mt-2">
             <input
               type="checkbox" 
               id="show-foreign-country"
@@ -320,46 +353,6 @@ export default function ExperienceForm({
               value={selectedCountryInput}
               onChange={setSelectedCountryInput}
             />
-          )}
-          
-          {/* Unternehmen Favoriten */}
-          {favorites.length > 0 && (
-            <div className="mt-4"> 
-              <div className="flex items-center space-x-2 mb-1">
-                <Star className="h-4 w-4 text-gray-400" />
-                <h4 className="text-xs font-medium text-gray-700">Unternehmen-Favoriten:</h4>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {favorites.map((company) => (
-                  <TagButtonFavorite
-                    key={company}
-                    label={company}
-                    onClick={() => addCompanyFavorite(company)}
-                    onRemove={() => toggleFavoriteCompany(company)}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-          
-          {/* Ort Favoriten */}
-          {favoriteCities.length > 0 && (
-            <div className="mt-4"> 
-              <div className="flex items-center space-x-2 mb-1">
-                <Star className="h-4 w-4 text-gray-400" />
-                <h4 className="text-xs font-medium text-gray-700">Ort-Favoriten:</h4>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {favoriteCities.map((city) => (
-                  <TagButtonFavorite
-                    key={city}
-                    label={city}
-                    onClick={() => addCityFavoriteToInput(city)}
-                    onRemove={() => toggleFavoriteCity(city)}
-                  />
-                ))}
-              </div>
-            </div>
           )}
         </div>
       </div>
