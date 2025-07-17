@@ -207,7 +207,10 @@ export default function AutocompleteInput<T = string>({
   };
 
   const handleAddToFavorites = (e?: React.MouseEvent) => {
-    if (e) e.preventDefault();
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation(); // Verhindert, dass das Blur-Event ausgelöst wird
+    }
     if (onFavoriteClick && hasInput) {
       onFavoriteClick(value);
     }
@@ -291,7 +294,7 @@ export default function AutocompleteInput<T = string>({
                 id={favoritesButtonId}
                 name={`favorites-${inputId}`}
                 disabled={disabled}
-                onClick={handleAddToFavorites}
+                onMouseDown={handleAddToFavorites} // onMouseDown statt onClick, wird vor onBlur ausgelöst
                 className="w-10 h-10 bg-[#F6A800] text-white rounded-md flex items-center justify-center transition-colors duration-200 hover:bg-[#E8950C]"
                 title="Zu Favoriten hinzufügen"
                 aria-label="Zu Favoriten hinzufügen"

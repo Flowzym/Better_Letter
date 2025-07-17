@@ -244,10 +244,10 @@ export default function ExperienceForm({
                 onChange={setCompanyNameInput}
                 onAdd={() => {}} // Wird nicht verwendet
                 onFocus={() => setIsCompanyInputFocused(true)}
-                onBlur={() => setIsCompanyInputFocused(false)}
+                onBlur={() => setTimeout(() => setIsCompanyInputFocused(false), 100)} // Verzögerung hinzugefügt
                 onFavoriteClick={(val) => {
-                  if (val) toggleFavoriteCompany(val);
-                  else if (companyNameInput.trim()) toggleFavoriteCompany(companyNameInput.trim());
+                  const valueToAdd = val || companyNameInput.trim();
+                  if (valueToAdd) toggleFavoriteCompany(valueToAdd);
                 }}
                 suggestions={favorites}
                 placeholder="Name des Unternehmens..."
@@ -264,11 +264,11 @@ export default function ExperienceForm({
                 value={companyCityInput}
                 onChange={setCompanyCityInput}
                 onFocus={() => setIsCityInputFocused(true)}
-                onBlur={() => setIsCityInputFocused(false)}
+                onBlur={() => setTimeout(() => setIsCityInputFocused(false), 100)} // Verzögerung hinzugefügt
                 onAdd={() => {}} // Wird nicht verwendet
                 onFavoriteClick={(val) => {
-                  if (val) toggleFavoriteCity(val);
-                  else if (companyCityInput.trim()) toggleFavoriteCity(companyCityInput.trim());
+                  const valueToAdd = val || companyCityInput.trim();
+                  if (valueToAdd) toggleFavoriteCity(valueToAdd);
                 }}
                 suggestions={favoriteCities}
                 placeholder="Ort des Unternehmens..."
