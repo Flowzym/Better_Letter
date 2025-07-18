@@ -213,8 +213,8 @@ export default function LebenslaufPreview() {
                   
                   <div
                     onClick={() => selectExperience(exp.id)}
-                    className={`p-2 cursor-pointer transition-all duration-200 bg-white hover:bg-gray-100 ${
-                      isSelected ? 'border border-[#F29400] rounded-md' : ''
+                    className={`p-2 cursor-pointer transition-all duration-200 hover:bg-gray-100 ${
+                      isSelected ? 'border border-[#F29400] rounded-md bg-gray-50' : 'bg-white'
                     }`}
                   >
                     <div className="flex justify-between items-start mb-0.5">
@@ -232,19 +232,6 @@ export default function LebenslaufPreview() {
                         placeholder="Zeitraum eingeben..."
                       />
                       <div className="flex items-center space-x-1">
-                        {isSelected && (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              selectExperience('');
-                            }}
-                            className="text-gray-500 hover:text-gray-700 p-1 rounded transition-colors duration-200"
-                            title="Bearbeitung beenden"
-                            aria-label="Bearbeitung beenden"
-                          >
-                            <Check className="h-6 w-6" />
-                          </button>
-                        )}
                         {!isSelected && (
                           <button
                             onClick={(e) => {
@@ -284,6 +271,37 @@ export default function LebenslaufPreview() {
                     {/* Erweiterte Inhalte nur bei ausgeklapptem Zustand */}
                     {isCardExpanded && (
                       <>
+                        {/* Floating Button in der oberen rechten Ecke der Card */}
+                        {isSelected && (
+                          <div className="absolute top-2 right-2">
+                            {isEmptyExperience(exp) ? (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  deleteExperience(exp.id);
+                                }}
+                                className="w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition-colors duration-200 shadow-md"
+                                title="Leeren Eintrag abbrechen"
+                                aria-label="Leeren Eintrag abbrechen"
+                              >
+                                <CircleOff className="h-4 w-4" />
+                              </button>
+                            ) : (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  selectExperience('');
+                                }}
+                                className="w-8 h-8 bg-green-500 hover:bg-green-600 text-white rounded-full flex items-center justify-center transition-colors duration-200 shadow-md"
+                                title="Bearbeitung beenden"
+                                aria-label="Bearbeitung beenden"
+                              >
+                                <Check className="h-4 w-4" />
+                              </button>
+                            )}
+                          </div>
+                        )}
+
                         {/* Weitere Angaben */}
                         {exp.zusatzangaben && (
                           <div className="mb-1 border-t pt-0.5 border-gray-100">
@@ -363,7 +381,7 @@ export default function LebenslaufPreview() {
                         
                         {/* Neue Aufgabe hinzufügen */}
                         {selectedExperienceId === exp.id && (
-                          <div className="mt-1 flex items-center space-x-2" style={{ marginLeft: '1.5rem' }}>
+                          <div className="mt-1 flex items-center space-x-2 ml-6">
                             <input
                               type="text"
                               value={newTaskInputs[exp.id] || ''}
@@ -416,8 +434,8 @@ export default function LebenslaufPreview() {
                   
                   <div
                     onClick={() => selectEducation(edu.id)}
-                    className={`p-2 cursor-pointer transition-all duration-200 bg-white hover:bg-gray-50 ${
-                      selectedEducationId === edu.id ? 'border border-[#F29400] rounded-md bg-gray-50' : ''
+                    className={`p-2 cursor-pointer transition-all duration-200 hover:bg-gray-100 ${
+                      selectedEducationId === edu.id ? 'border border-[#F29400] rounded-md bg-gray-50' : 'bg-white'
                     }`}
                   >
                     <div className="flex justify-between items-start mb-0.5">
@@ -451,37 +469,6 @@ export default function LebenslaufPreview() {
                       </div>
                     </div>
 
-                    {/* Floating Button in der oberen rechten Ecke der Card */}
-                    {selectedEducationId === edu.id && (
-                      <div className="absolute top-2 right-2">
-                        {isEmptyEducation(edu) ? (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              deleteEducation(edu.id);
-                            }}
-                            className="w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition-colors duration-200 shadow-md"
-                            title="Leeren Eintrag abbrechen"
-                            aria-label="Leeren Eintrag abbrechen"
-                          >
-                            <CircleOff className="h-4 w-4" />
-                          </button>
-                        ) : (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              selectEducation('');
-                            }}
-                            className="w-8 h-8 bg-green-500 hover:bg-green-600 text-white rounded-full flex items-center justify-center transition-colors duration-200 shadow-md"
-                            title="Bearbeitung beenden"
-                            aria-label="Bearbeitung beenden"
-                          >
-                            <Check className="h-4 w-4" />
-                          </button>
-                        )}
-                      </div>
-                    )}
-
                     {/* Ausbildungsart */}
                     <div className="mb-0.5">
                       <EditablePreviewText
@@ -495,6 +482,37 @@ export default function LebenslaufPreview() {
                     {/* Erweiterte Inhalte nur bei ausgeklapptem Zustand */}
                     {isCardExpanded && (
                       <>
+                        {/* Floating Button in der oberen rechten Ecke der Card */}
+                        {selectedEducationId === edu.id && (
+                          <div className="absolute top-2 right-2">
+                            {isEmptyEducation(edu) ? (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  deleteEducation(edu.id);
+                                }}
+                                className="w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition-colors duration-200 shadow-md"
+                                title="Leeren Eintrag abbrechen"
+                                aria-label="Leeren Eintrag abbrechen"
+                              >
+                                <CircleOff className="h-4 w-4" />
+                              </button>
+                            ) : (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  selectEducation('');
+                                }}
+                                className="w-8 h-8 bg-green-500 hover:bg-green-600 text-white rounded-full flex items-center justify-center transition-colors duration-200 shadow-md"
+                                title="Bearbeitung beenden"
+                                aria-label="Bearbeitung beenden"
+                              >
+                                <Check className="h-4 w-4" />
+                              </button>
+                            )}
+                          </div>
+                        )}
+
                         {/* Institution */}
                         <div className="mb-0.5">
                           <EditablePreviewText
