@@ -143,8 +143,6 @@ const LebenslaufInput: React.FC = () => {
         startMonth: null,
         startYear: "",
         endMonth: null,
-        endYear: null,
-        isCurrent: false,
         aufgabenbereiche: []
       });
     } else if (localActiveTab === 'education' && ausbildung.length === 0) {
