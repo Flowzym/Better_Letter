@@ -100,9 +100,9 @@ export default function TagButton({
   
   if (variant === TagContext.Selected) {
     // Ausgewählter Button: Orange, größer, fett
-    variantClasses = "bg-[#F29400] text-white border-[#F29400]";
+    variantClasses = "bg-[#F29400] text-white border-transparent";
     textClasses = "text-sm font-bold tracking-wide";
-    containerClasses = "flex items-center justify-between w-full";
+    containerClasses = "flex items-center space-x-1";
     starSize = 19;
     xSize = "w-3.5 h-3.5";
     starStroke = "#FFFFFF";
@@ -110,9 +110,9 @@ export default function TagButton({
     starStrokeWidth = isFavorite ? 1 : 1;
   } else if (variant === TagContext.Favorite) {
     // Favoriten-Button: Grau mit dicker gelber Umrandung
-    variantClasses = "bg-[#f8f8f8] text-gray-600 border-2";
+    variantClasses = "bg-[#F8F8F8] text-gray-600 border-2";
     textClasses = "text-sm font-normal tracking-wide";
-    containerClasses = "flex items-center justify-between w-full";
+    containerClasses = "flex items-center space-x-1";
     starSize = 16; // Größerer Stern für Favoriten
     xSize = "w-3 h-3";
     starStroke = "#FDE047";
@@ -120,9 +120,9 @@ export default function TagButton({
     starStrokeWidth = isFavorite ? 1 : 1;
   } else {
     // Suggestion/Standard Button
-    variantClasses = "bg-white text-gray-700 border-gray-300";
+    variantClasses = "bg-[#F8F8F8] text-gray-700 border-gray-300";
     textClasses = "text-sm font-normal tracking-wide";
-    containerClasses = "flex items-center justify-between w-full";
+    containerClasses = "flex items-center space-x-1";
     starSize = 12;
     xSize = "w-3 h-3";
     starStroke = isFavorite ? "#FDE047" : "#4B5563";
@@ -133,7 +133,7 @@ export default function TagButton({
   // Inline-Styles für garantierte Anwendung
   let buttonStyle: React.CSSProperties = {};
   if (variant === TagContext.Selected) {
-    buttonStyle = { padding: '0.25rem 0.75rem' };
+    buttonStyle = { padding: '0.2rem 0.6rem' };
   } else if (variant === TagContext.Favorite) {
     buttonStyle = {
       padding: '0.125rem 0.375rem 0.125rem 0.625rem',
@@ -152,7 +152,7 @@ export default function TagButton({
     >
       <div className={containerClasses}>
         {/* Text-Bereich */}
-        <div className="flex-1 text-left">
+        <div className="text-left">
           {editing ? (
             <input
               ref={inputRef}
@@ -160,10 +160,10 @@ export default function TagButton({
               onChange={handleEditChange}
               onBlur={finishEditing}
               onKeyDown={handleEditKey}
-              className="bg-transparent outline-none text-current w-full"
+              className="bg-transparent outline-none text-current"
               style={{ 
-                width: `${Math.max(editValue.length + 3, 8)}ch`,
-                minWidth: `${Math.max(editValue.length + 3, 8)}ch`
+                width: `${Math.max(editValue.length + 1, 6)}ch`,
+                minWidth: `${Math.max(editValue.length + 1, 6)}ch`
               }}
             />
           ) : (
@@ -177,7 +177,7 @@ export default function TagButton({
         </div>
         
         {/* Icon-Bereich */}
-        <div className="flex items-center ml-2 space-x-1">
+        <div className="flex items-center space-x-1">
           {onToggleFavorite && (
             <button
               type="button"
