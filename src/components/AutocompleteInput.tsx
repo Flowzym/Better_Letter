@@ -50,7 +50,7 @@ export default function AutocompleteInput<T = string>({
   const hasInput = (value || '').trim().length > 0;
   const [isFocused, setIsFocused] = useState(false);
 
-  // Buttons nur bei Fokus, wenn Handler vorhanden sind und explizit erlaubt
+  // Buttons nur bei Fokus, wenn Handler vorhanden sind
   const shouldShowAddButton = isFocused && hasInput && onAdd && showAddButton;
   const shouldShowFavoritesButton = isFocused && hasInput && onFavoriteClick;
 
