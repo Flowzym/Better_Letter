@@ -214,8 +214,12 @@ export default function ExperienceForm({
                 onUpdateField('companies', []);
                 setCompanyNameInput('');
                 setCompanyCityInput('');
+              }}
               className="p-1 text-gray-600 hover:text-gray-900"
-              title="Unternehmen &amp; Ort zurücksetzen"
+              title="Unternehmen & Ort zurücksetzen"
+            >
+              <Eraser className="h-4 w-4" />
+            </button>
             >
               <Eraser className="h-4 w-4" />
             </button>
