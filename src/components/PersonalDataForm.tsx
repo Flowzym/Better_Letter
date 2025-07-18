@@ -631,12 +631,17 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
                   name="kinder"
                   value={newChild}
                   onChange={(e) => handleNumericInput(e.target.value, setNewChild)}
+                  onFocus={() => setIsKinderInputFocused(true)}
+                  onBlur={() => setIsKinderInputFocused(false)}
                   onKeyPress={(e) => e.key === 'Enter' && addChild()}
-                  className={`flex-1 h-10 px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 ${
-                    newChild.trim() && (newChild.trim().length !== 4 || parseInt(newChild.trim(), 10) < 1901 || parseInt(newChild.trim(), 10) > 2099)
+                  className={`flex-1 h-10 px-3 py-2 border rounded-md focus:outline-none focus:ring-1 ${
+                    isKinderInputFocused || (newChild.trim() && newChild.trim().length === 4 && !isNaN(parseInt(newChild.trim(), 10)) && parseInt(newChild.trim(), 10) >= 1901 && parseInt(newChild.trim(), 10) <= 2099)
+                      ? 'border-[#F29400] focus:ring-[#F29400]'
+                      : newChild.trim() && (newChild.trim().length !== 4 || isNaN(parseInt(newChild.trim(), 10)) || parseInt(newChild.trim(), 10) < 1901 || parseInt(newChild.trim(), 10) > 2099)
                       ? 'border-red-500'
                       : 'border-gray-300'
                   }`}
+                  style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
                   placeholder="z.B. 2010"
                 />
                 {newChild.trim() && (

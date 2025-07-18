@@ -217,10 +217,14 @@ export default function AutocompleteInput<T = string>({
       e.preventDefault();
       e.stopPropagation(); // Verhindert, dass das Blur-Event ausgelöst wird
     }
+    console.log('AutocompleteInput: handleAddToFavorites called', { value: value.trim(), category, hasInput });
     if (onFavoriteClick && hasInput) {
+      console.log('AutocompleteInput: calling onFavoriteClick with', value.trim(), category);
       onFavoriteClick(value.trim(), category);
       setIsOpen(false); // Dropdown explizit schließen
       onChange(''); // Eingabefeld leeren nach Favoriten-Hinzufügung
+    } else {
+      console.log('AutocompleteInput: onFavoriteClick not called', { onFavoriteClick: !!onFavoriteClick, hasInput });
     }
   };
 

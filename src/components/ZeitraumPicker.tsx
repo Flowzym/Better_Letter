@@ -305,7 +305,16 @@ export default function ZeitraumPicker({
         <label className="ml-2 flex items-center space-x-1 text-sm">
           <ToggleSwitch
             checked={isCurrent}
-            onChange={toggleCurrent}
+            onChange={(newValue) => {
+              console.log('ZeitraumPicker: laufend toggle to', newValue);
+              setIsCurrent(newValue);
+              if (newValue) {
+                console.log('ZeitraumPicker: clearing end fields');
+                setEndMonth(undefined);
+                setEndYear(undefined);
+                setEndInput('');
+              }
+            }}
             label="laufend"
             className="ml-2"
           />
