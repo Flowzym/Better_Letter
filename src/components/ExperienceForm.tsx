@@ -214,8 +214,6 @@ export default function ExperienceForm({
                 onUpdateField('companies', []);
                 setCompanyNameInput('');
                 setCompanyCityInput('');
-                setSelectedCountryInput('Österreich');
-              placeholder="Unternehmen hinzufügen..."
               className="p-1 text-gray-600 hover:text-gray-900"
               title="Unternehmen &amp; Ort zurücksetzen"
             >
