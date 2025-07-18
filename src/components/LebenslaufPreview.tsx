@@ -58,7 +58,7 @@ export default function LebenslaufPreview() {
   const sortedAusbildungen = useMemo(() => {
     console.log('Ausbildungen für Vorschau:', ausbildung);
     return [...ausbildung].sort((a, b) => {
-      // Neue Einträge ohne Zeitraum kommen immer nach oben
+      // Neue Einträge ohne Zeitraum kommen immer nach oben (neueste zuerst)
       const aHasTime = a.startYear && a.startYear.trim();
       const bHasTime = b.startYear && b.startYear.trim();
       

@@ -430,7 +430,7 @@ const LebenslaufInput: React.FC = () => {
                   createEmptyExperience();
                 }
               }}
-              className="flex items-center justify-center w-16 h-16 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+              className="flex items-center justify-center w-14 h-14 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
               style={{ 
                 backgroundColor: hasEmptyEntry ? '#ef4444' : 
                                 (selectedExperienceId || selectedEducationId) ? '#569f1e' : '#F29400' 
@@ -442,13 +442,13 @@ const LebenslaufInput: React.FC = () => {
               }
             >
               {hasEmptyEntry ? (
-                <CircleOff className="h-6 w-6" />
+                <CircleOff className="h-5 w-5" />
               ) : (selectedExperienceId || selectedEducationId) ? (
-                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               ) : (
-                <Plus className="h-6 w-6" />
+                <Plus className="h-5 w-5" />
               )}
             </button>
           );
