@@ -240,7 +240,7 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
                 value={safeData.nachname || ''}
                 onChange={(e) => updateData('nachname', e.target.value)}
                 className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 pr-10"
-                placeholder="Nachname"
+              suggestions={Array.from(new Set([...favorites.ort, ...citySuggestions]))}
               />
               {safeData.nachname && (
                 <button
@@ -528,7 +528,7 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
                   console.log('Geburtsort onFavoriteClick:', value, cat);
                   if (value && cat) toggleFavorite(cat as keyof typeof favorites, value);
                 }}
-                suggestions={[...favorites.geburtsort, ...citySuggestions]}
+                suggestions={Array.from(new Set([...favorites.geburtsort, ...citySuggestions]))}
                 placeholder="Geburtsort"
               />
             </div>
