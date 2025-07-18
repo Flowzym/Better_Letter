@@ -110,7 +110,7 @@ export default function TagButton({
     starStrokeWidth = isFavorite ? 1 : 1;
   } else if (variant === TagContext.Favorite) {
     // Favoriten-Button: Grau mit dicker gelber Umrandung
-    variantClasses = "bg-[#f8f8f8] text-gray-600";
+    variantClasses = "bg-[#f8f8f8] text-gray-600 border-2";
     textClasses = "text-sm font-normal tracking-wide";
     containerClasses = "flex items-center justify-between w-full";
     starSize = 16; // Größerer Stern für Favoriten
@@ -137,8 +137,7 @@ export default function TagButton({
   } else if (variant === TagContext.Favorite) {
     buttonStyle = {
       padding: '0.125rem 0.375rem 0.125rem 0.625rem',
-      borderWidth: '2px',
-      borderColor: '#F29400'
+      borderColor: '#fdf5b4'
     };
   } else {
     buttonStyle = { padding: '0.25rem 0.5rem' };

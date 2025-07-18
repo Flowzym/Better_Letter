@@ -91,6 +91,11 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
   const [newSocialMedia, setNewSocialMedia] = useState('');
   const [newHomepage, setNewHomepage] = useState('');
   const [showSocialMedia, setShowSocialMedia] = useState(false);
+  
+  // Focus states for individual fields
+  const [isTitleFocused, setIsTitleFocused] = useState(false);
+  const [isOrtFocused, setIsOrtFocused] = useState(false);
+  const [isGeburtsortFocused, setIsGeburtsortFocused] = useState(false);
 
   // Set default values for country fields
   useEffect(() => {
@@ -438,10 +443,14 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
                 value={safeData.ort || ''}
                 onChange={(value) => updateData('ort', value)}
                 onAdd={(value) => updateData('ort', value || '')}
+                onFocus={() => setIsOrtFocused(true)}
+                onBlur={() => setIsOrtFocused(false)}
+                onFocus={() => setIsTitleFocused(true)}
+                onBlur={() => setIsTitleFocused(false)}
                 onFavoriteClick={(value) => toggleFavorite('ort', value || '')}
                 suggestions={[...favorites.ort, ...citySuggestions]}
                 placeholder="Wien"
-                showFavoritesButton={true}
+                showFavoritesButton={isOrtFocused}
                 showAddButton={false}
               />
             </div>
@@ -499,10 +508,12 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
                 value={safeData.geburtsort || ''}
                 onChange={(value) => updateData('geburtsort', value)}
                 onAdd={(value) => updateData('geburtsort', value || '')}
+                onFocus={() => setIsGeburtsortFocused(true)}
+                onBlur={() => setIsGeburtsortFocused(false)}
                 onFavoriteClick={(value) => toggleFavorite('geburtsort', value || '')}
                 suggestions={[...favorites.geburtsort, ...citySuggestions]}
                placeholder="Geburtsort"
-                showFavoritesButton
+                showFavoritesButton={isGeburtsortFocused}
                 showAddButton={false}
               />
             </div>
@@ -520,11 +531,18 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
           {/* Staatsbürgerschaft Checkbox */}
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-gray-700">Staatsbürgerschaft</span>
-            <ToggleSwitch
-              checked={safeData.staatsbuergerschaftCheckbox || false}
-              onChange={(checked) => updateData('staatsbuergerschaftCheckbox', checked)}
-              label=""
-            />
+            <button
+              type="button"
+              onClick={() => updateData('staatsbuergerschaftCheckbox', !(safeData.staatsbuergerschaftCheckbox || false))}
+              className="flex items-center text-gray-600 hover:text-gray-800 transition-colors duration-200"
+              title={safeData.staatsbuergerschaftCheckbox ? 'Staatsbürgerschaft deaktivieren' : 'Staatsbürgerschaft aktivieren'}
+            >
+              {safeData.staatsbuergerschaftCheckbox ? (
+                <ToggleRight className="h-6 w-6" style={{ color: '#F29400' }} />
+              ) : (
+                <ToggleLeft className="h-6 w-6" />
+              )}
+            </button>
           </div>
 
           {/* Bedingte Felder für Staatsbürgerschaft und Arbeitsmarktzugang */}
