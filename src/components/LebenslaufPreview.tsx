@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Trash2, Plus, FileText, Star, X, ToggleLeft, ToggleRight, Edit, Check } from 'lucide-react';
+import { Trash2, Plus, FileText, Star, X, ToggleLeft, ToggleRight, Edit, Check, CircleOff } from 'lucide-react';
 import { ReactSortable } from 'react-sortablejs';
 import { useLebenslauf } from "../context/LebenslaufContext";
 import EditablePreviewText from './EditablePreviewText';
@@ -149,6 +149,23 @@ export default function LebenslaufPreview() {
   const isExpanded = (id: string, type: 'experience' | 'education') => {
     if (showAllExpanded) return true;
     return type === 'experience' ? selectedExperienceId === id : selectedEducationId === id;
+  };
+
+  // Hilfsfunktion um zu prüfen ob ein Eintrag leer ist
+  const isEmptyExperience = (exp: any) => {
+    return (!exp.companies || exp.companies.length === 0) && 
+           (!exp.position || exp.position.length === 0) && 
+           (!exp.aufgabenbereiche || exp.aufgabenbereiche.length === 0) &&
+           (!exp.startYear || exp.startYear.trim() === '') &&
+           (!exp.zusatzangaben || exp.zusatzangaben.trim() === '');
+  };
+
+  const isEmptyEducation = (edu: any) => {
+    return (!edu.institution || edu.institution.length === 0) && 
+           (!edu.ausbildungsart || edu.ausbildungsart.length === 0) && 
+           (!edu.abschluss || edu.abschluss.length === 0) &&
+           (!edu.startYear || edu.startYear.trim() === '') &&
+           (!edu.zusatzangaben || edu.zusatzangaben.trim() === '');
   };
 
   return (
