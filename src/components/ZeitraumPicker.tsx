@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
-import { ToggleLeft, ToggleRight } from 'lucide-react';
 import { parseMonthYearInput } from '../utils/dateUtils';
 import MonthYearInputBase from './MonthYearInputBase';
+import ToggleSwitch from './ToggleSwitch';
 
 interface ZeitraumValue {
   startMonth?: string;
@@ -300,18 +300,12 @@ export default function ZeitraumPicker({
         )}
         <label className="ml-2 flex items-center space-x-1 text-sm">
           <span>laufend</span>
-          <button
-            type="button"
-            onClick={toggleCurrent}
-            className="ml-2 flex items-center text-gray-600 hover:text-gray-800 transition-colors duration-200"
-            title={isCurrent ? 'Laufend deaktivieren' : 'Laufend aktivieren'}
-          >
-            {isCurrent ? (
-              <ToggleRight className="h-5 w-5" style={{ color: '#F29400' }} />
-            ) : (
-              <ToggleLeft className="h-5 w-5" />
-            )}
-          </button>
+          <ToggleSwitch
+            checked={isCurrent}
+            onChange={toggleCurrent}
+            label=""
+            className="ml-2"
+          />
         </label>
       </div>
       {activeField && (
