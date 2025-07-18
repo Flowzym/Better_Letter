@@ -9,6 +9,7 @@ import CountryAutocomplete from './CountryAutocomplete';
 import CountryDropdown from './CountryDropdown';
 import ToggleSwitch from './ToggleSwitch';
 import Card from './cards/Card';
+import KinderYearPicker from './KinderYearPicker';
 
 interface PersonalData {
   titel: string;
