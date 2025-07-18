@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, ToggleLeft, ToggleRight } from 'lucide-react';
+import { X, ToggleLeft, ToggleRight, Eraser } from 'lucide-react';
 import AutocompleteInput from './AutocompleteInput';
 import TagButtonFavorite from './ui/TagButtonFavorite';
 import TagButtonSelected from './ui/TagButtonSelected';
