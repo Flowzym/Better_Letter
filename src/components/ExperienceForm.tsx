@@ -220,9 +220,6 @@ export default function ExperienceForm({
             >
               <Eraser className="h-4 w-4" />
             </button>
-            >
-              <Eraser className="h-4 w-4" />
-            </button>
           )}
         </div>
         
@@ -345,7 +342,7 @@ export default function ExperienceForm({
           
           {/* Ausland Checkbox */}
           <div className="flex items-center justify-end space-x-2 mt-4">
-              placeholder="Ort(e) hinzufügen..."
+            <ToggleSwitch
               checked={showForeignCountry}
               onChange={setShowForeignCountry}
               label="Ausland"
