@@ -91,6 +91,7 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
   const [newSocialMedia, setNewSocialMedia] = useState('');
   const [newHomepage, setNewHomepage] = useState('');
   const [showSocialMedia, setShowSocialMedia] = useState(false);
+  const [isKinderInputFocused, setIsKinderInputFocused] = useState(false);
   
   // Set default values for country fields
   useEffect(() => {
