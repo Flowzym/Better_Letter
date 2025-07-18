@@ -191,16 +191,11 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
           <div className="col-span-3">
             <AutocompleteInput
               label="Titel"
-              category="titel"
               value={safeData.titel}
               onChange={(value) => updateData('titel', value)}
               showAddButton={false}
-              showFavoritesButton={true}
-              onFavoriteClick={(value, cat) => {
-                console.log('Titel onFavoriteClick:', value, cat);
-                if (value && cat) toggleFavorite(cat as keyof typeof favorites, value);
-              }}
-              suggestions={[...favorites.titel, ...titleSuggestions]}
+              showFavoritesButton={false}
+              suggestions={titleSuggestions}
               placeholder="Titel"
             />
           </div>
@@ -307,19 +302,11 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
 
           {/* Social Media Checkbox */}
           <div className="flex items-center justify-end space-x-2">
-            <span className="text-sm font-medium text-gray-700">Social Media / Homepage</span>
-            <button
-              type="button"
-              onClick={() => setShowSocialMedia(!showSocialMedia)}
-              className="flex items-center text-gray-600 hover:text-gray-800 transition-colors duration-200"
-              title={showSocialMedia ? 'Social Media deaktivieren' : 'Social Media aktivieren'}
-            >
-              {showSocialMedia ? (
-                <ToggleRight className="h-6 w-6" style={{ color: '#F29400' }} />
-              ) : (
-                <ToggleLeft className="h-6 w-6" />
-              )}
-            </button>
+            <ToggleSwitch
+              checked={showSocialMedia}
+              onChange={setShowSocialMedia}
+              label="Social Media / Homepage"
+            />
           </div>
 
           {/* Social Media Fields */}
@@ -557,11 +544,10 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
 
           {/* Staatsbürgerschaft Checkbox */}
           <div className="flex items-center justify-end space-x-2">
-            <span className="text-sm font-medium text-gray-700">Staatsbürgerschaft</span>
             <ToggleSwitch
               checked={safeData.staatsbuergerschaftCheckbox || false}
               onChange={(checked) => updateData('staatsbuergerschaftCheckbox', checked)}
-              label=""
+              label="Staatsbürgerschaft"
             />
           </div>
 
@@ -623,40 +609,11 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
                 Geburtsjahre Kinder
               </label>
               
-              <div className="flex space-x-2">
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  id="personal-kinder"
-                  name="kinder"
-                  value={newChild}
-                  onChange={(e) => handleNumericInput(e.target.value, setNewChild)}
-                  onFocus={() => setIsKinderInputFocused(true)}
-                  onBlur={() => setIsKinderInputFocused(false)}
-                  onKeyPress={(e) => e.key === 'Enter' && addChild()}
-                  className={`flex-1 h-10 px-3 py-2 border rounded-md focus:outline-none focus:ring-1 ${
-                    isKinderInputFocused || (newChild.trim() && newChild.trim().length === 4 && !isNaN(parseInt(newChild.trim(), 10)) && parseInt(newChild.trim(), 10) >= 1901 && parseInt(newChild.trim(), 10) <= 2099)
-                      ? 'border-[#F29400] focus:ring-[#F29400]'
-                      : newChild.trim() && (newChild.trim().length !== 4 || isNaN(parseInt(newChild.trim(), 10)) || parseInt(newChild.trim(), 10) < 1901 || parseInt(newChild.trim(), 10) > 2099)
-                      ? 'border-red-500'
-                      : 'border-gray-300'
-                  }`}
-                  style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
-                  placeholder="z.B. 2010"
-                />
-                {newChild.trim() && (
-                  <button
-                    onClick={addChild}
-                    className="w-10 h-10 text-white rounded-md transition-colors duration-200 flex items-center justify-center"
-                    style={{ backgroundColor: '#F6A800' }}
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#F29400'}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#F6A800'}
-                  >
-                    +
-                  </button>
-                )}
-              </div>
+              <KinderYearPicker
+                value={newChild}
+                onChange={setNewChild}
+                onAdd={addChild}
+              />
               
               {/* Kinder Tags below field */}
               {(safeData.kinder || []).length > 0 && (

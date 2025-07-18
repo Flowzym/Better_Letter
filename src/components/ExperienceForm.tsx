@@ -343,19 +343,11 @@ export default function ExperienceForm({
           
           {/* Ausland Checkbox */}
           <div className="flex items-center justify-end space-x-2 mt-4">
-            <span className="text-sm font-medium text-gray-700">Ausland</span>
-            <button
-              type="button"
-              onClick={() => setShowForeignCountry(!showForeignCountry)}
-              className="flex items-center text-gray-600 hover:text-gray-800 transition-colors duration-200"
-              title={showForeignCountry ? 'Ausland deaktivieren' : 'Ausland aktivieren'}
-            >
-              {showForeignCountry ? (
-                <ToggleRight className="h-6 w-6" style={{ color: '#F29400' }} />
-              ) : (
-                <ToggleLeft className="h-6 w-6" />
-              )}
-            </button>
+            <ToggleSwitch
+              checked={showForeignCountry}
+              onChange={setShowForeignCountry}
+              label="Ausland"
+            />
           </div>
           
           {/* Land Dropdown - nur anzeigen wenn Ausland ausgewählt */}
