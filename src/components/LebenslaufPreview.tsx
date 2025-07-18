@@ -41,7 +41,10 @@ export default function LebenslaufPreview() {
       const aHasTime = a.startYear && a.startYear.trim();
       const bHasTime = b.startYear && b.startYear.trim();
       
-      if (!aHasTime && !bHasTime) return 0;
+      if (!aHasTime && !bHasTime) {
+        // Beide ohne Zeit: neueste zuerst (nach ID sortieren)
+        return b.id.localeCompare(a.id);
+      }
       if (!aHasTime) return -1;
       if (!bHasTime) return 1;
       
@@ -360,7 +363,7 @@ export default function LebenslaufPreview() {
                         
                         {/* Neue Aufgabe hinzufügen */}
                         {selectedExperienceId === exp.id && (
-                          <div className="mt-1 flex items-center space-x-2 ml-6">
+                          <div className="mt-1 flex items-center space-x-2" style={{ marginLeft: '1.5rem' }}>
                             <input
                               type="text"
                               value={newTaskInputs[exp.id] || ''}
