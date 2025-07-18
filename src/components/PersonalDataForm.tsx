@@ -175,6 +175,21 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
     setter(numericValue);
   };
 
+  const handleChildInput = (value: string) => {
+    // Nur Ziffern zulassen und auf 4 Stellen begrenzen
+    const numericValue = value.replace(/[^\d]/g, '').slice(0, 4);
+    
+    // Validierung: Jahr muss zwischen 1901 und 2099 liegen
+    if (numericValue.length === 4) {
+      const year = parseInt(numericValue, 10);
+      if (year < 1901 || year > 2099) {
+        return; // Ungültiges Jahr, Eingabe ignorieren
+      }
+    }
+    
+    setNewChild(numericValue);
+  };
+
   return (
     <div className="space-y-4">
       {/* Name & Titel */}
