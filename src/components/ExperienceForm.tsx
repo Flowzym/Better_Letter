@@ -215,7 +215,7 @@ export default function ExperienceForm({
                 setCompanyNameInput('');
                 setCompanyCityInput('');
                 setSelectedCountryInput('Österreich');
-              }}
+              placeholder="Unternehmen hinzufügen..."
               className="p-1 text-gray-600 hover:text-gray-900"
               title="Unternehmen &amp; Ort zurücksetzen"
             >
@@ -343,7 +343,7 @@ export default function ExperienceForm({
           
           {/* Ausland Checkbox */}
           <div className="flex items-center justify-end space-x-2 mt-4">
-            <ToggleSwitch
+              placeholder="Ort(e) hinzufügen..."
               checked={showForeignCountry}
               onChange={setShowForeignCountry}
               label="Ausland"

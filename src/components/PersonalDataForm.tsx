@@ -81,7 +81,6 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
   };
 
   const [favorites, setFavorites] = useState({
-    titel: titleSuggestions.slice(0, 4),
     ort: citySuggestions.slice(0, 5),
     geburtsort: citySuggestions.slice(0, 5),
     arbeitsmarktzugang: arbeitsmarktzugangOptions.slice(0, 2),
@@ -184,23 +183,67 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
     setter(numericValue);
   };
 
+  // Helper function to check if any field in a card has content
+  const hasNameContent = safeData.titel || safeData.vorname || safeData.nachname;
+  const hasContactContent = safeData.telefon || safeData.email || safeData.socialMedia.length > 0;
+  const hasAddressContent = safeData.adresse || safeData.plz || safeData.ort || safeData.land;
+  const hasBirthContent = safeData.geburtsdatum || safeData.geburtsort || safeData.geburtsland || safeData.staatsbuergerschaft || safeData.arbeitsmarktzugang;
+  const hasFamilyContent = safeData.familienstand || safeData.kinder.length > 0;
+
+  const clearNameData = () => {
+    updateData('titel', '');
+    updateData('vorname', '');
+    updateData('nachname', '');
+  };
+
+  const clearContactData = () => {
+    updateData('telefon', '');
+    updateData('telefonVorwahl', '+43');
+    updateData('email', '');
+    updateData('socialMedia', []);
+    setNewSocialMedia('');
+    setNewHomepage('');
+    setShowSocialMedia(false);
+  };
+
+  const clearAddressData = () => {
+    updateData('adresse', '');
+    updateData('plz', '');
+    updateData('ort', '');
+    updateData('land', '');
+    updateData('ausland', false);
+  };
+
+  const clearBirthData = () => {
+    updateData('geburtsdatum', '');
+    updateData('geburtsort', '');
+    updateData('geburtsland', '');
+    updateData('staatsbuergerschaft', '');
+    updateData('arbeitsmarktzugang', '');
+    updateData('staatsbuergerschaftCheckbox', false);
+  };
+
+  const clearFamilyData = () => {
+    updateData('familienstand', '');
+    updateData('kinder', []);
+    setNewChild('');
+  };
+
   return (
     <div className="space-y-4">
       {/* Name & Titel */}
-      <div className="bg-white border border-gray-200 rounded shadow-sm p-4 space-y-4">
+      <div className="bg-white border border-gray-200 rounded shadow-sm p-4 space-y-4 relative">
+        {hasNameContent && (
+          <button
+            type="button"
+            onClick={clearNameData}
+            className="absolute top-2 right-2 p-1 text-gray-600 hover:text-gray-900 transition-colors duration-200"
+            title="Alle Name & Titel Daten zurücksetzen"
+          >
+            <Eraser className="h-4 w-4" />
+          </button>
+        )}
         <div className="grid grid-cols-12 gap-4">
-          <div className="col-span-3">
-            <AutocompleteInput
-              label="Titel"
-              value={safeData.titel}
-              onChange={(value) => updateData('titel', value)}
-              showAddButton={false}
-              showFavoritesButton={false}
-              suggestions={titleSuggestions}
-              placeholder="Titel"
-            />
-          </div>
-          
           <div className="col-span-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Vorname
@@ -228,7 +271,7 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
             </div>
           </div>
           
-          <div className="col-span-5">
+          <div className="col-span-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Nachname
             </label>
@@ -240,7 +283,7 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
                 value={safeData.nachname || ''}
                 onChange={(e) => updateData('nachname', e.target.value)}
                 className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 pr-10"
-              suggestions={Array.from(new Set([...favorites.ort, ...citySuggestions]))}
+                placeholder="Nachname"
               />
               {safeData.nachname && (
                 <button
@@ -254,11 +297,33 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
               )}
             </div>
           </div>
+          
+          <div className="col-span-4">
+            <AutocompleteInput
+              label="Titel"
+              value={safeData.titel}
+              onChange={(value) => updateData('titel', value)}
+              showAddButton={false}
+              showFavoritesButton={false}
+              suggestions={titleSuggestions}
+              placeholder="Titel"
+            />
+          </div>
         </div>
       </div>
 
       {/* Kontaktdaten */}
-      <div className="bg-white border border-gray-200 rounded shadow-sm p-4 space-y-4">
+      <div className="bg-white border border-gray-200 rounded shadow-sm p-4 space-y-4 relative">
+        {hasContactContent && (
+          <button
+            type="button"
+            onClick={clearContactData}
+            className="absolute top-2 right-2 p-1 text-gray-600 hover:text-gray-900 transition-colors duration-200"
+            title="Alle Kontaktdaten zurücksetzen"
+          >
+            <Eraser className="h-4 w-4" />
+          </button>
+        )}
         <div className="space-y-4">
           <div className="grid grid-cols-12 gap-4">
             <div className="col-span-6">
@@ -393,7 +458,17 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
       </div>
 
       {/* Adresse */}
-      <div className="bg-white border border-gray-200 rounded shadow-sm p-4 space-y-4">
+      <div className="bg-white border border-gray-200 rounded shadow-sm p-4 space-y-4 relative">
+        {hasAddressContent && (
+          <button
+            type="button"
+            onClick={clearAddressData}
+            className="absolute top-2 right-2 p-1 text-gray-600 hover:text-gray-900 transition-colors duration-200"
+            title="Alle Adressdaten zurücksetzen"
+          >
+            <Eraser className="h-4 w-4" />
+          </button>
+        )}
         <div className="space-y-4">
           <div className="grid grid-cols-12 gap-4">
             <div className="col-span-5">
@@ -464,7 +539,7 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
                   console.log('Ort onFavoriteClick:', value, cat);
                   if (value && cat) toggleFavorite(cat as keyof typeof favorites, value);
                 }}
-                suggestions={[...favorites.ort, ...citySuggestions]}
+                suggestions={Array.from(new Set([...favorites.ort, ...citySuggestions]))}
                 placeholder="Wien"
               />
             </div>
@@ -472,19 +547,11 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
 
           {/* Ausland Checkbox */}
           <div className="flex items-center justify-end space-x-2">
-            <span className="text-sm font-medium text-gray-700">Ausland</span>
-            <button
-              type="button"
-              onClick={() => updateData('ausland', !(safeData.ausland || false))}
-              className="flex items-center text-gray-600 hover:text-gray-800 transition-colors duration-200"
-              title={safeData.ausland ? 'Ausland deaktivieren' : 'Ausland aktivieren'}
-            >
-              {safeData.ausland ? (
-                <ToggleRight className="h-6 w-6" style={{ color: '#F29400' }} />
-              ) : (
-                <ToggleLeft className="h-6 w-6" />
-              )}
-            </button>
+            <ToggleSwitch
+              checked={safeData.ausland || false}
+              onChange={(checked) => updateData('ausland', checked)}
+              label="Ausland"
+            />
           </div>
 
           {/* Land Field - shown in new row when Ausland is checked */}
@@ -497,11 +564,54 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
               />
             </div>
           )}
+
+          {/* Ort Favoriten */}
+          {favorites.ort.filter(item => item !== (safeData.ort || '')).length > 0 && (
+            <div>
+              <div className="flex items-center space-x-2 mb-2">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#9CA3AF"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polygon points="12 2 15 8.5 22 9.3 17 14 18.2 21 12 17.8 5.8 21 7 14 2 9.3 9 8.5 12 2" fill="none" />
+                </svg>
+                <h4 className="text-sm font-medium text-gray-700">Ort-Favoriten:</h4>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {favorites.ort
+                  .filter(item => item !== (safeData.ort || ''))
+                  .map((item) => (
+                    <TagButtonFavorite
+                      key={item}
+                      label={item}
+                      onClick={() => updateData('ort', item)}
+                      onRemove={() => toggleFavorite('ort', item)}
+                    />
+                  ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Geburtsdaten & Staatsbürgerschaft */}
-      <div className="bg-white border border-gray-200 rounded shadow-sm p-4 space-y-4">
+      <div className="bg-white border border-gray-200 rounded shadow-sm p-4 space-y-4 relative">
+        {hasBirthContent && (
+          <button
+            type="button"
+            onClick={clearBirthData}
+            className="absolute top-2 right-2 p-1 text-gray-600 hover:text-gray-900 transition-colors duration-200"
+            title="Alle Geburtsdaten zurücksetzen"
+          >
+            <Eraser className="h-4 w-4" />
+          </button>
+        )}
           {/* Geburtsdaten mit Checkbox */}
           <div className="grid grid-cols-3 gap-4 items-start">
             <div>
@@ -581,10 +691,53 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
               </div>
             </div>
           )}
+
+          {/* Geburtsort Favoriten */}
+          {favorites.geburtsort.filter(item => item !== (safeData.geburtsort || '')).length > 0 && (
+            <div>
+              <div className="flex items-center space-x-2 mb-2">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#9CA3AF"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polygon points="12 2 15 8.5 22 9.3 17 14 18.2 21 12 17.8 5.8 21 7 14 2 9.3 9 8.5 12 2" fill="none" />
+                </svg>
+                <h4 className="text-sm font-medium text-gray-700">Geburtsort-Favoriten:</h4>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {favorites.geburtsort
+                  .filter(item => item !== (safeData.geburtsort || ''))
+                  .map((item) => (
+                    <TagButtonFavorite
+                      key={item}
+                      label={item}
+                      onClick={() => updateData('geburtsort', item)}
+                      onRemove={() => toggleFavorite('geburtsort', item)}
+                    />
+                  ))}
+              </div>
+            </div>
+          )}
       </div>
 
       {/* Familienstand */}
-      <div className="bg-white border border-gray-200 rounded shadow-sm p-4 space-y-4">
+      <div className="bg-white border border-gray-200 rounded shadow-sm p-4 space-y-4 relative">
+        {hasFamilyContent && (
+          <button
+            type="button"
+            onClick={clearFamilyData}
+            className="absolute top-2 right-2 p-1 text-gray-600 hover:text-gray-900 transition-colors duration-200"
+            title="Alle Familiendaten zurücksetzen"
+          >
+            <Eraser className="h-4 w-4" />
+          </button>
+        )}
         <div className="space-y-4">
           <div className="grid grid-cols-12 gap-4 items-start">
             <div className="col-span-4">
@@ -607,7 +760,7 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
             {/* Kinder */}
             <div className="col-span-8">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Geburtsjahre Kinder
+                Geburtsjahr
               </label>
               
               <KinderYearPicker

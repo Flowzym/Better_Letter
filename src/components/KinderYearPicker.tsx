@@ -12,8 +12,9 @@ export default function KinderYearPicker({ value, onChange, onAdd }: KinderYearP
   const [isFocused, setIsFocused] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   
-  // Generate years from 2099 down to 1901 (descending)
-  const years = Array.from({ length: 2099 - 1901 + 1 }, (_, i) => 2099 - i);
+  // Generate years from current year down to 1901 (descending)
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: currentYear - 1901 + 1 }, (_, i) => currentYear - i);
   
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -48,7 +49,7 @@ export default function KinderYearPicker({ value, onChange, onAdd }: KinderYearP
   const isValidYear = (yearStr: string) => {
     if (yearStr.length !== 4) return false;
     const year = parseInt(yearStr, 10);
-    return !isNaN(year) && year >= 1901 && year <= 2099;
+    return !isNaN(year) && year >= 1901 && year <= currentYear;
   };
 
   const hasValue = value.trim().length > 0;
@@ -78,7 +79,7 @@ export default function KinderYearPicker({ value, onChange, onAdd }: KinderYearP
                 : 'border-gray-300'
             }`}
             style={{ '--tw-ring-color': '#F29400' } as React.CSSProperties}
-            placeholder="z.B. 2010"
+            placeholder="Geburtsjahr"
             maxLength={4}
           />
           
@@ -95,12 +96,12 @@ export default function KinderYearPicker({ value, onChange, onAdd }: KinderYearP
         {hasValue && (
           <button
             onClick={onAdd}
-            className="w-10 h-10 text-white rounded-md transition-colors duration-200 flex items-center justify-center text-lg font-bold"
+            className="w-10 h-10 text-white rounded-md transition-colors duration-200 flex items-center justify-center"
             style={{ backgroundColor: '#F6A800' }}
             onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#F29400'}
             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#F6A800'}
           >
-            <Plus className="w-6 h-6" />
+            <Plus className="w-7 h-7" />
           </button>
         )}
       </div>
