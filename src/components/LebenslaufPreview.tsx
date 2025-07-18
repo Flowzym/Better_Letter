@@ -41,10 +41,7 @@ export default function LebenslaufPreview() {
       const aHasTime = a.startYear && a.startYear.trim();
       const bHasTime = b.startYear && b.startYear.trim();
       
-      if (!aHasTime && !bHasTime) {
-        // Beide ohne Zeit: neueste zuerst (nach ID sortieren)
-        return b.id.localeCompare(a.id);
-      }
+      if (!aHasTime && !bHasTime) return 0;
       if (!aHasTime) return -1;
       if (!bHasTime) return 1;
       
@@ -65,7 +62,10 @@ export default function LebenslaufPreview() {
       const aHasTime = a.startYear && a.startYear.trim();
       const bHasTime = b.startYear && b.startYear.trim();
       
-      if (!aHasTime && !bHasTime) return 0;
+      if (!aHasTime && !bHasTime) {
+        // Beide ohne Zeit: neueste zuerst (nach ID sortieren)
+        return b.id.localeCompare(a.id);
+      }
       if (!aHasTime) return -1;
       if (!bHasTime) return 1;
       
