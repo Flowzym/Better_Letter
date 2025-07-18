@@ -185,7 +185,7 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
               label="Titel"
               value={safeData.titel}
               onChange={(value) => updateData('titel', value)}
-              onAdd={(value) => updateData('titel', value || '')}
+              showAddButton={false}
               onFavoriteClick={(value) => toggleFavorite('titel', value || '')}
               suggestions={[...favorites.titel, ...titleSuggestions]}
               placeholder="Titel"
@@ -456,7 +456,7 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
                 label="Ort"
                 value={safeData.ort || ''}
                 onChange={(value) => updateData('ort', value)}
-                onAdd={(value) => updateData('ort', value || '')}
+                showAddButton={false}
                 onFavoriteClick={(value) => toggleFavorite('ort', value || '')}
                 suggestions={[...favorites.ort, ...citySuggestions]}
                 placeholder="Wien"
@@ -515,7 +515,7 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
                 label="Geburtsort"
                 value={safeData.geburtsort || ''}
                 onChange={(value) => updateData('geburtsort', value)}
-                onAdd={(value) => updateData('geburtsort', value || '')}
+                showAddButton={false}
                 onFavoriteClick={(value) => toggleFavorite('geburtsort', value || '')}
                 suggestions={[...favorites.geburtsort, ...citySuggestions]}
                placeholder="Geburtsort"
@@ -533,12 +533,11 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
           </div>
 
           {/* Staatsbürgerschaft Checkbox */}
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-700">Staatsbürgerschaft</span>
+          <div className="flex items-center justify-end space-x-2">
             <ToggleSwitch
               checked={safeData.staatsbuergerschaftCheckbox || false}
               onChange={(checked) => updateData('staatsbuergerschaftCheckbox', checked)}
-              label=""
+              label="Staatsbürgerschaft"
             />
           </div>
 

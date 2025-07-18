@@ -299,7 +299,6 @@ export default function ZeitraumPicker({
           />
         )}
         <label className="ml-2 flex items-center space-x-1 text-sm">
-          <span>laufend</span>
           <ToggleSwitch
             checked={isCurrent}
             onChange={(checked) => {
@@ -310,7 +309,7 @@ export default function ZeitraumPicker({
                 setEndInput('');
               }
             }}
-            label=""
+            label="laufend"
             className="ml-2"
           />
         </label>

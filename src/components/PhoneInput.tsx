@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Phone, ChevronDown } from 'lucide-react';
+import { Phone, ChevronDown, X } from 'lucide-react';
 
 interface PhoneInputProps {
   countryCode: string;
@@ -73,24 +73,56 @@ export default function PhoneInput({ countryCode, phoneNumber, onCountryChange, 
     // Remove all non-digits
     const digits = value.replace(/\D/g, '');
     
-    // Format based on Austrian phone number patterns
-    if (countryCode === '+43') {
-      if (digits.length <= 3) return digits;
-      if (digits.length <= 6) return `${digits.slice(0, 3)} ${digits.slice(3)}`;
-      if (digits.length <= 10) return `${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6)}`;
-      return `${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6, 10)}`;
-    }
+    // Limit to 18 digits maximum
+    const limitedDigits = digits.slice(0, 18);
     
-    // Generic formatting for other countries
-    if (digits.length <= 3) return digits;
-    if (digits.length <= 6) return `${digits.slice(0, 3)} ${digits.slice(3)}`;
-    if (digits.length <= 10) return `${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6)}`;
-    return `${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6, 10)}`;
+    // Format: "123 4567890 xxxx xxxx xxxx"
+    if (limitedDigits.length <= 3) return limitedDigits;
+    if (limitedDigits.length <= 10) return `${limitedDigits.slice(0, 3)} ${limitedDigits.slice(3)}`;
+    if (limitedDigits.length <= 14) return `${limitedDigits.slice(0, 3)} ${limitedDigits.slice(3, 10)} ${limitedDigits.slice(10)}`;
+    return `${limitedDigits.slice(0, 3)} ${limitedDigits.slice(3, 10)} ${limitedDigits.slice(10, 14)} ${limitedDigits.slice(14)}`;
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatPhoneNumber(e.target.value);
+    const input = e.target;
+    const cursorPosition = input.selectionStart || 0;
+    const oldValue = phoneNumber;
+    const newValue = e.target.value;
+    
+    const formatted = formatPhoneNumber(newValue);
     onPhoneChange(formatted);
+    
+    // Calculate new cursor position
+    setTimeout(() => {
+      if (input) {
+        // Count spaces before cursor in old and new value
+        const oldSpacesBefore = (oldValue.slice(0, cursorPosition).match(/ /g) || []).length;
+        const oldDigitsBefore = oldValue.slice(0, cursorPosition).replace(/\D/g, '').length;
+        
+        // Find position in formatted string
+        let newPosition = 0;
+        let digitCount = 0;
+        
+        for (let i = 0; i < formatted.length; i++) {
+          if (formatted[i] === ' ') {
+            newPosition++;
+          } else {
+            if (digitCount < oldDigitsBefore) {
+              digitCount++;
+              newPosition++;
+            } else {
+              break;
+            }
+          }
+        }
+        
+        input.setSelectionRange(newPosition, newPosition);
+      }
+    }, 0);
+  };
+
+  const clearPhoneNumber = () => {
+    onPhoneChange('');
   };
 
   return (
@@ -157,8 +189,18 @@ export default function PhoneInput({ countryCode, phoneNumber, onCountryChange, 
           value={phoneNumber}
           onChange={handlePhoneChange}
         className="w-full h-10 pl-3 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
-          placeholder="123 456 7890"
+          placeholder="Telefonnummer"
         />
+        {phoneNumber && (
+          <button
+            type="button"
+            onClick={clearPhoneNumber}
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-300"
+            aria-label="Telefonnummer löschen"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
       </div>
     </div>
   );

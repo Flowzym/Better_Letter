@@ -10,11 +10,11 @@ interface ToggleSwitchProps {
 
 export default function ToggleSwitch({ checked, onChange, label, className = "" }: ToggleSwitchProps) {
   return (
-    <label className={`flex items-center space-x-2 cursor-pointer ${className}`}>
+    <div className={`flex items-center space-x-2 ${className}`}>
       <button
         type="button"
         onClick={() => onChange(!checked)}
-        className="flex items-center text-gray-600 hover:text-gray-800 transition-colors duration-200"
+        className="flex items-center text-gray-600 hover:text-gray-800 transition-colors duration-200 cursor-pointer"
         title={checked ? `${label} deaktivieren` : `${label} aktivieren`}
       >
         {checked ? (
@@ -23,7 +23,7 @@ export default function ToggleSwitch({ checked, onChange, label, className = "" 
           <ToggleLeft className="h-6 w-6" />
         )}
       </button>
-      <span className="text-sm font-medium text-gray-500">{label}</span>
-    </label>
+      {label && <span className="text-sm font-medium text-gray-500">{label}</span>}
+    </div>
   );
 }

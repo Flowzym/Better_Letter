@@ -12,7 +12,6 @@ interface AutocompleteInputProps<T = string> {
   placeholder: string;
   disabled?: boolean;
   className?: string;
-  showFavoritesButton?: boolean;
   showAddButton?: boolean;
   buttonColor?: string;
   id?: string;
@@ -35,6 +34,7 @@ export default function AutocompleteInput<T = string>({
   className = '',
   id,
   label,
+  showAddButton = true,
   buttonColor = '#F6A800',
   formatSuggestion,
   getSearchableString,
@@ -50,8 +50,8 @@ export default function AutocompleteInput<T = string>({
   const hasInput = (value || '').trim().length > 0;
   const [isFocused, setIsFocused] = useState(false);
 
-  // Buttons nur bei Fokus und wenn Handler vorhanden sind
-  const shouldShowAddButton = isFocused && hasInput && onAdd;
+  // Buttons nur bei Fokus, wenn Handler vorhanden sind und explizit erlaubt
+  const shouldShowAddButton = isFocused && hasInput && onAdd && showAddButton;
   const shouldShowFavoritesButton = isFocused && hasInput && onFavoriteClick;
 
   // Helper functions with defaults for string suggestions
@@ -214,7 +214,7 @@ export default function AutocompleteInput<T = string>({
       e.stopPropagation(); // Verhindert, dass das Blur-Event ausgelöst wird
     }
     if (onFavoriteClick && hasInput) {
-      onFavoriteClick(value);
+      onFavoriteClick(value.trim());
     }
   };
 
