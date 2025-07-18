@@ -360,7 +360,7 @@ export default function LebenslaufPreview() {
                         
                         {/* Neue Aufgabe hinzufügen */}
                         {selectedExperienceId === exp.id && (
-                          <div className="mt-1 flex items-center space-x-2" style={{ marginLeft: '1.5rem' }}>
+                          <div className="mt-1 flex items-center space-x-2 ml-6">
                             <input
                               type="text"
                               value={newTaskInputs[exp.id] || ''}
