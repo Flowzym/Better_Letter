@@ -387,34 +387,6 @@ const LebenslaufInput: React.FC = () => {
 
       {/* Floating Button */}
       <div className="fixed bottom-4 right-4 z-50">
-        <button
-          onClick={() => {
-            if (selectedExperienceId || selectedEducationId) {
-              // Aktualisieren: Alle Einträge deselektieren
-              deselectAllEntries();
-            } else {
-              // Neue Berufserfahrung hinzufügen
-              createEmptyExperience();
-            }
-          }}
-          className="flex items-center justify-center w-20 h-20 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
-          style={{ 
-            backgroundColor: selectedExperienceId || selectedEducationId ? '#569f1e' : '#F29400' 
-          }}
-          title={
-            selectedExperienceId || selectedEducationId 
-              ? "Bearbeitung beenden" 
-              : "Neue Berufserfahrung hinzufügen"
-          }
-        >
-          {selectedExperienceId || selectedEducationId ? (
-            <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-          ) : (
-            <Plus className="h-8 w-8" />
-          )}
-        </button>
       </div>
     </div>
   );
