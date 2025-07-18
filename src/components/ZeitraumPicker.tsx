@@ -191,6 +191,7 @@ export default function ZeitraumPicker({
       if (next) {
         setEndMonth(undefined);
         setEndYear(undefined);
+        setEndInput('');
       }
       return next;
     });
