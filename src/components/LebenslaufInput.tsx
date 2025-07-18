@@ -3,7 +3,7 @@ import { useLebenslauf } from '../context/LebenslaufContext';
 import PersonalDataForm from './PersonalDataForm';
 import ExperienceForm from './ExperienceForm';
 import AusbildungForm from './AusbildungForm';
-import { Plus, Calendar, Building, Briefcase, ChevronRight, User } from 'lucide-react';
+import { Plus, Calendar, Building, Briefcase, ChevronRight, User, CircleOff } from 'lucide-react';
 
 type TabType = 'personal' | 'experience' | 'education' | 'skills' | 'softskills';
 
@@ -30,6 +30,22 @@ const LebenslaufInput: React.FC = () => {
   } = useLebenslauf();
 
   const [localActiveTab, setLocalActiveTab] = useState<TabType>('personal');
+  
+  // Hilfsfunktion zum Prüfen ob eine Berufserfahrung leer ist
+  const isEmptyExperience = (exp: any) => {
+    return (!exp.companies || exp.companies.length === 0) && 
+           exp.position.length === 0 && 
+           exp.aufgabenbereiche.length === 0 &&
+           !exp.startYear;
+  };
+
+  // Hilfsfunktion zum Prüfen ob eine Ausbildung leer ist
+  const isEmptyEducation = (edu: any) => {
+    return (!edu.institution || edu.institution.length === 0) && 
+           (!edu.ausbildungsart || edu.ausbildungsart.length === 0) && 
+           (!edu.abschluss || edu.abschluss.length === 0) &&
+           !edu.startYear;
+  };
   
   // Hilfsfunktion zum Erstellen einer neuen Berufserfahrung
   const createEmptyExperience = () => {
@@ -387,6 +403,56 @@ const LebenslaufInput: React.FC = () => {
 
       {/* Floating Button */}
       <div className="fixed bottom-4 right-4 z-50">
+        {(() => {
+          // Prüfe ob eine leere Card im Bearbeitungsmodus ist
+          const hasEmptyExperience = selectedExperienceId && 
+            berufserfahrung.find(exp => exp.id === selectedExperienceId && isEmptyExperience(exp));
+          const hasEmptyEducation = selectedEducationId && 
+            ausbildung.find(edu => edu.id === selectedEducationId && isEmptyEducation(edu));
+          const hasEmptyEntry = hasEmptyExperience || hasEmptyEducation;
+          
+          return (
+            <button
+              onClick={() => {
+                if (hasEmptyEntry) {
+                  // Abbrechen: Leere Einträge löschen
+                  if (hasEmptyExperience) {
+                    deleteExperience(selectedExperienceId!);
+                  }
+                  if (hasEmptyEducation) {
+                    deleteEducation(selectedEducationId!);
+                  }
+                } else if (selectedExperienceId || selectedEducationId) {
+                  // Aktualisieren: Bearbeitung beenden
+                  deselectAllEntries();
+                } else {
+                  // Neue Berufserfahrung hinzufügen
+                  createEmptyExperience();
+                }
+              }}
+              className="flex items-center justify-center w-20 h-20 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+              style={{ 
+                backgroundColor: hasEmptyEntry ? '#ef4444' : 
+                                (selectedExperienceId || selectedEducationId) ? '#569f1e' : '#F29400' 
+              }}
+              title={
+                hasEmptyEntry ? "Leeren Eintrag abbrechen" :
+                (selectedExperienceId || selectedEducationId) ? "Bearbeitung beenden" : 
+                "Neue Berufserfahrung hinzufügen"
+              }
+            >
+              {hasEmptyEntry ? (
+                <CircleOff className="h-8 w-8" />
+              ) : (selectedExperienceId || selectedEducationId) ? (
+                <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              ) : (
+                <Plus className="h-8 w-8" />
+              )}
+            </button>
+          );
+        })()}
       </div>
     </div>
   );
