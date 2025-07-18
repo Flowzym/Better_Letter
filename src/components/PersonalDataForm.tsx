@@ -132,6 +132,7 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
   };
 
   const toggleFavorite = (category: keyof typeof favorites, value: string) => {
+    console.log('toggleFavorite called with:', category, value);
     setFavorites(prev => ({
       ...prev,
       [category]: prev[category].includes(value)
@@ -141,9 +142,15 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
   };
 
   const addChild = () => {
-    if (newChild.trim()) {
-      updateData('kinder', [...safeData.kinder, newChild.trim()]);
-      setNewChild('');
+    const trimmedChild = newChild.trim();
+    if (trimmedChild) {
+      // Strikte Validierung: Nur 4-stellige Jahre zwischen 1901 und 2099
+      const year = parseInt(trimmedChild, 10);
+      if (trimmedChild.length === 4 && year >= 1901 && year <= 2099) {
+        updateData('kinder', [...safeData.kinder, trimmedChild]);
+        setNewChild('');
+      }
+      // Ungültige Eingaben werden ignoriert (nicht hinzugefügt)
     }
   };
 
@@ -183,10 +190,15 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
           <div className="col-span-3">
             <AutocompleteInput
               label="Titel"
+              category="titel"
               value={safeData.titel}
               onChange={(value) => updateData('titel', value)}
               showAddButton={false}
-              onFavoriteClick={(value) => toggleFavorite('titel', value || '')}
+              showFavoritesButton={true}
+              onFavoriteClick={(value, cat) => {
+                console.log('Titel onFavoriteClick:', value, cat);
+                if (value && cat) toggleFavorite(cat as keyof typeof favorites, value);
+              }}
               suggestions={[...favorites.titel, ...titleSuggestions]}
               placeholder="Titel"
             />
@@ -454,10 +466,15 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
             <div className="col-span-5">
               <AutocompleteInput
                 label="Ort"
+                category="ort"
                 value={safeData.ort || ''}
                 onChange={(value) => updateData('ort', value)}
                 showAddButton={false}
-                onFavoriteClick={(value) => toggleFavorite('ort', value || '')}
+                showFavoritesButton={true}
+                onFavoriteClick={(value, cat) => {
+                  console.log('Ort onFavoriteClick:', value, cat);
+                  if (value && cat) toggleFavorite(cat as keyof typeof favorites, value);
+                }}
                 suggestions={[...favorites.ort, ...citySuggestions]}
                 placeholder="Wien"
               />
@@ -513,12 +530,17 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
               <AutocompleteInput
                 className="w-full"
                 label="Geburtsort"
+                category="geburtsort"
                 value={safeData.geburtsort || ''}
                 onChange={(value) => updateData('geburtsort', value)}
                 showAddButton={false}
-                onFavoriteClick={(value) => toggleFavorite('geburtsort', value || '')}
+                showFavoritesButton={true}
+                onFavoriteClick={(value, cat) => {
+                  console.log('Geburtsort onFavoriteClick:', value, cat);
+                  if (value && cat) toggleFavorite(cat as keyof typeof favorites, value);
+                }}
                 suggestions={[...favorites.geburtsort, ...citySuggestions]}
-               placeholder="Geburtsort"
+                placeholder="Geburtsort"
               />
             </div>
             
@@ -610,7 +632,11 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
                   value={newChild}
                   onChange={(e) => handleNumericInput(e.target.value, setNewChild)}
                   onKeyPress={(e) => e.key === 'Enter' && addChild()}
-                  className="flex-1 h-10 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
+                  className={`flex-1 h-10 px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 ${
+                    newChild.trim() && (newChild.trim().length !== 4 || parseInt(newChild.trim(), 10) < 1901 || parseInt(newChild.trim(), 10) > 2099)
+                      ? 'border-red-500'
+                      : 'border-gray-300'
+                  }`}
                   placeholder="z.B. 2010"
                 />
                 {newChild.trim() && (

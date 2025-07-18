@@ -186,9 +186,12 @@ export default function ZeitraumPicker({
   };
 
   const toggleCurrent = () => {
+    console.log('toggleCurrent called, current isCurrent:', isCurrent);
     setIsCurrent((prev) => {
       const next = !prev;
+      console.log('Setting isCurrent to:', next);
       if (next) {
+        console.log('Clearing end fields');
         setEndMonth(undefined);
         setEndYear(undefined);
         setEndInput('');
@@ -302,14 +305,7 @@ export default function ZeitraumPicker({
         <label className="ml-2 flex items-center space-x-1 text-sm">
           <ToggleSwitch
             checked={isCurrent}
-            onChange={(checked) => {
-              setIsCurrent(checked);
-              if (checked) {
-                setEndMonth(undefined);
-                setEndYear(undefined);
-                setEndInput('');
-              }
-            }}
+            onChange={toggleCurrent}
             label="laufend"
             className="ml-2"
           />

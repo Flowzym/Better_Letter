@@ -7,15 +7,17 @@ interface AutocompleteInputProps<T = string> {
   onFocus?: () => void;
   onBlur?: () => void;
   onAdd?: (valueToAdd?: string | T) => void;
-  onFavoriteClick?: (valueToAdd?: string) => void;
+  onFavoriteClick?: (valueToAdd?: string, category?: string) => void;
   suggestions: T[];
   placeholder: string;
   disabled?: boolean;
   className?: string;
   showAddButton?: boolean;
+  showFavoritesButton?: boolean;
   buttonColor?: string;
   id?: string;
   label?: string;
+  category?: string;
   formatSuggestion?: (item: T) => React.ReactNode;
   getSearchableString?: (item: T) => string;
   getKey?: (item: T) => string;
@@ -35,7 +37,9 @@ export default function AutocompleteInput<T = string>({
   id,
   label,
   showAddButton = true,
+  showFavoritesButton = true,
   buttonColor = '#F6A800',
+  category,
   formatSuggestion,
   getSearchableString,
   getKey
@@ -52,7 +56,7 @@ export default function AutocompleteInput<T = string>({
 
   // Buttons nur bei Fokus, wenn Handler vorhanden sind
   const shouldShowAddButton = isFocused && hasInput && onAdd && showAddButton;
-  const shouldShowFavoritesButton = isFocused && hasInput && onFavoriteClick;
+  const shouldShowFavoritesButton = isFocused && hasInput && onFavoriteClick && showFavoritesButton;
 
   // Helper functions with defaults for string suggestions
   const getSuggestionText = (item: T): string => {
@@ -214,7 +218,9 @@ export default function AutocompleteInput<T = string>({
       e.stopPropagation(); // Verhindert, dass das Blur-Event ausgelöst wird
     }
     if (onFavoriteClick && hasInput) {
-      onFavoriteClick(value.trim());
+      onFavoriteClick(value.trim(), category);
+      setIsOpen(false); // Dropdown explizit schließen
+      onChange(''); // Eingabefeld leeren nach Favoriten-Hinzufügung
     }
   };
 
