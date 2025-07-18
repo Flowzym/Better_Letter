@@ -33,8 +33,6 @@ export default function AutocompleteInput<T = string>({
   placeholder,
   disabled = false,
   className = '',
-  showFavoritesButton = false,
-  showAddButton = true,
   id,
   label,
   buttonColor = '#F6A800',
@@ -51,6 +49,10 @@ export default function AutocompleteInput<T = string>({
 
   const hasInput = (value || '').trim().length > 0;
   const [isFocused, setIsFocused] = useState(false);
+
+  // Buttons nur bei Fokus und wenn Handler vorhanden sind
+  const shouldShowAddButton = isFocused && hasInput && onAdd;
+  const shouldShowFavoritesButton = isFocused && hasInput && onFavoriteClick;
 
   // Helper functions with defaults for string suggestions
   const getSuggestionText = (item: T): string => {
@@ -272,10 +274,10 @@ export default function AutocompleteInput<T = string>({
           )}
         </div>
         
-        {(showAddButton || (showFavoritesButton && onFavoriteClick)) && (
+        {(shouldShowAddButton || shouldShowFavoritesButton) && (
           <div className="flex-shrink-0 flex space-x-2">
             {/* Add button */}
-            {showAddButton && (
+            {shouldShowAddButton && (
               <button
                 id={addButtonId}
                 name={`add-${inputId}`}
@@ -289,7 +291,7 @@ export default function AutocompleteInput<T = string>({
             )}
             
             {/* Favorites button */}
-            {showFavoritesButton && onFavoriteClick && (
+            {shouldShowFavoritesButton && (
               <button
                 id={favoritesButtonId}
                 name={`favorites-${inputId}`}

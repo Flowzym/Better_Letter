@@ -302,7 +302,14 @@ export default function ZeitraumPicker({
           <span>laufend</span>
           <ToggleSwitch
             checked={isCurrent}
-            onChange={toggleCurrent}
+            onChange={(checked) => {
+              setIsCurrent(checked);
+              if (checked) {
+                setEndMonth(undefined);
+                setEndYear(undefined);
+                setEndInput('');
+              }
+            }}
             label=""
             className="ml-2"
           />

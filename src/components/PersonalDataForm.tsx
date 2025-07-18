@@ -189,8 +189,6 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
               onFavoriteClick={(value) => toggleFavorite('titel', value || '')}
               suggestions={[...favorites.titel, ...titleSuggestions]}
               placeholder="Titel"
-              showFavoritesButton={true}
-              showAddButton={false}
             />
           </div>
           
@@ -462,8 +460,6 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
                 onFavoriteClick={(value) => toggleFavorite('ort', value || '')}
                 suggestions={[...favorites.ort, ...citySuggestions]}
                 placeholder="Wien"
-                showFavoritesButton={true}
-                showAddButton={false}
               />
             </div>
           </div>
@@ -523,8 +519,6 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
                 onFavoriteClick={(value) => toggleFavorite('geburtsort', value || '')}
                 suggestions={[...favorites.geburtsort, ...citySuggestions]}
                placeholder="Geburtsort"
-                showFavoritesButton={true}
-                showAddButton={false}
               />
             </div>
             
