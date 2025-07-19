@@ -423,7 +423,9 @@ export default function ExperienceForm({
                     onChange={setLeasingCompanyInput}
                     onAdd={addLeasingCompany}
                     onFavoriteClick={(val) => {
-                      handleAddFavoriteInput(val);
+                      const valueToAdd = val || leasingCompanyInput.trim();
+                      if (valueToAdd) toggleFavoriteLeasingCompany(valueToAdd);
+                      setLeasingCompanyInput('');
                     }}
                     suggestions={favoriteLeasingCompanies}
                     placeholder="Überlassungsunternehmen..."
