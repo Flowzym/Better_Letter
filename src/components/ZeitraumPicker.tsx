@@ -371,7 +371,7 @@ export default function ZeitraumPicker({
                   <button
                     key={y}
                     onMouseDown={() => handleYearSelect(y)} // Changed from onClick to onMouseDown
-                    className={\`px-2 h-8 flex items-center justify-center border rounded transition-colors duration-150 focus:outline-none text-sm font-medium ${selected ? "bg-[#F29400] text-white border-[#F29400]" : "bg-white text-gray-700 border-[#ffdea2] hover:bg-orange-50"}`}
+                    className={`px-2 h-8 flex items-center justify-center border rounded transition-colors duration-150 focus:outline-none text-sm font-medium ${selected ? "bg-[#F29400] text-white border-[#F29400]" : "bg-white text-gray-700 border-[#ffdea2] hover:bg-orange-50"}`}
                   >
                     {y}
                   </button>
