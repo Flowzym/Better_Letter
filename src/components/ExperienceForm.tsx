@@ -221,20 +221,21 @@ export default function ExperienceForm({
               onChange={setShowLeasing}
               label="Leasing"
             />
-          {hasCompanyData && (
-            <button
-              type="button"
-              onClick={() => {
-                onUpdateField('companies', []);
-                setCompanyNameInput('');
-                setCompanyCityInput('');
-              }}
-              className="p-1 text-gray-600 hover:text-gray-900"
-              title="Unternehmen & Ort zurücksetzen"
-            >
-              <Eraser className="h-4 w-4" />
-            </button>
-          )}
+            {hasCompanyData && (
+              <button
+                type="button"
+                onClick={() => {
+                  onUpdateField('companies', []);
+                  setCompanyNameInput('');
+                  setCompanyCityInput('');
+                }}
+                className="p-1 text-gray-600 hover:text-gray-900"
+                title="Unternehmen & Ort zurücksetzen"
+              >
+                <Eraser className="h-4 w-4" />
+              </button>
+            )}
+          </div>
         </div>
         
         {/* Bestehende Unternehmenseinträge als Tags anzeigen */}
