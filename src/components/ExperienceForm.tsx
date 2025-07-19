@@ -277,7 +277,7 @@ export default function ExperienceForm({
                   setCompanyCityInput('');
                 }}
                 suggestions={favoriteCities}
-                placeholder="Ort/Orte..."
+                placeholder="Ort / Orte..."
                 showFavoritesButton={isCityInputFocused}
                 showAddButton={false}
                 buttonColor="#F6A800"
