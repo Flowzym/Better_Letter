@@ -377,13 +377,25 @@ export default function ZeitraumPicker({
             
             {/* Jahres-Spalte mit präziser Höhe */}
             <div className="flex flex-col gap-1 max-h-[192px] overflow-y-auto pr-2">
-              {months.slice(0, 6).map((m) => {
+              {years.map((year) => {
                 const selected =
                   activeField === "start"
-                    ? startMonth === m.value
-                    : endMonth === m.value;
+                    ? startYear === year
+                    : endYear === year;
                 return (
                   <button
+                    key={year}
+                    onMouseDown={() => handleYearSelect(year)}
+                    className={`w-16 h-8 rounded border transition-colors duration-150 focus:outline-none text-sm font-medium ${
+                      selected
+                        ? "bg-[#F29400] text-white border-[#F29400]"
+                        : "bg-white text-gray-700 border-[#ffdea2] hover:bg-orange-50"
+                    }`}
+                  >
+                    {year}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
