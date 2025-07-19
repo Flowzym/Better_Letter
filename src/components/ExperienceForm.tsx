@@ -51,6 +51,7 @@ export default function ExperienceForm({
   const [showLeasing, setShowLeasing] = useState(false);
   const [leasingCompanyInput, setLeasingCompanyInput] = useState('');
   const [isPositionInputFocused, setIsPositionInputFocused] = useState(false);
+  const [leasingCompanies, setLeasingCompanies] = useState<string[]>([]);
 
   const hasZeitraumData =
     form.startMonth !== null ||
@@ -62,7 +63,7 @@ export default function ExperienceForm({
   const hasPositionData = selectedPositions.length > 0;
   const hasTaskData = form.aufgabenbereiche.length > 0;
   const hasAdditionalInfo = form.zusatzangaben && form.zusatzangaben.trim().length > 0;
-  const hasLeasingData = showLeasing && leasingCompanyInput.trim() !== '';
+  const hasLeasingData = showLeasing && (leasingCompanies.length > 0 || leasingCompanyInput.trim() !== '');
 
   // Prüft, ob mindestens ein Eingabefeld gefüllt ist
   const hasInputData = companyNameInput.trim() !== '' || companyCityInput.trim() !== '' || (showLeasing && leasingCompanyInput.trim() !== '');
@@ -106,6 +107,51 @@ export default function ExperienceForm({
     }
   };
   
+  // Funktion zum Hinzufügen einer Leasingfirma
+  const addLeasingCompany = (company?: string) => {
+    const companyToAdd = (company ?? leasingCompanyInput).trim();
+    if (!companyToAdd || leasingCompanies.includes(companyToAdd)) return;
+    
+    const newLeasingCompanies = [...leasingCompanies, companyToAdd];
+    setLeasingCompanies(newLeasingCompanies);
+    
+    // Zur companies-Liste hinzufügen mit speziellem Format
+    const formattedEntry = `${companyToAdd} (über Überlassungsunternehmen)`;
+    if (!form.companies?.includes(formattedEntry)) {
+      onUpdateField('companies', [...(form.companies || []), formattedEntry]);
+    }
+    
+    setLeasingCompanyInput('');
+  };
+
+  // Funktion zum Entfernen einer Leasingfirma
+  const removeLeasingCompany = (company: string) => {
+    const newLeasingCompanies = leasingCompanies.filter(c => c !== company);
+    setLeasingCompanies(newLeasingCompanies);
+    
+    // Auch aus der companies-Liste entfernen
+    const formattedEntry = `${company} (über Überlassungsunternehmen)`;
+    if (form.companies?.includes(formattedEntry)) {
+      onUpdateField('companies', form.companies.filter(c => c !== formattedEntry));
+    }
+  };
+
+  // Funktion zum Bearbeiten einer Leasingfirma
+  const updateLeasingCompany = (oldCompany: string, newCompany: string) => {
+    const trimmed = newCompany.trim();
+    if (!trimmed) return;
+    
+    const newLeasingCompanies = leasingCompanies.map(c => c === oldCompany ? trimmed : c);
+    setLeasingCompanies(newLeasingCompanies);
+    
+    // Auch in der companies-Liste aktualisieren
+    const oldFormattedEntry = `${oldCompany} (über Überlassungsunternehmen)`;
+    const newFormattedEntry = `${trimmed} (über Überlassungsunternehmen)`;
+    if (form.companies?.includes(oldFormattedEntry)) {
+      onUpdateField('companies', form.companies.map(c => c === oldFormattedEntry ? newFormattedEntry : c));
+    }
+  };
+
   // Funktion zum Entfernen eines Unternehmenseintrags
   const removeCompanyEntry = (entry: string) => {
     if (form.companies) {
@@ -358,23 +404,41 @@ export default function ExperienceForm({
           {/* Überlassungsunternehmen Input - nur anzeigen wenn Leasing ausgewählt */}
           {showLeasing && (
             <div className="mt-4 space-y-3">
-              <AutocompleteInput
-                label=""
-                id="leasing-company-input"
-                value={leasingCompanyInput}
-                onChange={setLeasingCompanyInput}
-                onAdd={() => {}} // Wird nicht verwendet
-                onFavoriteClick={(val) => {
-                  const valueToAdd = val || leasingCompanyInput.trim();
-                  if (valueToAdd) toggleFavoriteLeasingCompany(valueToAdd);
-                  setLeasingCompanyInput('');
-                }}
-                suggestions={favoriteLeasingCompanies}
-                placeholder="Überlassungsunternehmen..."
-                showFavoritesButton={true}
-                showAddButton={false}
-                buttonColor="#F6A800"
-              />
+              {/* Bestehende Leasingfirmen als Tags anzeigen */}
+              {leasingCompanies.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {leasingCompanies.map((company, index) => (
+                    <CompanyTag
+                      key={`${company}-${index}`}
+                      label={company}
+                      onRemove={() => removeLeasingCompany(company)}
+                      onEdit={(newValue) => updateLeasingCompany(company, newValue)}
+                    />
+                  ))}
+                </div>
+              )}
+              
+              <div className="flex space-x-2 items-center">
+                <div className="flex-1">
+                  <AutocompleteInput
+                    label=""
+                    id="leasing-company-input"
+                    value={leasingCompanyInput}
+                    onChange={setLeasingCompanyInput}
+                    onAdd={addLeasingCompany}
+                    onFavoriteClick={(val) => {
+                      const valueToAdd = val || leasingCompanyInput.trim();
+                      if (valueToAdd) toggleFavoriteLeasingCompany(valueToAdd);
+                      setLeasingCompanyInput('');
+                    }}
+                    suggestions={favoriteLeasingCompanies}
+                    placeholder="Überlassungsunternehmen..."
+                    showFavoritesButton={true}
+                    showAddButton={true}
+                    buttonColor="#F6A800"
+                  />
+                </div>
+              </div>
               
               {/* Leasing-Unternehmen Favoriten */}
               {favoriteLeasingCompanies.length > 0 && (
@@ -388,11 +452,7 @@ export default function ExperienceForm({
                       <TagButtonFavorite
                         key={company}
                         label={company}
-                        onClick={() => {
-                          if (!form.companies?.includes(company)) {
-                            onUpdateField('companies', [...(form.companies || []), company]);
-                          }
-                        }}
+                        onClick={() => addLeasingCompany(company)}
                         onRemove={() => toggleFavoriteLeasingCompany(company)}
                       />
                     ))}
