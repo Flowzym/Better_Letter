@@ -64,6 +64,16 @@ export default function ExperienceForm({
   const hasAdditionalInfo = form.zusatzangaben && form.zusatzangaben.trim().length > 0;
   const hasLeasingData = showLeasing && ((Array.isArray(form.leasingCompaniesList) && form.leasingCompaniesList.length > 0) || leasingCompanyInput.trim() !== '');
 
+  // Leasing-Daten löschen wenn Toggle deaktiviert wird
+  const handleLeasingToggle = (enabled: boolean) => {
+    setShowLeasing(enabled);
+    if (!enabled) {
+      // Leasing-Daten löschen wenn deaktiviert
+      onUpdateField('leasingCompaniesList', []);
+      setLeasingCompanyInput('');
+    }
+  };
+
   // Prüft, ob mindestens ein Eingabefeld gefüllt ist
   const hasInputData = companyNameInput.trim() !== '' || companyCityInput.trim() !== '' || (showLeasing && leasingCompanyInput.trim() !== '');
   
@@ -249,7 +259,7 @@ export default function ExperienceForm({
           <div className="flex items-center space-x-4">
             <ToggleSwitch
               checked={showLeasing}
-              onChange={setShowLeasing}
+              onChange={handleLeasingToggle}
               label="Leasing"
             />
             {hasCompanyData && (

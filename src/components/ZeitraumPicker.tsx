@@ -302,11 +302,13 @@ export default function ZeitraumPicker({
             }`}
           />
         )}
-        <label className="ml-2 flex items-center space-x-1 text-sm">
-          <ToggleSwitch
+        <label className="ml-2 flex items-center space-x-2 text-sm">
+          <input
+            type="checkbox"
             checked={isCurrent}
-            onChange={(newValue) => {
-              console.log('ZeitraumPicker: laufend toggle to', newValue);
+            onChange={(e) => {
+              const newValue = e.target.checked;
+              console.log('ZeitraumPicker: laufend checkbox to', newValue);
               setIsCurrent(newValue);
               if (newValue) {
                 console.log('ZeitraumPicker: clearing end fields');
@@ -315,9 +317,10 @@ export default function ZeitraumPicker({
                 setEndInput('');
               }
             }}
-            label="laufend"
-            className="ml-2"
+            className="w-4 h-4 rounded border-gray-300 focus:ring-2 focus:ring-orange-500"
+            style={{ accentColor: '#F29400' }}
           />
+          <span className="text-gray-700">laufend</span>
         </label>
       </div>
       {activeField && (
