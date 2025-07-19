@@ -255,7 +255,7 @@ export default function ExperienceForm({
                   setCompanyNameInput('');
                 }}
                 suggestions={favorites}
-                placeholder="Name des Unternehmens..."
+                placeholder="Unternehmens..."
                 showFavoritesButton={isCompanyInputFocused}
                 showAddButton={false}
                 buttonColor="#F6A800"
@@ -277,7 +277,7 @@ export default function ExperienceForm({
                   setCompanyCityInput('');
                 }}
                 suggestions={favoriteCities}
-                placeholder="Orte..."
+                placeholder="Ort(e)..."
                 showFavoritesButton={isCityInputFocused}
                 showAddButton={false}
                 buttonColor="#F6A800"
