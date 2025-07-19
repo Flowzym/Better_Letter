@@ -514,7 +514,6 @@ export default function ExperienceForm({
           id="experience-additional-info"
           name="experience-additional-info"
         />
-      </div>
     </div>
     </>
   );
