@@ -137,7 +137,7 @@ export default function TasksTagInput({
       </div>
       
       {/* KI-Vorschläge basierend auf Positionen */}
-      {aiSuggestions && aiSuggestions.filter(s => !value.includes(s) && !favorites.includes(s)).length > 0 && (
+      {aiSuggestions && aiSuggestions.filter(s => !value.includes(s)).length > 0 && (
         <div>
           <div className="flex items-center space-x-2 mb-2">
             <Lightbulb className="h-4 w-4 text-gray-500" />
@@ -145,12 +145,12 @@ export default function TasksTagInput({
           </div>
           <div className="flex flex-wrap gap-2">
             {aiSuggestions
-              .filter(s => !value.includes(s) && !favorites.includes(s))
+              .filter(s => !value.includes(s))
               .map(suggestion => (
                 <button
                   key={suggestion}
                   onClick={() => addTask(suggestion)}
-                  className="inline-flex items-center px-3 py-1 bg-[#F8F8F8] text-gray-700 text-sm rounded-full border-2 border-[#ffda95] hover:bg-gray-100 transition-colors duration-200"
+                  className="inline-flex items-center bg-[#F8F8F8] text-gray-600 text-sm rounded-full border-2 border-[#ffdea2] hover:bg-gray-100 transition-colors duration-200"
                   style={{ padding: '0.125rem 0.375rem' }}
                 >
                   <span>{suggestion}</span>
@@ -183,7 +183,7 @@ export default function TasksTagInput({
           </div>
           <div className="flex flex-wrap gap-2">
             {favorites
-              .filter((item) => !value.includes(item))
+              .filter((item) => !value.includes(item) && !aiSuggestions.includes(item))
               .map((item) => (
                 <TagButtonFavorite
                   key={item}
