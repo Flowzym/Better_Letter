@@ -73,18 +73,18 @@ export default function ZeitraumPicker({
     String(2025 - i),
   );
   const months: { label: string; value: string }[] = [
-    { label: "Januar", value: "01" },
-    { label: "Februar", value: "02" },
-    { label: "März", value: "03" },
-    { label: "April", value: "04" },
-    { label: "Mai", value: "05" },
-    { label: "Juni", value: "06" },
-    { label: "Juli", value: "07" },
-    { label: "August", value: "08" },
-    { label: "September", value: "09" },
-    { label: "Oktober", value: "10" },
-    { label: "November", value: "11" },
-    { label: "Dezember", value: "12" },
+    { label: "01", value: "01" },
+    { label: "02", value: "02" },
+    { label: "03", value: "03" },
+    { label: "04", value: "04" },
+    { label: "05", value: "05" },
+    { label: "06", value: "06" },
+    { label: "07", value: "07" },
+    { label: "08", value: "08" },
+    { label: "09", value: "09" },
+    { label: "10", value: "10" },
+    { label: "11", value: "11" },
+    { label: "12", value: "12" },
   ];
 
   const closePopup = () => {
@@ -325,11 +325,11 @@ export default function ZeitraumPicker({
       </div>
       {activeField && (
         <div
-          className="absolute top-full left-0 mt-2 bg-white border rounded-md shadow-lg p-4 z-50"
+          className="absolute top-full left-0 mt-2 bg-white border border-gray-300 rounded-md shadow-sm p-3 z-50"
           ref={popupRef}
         >
-          <div className="grid grid-cols-3 gap-x-4 items-start">
-            <div className="flex flex-col space-y-2">
+          <div className="grid grid-cols-3 gap-x-3 items-start">
+            <div className="flex flex-col space-y-1">
               {months.slice(0, 6).map((m) => {
                 const selected =
                   activeField === "start"
@@ -339,14 +339,14 @@ export default function ZeitraumPicker({
                   <button
                     key={m.label}
                     onMouseDown={() => handleMonthSelect(m.value)}
-                    className={`px-2 py-1 h-8 border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 ${selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"}`}
+                    className={`w-8 h-8 rounded-full border transition-colors duration-150 focus:outline-none text-sm font-medium ${selected ? "bg-[#F29400] text-white border-[#F29400]" : "bg-white text-gray-700 border-[#F29400] hover:bg-orange-50"}`}
                   >
                     {m.label}
                   </button>
                 );
               })}
             </div>
-            <div className="flex flex-col space-y-2">
+            <div className="flex flex-col space-y-1">
               {months.slice(6).map((m) => {
                 const selected =
                   activeField === "start"
@@ -356,14 +356,14 @@ export default function ZeitraumPicker({
                   <button
                     key={m.label}
                     onMouseDown={() => handleMonthSelect(m.value)}
-                    className={`px-2 py-1 h-8 border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 ${selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"}`}
+                    className={`w-8 h-8 rounded-full border transition-colors duration-150 focus:outline-none text-sm font-medium ${selected ? "bg-[#F29400] text-white border-[#F29400]" : "bg-white text-gray-700 border-[#F29400] hover:bg-orange-50"}`}
                   >
                     {m.label}
                   </button>
                 );
               })}
             </div>
-            <div className="row-span-2 overflow-y-auto flex flex-col space-y-2 pr-1" style={{ maxHeight: "15rem" }}>
+            <div className="row-span-2 overflow-y-auto flex flex-col space-y-1 pr-1" style={{ maxHeight: "12rem" }}>
               {years.map((y) => {
                 const selected =
                   activeField === "start" ? startYear === y : endYear === y;
@@ -371,14 +371,13 @@ export default function ZeitraumPicker({
                   <button
                     key={y}
                     onMouseDown={() => handleYearSelect(y)}
-                  className={`px-2 py-1 h-8 text-center border rounded-md transition-colors duration-150 focus:outline-none focus:ring-0 ${selected ? "bg-[#F29400] text-white" : "bg-gray-100 hover:bg-gray-200"}`}
+                    className={`px-2 py-1 h-7 text-center border rounded transition-colors duration-150 focus:outline-none text-sm font-medium ${selected ? "bg-[#F29400] text-white border-[#F29400]" : "bg-white text-gray-700 border-[#F29400] hover:bg-orange-50"}`}
                   >
                     {y}
                   </button>
                 );
               })}
             </div>
-            <div className="col-span-2 text-xs text-gray-400 mt-2">Monat optional</div>
           </div>
         </div>
       )}
