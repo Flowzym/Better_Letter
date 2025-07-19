@@ -255,7 +255,7 @@ export default function ExperienceForm({
                   setCompanyNameInput('');
                 }}
                 suggestions={favorites}
-                placeholder="Unternehmens..."
+                placeholder="Unternehmen..."
                 showFavoritesButton={isCompanyInputFocused}
                 showAddButton={false}
                 buttonColor="#F6A800"
