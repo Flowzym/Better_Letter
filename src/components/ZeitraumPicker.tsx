@@ -328,7 +328,7 @@ export default function ZeitraumPicker({
           className="absolute top-full left-0 mt-2 bg-white border border-gray-300 rounded-md shadow-sm p-3 z-50"
           ref={popupRef}
         >
-          <div className="grid grid-cols-3 gap-x-3 items-start">
+          <div className="grid grid-cols-3 gap-1 items-start">
             <div className="flex flex-col space-y-1">
               {months.slice(0, 6).map((m) => {
                 const selected =
@@ -339,7 +339,7 @@ export default function ZeitraumPicker({
                   <button
                     key={m.label}
                     onMouseDown={() => handleMonthSelect(m.value)}
-                    className={`w-8 h-8 rounded-full border transition-colors duration-150 focus:outline-none text-sm font-medium ${selected ? "bg-[#F29400] text-white border-[#F29400]" : "bg-white text-gray-700 border-[#F29400] hover:bg-orange-50"}`}
+                    className={`w-8 h-8 rounded-full border transition-colors duration-150 focus:outline-none text-sm font-medium ${selected ? "bg-[#F29400] text-white border-[#F29400]" : "bg-white text-gray-700 border-[#ffdea2] hover:bg-orange-50"}`}
                   >
                     {m.label}
                   </button>
@@ -356,7 +356,7 @@ export default function ZeitraumPicker({
                   <button
                     key={m.label}
                     onMouseDown={() => handleMonthSelect(m.value)}
-                    className={`w-8 h-8 rounded-full border transition-colors duration-150 focus:outline-none text-sm font-medium ${selected ? "bg-[#F29400] text-white border-[#F29400]" : "bg-white text-gray-700 border-[#F29400] hover:bg-orange-50"}`}
+                    className={`w-8 h-8 rounded-full border transition-colors duration-150 focus:outline-none text-sm font-medium ${selected ? "bg-[#F29400] text-white border-[#F29400]" : "bg-white text-gray-700 border-[#ffdea2] hover:bg-orange-50"}`}
                   >
                     {m.label}
                   </button>
@@ -371,7 +371,7 @@ export default function ZeitraumPicker({
                   <button
                     key={y}
                     onMouseDown={() => handleYearSelect(y)}
-                    className={`px-2 py-1 h-7 text-center border rounded transition-colors duration-150 focus:outline-none text-sm font-medium ${selected ? "bg-[#F29400] text-white border-[#F29400]" : "bg-white text-gray-700 border-[#F29400] hover:bg-orange-50"}`}
+                    className={`px-2 py-1 h-8 text-center border rounded transition-colors duration-150 focus:outline-none text-sm font-medium ${selected ? "bg-[#F29400] text-white border-[#F29400]" : "bg-white text-gray-700 border-[#ffdea2] hover:bg-orange-50"}`}
                   >
                     {y}
                   </button>

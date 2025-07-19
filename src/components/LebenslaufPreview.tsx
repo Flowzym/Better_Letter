@@ -276,7 +276,7 @@ export default function LebenslaufPreview() {
                         value={(() => {
                           const companiesText = Array.isArray(exp.companies) ? exp.companies.join(' // ') : (exp.companies || "");
                           const leasingText = exp.leasingCompaniesList && exp.leasingCompaniesList.length > 0 
-                            ? ` (über ${formatListWithConjunction(exp.leasingCompaniesList)})`
+                            ? ` (über ${exp.leasingCompaniesList.join(', ')})`
                             : '';
                           return companiesText + leasingText;
                         })()}
