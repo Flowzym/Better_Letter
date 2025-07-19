@@ -150,7 +150,8 @@ export default function TasksTagInput({
                 <button
                   key={suggestion}
                   onClick={() => addTask(suggestion)}
-                  className="inline-flex items-center px-3 py-1 bg-[#F8F8F8] text-gray-700 text-sm rounded-full border border-[#F6A800] hover:bg-gray-100 transition-colors duration-200"
+                  className="inline-flex items-center px-3 py-1 bg-[#F8F8F8] text-gray-700 text-sm rounded-full border-2 border-[#ffda95] hover:bg-gray-100 transition-colors duration-200"
+                  style={{ padding: '0.125rem 0.375rem' }}
                 >
                   <span>{suggestion}</span>
                 </button>
