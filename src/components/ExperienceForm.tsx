@@ -400,6 +400,15 @@ export default function ExperienceForm({
                             onUpdateField('companies', [...(form.companies || []), company]);
                           }
                         }}
+                        onRemove={() => toggleFavoriteLeasingCompany(company)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+          
           {/* Ausland Checkbox */}
           <div className="flex items-center justify-end space-x-2 mt-4">
             <ToggleSwitch
