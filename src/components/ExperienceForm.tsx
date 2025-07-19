@@ -284,58 +284,116 @@ export default function ExperienceForm({
         )}
         
         <div className="space-y-3">
-          {/* Unternehmen & Ort Eingabefelder nebeneinander */}
-          <div className="flex space-x-2 items-start">
-            <div className="flex-1 relative">
-              <AutocompleteInput
-                label="" 
-                id="company-name-input"
-                value={companyNameInput}
-                onChange={setCompanyNameInput}
-                onAdd={() => {}} // Wird nicht verwendet
-                onFocus={() => setIsCompanyInputFocused(true)}
-                onBlur={() => setTimeout(() => setIsCompanyInputFocused(false), 100)} // Verzögerung hinzugefügt
-                onFavoriteClick={(val) => {
-                  const valueToAdd = val || companyNameInput.trim();
-                  if (valueToAdd) toggleFavoriteCompany(valueToAdd);
-                  setCompanyNameInput('');
-                }}
-                suggestions={favorites}
-                placeholder="Unternehmen..."
-                showFavoritesButton={isCompanyInputFocused}
-                showAddButton={false}
-                buttonColor="#F6A800"
-              />
+          {/* Kombiniertes Eingabefeld für Unternehmen & Ort */}
+          <div className="flex items-center space-x-2">
+            {/* Kombinierter Container mit gemeinsamem Rahmen */}
+            <div className="flex-1 relative border border-gray-300 rounded-md overflow-hidden focus-within:ring-1 focus-within:ring-orange-500 focus-within:border-orange-500 transition-all">
+              <div className="flex">
+                {/* Unternehmen Input */}
+                <div className="flex-1 relative">
+                  <input
+                    type="text"
+                    id="company-name-input"
+                    value={companyNameInput}
+                    onChange={(e) => setCompanyNameInput(e.target.value)}
+                    onFocus={() => setIsCompanyInputFocused(true)}
+                    onBlur={() => setTimeout(() => setIsCompanyInputFocused(false), 100)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        addCompanyEntry();
+                      }
+                    }}
+                    placeholder="Unternehmen..."
+                    className="w-full h-10 px-3 py-2 border-none focus:outline-none focus:ring-0 bg-transparent"
+                  />
+                  {companyNameInput && (
+                    <button
+                      type="button"
+                      onClick={() => setCompanyNameInput('')}
+                      className="absolute right-1 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 rounded-full focus:outline-none"
+                      aria-label="Unternehmen löschen"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+                
+                {/* Visueller Separator */}
+                <div className="w-px bg-gray-300 self-stretch my-2"></div>
+                
+                {/* Ort Input */}
+                <div className="flex-1 relative">
+                  <input
+                    type="text"
+                    id="company-city-input"
+                    value={companyCityInput}
+                    onChange={(e) => setCompanyCityInput(e.target.value)}
+                    onFocus={() => setIsCityInputFocused(true)}
+                    onBlur={() => setTimeout(() => setIsCityInputFocused(false), 100)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        addCompanyEntry();
+                      }
+                    }}
+                    placeholder="Ort(e)..."
+                    className="w-full h-10 px-3 py-2 border-none focus:outline-none focus:ring-0 bg-transparent"
+                  />
+                  {companyCityInput && (
+                    <button
+                      type="button"
+                      onClick={() => setCompanyCityInput('')}
+                      className="absolute right-1 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 rounded-full focus:outline-none"
+                      aria-label="Ort löschen"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
             
-            <div className="flex-1 relative">
-              <AutocompleteInput
-                label=""
-                id="company-city-input"
-                value={companyCityInput}
-                onChange={setCompanyCityInput}
-                onFocus={() => setIsCityInputFocused(true)}
-                onBlur={() => setTimeout(() => setIsCityInputFocused(false), 100)} // Verzögerung hinzugefügt
-                onAdd={() => {}} // Wird nicht verwendet
-                onFavoriteClick={(val) => {
-                  const valueToAdd = val || companyCityInput.trim();
-                  if (valueToAdd) toggleFavoriteCity(valueToAdd);
+            {/* Zentraler Favoriten-Button */}
+            {hasInputData && (
+              <button
+                type="button"
+                onClick={() => {
+                  // Intelligente Favoriten-Logik
+                  const companyValue = companyNameInput.trim();
+                  const cityValue = companyCityInput.trim();
+                  
+                  if (companyValue && cityValue) {
+                    // Beide Felder gefüllt: Kombination als Favorit
+                    const combinedValue = showForeignCountry && selectedCountryInput && selectedCountryInput !== 'Österreich'
+                      ? `${companyValue}, ${cityValue} (${selectedCountryInput})`
+                      : `${companyValue}, ${cityValue}`;
+                    toggleFavoriteCompany(combinedValue);
+                  } else if (companyValue) {
+                    // Nur Unternehmen: als Unternehmen-Favorit
+                    toggleFavoriteCompany(companyValue);
+                  } else if (cityValue) {
+                    // Nur Ort: als Ort-Favorit
+                    toggleFavoriteCity(cityValue);
+                  }
+                  
+                  // Felder leeren
+                  setCompanyNameInput('');
                   setCompanyCityInput('');
                 }}
-                suggestions={favoriteCities}
-                placeholder="Ort(e)..."
-                showFavoritesButton={isCityInputFocused}
-                showAddButton={false}
-                buttonColor="#F6A800"
-              />
-            </div>
+                className="w-10 h-10 bg-[#F6A800] hover:bg-[#F29400] text-white rounded-md flex items-center justify-center transition-colors duration-200"
+                title="Als Favorit hinzufügen"
+              >
+                <Star className="h-5 w-5" />
+              </button>
+            )}
             
             {/* Hinzufügen-Button */}
             {hasInputData && (
               <button 
                 onClick={addCompanyEntry} 
                 className="flex items-center justify-center w-10 h-10 bg-[#F6A800] hover:bg-[#F29400] text-white rounded-md transition-colors duration-200"
-                title="Unternehmen und Ort zusammen hinzufügen"
+                title="Unternehmen und Ort hinzufügen"
               >
                 <Plus className="h-5 w-5" />
               </button>
