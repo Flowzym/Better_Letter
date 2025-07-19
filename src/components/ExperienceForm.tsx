@@ -46,6 +46,8 @@ export default function ExperienceForm({
   const [companyCityInput, setCompanyCityInput] = useState('');
   const [selectedCountryInput, setSelectedCountryInput] = useState('Österreich');
   const [showForeignCountry, setShowForeignCountry] = useState(false);
+  const [showLeasing, setShowLeasing] = useState(false);
+  const [leasingCompanyInput, setLeasingCompanyInput] = useState('');
   const [isPositionInputFocused, setIsPositionInputFocused] = useState(false);
 
   const hasZeitraumData =
@@ -58,9 +60,10 @@ export default function ExperienceForm({
   const hasPositionData = selectedPositions.length > 0;
   const hasTaskData = form.aufgabenbereiche.length > 0;
   const hasAdditionalInfo = form.zusatzangaben && form.zusatzangaben.trim().length > 0;
+  const hasLeasingData = showLeasing && leasingCompanyInput.trim() !== '';
 
   // Prüft, ob mindestens ein Eingabefeld gefüllt ist
-  const hasInputData = companyNameInput.trim() !== '' || companyCityInput.trim() !== '';
+  const hasInputData = companyNameInput.trim() !== '' || companyCityInput.trim() !== '' || (showLeasing && leasingCompanyInput.trim() !== '');
   
   // Funktion zum Hinzufügen eines neuen Unternehmenseintrags
   const addCompanyEntry = () => {
@@ -96,6 +99,9 @@ export default function ExperienceForm({
     // Eingabefelder leeren nach dem Hinzufügen
     setCompanyNameInput('');
     setCompanyCityInput(''); 
+    if (showLeasing) {
+      setLeasingCompanyInput('');
+    }
   };
   
   // Funktion zum Entfernen eines Unternehmenseintrags
@@ -335,6 +341,38 @@ export default function ExperienceForm({
                   />
                 ))}
               </div>
+            </div>
+          )}
+          
+          {/* Leasing Checkbox */}
+          <div className="flex items-center justify-end space-x-2 mt-4">
+            <ToggleSwitch
+              checked={showLeasing}
+              onChange={setShowLeasing}
+              label="Leasing"
+            />
+          </div>
+          
+          {/* Überlassungsunternehmen Input - nur anzeigen wenn Leasing ausgewählt */}
+          {showLeasing && (
+            <div className="mt-4">
+              <AutocompleteInput
+                label="Überlassungsunternehmen"
+                id="leasing-company-input"
+                value={leasingCompanyInput}
+                onChange={setLeasingCompanyInput}
+                onAdd={() => {}} // Wird nicht verwendet
+                onFavoriteClick={(val) => {
+                  const valueToAdd = val || leasingCompanyInput.trim();
+                  if (valueToAdd) toggleFavoriteCompany(valueToAdd);
+                  setLeasingCompanyInput('');
+                }}
+                suggestions={favorites}
+                placeholder="Überlassungsunternehmen..."
+                showFavoritesButton={true}
+                showAddButton={false}
+                buttonColor="#F6A800"
+              />
             </div>
           )}
           

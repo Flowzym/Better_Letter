@@ -228,7 +228,11 @@ const LebenslaufInput: React.FC = () => {
         return (
           <div className="space-y-6">
             <h3 className="text-lg font-medium text-gray-900 mb-4">
-              Berufserfahrung {berufserfahrung.length > 0 ? `(${berufserfahrung.length})` : ''}
+              Berufserfahrung {berufserfahrung.length > 0 && (
+                <span className="ml-2 px-2 py-1 text-white text-xs font-bold rounded-full" style={{ backgroundColor: '#b5b7bb' }}>
+                  {berufserfahrung.length}
+                </span>
+              )}
             </h3>
             {/* Immer das Formular anzeigen, unabhängig davon, ob ein Eintrag ausgewählt ist */}
             {(selectedExperienceId || berufserfahrung.length > 0) && (
@@ -267,7 +271,11 @@ const LebenslaufInput: React.FC = () => {
         return (
           <div className="space-y-6">
             <h3 className="text-lg font-medium text-gray-900 mb-4">
-              Ausbildung {ausbildung.length > 0 ? `(${ausbildung.length})` : ''}
+              Ausbildung {ausbildung.length > 0 && (
+                <span className="ml-2 px-2 py-1 text-white text-xs font-bold rounded-full" style={{ backgroundColor: '#b5b7bb' }}>
+                  {ausbildung.length}
+                </span>
+              )}
             </h3>
             {/* Immer das Formular anzeigen, unabhängig davon, ob ein Eintrag ausgewählt ist */}
             {(selectedEducationId || ausbildung.length > 0) && (
