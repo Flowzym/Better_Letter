@@ -140,7 +140,7 @@ export default function TasksTagInput({
       {aiSuggestions && aiSuggestions.filter(s => !value.includes(s) && !favorites.includes(s)).length > 0 && (
         <div>
           <div className="flex items-center space-x-2 mb-2">
-            <Lightbulb className="h-4 w-4 text-yellow-500" />
+            <Lightbulb className="h-4 w-4 text-gray-500" />
             <h4 className="text-sm font-medium text-gray-700">KI-Vorschläge:</h4>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -150,9 +150,8 @@ export default function TasksTagInput({
                 <button
                   key={suggestion}
                   onClick={() => addTask(suggestion)}
-                  className="inline-flex items-center px-3 py-1 bg-yellow-50 text-gray-700 text-sm rounded-full border border-yellow-300 hover:bg-yellow-100 transition-colors duration-200"
+                  className="inline-flex items-center px-3 py-1 bg-[#F8F8F8] text-gray-700 text-sm rounded-full border border-[#F6A800] hover:bg-gray-100 transition-colors duration-200"
                 >
-                  <Lightbulb className="h-3 w-3 mr-1 text-yellow-500" />
                   <span>{suggestion}</span>
                 </button>
               ))}

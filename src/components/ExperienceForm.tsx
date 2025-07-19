@@ -258,7 +258,7 @@ export default function ExperienceForm({
                 placeholder="Name des Unternehmens..."
                 showFavoritesButton={isCompanyInputFocused}
                 showAddButton={false}
-                buttonColor="orange"
+                buttonColor="#F6A800"
               />
             </div>
             
@@ -277,10 +277,10 @@ export default function ExperienceForm({
                   setCompanyCityInput('');
                 }}
                 suggestions={favoriteCities}
-                placeholder="Ort des Unternehmens..."
+                placeholder="Orte..."
                 showFavoritesButton={isCityInputFocused}
                 showAddButton={false}
-                buttonColor="orange"
+                buttonColor="#F6A800"
               />
             </div>
             
@@ -289,7 +289,7 @@ export default function ExperienceForm({
               <button 
                 onClick={addCompanyEntry} 
                 className="flex items-center justify-center px-3 py-2 h-10 text-white rounded-md transition-colors duration-200"
-                style={{ backgroundColor: '#F29400' }}
+                style={{ backgroundColor: '#F6A800' }}
                 title="Unternehmen und Ort zusammen hinzufügen"
               >
                 <Plus className="h-4 w-4 mr-1" />
@@ -303,7 +303,7 @@ export default function ExperienceForm({
             <div className="mt-4"> 
               <div className="flex items-center space-x-2 mb-1">
                 <Star className="h-4 w-4 text-gray-400" />
-                <h4 className="text-xs font-medium text-gray-700">Unternehmen-Favoriten:</h4>
+                <h4 className="text-xs font-medium text-gray-700">Unternehmen:</h4>
               </div>
               <div className="flex flex-wrap gap-2">
                 {favorites
@@ -325,7 +325,7 @@ export default function ExperienceForm({
             <div className="mt-4"> 
               <div className="flex items-center space-x-2 mb-1">
                 <Star className="h-4 w-4 text-gray-400" />
-                <h4 className="text-xs font-medium text-gray-700">Ort-Favoriten:</h4>
+                <h4 className="text-xs font-medium text-gray-700">Orte:</h4>
               </div>
               <div className="flex flex-wrap gap-2">
                 {favoriteCities.map((city) => (
