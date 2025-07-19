@@ -368,7 +368,7 @@ export default function ExperienceForm({
           {showLeasing && (
             <div className="mt-4 space-y-3">
               <AutocompleteInput
-                label="Überlassungsunternehmen"
+                label={<span className="font-bold">Leasingfirma</span>}
                 id="leasing-company-input"
                 value={leasingCompanyInput}
                 onChange={setLeasingCompanyInput}
@@ -411,15 +411,6 @@ export default function ExperienceForm({
             </div>
           )}
           
-          {/* Ausland Checkbox */}
-          <div className="flex items-center justify-end space-x-2 mt-4">
-            <ToggleSwitch
-              checked={showForeignCountry}
-              onChange={setShowForeignCountry}
-              label="Ausland"
-            />
-          </div>
-          
           {/* Land Dropdown - nur anzeigen wenn Ausland ausgewählt */}
           {showForeignCountry && (
             <div className="mt-4">
@@ -430,6 +421,15 @@ export default function ExperienceForm({
               />
             </div>
           )}
+          
+          {/* Ausland Checkbox */}
+          <div className="flex items-center justify-end space-x-2 mt-4">
+            <ToggleSwitch
+              checked={showForeignCountry}
+              onChange={setShowForeignCountry}
+              label="Ausland"
+            />
+          </div>
         </div>
       </div>
 
@@ -514,6 +514,7 @@ export default function ExperienceForm({
           id="experience-additional-info"
           name="experience-additional-info"
         />
+    </div>
     </div>
     </>
   );
