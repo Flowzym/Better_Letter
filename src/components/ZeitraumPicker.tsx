@@ -317,7 +317,7 @@ export default function ZeitraumPicker({
                 setEndInput('');
               }
             }}
-            className="w-4 h-4 rounded border-gray-300 focus:ring-2 focus:ring-orange-500"
+            className="w-4 h-4 rounded border-gray-300 focus:outline-none"
             style={{ accentColor: '#F29400' }}
           />
           <span className="text-gray-700">laufend</span>
