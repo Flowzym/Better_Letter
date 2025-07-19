@@ -156,8 +156,6 @@ export default function ExperienceForm({
     return suggestions;
   }, [selectedPositions]);
   
-  const hasPositionData = selectedPositions.length > 0;
-
   return (
     <div className="space-y-4">
       {/* Zeitraum */}
