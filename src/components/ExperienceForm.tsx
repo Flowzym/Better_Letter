@@ -213,30 +213,6 @@ export default function ExperienceForm({
         />
       </div>
 
-      {/* Position */}
-      <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
-        <div className="flex justify-between mb-2">
-          <h3 className="text-sm font-bold text-gray-700">Position</h3>
-          {hasPositionData && (
-            <button
-              type="button"
-              onClick={() => onPositionsChange([])}
-              className="p-1 text-gray-600 hover:text-gray-900"
-              title="Position zurücksetzen"
-            >
-              <Eraser className="h-4 w-4" />
-            </button>
-          )}
-        </div>
-        <TagSelectorWithFavorites
-          label=""
-          value={selectedPositions}
-          onChange={onPositionsChange}
-          allowCustom={true}
-          suggestions={cvSuggestions.positions}
-        />
-      </div>
-
       {/* Unternehmen & Ort */}
       <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
         <div className="flex justify-between items-center mb-2">
@@ -383,7 +359,7 @@ export default function ExperienceForm({
           {showLeasing && (
             <div className="mt-4 space-y-3">
               <AutocompleteInput
-                label={<span className="font-bold">Leasingfirma</span>}
+                label=""
                 id="leasing-company-input"
                 value={leasingCompanyInput}
                 onChange={setLeasingCompanyInput}
@@ -446,6 +422,30 @@ export default function ExperienceForm({
             />
           </div>
         </div>
+      </div>
+
+      {/* Position */}
+      <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
+        <div className="flex justify-between mb-2">
+          <h3 className="text-sm font-bold text-gray-700">Position</h3>
+          {hasPositionData && (
+            <button
+              type="button"
+              onClick={() => onPositionsChange([])}
+              className="p-1 text-gray-600 hover:text-gray-900"
+              title="Position zurücksetzen"
+            >
+              <Eraser className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+        <TagSelectorWithFavorites
+          label=""
+          value={selectedPositions}
+          onChange={onPositionsChange}
+          allowCustom={true}
+          suggestions={cvSuggestions.positions}
+        />
       </div>
 
       {/* Tätigkeiten */}
