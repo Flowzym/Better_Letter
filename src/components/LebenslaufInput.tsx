@@ -248,7 +248,8 @@ const LebenslaufInput: React.FC = () => {
                     endYear: experience?.endYear || null,
                     isCurrent: experience?.isCurrent || false,
                     aufgabenbereiche: Array.isArray(experience?.aufgabenbereiche) ? experience.aufgabenbereiche : [],
-                    zusatzangaben: experience?.zusatzangaben || ""
+                    zusatzangaben: experience?.zusatzangaben || "",
+                    leasingCompaniesList: Array.isArray(experience?.leasingCompaniesList) ? experience.leasingCompaniesList : []
                   };
                 })()}
                 selectedPositions={berufserfahrung.find(e => e.id === selectedExperienceId)?.position || []}

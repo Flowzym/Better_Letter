@@ -215,7 +215,13 @@ export const LebenslaufProvider: React.FC<LebenslaufProviderProps> = ({
       setPersonalData(JSON.parse(savedPersonalData));
     }
     if (savedBerufserfahrung) {
-      setBerufserfahrung(JSON.parse(savedBerufserfahrung));
+      const loadedBerufserfahrung = JSON.parse(savedBerufserfahrung);
+      // Ensure leasingCompaniesList is always an array for each experience
+      const normalizedBerufserfahrung = loadedBerufserfahrung.map((exp: any) => ({
+        ...exp,
+        leasingCompaniesList: Array.isArray(exp.leasingCompaniesList) ? exp.leasingCompaniesList : []
+      }));
+      setBerufserfahrung(normalizedBerufserfahrung);
     }
     if (savedAusbildung) {
       setAusbildung(JSON.parse(savedAusbildung));

@@ -62,7 +62,7 @@ export default function ExperienceForm({
   const hasPositionData = selectedPositions.length > 0;
   const hasTaskData = form.aufgabenbereiche.length > 0;
   const hasAdditionalInfo = form.zusatzangaben && form.zusatzangaben.trim().length > 0;
-  const hasLeasingData = showLeasing && ((form.leasingCompaniesList && form.leasingCompaniesList.length > 0) || leasingCompanyInput.trim() !== '');
+  const hasLeasingData = showLeasing && ((Array.isArray(form.leasingCompaniesList) && form.leasingCompaniesList.length > 0) || leasingCompanyInput.trim() !== '');
 
   // Prüft, ob mindestens ein Eingabefeld gefüllt ist
   const hasInputData = companyNameInput.trim() !== '' || companyCityInput.trim() !== '' || (showLeasing && leasingCompanyInput.trim() !== '');
