@@ -250,7 +250,7 @@ export default function ExperienceForm({
                 onFocus={() => setIsCompanyInputFocused(true)}
                 onBlur={() => setTimeout(() => setIsCompanyInputFocused(false), 100)} // Verzögerung hinzugefügt
                 onFavoriteClick={(val) => {
-                  const valueToAdd = vaTagSelectorWithFavoritesl || companyNameInput.trim();
+                  const valueToAdd = val || companyNameInput.trim();
                   if (valueToAdd) toggleFavoriteCompany(valueToAdd);
                   setCompanyNameInput('');
                 }}
