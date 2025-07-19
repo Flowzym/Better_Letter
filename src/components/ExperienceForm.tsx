@@ -114,13 +114,6 @@ export default function ExperienceForm({
     
     const newLeasingCompanies = [...leasingCompanies, companyToAdd];
     setLeasingCompanies(newLeasingCompanies);
-    
-    // Zur companies-Liste hinzufügen mit speziellem Format
-    const formattedEntry = `${companyToAdd} (über Überlassungsunternehmen)`;
-    if (!form.companies?.includes(formattedEntry)) {
-      onUpdateField('companies', [...(form.companies || []), formattedEntry]);
-    }
-    
     setLeasingCompanyInput('');
   };
 
@@ -128,12 +121,6 @@ export default function ExperienceForm({
   const removeLeasingCompany = (company: string) => {
     const newLeasingCompanies = leasingCompanies.filter(c => c !== company);
     setLeasingCompanies(newLeasingCompanies);
-    
-    // Auch aus der companies-Liste entfernen
-    const formattedEntry = `${company} (über Überlassungsunternehmen)`;
-    if (form.companies?.includes(formattedEntry)) {
-      onUpdateField('companies', form.companies.filter(c => c !== formattedEntry));
-    }
   };
 
   // Funktion zum Bearbeiten einer Leasingfirma
@@ -143,13 +130,6 @@ export default function ExperienceForm({
     
     const newLeasingCompanies = leasingCompanies.map(c => c === oldCompany ? trimmed : c);
     setLeasingCompanies(newLeasingCompanies);
-    
-    // Auch in der companies-Liste aktualisieren
-    const oldFormattedEntry = `${oldCompany} (über Überlassungsunternehmen)`;
-    const newFormattedEntry = `${trimmed} (über Überlassungsunternehmen)`;
-    if (form.companies?.includes(oldFormattedEntry)) {
-      onUpdateField('companies', form.companies.map(c => c === oldFormattedEntry ? newFormattedEntry : c));
-    }
   };
 
   // Funktion zum Entfernen eines Unternehmenseintrags
