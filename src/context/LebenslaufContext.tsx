@@ -363,9 +363,7 @@ export const LebenslaufProvider: React.FC<LebenslaufProviderProps> = ({
   const addExperience = (data: Partial<Berufserfahrung> = {}) => {
     const newExperience: Berufserfahrung = {
       id: Date.now().toString(),
-      companyName: '',
-      companyCity: '',
-      companyCountry: '',
+      companies: [],
       position: [],
       startMonth: null,
       startYear: "",

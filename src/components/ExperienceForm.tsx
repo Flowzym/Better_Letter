@@ -111,7 +111,7 @@ export default function ExperienceForm({
     const companyToAdd = (company ?? leasingCompanyInput).trim();
     if (!companyToAdd) return;
     
-    const currentList = form.leasingCompaniesList || [];
+    const currentList = Array.isArray(form.leasingCompaniesList) ? form.leasingCompaniesList : [];
     if (currentList.includes(companyToAdd)) return;
     
     onUpdateField('leasingCompaniesList', [...currentList, companyToAdd]);
@@ -120,17 +120,18 @@ export default function ExperienceForm({
 
   // Funktion zum Entfernen einer Leasingfirma
   const removeLeasingCompany = (company: string) => {
-    if (!form.leasingCompaniesList) return;
-    const newLeasingCompanies = form.leasingCompaniesList.filter(c => c !== company);
+    const currentList = Array.isArray(form.leasingCompaniesList) ? form.leasingCompaniesList : [];
+    const newLeasingCompanies = currentList.filter(c => c !== company);
     onUpdateField('leasingCompaniesList', newLeasingCompanies);
   };
 
   // Funktion zum Bearbeiten einer Leasingfirma
   const updateLeasingCompany = (oldCompany: string, newCompany: string) => {
     const trimmed = newCompany.trim();
-    if (!trimmed || !form.leasingCompaniesList) return;
+    if (!trimmed) return;
     
-    const newLeasingCompanies = form.leasingCompaniesList.map(c => c === oldCompany ? trimmed : c);
+    const currentList = Array.isArray(form.leasingCompaniesList) ? form.leasingCompaniesList : [];
+    const newLeasingCompanies = currentList.map(c => c === oldCompany ? trimmed : c);
     onUpdateField('leasingCompaniesList', newLeasingCompanies);
   };
 
@@ -387,21 +388,7 @@ export default function ExperienceForm({
           {showLeasing && (
             <div className="mt-4 space-y-3">
               {/* Bestehende Leasingfirmen als Tags anzeigen */}
-              {form.leasingCompaniesList && form.leasingCompaniesList.length > 0 && (
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {form.leasingCompaniesList.map((company, index) => (
-                    <CompanyTag
-                      key={`${company}-${index}`}
-                      label={company}
-                      onRemove={() => removeLeasingCompany(company)}
-                      onEdit={(newValue) => updateLeasingCompany(company, newValue)}
-                    />
-                  ))}
-                </div>
-              )}
-              
-              {/* Bestehende Leasingfirmen als Tags anzeigen */}
-              {form.leasingCompaniesList && form.leasingCompaniesList.length > 0 && (
+              {Array.isArray(form.leasingCompaniesList) && form.leasingCompaniesList.length > 0 && (
                 <div className="flex flex-wrap gap-2 mb-4">
                   {form.leasingCompaniesList.map((company, index) => (
                     <CompanyTag
@@ -437,7 +424,7 @@ export default function ExperienceForm({
               </div>
               
               {/* Leasing-Unternehmen Favoriten */}
-              {favoriteLeasingCompanies.filter(company => !form.leasingCompaniesList?.includes(company)).length > 0 && (
+              {favoriteLeasingCompanies.filter(company => !(Array.isArray(form.leasingCompaniesList) && form.leasingCompaniesList.includes(company))).length > 0 && (
                 <div>
                   <div className="flex items-center space-x-2 mb-2">
                     <Star className="h-4 w-4 text-gray-400" />
@@ -445,7 +432,7 @@ export default function ExperienceForm({
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {favoriteLeasingCompanies
-                      .filter(company => !form.leasingCompaniesList?.includes(company))
+                      .filter(company => !(Array.isArray(form.leasingCompaniesList) && form.leasingCompaniesList.includes(company)))
                       .map((company) => (
                       <TagButtonFavorite
                         key={company}
