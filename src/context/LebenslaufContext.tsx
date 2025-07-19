@@ -203,6 +203,13 @@ export const LebenslaufProvider: React.FC<LebenslaufProviderProps> = ({
     const savedFavoriteAusbildungsarten = localStorage.getItem('favoriteAusbildungsarten');
     const savedFavoriteAbschluesse = localStorage.getItem('favoriteAbschluesse');
 
+    let savedFavoriteLeasingCompanies = null;
+    try {
+      savedFavoriteLeasingCompanies = localStorage.getItem('favoriteLeasingCompanies');
+    } catch (error) {
+      console.error('Error loading favorite leasing companies from localStorage:', error);
+    }
+
     if (savedPersonalData) {
       setPersonalData(JSON.parse(savedPersonalData));
     }
@@ -256,6 +263,9 @@ export const LebenslaufProvider: React.FC<LebenslaufProviderProps> = ({
     }
     if (savedFavoriteAbschluesse) {
       setFavoriteAbschluesse(JSON.parse(savedFavoriteAbschluesse));
+    }
+    if (savedFavoriteLeasingCompanies) {
+      setFavoriteLeasingCompanies(JSON.parse(savedFavoriteLeasingCompanies));
     }
     if (savedFavoriteLeasingCompanies) {
       setFavoriteLeasingCompanies(JSON.parse(savedFavoriteLeasingCompanies));
