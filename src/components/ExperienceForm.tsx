@@ -288,11 +288,10 @@ export default function ExperienceForm({
             {hasInputData && (
               <button 
                 onClick={addCompanyEntry} 
-                className="flex items-center justify-center px-3 py-2 h-10 bg-[#F6A800] hover:bg-[#F29400] text-white rounded-md transition-colors duration-200"
+                className="flex items-center justify-center w-10 h-10 bg-[#F6A800] hover:bg-[#F29400] text-white rounded-md transition-colors duration-200"
                 title="Unternehmen und Ort zusammen hinzufügen"
               >
-                <Plus className="h-4 w-4 mr-1" />
-                <span>Hinzufügen</span>
+                <Plus className="h-5 w-5" />
               </button>
             )}
           </div>
