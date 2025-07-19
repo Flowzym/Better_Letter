@@ -325,11 +325,11 @@ export default function ZeitraumPicker({
       </div>
       {activeField && (
         <div
-          className="absolute top-full left-0 mt-2 bg-white border border-gray-300 rounded-md shadow-sm p-3 z-50"
+          className="absolute top-full left-0 mt-2 bg-white border border-gray-300 rounded-md shadow-sm p-2 z-50"
           ref={popupRef}
         >
-          <div className="grid grid-cols-3 gap-1 items-start">
-            <div className="flex flex-col space-y-1">
+          <div className="grid grid-cols-3 gap-1 items-start h-48">
+            <div className="flex flex-col gap-1">
               {months.slice(0, 6).map((m) => {
                 const selected =
                   activeField === "start"
@@ -339,14 +339,14 @@ export default function ZeitraumPicker({
                   <button
                     key={m.label}
                     onMouseDown={() => handleMonthSelect(m.value)}
-                    className={`w-8 h-8 rounded-full border transition-colors duration-150 focus:outline-none text-sm font-medium ${selected ? "bg-[#F29400] text-white border-[#F29400]" : "bg-white text-gray-700 border-[#ffdea2] hover:bg-orange-50"}`}
+                    className={`w-8 h-8 rounded-full border transition-colors duration-150 focus:outline-none text-xs font-medium ${selected ? "bg-[#F29400] text-white border-[#F29400]" : "bg-white text-gray-700 border-[#ffdea2] hover:bg-orange-50"}`}
                   >
                     {m.label}
                   </button>
                 );
               })}
             </div>
-            <div className="flex flex-col space-y-1">
+            <div className="flex flex-col gap-1">
               {months.slice(6).map((m) => {
                 const selected =
                   activeField === "start"
@@ -356,14 +356,14 @@ export default function ZeitraumPicker({
                   <button
                     key={m.label}
                     onMouseDown={() => handleMonthSelect(m.value)}
-                    className={`w-8 h-8 rounded-full border transition-colors duration-150 focus:outline-none text-sm font-medium ${selected ? "bg-[#F29400] text-white border-[#F29400]" : "bg-white text-gray-700 border-[#ffdea2] hover:bg-orange-50"}`}
+                    className={`w-8 h-8 rounded-full border transition-colors duration-150 focus:outline-none text-xs font-medium ${selected ? "bg-[#F29400] text-white border-[#F29400]" : "bg-white text-gray-700 border-[#ffdea2] hover:bg-orange-50"}`}
                   >
                     {m.label}
                   </button>
                 );
               })}
             </div>
-            <div className="row-span-2 overflow-y-auto flex flex-col space-y-1 pr-1" style={{ maxHeight: "12rem" }}>
+            <div className="overflow-y-auto flex flex-col gap-1 pr-1 h-48">
               {years.map((y) => {
                 const selected =
                   activeField === "start" ? startYear === y : endYear === y;
@@ -371,7 +371,7 @@ export default function ZeitraumPicker({
                   <button
                     key={y}
                     onMouseDown={() => handleYearSelect(y)}
-                    className={`px-2 py-1 h-8 text-center border rounded transition-colors duration-150 focus:outline-none text-sm font-medium ${selected ? "bg-[#F29400] text-white border-[#F29400]" : "bg-white text-gray-700 border-[#ffdea2] hover:bg-orange-50"}`}
+                    className={`px-2 h-8 text-center border rounded transition-colors duration-150 focus:outline-none text-xs font-medium ${selected ? "bg-[#F29400] text-white border-[#F29400]" : "bg-white text-gray-700 border-[#ffdea2] hover:bg-orange-50"}`}
                   >
                     {y}
                   </button>
