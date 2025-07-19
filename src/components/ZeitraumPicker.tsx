@@ -325,7 +325,7 @@ export default function ZeitraumPicker({
       </div>
       {activeField && (
         <div
-          className="absolute top-full left-0 mt-2 bg-white border border-gray-300 rounded-md shadow-sm p-2 z-50"
+          className="absolute top-full left-0 mt-2 bg-white border border-gray-300 rounded-md shadow-sm p-2 z-50 w-max"
           ref={popupRef}
         >
           <div className="grid grid-cols-3 gap-x-3 items-start">
@@ -338,7 +338,7 @@ export default function ZeitraumPicker({
                 return (
                   <button
                     key={m.label}
-                    onMouseDown={() => handleMonthSelect(m.value)}
+                    onMouseDown={() => handleMonthSelect(m.value)} // Changed from onClick to onMouseDown
                     className={`w-8 h-8 rounded-full border transition-colors duration-150 focus:outline-none text-sm font-medium ${selected ? "bg-[#F29400] text-white border-[#F29400]" : "bg-white text-gray-700 border-[#ffdea2] hover:bg-orange-50"}`}
                   >
                     {m.label}
@@ -355,7 +355,7 @@ export default function ZeitraumPicker({
                 return (
                   <button
                     key={m.label}
-                    onMouseDown={() => handleMonthSelect(m.value)}
+                    onMouseDown={() => handleMonthSelect(m.value)} // Changed from onClick to onMouseDown
                     className={`w-8 h-8 rounded-full border transition-colors duration-150 focus:outline-none text-sm font-medium ${selected ? "bg-[#F29400] text-white border-[#F29400]" : "bg-white text-gray-700 border-[#ffdea2] hover:bg-orange-50"}`}
                   >
                     {m.label}
@@ -370,7 +370,7 @@ export default function ZeitraumPicker({
                 return (
                   <button
                     key={y}
-                    onMouseDown={() => handleYearSelect(y)}
+                    onMouseDown={() => handleYearSelect(y)} // Changed from onClick to onMouseDown
                     className={`px-2 h-8 text-center border rounded transition-colors duration-150 focus:outline-none text-sm font-medium ${selected ? "bg-[#F29400] text-white border-[#F29400]" : "bg-white text-gray-700 border-[#ffdea2] hover:bg-orange-50"}`}
                   >
                     {y}
