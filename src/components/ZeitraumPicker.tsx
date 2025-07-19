@@ -376,7 +376,7 @@ export default function ZeitraumPicker({
             </div>
             
             {/* Jahres-Spalte mit präziser Höhe */}
-            <div className="flex flex-col gap-1 max-h-[200px] overflow-y-auto pr-2">
+            <div className="flex flex-col gap-1 max-h-[188px] overflow-y-auto pr-2">
               {years.map((year) => {
                 const selected =
                   activeField === "start"
