@@ -423,15 +423,15 @@ export default function ExperienceForm({
           )}
         </div>
       </div>
-
-      <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
-        <div className="flex justify-between mb-2">
-          <h3 className="text-sm font-bold text-gray-700">Position</h3>
-          {hasPositionData && (
-            <button
-              type="button"
-              onClick={() => {
-                onPositionsChange([]);
+      
+      {/* Ausland Checkbox */}
+      <div className="flex items-center justify-end space-x-2 mt-4">
+        <ToggleSwitch
+          checked={showForeignCountry}
+          onChange={setShowForeignCountry}
+          label="Ausland"
+        />
+      </div>
                 onUpdateField('position', []);
               }}
               className="p-1 text-gray-600 hover:text-gray-900"
