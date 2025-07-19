@@ -432,31 +432,6 @@ export default function ExperienceForm({
           label="Ausland"
         />
       </div>
-                onUpdateField('position', []);
-              }}
-              className="p-1 text-gray-600 hover:text-gray-900"
-              title="Position zurücksetzen"
-            >
-              <Eraser className="h-4 w-4" />
-            </button>
-          )}
-        </div>
-        <TagSelectorWithFavorites
-          label=""
-          value={selectedPositions}
-          onChange={(val) => {
-            console.log('Positions changed:', val);
-            onPositionsChange(val);
-            onUpdateField('position', val);
-          }}
-          onFocus={() => setIsPositionInputFocused(true)}
-          onBlur={() => setTimeout(() => setIsPositionInputFocused(false), 100)}
-          showFavoritesButton={isPositionInputFocused}
-          options={[]}
-          allowCustom={true}
-          suggestions={cvSuggestions.positions || []}
-        />
-      </div>
 
       <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
         <div className="flex justify-between mb-2">
