@@ -545,15 +545,6 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
             </div>
           </div>
 
-          {/* Ausland Checkbox */}
-          <div className="flex items-center justify-end space-x-2">
-            <ToggleSwitch
-              checked={safeData.ausland || false}
-              onChange={(checked) => updateData('ausland', checked)}
-              label="Ausland"
-            />
-          </div>
-
           {/* Ort Favoriten */}
           {favorites.ort.filter(item => item !== (safeData.ort || '')).length > 0 && (
             <div>
@@ -586,6 +577,15 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
               </div>
             </div>
           )}
+
+          {/* Ausland Checkbox */}
+          <div className="flex items-center justify-end space-x-2">
+            <ToggleSwitch
+              checked={safeData.ausland || false}
+              onChange={(checked) => updateData('ausland', checked)}
+              label="Ausland"
+            />
+          </div>
         </div>
       </div>
 
@@ -641,6 +641,39 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
               />
             </div>
           </div>
+
+          {/* Geburtsort Favoriten */}
+          {favorites.geburtsort.filter(item => item !== (safeData.geburtsort || '')).length > 0 && (
+            <div>
+              <div className="flex items-center space-x-2 mb-2">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#9CA3AF"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polygon points="12 2 15 8.5 22 9.3 17 14 18.2 21 12 17.8 5.8 21 7 14 2 9.3 9 8.5 12 2" fill="none" />
+                </svg>
+                <h4 className="text-sm font-medium text-gray-700">Orte:</h4>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {favorites.geburtsort
+                  .filter(item => item !== (safeData.geburtsort || ''))
+                  .map((item) => (
+                    <TagButtonFavorite
+                      key={item}
+                      label={item}
+                      onClick={() => updateData('geburtsort', item)}
+                      onRemove={() => toggleFavorite('geburtsort', item)}
+                    />
+                  ))}
+              </div>
+            </div>
+          )}
 
           {/* Staatsbürgerschaft Checkbox */}
           <div className="flex items-center justify-end space-x-2">
@@ -755,35 +788,3 @@ export default function PersonalDataForm({ data = {}, onChange = () => {} }: Per
     </div>
   );
 }
-          {/* Geburtsort Favoriten */}
-          {favorites.geburtsort.filter(item => item !== (safeData.geburtsort || '')).length > 0 && (
-            <div>
-              <div className="flex items-center space-x-2 mb-2">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#9CA3AF"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <polygon points="12 2 15 8.5 22 9.3 17 14 18.2 21 12 17.8 5.8 21 7 14 2 9.3 9 8.5 12 2" fill="none" />
-                </svg>
-                <h4 className="text-sm font-medium text-gray-700">Orte:</h4>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {favorites.geburtsort
-                  .filter(item => item !== (safeData.geburtsort || ''))
-                  .map((item) => (
-                    <TagButtonFavorite
-                      key={item}
-                      label={item}
-                      onClick={() => updateData('geburtsort', item)}
-                      onRemove={() => toggleFavorite('geburtsort', item)}
-                    />
-                  ))}
-              </div>
-            </div>
-          )}
