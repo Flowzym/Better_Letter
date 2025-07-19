@@ -229,7 +229,7 @@ const LebenslaufInput: React.FC = () => {
           <div className="space-y-6">
             <h3 className="text-lg font-medium text-gray-900 mb-4">
               Berufserfahrung {berufserfahrung.length > 0 && (
-                <span className="ml-2 px-2 py-1 text-white text-xs font-bold rounded-full" style={{ backgroundColor: '#b5b7bb' }}>
+                <span className="ml-2 px-3 py-1.5 text-white text-sm font-bold rounded-full" style={{ backgroundColor: '#b5b7bb' }}>
                   {berufserfahrung.length}
                 </span>
               )}
@@ -272,7 +272,7 @@ const LebenslaufInput: React.FC = () => {
           <div className="space-y-6">
             <h3 className="text-lg font-medium text-gray-900 mb-4">
               Ausbildung {ausbildung.length > 0 && (
-                <span className="ml-2 px-2 py-1 text-white text-xs font-bold rounded-full" style={{ backgroundColor: '#b5b7bb' }}>
+                <span className="ml-2 px-3 py-1.5 text-white text-sm font-bold rounded-full" style={{ backgroundColor: '#b5b7bb' }}>
                   {ausbildung.length}
                 </span>
               )}

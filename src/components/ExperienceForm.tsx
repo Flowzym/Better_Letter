@@ -33,7 +33,9 @@ export default function ExperienceForm({
     favoriteTasks, 
     favoriteCities, 
     favoriteCompanies: favorites,
+    favoriteLeasingCompanies,
     toggleFavoriteCompany,
+    toggleFavoriteLeasingCompany,
     toggleFavoriteCity,
     favoritePositions, 
     toggleFavoritePosition 
@@ -211,8 +213,14 @@ export default function ExperienceForm({
       </div>
 
       <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
-        <div className="flex justify-between mb-2">
+        <div className="flex justify-between items-center mb-2">
           <h3 className="text-sm font-bold text-gray-700">Unternehmen & Ort</h3>
+          <div className="flex items-center space-x-4">
+            <ToggleSwitch
+              checked={showLeasing}
+              onChange={setShowLeasing}
+              label="Leasing"
+            />
           {hasCompanyData && (
             <button
               type="button"
@@ -301,6 +309,7 @@ export default function ExperienceForm({
               </button>
             )}
           </div>
+          </div>
           
           {/* Unternehmen Favoriten */}
           {favorites.filter(company => !form.companies?.includes(company)).length > 0 && (
@@ -355,7 +364,7 @@ export default function ExperienceForm({
           
           {/* Überlassungsunternehmen Input - nur anzeigen wenn Leasing ausgewählt */}
           {showLeasing && (
-            <div className="mt-4">
+            <div className="mt-4 space-y-3">
               <AutocompleteInput
                 label="Überlassungsunternehmen"
                 id="leasing-company-input"
@@ -364,18 +373,33 @@ export default function ExperienceForm({
                 onAdd={() => {}} // Wird nicht verwendet
                 onFavoriteClick={(val) => {
                   const valueToAdd = val || leasingCompanyInput.trim();
-                  if (valueToAdd) toggleFavoriteCompany(valueToAdd);
+                  if (valueToAdd) toggleFavoriteLeasingCompany(valueToAdd);
                   setLeasingCompanyInput('');
                 }}
-                suggestions={favorites}
+                suggestions={favoriteLeasingCompanies}
                 placeholder="Überlassungsunternehmen..."
                 showFavoritesButton={true}
                 showAddButton={false}
                 buttonColor="#F6A800"
               />
-            </div>
-          )}
-          
+              
+              {/* Leasing-Unternehmen Favoriten */}
+              {favoriteLeasingCompanies.length > 0 && (
+                <div>
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Star className="h-4 w-4 text-gray-400" />
+                    <h4 className="text-sm font-medium text-gray-700">Favoriten:</h4>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {favoriteLeasingCompanies.map((company) => (
+                      <TagButtonFavorite
+                        key={company}
+                        label={company}
+                        onClick={() => {
+                          if (!form.companies?.includes(company)) {
+                            onUpdateField('companies', [...(form.companies || []), company]);
+                          }
+                        }}
           {/* Ausland Checkbox */}
           <div className="flex items-center justify-end space-x-2 mt-4">
             <ToggleSwitch

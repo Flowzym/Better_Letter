@@ -70,6 +70,7 @@ export interface LebenslaufContextType {
   favoriteInstitutions: string[];
   favoriteAusbildungsarten: string[];
   favoriteAbschluesse: string[];
+  favoriteLeasingCompanies: string[];
   selectedExperienceId: string | null;
   selectedEducationId: string | null;
   activeTab: TabType;
@@ -92,6 +93,7 @@ export interface LebenslaufContextType {
   toggleFavoriteInstitution: (institution: string) => void;
   toggleFavoriteAusbildungsart: (ausbildungsart: string) => void;
   toggleFavoriteAbschluss: (abschluss: string) => void;
+  toggleFavoriteLeasingCompany: (company: string) => void;
   selectExperience: (id: string) => void;
   selectEducation: (id: string) => void;
   setActiveTab: (tab: TabType) => void;
@@ -159,6 +161,7 @@ export const LebenslaufProvider: React.FC<LebenslaufProviderProps> = ({
   const [favoriteInstitutions, setFavoriteInstitutions] = useState<string[]>([]);
   const [favoriteAusbildungsarten, setFavoriteAusbildungsarten] = useState<string[]>([]);
   const [favoriteAbschluesse, setFavoriteAbschluesse] = useState<string[]>([]);
+  const [favoriteLeasingCompanies, setFavoriteLeasingCompanies] = useState<string[]>([]);
 
   // Load cvSuggestions using profileSourceMappings
   useEffect(() => {
@@ -254,6 +257,9 @@ export const LebenslaufProvider: React.FC<LebenslaufProviderProps> = ({
     if (savedFavoriteAbschluesse) {
       setFavoriteAbschluesse(JSON.parse(savedFavoriteAbschluesse));
     }
+    if (savedFavoriteLeasingCompanies) {
+      setFavoriteLeasingCompanies(JSON.parse(savedFavoriteLeasingCompanies));
+    }
   }, []);
 
   // Save to localStorage whenever data changes
@@ -334,6 +340,10 @@ export const LebenslaufProvider: React.FC<LebenslaufProviderProps> = ({
   useEffect(() => {
     localStorage.setItem('favoriteAbschluesse', JSON.stringify(favoriteAbschluesse));
   }, [favoriteAbschluesse]);
+
+  useEffect(() => {
+    localStorage.setItem('favoriteLeasingCompanies', JSON.stringify(favoriteLeasingCompanies));
+  }, [favoriteLeasingCompanies]);
 
   const updatePersonalData = (data: Partial<PersonalData>) => {
     setPersonalData(prev => ({ ...prev, ...data }));
@@ -498,6 +508,14 @@ export const LebenslaufProvider: React.FC<LebenslaufProviderProps> = ({
     );
   };
 
+  const toggleFavoriteLeasingCompany = (company: string) => {
+    setFavoriteLeasingCompanies(prev => 
+      prev.includes(company) 
+        ? prev.filter(c => c !== company)
+        : [...prev, company]
+    );
+  };
+
   const updateExperienceField = (id: string, field: keyof Berufserfahrung, value: any) => {
     setBerufserfahrung(prev => 
       prev.map(exp => exp.id === id ? { ...exp, [field]: value } : exp)
@@ -558,6 +576,7 @@ export const LebenslaufProvider: React.FC<LebenslaufProviderProps> = ({
     favoriteInstitutions,
     favoriteAusbildungsarten,
     favoriteAbschluesse,
+    favoriteLeasingCompanies,
     selectedExperienceId,
     selectedEducationId,
     activeTab,
@@ -584,6 +603,7 @@ export const LebenslaufProvider: React.FC<LebenslaufProviderProps> = ({
     toggleFavoriteInstitution,
     toggleFavoriteAusbildungsart,
     toggleFavoriteAbschluss,
+    toggleFavoriteLeasingCompany,
     updateExperienceField,
     updateEducationField,
     updateExperienceTask,
