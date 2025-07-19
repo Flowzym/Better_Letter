@@ -51,7 +51,6 @@ export default function ExperienceForm({
   const [showLeasing, setShowLeasing] = useState(false);
   const [leasingCompanyInput, setLeasingCompanyInput] = useState('');
   const [isPositionInputFocused, setIsPositionInputFocused] = useState(false);
-  const [leasingCompanies, setLeasingCompanies] = useState<string[]>([]);
 
   const hasZeitraumData =
     form.startMonth !== null ||
@@ -63,7 +62,7 @@ export default function ExperienceForm({
   const hasPositionData = selectedPositions.length > 0;
   const hasTaskData = form.aufgabenbereiche.length > 0;
   const hasAdditionalInfo = form.zusatzangaben && form.zusatzangaben.trim().length > 0;
-  const hasLeasingData = showLeasing && (leasingCompanies.length > 0 || leasingCompanyInput.trim() !== '');
+  const hasLeasingData = showLeasing && ((form.leasingCompaniesList && form.leasingCompaniesList.length > 0) || leasingCompanyInput.trim() !== '');
 
   // Prüft, ob mindestens ein Eingabefeld gefüllt ist
   const hasInputData = companyNameInput.trim() !== '' || companyCityInput.trim() !== '' || (showLeasing && leasingCompanyInput.trim() !== '');
@@ -110,26 +109,27 @@ export default function ExperienceForm({
   // Funktion zum Hinzufügen einer Leasingfirma
   const addLeasingCompany = (company?: string) => {
     const companyToAdd = (company ?? leasingCompanyInput).trim();
-    if (!companyToAdd || leasingCompanies.includes(companyToAdd)) return;
+    if (!companyToAdd || (form.leasingCompaniesList && form.leasingCompaniesList.includes(companyToAdd))) return;
     
-    const newLeasingCompanies = [...leasingCompanies, companyToAdd];
-    setLeasingCompanies(newLeasingCompanies);
+    const currentList = form.leasingCompaniesList || [];
+    onUpdateField('leasingCompaniesList', [...currentList, companyToAdd]);
     setLeasingCompanyInput('');
   };
 
   // Funktion zum Entfernen einer Leasingfirma
   const removeLeasingCompany = (company: string) => {
-    const newLeasingCompanies = leasingCompanies.filter(c => c !== company);
-    setLeasingCompanies(newLeasingCompanies);
+    if (!form.leasingCompaniesList) return;
+    const newLeasingCompanies = form.leasingCompaniesList.filter(c => c !== company);
+    onUpdateField('leasingCompaniesList', newLeasingCompanies);
   };
 
   // Funktion zum Bearbeiten einer Leasingfirma
   const updateLeasingCompany = (oldCompany: string, newCompany: string) => {
     const trimmed = newCompany.trim();
-    if (!trimmed) return;
+    if (!trimmed || !form.leasingCompaniesList) return;
     
-    const newLeasingCompanies = leasingCompanies.map(c => c === oldCompany ? trimmed : c);
-    setLeasingCompanies(newLeasingCompanies);
+    const newLeasingCompanies = form.leasingCompaniesList.map(c => c === oldCompany ? trimmed : c);
+    onUpdateField('leasingCompaniesList', newLeasingCompanies);
   };
 
   // Funktion zum Entfernen eines Unternehmenseintrags
@@ -385,9 +385,9 @@ export default function ExperienceForm({
           {showLeasing && (
             <div className="mt-4 space-y-3">
               {/* Bestehende Leasingfirmen als Tags anzeigen */}
-              {leasingCompanies.length > 0 && (
+              {form.leasingCompaniesList && form.leasingCompaniesList.length > 0 && (
                 <div className="flex flex-wrap gap-2 mb-4">
-                  {leasingCompanies.map((company, index) => (
+                  {form.leasingCompaniesList.map((company, index) => (
                     <CompanyTag
                       key={`${company}-${index}`}
                       label={company}
@@ -428,7 +428,9 @@ export default function ExperienceForm({
                     <h4 className="text-sm font-medium text-gray-700">Favoriten:</h4>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {favoriteLeasingCompanies.map((company) => (
+                    {favoriteLeasingCompanies
+                      .filter(company => !form.leasingCompaniesList?.includes(company))
+                      .map((company) => (
                       <TagButtonFavorite
                         key={company}
                         label={company}

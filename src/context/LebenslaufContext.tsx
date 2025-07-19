@@ -26,6 +26,7 @@ export interface Berufserfahrung {
   isCurrent: boolean;
   aufgabenbereiche: string[];
   zusatzangaben: string;
+  leasingCompaniesList: string[];
 }
 
 export interface Ausbildung {
@@ -372,7 +373,9 @@ export const LebenslaufProvider: React.FC<LebenslaufProviderProps> = ({
       endYear: null,
       isCurrent: false,
       aufgabenbereiche: [],
-      zusatzangaben: ""
+      zusatzangaben: "",
+      leasingCompaniesList: [],
+      ...data
     };
     setBerufserfahrung(prev => [...prev, newExperience]);
     setSelectedExperienceId(newExperience.id);

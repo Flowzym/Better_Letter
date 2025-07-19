@@ -9,4 +9,5 @@ export interface ExperienceEntry {
   isCurrent: boolean;
   aufgabenbereiche: string[];
   zusatzangaben?: string;
+  leasingCompaniesList?: string[];
 }

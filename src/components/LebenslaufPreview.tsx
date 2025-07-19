@@ -79,6 +79,18 @@ export default function LebenslaufPreview() {
     });
   }, [ausbildung]);
 
+  // Hilfsfunktion zum Formatieren einer Liste mit korrekter Interpunktion
+  const formatListWithConjunction = (items: string[]): string => {
+    if (items.length === 0) return '';
+    if (items.length === 1) return `"${items[0]}"`;
+    if (items.length === 2) return `"${items[0]}" & "${items[1]}"`;
+    
+    // Für 3 oder mehr Elemente: "A", "B", "C" & "D"
+    const allButLast = items.slice(0, -1).map(item => `"${item}"`).join(', ');
+    const last = `"${items[items.length - 1]}"`;
+    return `${allButLast} & ${last}`;
+  };
+
   const formatZeitraum = (
     startMonth: string | null,
     startYear: string | null,
@@ -261,7 +273,13 @@ export default function LebenslaufPreview() {
                     {/* Unternehmen/Ort */}
                     <div className="mb-0.5">
                       <EditablePreviewText
-                        value={Array.isArray(exp.companies) ? exp.companies.join(' // ') : (exp.companies || "")}
+                        value={(() => {
+                          const companiesText = Array.isArray(exp.companies) ? exp.companies.join(' // ') : (exp.companies || "");
+                          const leasingText = exp.leasingCompaniesList && exp.leasingCompaniesList.length > 0 
+                            ? ` (über ${formatListWithConjunction(exp.leasingCompaniesList)})`
+                            : '';
+                          return companiesText + leasingText;
+                        })()}
                         onSave={(newValue) => handleExperienceFieldUpdate(exp.id, 'companies', newValue)}
                         className="text-gray-700"
                         placeholder="Unternehmen eingeben..."
