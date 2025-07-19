@@ -400,6 +400,20 @@ export default function ExperienceForm({
                 </div>
               )}
               
+              {/* Bestehende Leasingfirmen als Tags anzeigen */}
+              {form.leasingCompaniesList && form.leasingCompaniesList.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {form.leasingCompaniesList.map((company, index) => (
+                    <CompanyTag
+                      key={`${company}-${index}`}
+                      label={company}
+                      onRemove={() => removeLeasingCompany(company)}
+                      onEdit={(newValue) => updateLeasingCompany(company, newValue)}
+                    />
+                  ))}
+                </div>
+              )}
+              
               <div className="flex space-x-2 items-center">
                 <div className="flex-1">
                   <AutocompleteInput
