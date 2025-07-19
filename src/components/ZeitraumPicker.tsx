@@ -325,7 +325,7 @@ export default function ZeitraumPicker({
       </div>
       {activeField && (
         <div
-          className="absolute top-full left-0 mt-2 bg-white border border-gray-300 rounded-md shadow-lg p-4 z-50"
+          className="absolute top-full left-0 mt-2 bg-white border border-gray-300 rounded-md shadow-sm p-3 z-50"
           ref={popupRef}
         >
           <div className="flex items-start">
@@ -376,7 +376,7 @@ export default function ZeitraumPicker({
             </div>
             
             {/* Jahres-Spalte mit präziser Höhe */}
-            <div className="flex flex-col gap-1 max-h-[212px] overflow-y-auto pr-2">
+            <div className="flex flex-col gap-1 max-h-[192px] overflow-y-auto pr-2">
               {years.map((year) => {
                 const selected =
                   activeField === "start"
