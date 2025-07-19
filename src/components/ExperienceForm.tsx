@@ -157,6 +157,7 @@ export default function ExperienceForm({
   }, [selectedPositions]);
   
   return (
+    <>
     <div className="space-y-4">
       <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
         <div className="flex justify-between mb-2">
@@ -515,5 +516,6 @@ export default function ExperienceForm({
         />
       </div>
     </div>
+    </>
   );
 }
