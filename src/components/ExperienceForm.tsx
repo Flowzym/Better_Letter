@@ -109,9 +109,11 @@ export default function ExperienceForm({
   // Funktion zum Hinzufügen einer Leasingfirma
   const addLeasingCompany = (company?: string) => {
     const companyToAdd = (company ?? leasingCompanyInput).trim();
-    if (!companyToAdd || (form.leasingCompaniesList && form.leasingCompaniesList.includes(companyToAdd))) return;
+    if (!companyToAdd) return;
     
     const currentList = form.leasingCompaniesList || [];
+    if (currentList.includes(companyToAdd)) return;
+    
     onUpdateField('leasingCompaniesList', [...currentList, companyToAdd]);
     setLeasingCompanyInput('');
   };
@@ -407,9 +409,7 @@ export default function ExperienceForm({
                     onChange={setLeasingCompanyInput}
                     onAdd={addLeasingCompany}
                     onFavoriteClick={(val) => {
-                      const valueToAdd = val || leasingCompanyInput.trim();
-                      if (valueToAdd) toggleFavoriteLeasingCompany(valueToAdd);
-                      setLeasingCompanyInput('');
+                      handleAddFavoriteInput(val);
                     }}
                     suggestions={favoriteLeasingCompanies}
                     placeholder="Überlassungsunternehmen..."
@@ -421,7 +421,7 @@ export default function ExperienceForm({
               </div>
               
               {/* Leasing-Unternehmen Favoriten */}
-              {favoriteLeasingCompanies.length > 0 && (
+              {favoriteLeasingCompanies.filter(company => !form.leasingCompaniesList?.includes(company)).length > 0 && (
                 <div>
                   <div className="flex items-center space-x-2 mb-2">
                     <Star className="h-4 w-4 text-gray-400" />
